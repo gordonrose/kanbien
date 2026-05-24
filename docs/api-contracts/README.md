@@ -35,3 +35,8 @@ Shared platform contracts:
 - `platform-authorization-denials.md` defines the reusable authn/authz denial
   matrix for future protected root, tenant, lifecycle, entitlement, RBAC, ABAC,
   ReBAC, object-level, support, and emergency route families.
+
+Feature route-family contracts:
+
+- `entity.md` defines the root-only Entity CRUD API contract for platform
+  self-definition seed records.

@@ -2,7 +2,7 @@
 
 ## Summary
 
-- Features analyzed: 27
+- Features analyzed: 28
 - Cross-feature edges: 44
 - Validation violations: 0
 
@@ -56,6 +56,21 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Breaking-change risks:
   - Changing the public canonical launcher or rendering seam can break generated design-system routes and any feature that reads canonical family truth through this integration seam.
   - Changing canonical family persistence or lifecycle semantics can break public design-system route resolution and hierarchy projection.
+
+### entity
+
+- Manifest: `src/features/entity/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `feature-factory` via `createEntityFeature` in `index.ts` (feature-factory, experimental)
+  - `entity-response-types` via `Entity | EntityListResult | EntityStatus` in `index.ts` (contract-types, experimental)
+- Breaking-change risks:
+  - Changing Entity status semantics can break future deterministic platform-definition layers that attach route, relationship, attribute, compliance, reporting, and capability instructions to Entity records.
+  - Changing name uniqueness or normalized-name behavior can break future stable lookup and generation assumptions.
 
 ### entityBuilder
 

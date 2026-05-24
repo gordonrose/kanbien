@@ -10,7 +10,8 @@ info:
     notificationDelivery feature, the protected capability-contract-catalog
     feature, the protected assets feature, the design-system-canonicals feature, the protected web-app-hierarchy feature, the protected
     web-app-page-settings feature, the protected web-app-surface-discovery
-    feature, and the shared tenant-auth foundation.
+    feature, the protected entity feature, and the shared tenant-auth
+    foundation.
 
 servers:
   - url: http://localhost:3000
@@ -30,6 +31,7 @@ tags:
   - name: Web App Hierarchy
   - name: Web App Page Settings
   - name: Web App Surface Discovery
+  - name: Entity
   - name: Tenant Auth
 
 paths:
@@ -48,6 +50,176 @@ paths:
                 $ref: "#/components/schemas/HealthResponse"
         "429":
           $ref: "#/components/responses/TooManyRequests"
+
+  /v1/entity:
+    post:
+      tags:
+        - Entity
+      summary: Create an Entity
+      operationId: createEntity
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEntityBody"
+      responses:
+        "201":
+          description: Entity created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entity"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    get:
+      tags:
+        - Entity
+      summary: List Entities
+      operationId: listEntities
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/EntityOrderBy"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/NamePrefix"
+        - $ref: "#/components/parameters/EntityStatus"
+        - $ref: "#/components/parameters/IncludeArchived"
+        - $ref: "#/components/parameters/CreatedAtFrom"
+        - $ref: "#/components/parameters/CreatedAtTo"
+        - $ref: "#/components/parameters/UpdatedAtFrom"
+        - $ref: "#/components/parameters/UpdatedAtTo"
+      responses:
+        "200":
+          description: Paginated Entities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedEntities"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/entity/{entityId}:
+    get:
+      tags:
+        - Entity
+      summary: Get an Entity by ID
+      operationId: getEntity
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+        - $ref: "#/components/parameters/IncludeArchived"
+      responses:
+        "200":
+          description: Entity found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entity"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    patch:
+      tags:
+        - Entity
+      summary: Update an Entity
+      operationId: updateEntity
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEntityBody"
+      responses:
+        "200":
+          description: Entity updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entity"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    delete:
+      tags:
+        - Entity
+      summary: Archive an Entity
+      operationId: deleteEntity
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200":
+          description: Entity archived
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entity"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
   /v1/assets/upload-intents:
     post:
@@ -4079,6 +4251,14 @@ components:
         type: string
         format: uuid
 
+    EntityId:
+      name: entityId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
     NotificationEmailId:
       name: emailId
       in: path
@@ -4255,6 +4435,15 @@ components:
         enum: [updatedAt, createdAt, email, firstName, lastName]
         default: updatedAt
 
+    EntityOrderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [name, status, createdAt, updatedAt, archivedAt]
+        default: updatedAt
+
     Email:
       name: email
       in: query
@@ -4357,6 +4546,21 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/RootUserStatus"
+
+    EntityStatus:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/EntityStatus"
+
+    IncludeArchived:
+      name: includeArchived
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
 
     TenantCategory:
       name: category
@@ -5414,6 +5618,101 @@ components:
     RootUserStatus:
       type: string
       enum: [active, inactive]
+
+    EntityStatus:
+      type: string
+      enum: [draft, active, superseded, archived]
+
+    Entity:
+      type: object
+      properties:
+        entityId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: "#/components/schemas/EntityStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        archivedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - entityId
+        - name
+        - description
+        - status
+        - createdAt
+        - updatedAt
+        - archivedAt
+
+    CreateEntityBody:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/EntityStatus"
+      required:
+        - name
+        - description
+      additionalProperties: false
+
+    UpdateEntityBody:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/EntityStatus"
+      minProperties: 1
+      additionalProperties: false
+
+    PaginatedEntities:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          oneOf:
+            - type: integer
+            - type: string
+              const: "10000+"
+        totalMatchingRecords:
+          oneOf:
+            - type: integer
+            - type: string
+              const: "10000+"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
 
     TenantCategory:
       type: string

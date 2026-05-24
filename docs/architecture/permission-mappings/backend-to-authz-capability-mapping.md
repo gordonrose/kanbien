@@ -99,6 +99,8 @@ or in a generated/materialized catalog that cites this mapping.
   and operator-visible metadata retrieval
 - `tenant-admin.*` is reserved for root-managed tenant-admin profile lifecycle
   and verification workflows
+- `entity.*` is reserved for root-managed Entity records that seed platform
+  self-definition instructions
 - `root-admin-shell.*` is reserved for cookie-backed browser-session shell
   behavior
 - `root.*` is reserved for new root/operator authority-world capability
@@ -163,6 +165,11 @@ implementation loop.
 | root users | `rootUsers` | `deleteRootUser` | `current` | `root-user.delete` | `can(...)` | `RootUserAdmin` | soft-delete lifecycle action |
 | root users | `rootUsers` | `removeRootUser` | `current` | `root-user.remove` | `can(...)` | `RootUserAdmin` | irreversible anonymized remove |
 | root users | `rootUsers` | `reactivateRootUser` | `current` | `root-user.reactivate` | `can(...)` | `RootUserAdmin` | restore/reactivation action |
+| entity | `entity` | `createEntity` | `current` | `entity.create` | `can(...)` | `RootUserAdmin` | create root-managed platform self-definition seed records |
+| entity | `entity` | `getEntity` | `current` | `entity.read` | `can(...)` | `RootUserAdmin` | exact current Entity lookup with explicit archived opt-in |
+| entity | `entity` | `listEntities` | `current` | `entity.read` | `scope(...) and can(...)` | `RootUserAdmin` | paginated Entity listing with explicit archived opt-in |
+| entity | `entity` | `updateEntity` | `current` | `entity.update` | `can(...)` | `RootUserAdmin` | update editable Entity metadata and lifecycle status while current |
+| entity | `entity` | `deleteEntity` | `current` | `entity.delete` | `can(...)` | `RootUserAdmin` | archive Entity records; first slice has no hard delete |
 | root roles | `rootRoles` | `createSystemRootRole` | `current` | `root-role.create` | `can(...)` | `RootUserAdmin` | creates durable system root roles |
 | root roles | `rootRoles` | `getSystemRootRole` | `current` | `root-role.read` | `can(...)` | `RootUserAdmin` | exact role lookup |
 | root roles | `rootRoles` | `listSystemRootRoles` | `current` | `root-role.list` | `scope(...) and can(...)` | `RootUserAdmin` | paginated role listing |

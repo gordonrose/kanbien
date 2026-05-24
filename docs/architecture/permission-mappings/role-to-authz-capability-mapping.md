@@ -184,6 +184,10 @@ runtime grants and must not be exposed in UI until the grant source posture is
 | `RootUserAdmin` | `entity-builder.catalog.read` | `current` | current root operator grant | yes | yes | approved attribute and form-pattern catalog reads |
 | `RootUserAdmin` | `entity-builder.validate` | `current` | current root operator grant | yes | yes | validation readiness reads for activation and export |
 | `RootUserAdmin` | `entity-builder.export` | `current` | current root operator grant | yes | yes | canonical derived export generation |
+| `RootUserAdmin` | `entity.create` | `current` | current root operator grant | yes | yes | create root-managed platform self-definition seed records |
+| `RootUserAdmin` | `entity.read` | `current` | current root operator grant | yes | yes | read and list current Entity records with explicit archived opt-in |
+| `RootUserAdmin` | `entity.update` | `current` | current root operator grant | yes | yes | update editable Entity metadata and lifecycle status |
+| `RootUserAdmin` | `entity.delete` | `current` | current root operator grant | no | yes | archive Entity records; first slice has no hard delete |
 | `RootUserAdmin` | `capability-contract-catalog.read` | `current` | current root operator grant | no | yes | browse and inspect persisted capability catalog records |
 | `RootUserAdmin` | `capability-contract-catalog.export` | `current` | current root operator grant | no | yes | export deterministic capability catalog snapshots |
 | `RootUserAdmin` | `capability-contract-catalog.materialize` | `current` | current root operator grant | no | yes | materialize persisted capability catalog records from approved source truth |
