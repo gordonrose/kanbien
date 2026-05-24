@@ -35,6 +35,41 @@
   Type / Shape: `TEXT`
   Description: Durable explanation of what this Entity represents.
   Constraints / Notes: Required. Empty strings are rejected.
+- `entity_key`
+  Type / Shape: `TEXT`
+  Description: Resolved singular repo-generation entity key.
+  Constraints / Notes: Required. Suggested from `feature_name` on create when
+  omitted, then stored durably and returned from storage.
+- `feature_name`
+  Type / Shape: `TEXT`
+  Description: Resolved feature folder/name stem for future generation.
+  Constraints / Notes: Required. Empty strings are rejected.
+- `table_name`
+  Type / Shape: `TEXT`
+  Description: Resolved table name for future generated persistence.
+  Constraints / Notes: Required. Suggested from `entity_key` on create when
+  omitted, then stored durably.
+- `id_field`
+  Type / Shape: `TEXT`
+  Description: Resolved API/domain identifier field name.
+  Constraints / Notes: Required. Suggested as `${entityKey}Id` on create when
+  omitted, then stored durably.
+- `id_column`
+  Type / Shape: `TEXT`
+  Description: Resolved storage identifier column name.
+  Constraints / Notes: Required. Suggested as snake_case of `id_field` on
+  create when omitted, then stored durably.
+- `scope`
+  Type / Shape: `'root' | 'tenant' | 'shared-cross-tenant'`
+  Description: Explicit tenant-boundary classification for future generated
+  capabilities.
+  Constraints / Notes: Required. `shared-cross-tenant` requires explicit
+  validation approval before persistence.
+- `route_base`
+  Type / Shape: `TEXT`
+  Description: Resolved route base for future generated transport.
+  Constraints / Notes: Required. Suggested as `/${featureName}` on create when
+  omitted, then stored durably.
 - `status`
   Type / Shape: `'draft' | 'active' | 'superseded' | 'archived'`
   Description: Current Entity lifecycle posture.
@@ -67,6 +102,15 @@
 - `ix_entities_normalized_name_prefix`
   Type: `other`
   Definition / Rule: Prefix search support for `normalized_name`.
+- `ix_entities_feature_name`
+  Type: `other`
+  Definition / Rule: Secondary index on `feature_name`.
+- `ix_entities_entity_key`
+  Type: `other`
+  Definition / Rule: Secondary index on `entity_key`.
+- `ix_entities_scope`
+  Type: `other`
+  Definition / Rule: Secondary index on `scope`.
 - `ix_entities_created_at`
   Type: `other`
   Definition / Rule: Secondary index on `created_at DESC`.
@@ -76,6 +120,14 @@
 - `ix_entities_archived_at`
   Type: `other`
   Definition / Rule: Secondary index on `archived_at DESC`.
+- `ck_entities_*_non_empty`
+  Type: `check`
+  Definition / Rule: Required text fields must remain non-empty after trim,
+  including repo-generation identity fields.
+- `ck_entities_scope_allowed`
+  Type: `check`
+  Definition / Rule: `scope` must be `root`, `tenant`, or
+  `shared-cross-tenant`.
 
 ## Lifecycle Semantics
 
@@ -118,7 +170,7 @@
 | System-managed identifiers and timestamps | yes | contract and migration | `tests/security/entity/security.test.ts`; `tests/unit/entity/service.test.ts` | Client system-field input is rejected. |
 | Normalization, uniqueness, and searchable-storage rules | yes | migration and repository | `tests/integration/entity/persistence.test.ts` | `normalized_name` owns current uniqueness and prefix search. |
 | Soft-delete and normal-read visibility | yes | service and repository | `tests/unit/entity/service.test.ts`; `tests/integration/entity/flow.test.ts` | Archive is the first-slice delete posture. |
-| Tenant boundary / object-level authorization | yes | root-only route mounting and authz | `tests/security/entity/security.test.ts` | No tenant-scoped access exists in this slice. |
+| Tenant boundary / object-level authorization | yes | root-only route mounting, authz, and explicit future-scope classification | `tests/security/entity/security.test.ts`; `tests/unit/entity/service.test.ts` | No tenant-scoped access exists in this slice. Stored `scope` classifies future generated behavior; `shared-cross-tenant` requires explicit approval. |
 | Retention and cleanup posture | partial | documented deferral | API contract and this dictionary page | Pending cleanup and hard-delete states are out of scope. |
 | Auditability and operational evidence | yes | route audit writes and security tests | `tests/security/entity/security.test.ts` | Mutation success events use platform security audit records. |
 

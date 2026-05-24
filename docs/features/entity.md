@@ -11,7 +11,14 @@ compliance, reporting, and capability instructions.
 
 - root-only API routes
 - create, exact read, list, update, and archive behavior
-- required `name`, `description`, and `status`
+- required `name`, `description`, `featureName`, `scope`, and `status`
+- durable resolved repo-generation identity fields:
+  `entityKey`, `featureName`, `tableName`, `idField`, `idColumn`, `scope`,
+  and `routeBase`
+- create-time suggestions from `featureName` for omitted identity fields,
+  persisted as resolved values instead of recalculated on reads
+- explicit `shared-cross-tenant` scope approval through
+  `sharedCrossTenantApproved=true`
 - system-generated `entityId`, `createdAt`, `updatedAt`, and `archivedAt`
 - current-name uniqueness on normalized names
 - mutation audit events through platform security audit storage

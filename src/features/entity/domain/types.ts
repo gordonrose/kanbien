@@ -1,10 +1,18 @@
 export type EntityStatus = "draft" | "active" | "superseded" | "archived";
+export type EntityScope = "root" | "tenant" | "shared-cross-tenant";
 export type CountValue = number | "10000+";
 
 export interface Entity {
   entityId: string;
   name: string;
   description: string;
+  entityKey: string;
+  featureName: string;
+  tableName: string;
+  idField: string;
+  idColumn: string;
+  scope: EntityScope;
+  routeBase: string;
   status: EntityStatus;
   createdAt: string;
   updatedAt: string;
@@ -16,6 +24,13 @@ export interface EntityData {
   name: string;
   normalizedName: string;
   description: string;
+  entityKey: string;
+  featureName: string;
+  tableName: string;
+  idField: string;
+  idColumn: string;
+  scope: EntityScope;
+  routeBase: string;
   status: EntityStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +40,14 @@ export interface EntityData {
 export interface CreateEntityInput {
   name: string;
   description: string;
+  featureName: string;
+  entityKey?: string;
+  tableName?: string;
+  idField?: string;
+  idColumn?: string;
+  scope: EntityScope;
+  routeBase?: string;
+  sharedCrossTenantApproved?: boolean;
   status?: EntityStatus;
 }
 
@@ -70,6 +93,14 @@ export interface UpdateEntityInput {
   entityId: string;
   name?: string;
   description?: string;
+  entityKey?: string;
+  featureName?: string;
+  tableName?: string;
+  idField?: string;
+  idColumn?: string;
+  scope?: EntityScope;
+  routeBase?: string;
+  sharedCrossTenantApproved?: boolean;
   status?: EntityStatus;
 }
 

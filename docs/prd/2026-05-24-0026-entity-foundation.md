@@ -24,6 +24,9 @@ It provides the backend capabilities required for:
 It also establishes:
 
 - durable Entity identity through `entityId`
+- durable resolved repo-generation identity through `entityKey`,
+  `featureName`, `tableName`, `idField`, `idColumn`, `scope`, and
+  `routeBase`
 - normalized current-name uniqueness
 - first-slice lifecycle status using `draft`, `active`, `superseded`, and
   `archived`
@@ -41,7 +44,10 @@ This phase includes:
 - a new `entity` feature under `src/features/`
 - root-only backend routes under `/v1/entity`
 - durable storage for Entity records
-- required `name`, `description`, and `status`
+- required `name`, `description`, `featureName`, `scope`, and `status`
+- create-time suggestions for omitted repo-generation identity fields, stored
+  as resolved durable values rather than recalculated on read
+- explicit validation approval before `shared-cross-tenant` scope can be saved
 - system-generated `entityId`, `createdAt`, `updatedAt`, and `archivedAt`
 - normalized current-name uniqueness
 - standard pagination, sorting, and scalar filtering
@@ -81,11 +87,40 @@ Each Entity has:
 - `entityId`
 - `name`
 - `description`
+- `entityKey`
+- `featureName`
+- `tableName`
+- `idField`
+- `idColumn`
+- `scope`
+- `routeBase`
 - `status`
 - standard system-managed lifecycle timestamps
 
 The Entity record is not yet a full definition model. It is the stable owning
 record that future deterministic platform-building layers can extend.
+
+### Repo-generation identity
+
+The repo-generation identity fields are resolved values, not live derived
+projections.
+
+Rules:
+
+- `featureName` is required
+- `scope` is required and must be provided explicitly
+- allowed `scope` values are `root`, `tenant`, and `shared-cross-tenant`
+- `shared-cross-tenant` requires explicit approval validation before the record
+  can be created or changed to that scope
+- when omitted on create, the system suggests and stores:
+  - `entityKey`: singular form of `featureName`
+  - `tableName`: `entityKey`
+  - `idField`: `${entityKey}Id`
+  - `idColumn`: snake_case of `idField`
+  - `routeBase`: `/${featureName}`
+- later reads return the stored values and do not recalculate them
+- updates to `featureName` do not silently rewrite the other stored identity
+  fields
 
 ### Entity name
 
@@ -200,6 +235,10 @@ Request body:
 
 - `name`
 - `description`
+- `featureName`
+- `scope`
+- optional `entityKey`, `tableName`, `idField`, `idColumn`, and `routeBase`
+- optional `sharedCrossTenantApproved` when `scope=shared-cross-tenant`
 - optional `status`, defaulting to `draft`
 
 System-managed fields are rejected if supplied by the client.
@@ -246,6 +285,13 @@ Updates editable current Entity fields:
 
 - `name`
 - `description`
+- `entityKey`
+- `featureName`
+- `tableName`
+- `idField`
+- `idColumn`
+- `scope`
+- `routeBase`
 - `status`
 
 Archived records are not editable through normal update.
@@ -351,4 +397,3 @@ compatibility plan.
 - `AC-ENTITY-007`: Client-supplied system-managed fields are rejected.
 - `AC-ENTITY-008`: API contract, data dictionary, permission mapping, OpenAPI,
   feature manifest, and generated dependency graph artifacts stay synchronized.
-

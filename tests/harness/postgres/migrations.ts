@@ -127,6 +127,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     relativePath: "entity/persistence/migrations/0062_seed_entity_root_capabilities.sql",
   },
   {
+    group: "entity",
+    relativePath: "entity/persistence/migrations/0063_add_repo_generation_identity_fields_to_entity.sql",
+  },
+  {
     group: "webAppSurfaceDiscovery",
     relativePath:
       "webAppSurfaceDiscovery/persistence/migrations/0016_create_web_app_surface_discovery.sql",

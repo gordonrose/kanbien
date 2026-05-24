@@ -21,6 +21,13 @@ function toEntityData(record: EntityRecord): EntityData {
     name: record.name,
     normalizedName: record.normalized_name,
     description: record.description,
+    entityKey: record.entity_key,
+    featureName: record.feature_name,
+    tableName: record.table_name,
+    idField: record.id_field,
+    idColumn: record.id_column,
+    scope: record.scope,
+    routeBase: record.route_base,
     status: record.status,
     createdAt: record.created_at,
     updatedAt: record.updated_at,
@@ -75,12 +82,24 @@ export function createPostgresEntityRepository(dbPool: Pool): EntityRepository {
             name,
             normalized_name,
             description,
+            entity_key,
+            feature_name,
+            table_name,
+            id_field,
+            id_column,
+            scope,
+            route_base,
             status,
             created_at,
             updated_at,
             archived_at
           )
-          VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), CASE WHEN $5 = 'archived' THEN NOW() ELSE NULL END)
+          VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+            NOW(),
+            NOW(),
+            CASE WHEN $12 = 'archived' THEN NOW() ELSE NULL END
+          )
           RETURNING *
         `,
         [
@@ -88,6 +107,13 @@ export function createPostgresEntityRepository(dbPool: Pool): EntityRepository {
           input.name,
           normalizeName(input.name),
           input.description,
+          input.entityKey,
+          input.featureName,
+          input.tableName,
+          input.idField,
+          input.idColumn,
+          input.scope,
+          input.routeBase,
           input.status,
         ],
       );
@@ -152,10 +178,40 @@ export function createPostgresEntityRepository(dbPool: Pool): EntityRepository {
         values.push(input.description);
         assignments.push(`description = $${values.length}`);
       }
+      if (input.entityKey !== undefined) {
+        values.push(input.entityKey);
+        assignments.push(`entity_key = $${values.length}`);
+      }
+      if (input.featureName !== undefined) {
+        values.push(input.featureName);
+        assignments.push(`feature_name = $${values.length}`);
+      }
+      if (input.tableName !== undefined) {
+        values.push(input.tableName);
+        assignments.push(`table_name = $${values.length}`);
+      }
+      if (input.idField !== undefined) {
+        values.push(input.idField);
+        assignments.push(`id_field = $${values.length}`);
+      }
+      if (input.idColumn !== undefined) {
+        values.push(input.idColumn);
+        assignments.push(`id_column = $${values.length}`);
+      }
+      if (input.scope !== undefined) {
+        values.push(input.scope);
+        assignments.push(`scope = $${values.length}`);
+      }
+      if (input.routeBase !== undefined) {
+        values.push(input.routeBase);
+        assignments.push(`route_base = $${values.length}`);
+      }
       if (input.status !== undefined) {
         values.push(input.status);
         assignments.push(`status = $${values.length}`);
-        assignments.push(`archived_at = CASE WHEN $${values.length} = 'archived' THEN COALESCE(archived_at, NOW()) ELSE NULL END`);
+        assignments.push(
+          `archived_at = CASE WHEN $${values.length} = 'archived' THEN COALESCE(archived_at, NOW()) ELSE NULL END`,
+        );
       }
       assignments.push("updated_at = NOW()");
       values.push(input.entityId);

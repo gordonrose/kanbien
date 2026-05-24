@@ -48,6 +48,8 @@
   - `TC-ENTITY-UNIT-001`
   - `TC-ENTITY-UNIT-002`
   - `TC-ENTITY-UNIT-003`
+  - `TC-ENTITY-UNIT-004`
+  - `TC-ENTITY-UNIT-005`
   - `TC-ENTITY-INT-001`
   - `TC-ENTITY-SEC-001`
   - `TC-ENTITY-SEC-002`
@@ -81,6 +83,9 @@
   Cleanup Expectation: n/a
   Coverage:
   - creates an Entity with server-generated identifier
+  - requires explicit `featureName` and `scope`
+  - persists suggested repo-generation identity fields from `featureName` when
+    optional resolved values are omitted
   - defaults status to `draft`
   - returns system-managed timestamps
   - leaves `archivedAt` null for current records
@@ -112,6 +117,33 @@
   - hides archived records from normal exact reads
   - allows exact archived read only with explicit archived opt-in
 
+- Capability: repo-generation identity resolution
+  Test Case ID: `TC-ENTITY-UNIT-004`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/entity/`
+  Requires Shared Test Helper: no
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Coverage:
+  - stores explicit `entityKey`, `featureName`, `tableName`, `idField`,
+    `idColumn`, `scope`, and `routeBase`
+  - returns stored values from the durable record
+  - changing `featureName` does not silently recalculate accepted identity
+    fields
+
+- Capability: repo-generation scope validation
+  Test Case ID: `TC-ENTITY-UNIT-005`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/entity/`
+  Requires Shared Test Helper: no
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Coverage:
+  - supports `root`, `tenant`, and `shared-cross-tenant`
+  - rejects `shared-cross-tenant` unless explicit approval validation is
+    present
+  - accepts `shared-cross-tenant` only when `sharedCrossTenantApproved=true`
+
 ## Integration Tests
 
 - Capability:
@@ -124,9 +156,12 @@
   Cleanup Expectation: in-memory route harness state is per-test
   Coverage:
   - authenticated root session can create an Entity
+  - create response includes stored repo-generation identity fields
   - exact read returns the created record
   - list supports status and name-prefix filters
   - update changes description and status
+  - update can change one stored repo-generation identity field without
+    recalculating the others
   - delete archives the record
   - normal exact read hides archived records
   - explicit archived exact read returns retained history
@@ -183,6 +218,7 @@
   Cleanup Expectation: reset Postgres test database between runs
   Coverage:
   - migration creates durable `entities` storage
+  - migration stores repo-generation identity fields as non-null durable values
   - normalized name is stored
   - duplicate current normalized names are rejected
   - archive hides current visibility without hard delete

@@ -7,6 +7,13 @@ interface EntityResponse {
   entityId: string;
   name: string;
   description: string;
+  entityKey: string;
+  featureName: string;
+  tableName: string;
+  idField: string;
+  idColumn: string;
+  scope: "root" | "tenant" | "shared-cross-tenant";
+  routeBase: string;
   status: "draft" | "active" | "superseded" | "archived";
   createdAt: string;
   updatedAt: string;
@@ -32,6 +39,8 @@ describe("entity integration flows", () => {
       body: {
         name: "Organization",
         description: "Organization is the first platform self-definition seed.",
+        featureName: "organizations",
+        scope: "root",
         status: "active",
       },
     });
@@ -39,6 +48,13 @@ describe("entity integration flows", () => {
     expect(created.status).toBe(201);
     expect(created.body).toMatchObject({
       name: "Organization",
+      entityKey: "organization",
+      featureName: "organizations",
+      tableName: "organization",
+      idField: "organizationId",
+      idColumn: "organization_id",
+      scope: "root",
+      routeBase: "/organizations",
       status: "active",
       archivedAt: null,
     });
@@ -65,12 +81,14 @@ describe("entity integration flows", () => {
       headers: { authorization: `Bearer ${session.sessionId}` },
       body: {
         description: "Organization remains the first platform self-definition seed.",
+        tableName: "organization_record",
         status: "draft",
       },
     });
     expect(updated.status).toBe(200);
     expect(updated.body).toMatchObject({
       description: "Organization remains the first platform self-definition seed.",
+      tableName: "organization_record",
       status: "draft",
     });
 

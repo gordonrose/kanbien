@@ -49,10 +49,21 @@
 
 - `POST /v1/entity`
   - body:
-    `{ name, description, status? }`
+    `{ name, description, featureName, scope, entityKey?, tableName?, idField?, idColumn?, routeBase?, sharedCrossTenantApproved?, status? }`
   - `status` defaults to `draft`
   - allowed status values:
     `draft`, `active`, `superseded`, `archived`
+  - `featureName` is required
+  - `scope` is required and must be explicit; allowed values are:
+    `root`, `tenant`, `shared-cross-tenant`
+  - `shared-cross-tenant` requires `sharedCrossTenantApproved=true`
+  - omitted repo-generation identity fields are suggested from `featureName`
+    at create time and then stored durably:
+    - `entityKey`: singular form of `featureName`
+    - `tableName`: `entityKey`
+    - `idField`: `${entityKey}Id`
+    - `idColumn`: snake_case of `idField`
+    - `routeBase`: `/${featureName}`
   - client-supplied system fields are rejected
 - `GET /v1/entity`
   - query:
@@ -70,7 +81,14 @@
     optional `includeArchived=true`
 - `PATCH /v1/entity/{entityId}`
   - body:
-    at least one of `name`, `description`, or `status`
+    at least one persisted field among `name`, `description`,
+    `featureName`, `entityKey`, `tableName`, `idField`, `idColumn`, `scope`,
+    `routeBase`, or `status`
+  - updating `featureName` does not recalculate the other stored identity
+    fields; callers must update each resolved value explicitly when they want
+    it changed
+  - setting `scope` to `shared-cross-tenant` requires
+    `sharedCrossTenantApproved=true`
   - archived records are not editable through this normal update route
 - `DELETE /v1/entity/{entityId}`
   - archives the record by setting `status=archived`, `archivedAt`, and
@@ -83,6 +101,13 @@
   - `entityId`
   - `name`
   - `description`
+  - `entityKey`
+  - `featureName`
+  - `tableName`
+  - `idField`
+  - `idColumn`
+  - `scope`
+  - `routeBase`
   - `status`
   - `createdAt`
   - `updatedAt`

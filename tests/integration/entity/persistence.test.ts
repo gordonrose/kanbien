@@ -42,15 +42,38 @@ describeIfPostgres("entity postgres repository", () => {
       entityId: "11111111-1111-4111-8111-111111111111",
       name: "  Organization  ",
       description: "Organization instruction seed.",
+      entityKey: "organization",
+      featureName: "organizations",
+      tableName: "organization",
+      idField: "organizationId",
+      idColumn: "organization_id",
+      scope: "root",
+      routeBase: "/organizations",
       status: "active",
     });
     expect(created.normalizedName).toBe("organization");
+    expect(created).toMatchObject({
+      entityKey: "organization",
+      featureName: "organizations",
+      tableName: "organization",
+      idField: "organizationId",
+      idColumn: "organization_id",
+      scope: "root",
+      routeBase: "/organizations",
+    });
 
     await expect(
       repository.create({
         entityId: "22222222-2222-4222-8222-222222222222",
         name: "organization",
         description: "Duplicate current entity.",
+        entityKey: "organization",
+        featureName: "organizations",
+        tableName: "organization",
+        idField: "organizationId",
+        idColumn: "organization_id",
+        scope: "root",
+        routeBase: "/organizations",
         status: "draft",
       }),
     ).rejects.toThrow();
@@ -69,6 +92,13 @@ describeIfPostgres("entity postgres repository", () => {
         entityId: "33333333-3333-4333-8333-333333333333",
         name: "Organization",
         description: "Replacement current entity.",
+        entityKey: "replacementOrganization",
+        featureName: "replacementOrganizations",
+        tableName: "replacementOrganization",
+        idField: "replacementOrganizationId",
+        idColumn: "replacement_organization_id",
+        scope: "tenant",
+        routeBase: "/replacementOrganizations",
         status: "draft",
       }),
     ).resolves.toMatchObject({ normalizedName: "organization" });

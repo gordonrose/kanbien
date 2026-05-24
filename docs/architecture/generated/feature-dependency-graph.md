@@ -60,17 +60,18 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### entity
 
 - Manifest: `src/features/entity/feature.manifest.json`
-- Source files: 11
+- Source files: 18
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
 - Depended on by: none
 - Public seams:
   - `feature-factory` via `createEntityFeature` in `index.ts` (feature-factory, experimental)
-  - `entity-response-types` via `Entity | EntityListResult | EntityStatus` in `index.ts` (contract-types, experimental)
+  - `entity-response-types` via `Entity | EntityListResult | EntityScope | EntityStatus | CreateEntityRequest | UpdateEntityRequest` in `index.ts` (contract-types, experimental)
 - Breaking-change risks:
   - Changing Entity status semantics can break future deterministic platform-definition layers that attach route, relationship, attribute, compliance, reporting, and capability instructions to Entity records.
   - Changing name uniqueness or normalized-name behavior can break future stable lookup and generation assumptions.
+  - Changing stored repo-generation identity fields or scope approval semantics can break future capability generation and tenant-boundary enforcement.
 
 ### entityBuilder
 

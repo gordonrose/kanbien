@@ -12,16 +12,17 @@
     },
     {
       "seamId": "entity-response-types",
-      "symbol": "Entity | EntityListResult | EntityStatus",
+      "symbol": "Entity | EntityListResult | EntityScope | EntityStatus | CreateEntityRequest | UpdateEntityRequest",
       "path": "index.ts",
       "kind": "contract-types",
       "stability": "experimental",
-      "description": "Response type surface for root-managed Entity API consumers."
+      "description": "API request, response, lifecycle, and scope type surface for root-managed Entity API consumers."
     }
   ],
   "dependsOn": [],
   "breakingChangeRisks": [
     "Changing Entity status semantics can break future deterministic platform-definition layers that attach route, relationship, attribute, compliance, reporting, and capability instructions to Entity records.",
-    "Changing name uniqueness or normalized-name behavior can break future stable lookup and generation assumptions."
+    "Changing name uniqueness or normalized-name behavior can break future stable lookup and generation assumptions.",
+    "Changing stored repo-generation identity fields or scope approval semantics can break future capability generation and tenant-boundary enforcement."
   ]
 }

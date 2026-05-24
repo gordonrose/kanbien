@@ -14,6 +14,13 @@ function createEntityRecord(overrides: Partial<EntityData> = {}): EntityData {
     name,
     normalizedName: overrides.normalizedName ?? name.trim().toLowerCase(),
     description: overrides.description ?? "Organization instruction seed.",
+    entityKey: overrides.entityKey ?? "organization",
+    featureName: overrides.featureName ?? "organizations",
+    tableName: overrides.tableName ?? "organization",
+    idField: overrides.idField ?? "organizationId",
+    idColumn: overrides.idColumn ?? "organization_id",
+    scope: overrides.scope ?? "root",
+    routeBase: overrides.routeBase ?? "/organizations",
     status: overrides.status ?? "draft",
     createdAt: overrides.createdAt ?? now,
     updatedAt: overrides.updatedAt ?? now,
@@ -31,6 +38,13 @@ function createRepositoryHarness(initialRecords: EntityData[] = []) {
         name: input.name,
         normalizedName: input.name.trim().toLowerCase(),
         description: input.description,
+        entityKey: input.entityKey,
+        featureName: input.featureName,
+        tableName: input.tableName,
+        idField: input.idField,
+        idColumn: input.idColumn,
+        scope: input.scope,
+        routeBase: input.routeBase,
         status: input.status,
       });
       records.set(record.entityId, record);
@@ -66,6 +80,13 @@ function createRepositoryHarness(initialRecords: EntityData[] = []) {
         name: input.name ?? current.name,
         normalizedName: input.name ? input.name.trim().toLowerCase() : current.normalizedName,
         description: input.description ?? current.description,
+        entityKey: input.entityKey ?? current.entityKey,
+        featureName: input.featureName ?? current.featureName,
+        tableName: input.tableName ?? current.tableName,
+        idField: input.idField ?? current.idField,
+        idColumn: input.idColumn ?? current.idColumn,
+        scope: input.scope ?? current.scope,
+        routeBase: input.routeBase ?? current.routeBase,
         status: input.status ?? current.status,
         updatedAt: new Date("2026-05-24T00:01:00.000Z"),
         archivedAt: input.status === "archived" ? new Date("2026-05-24T00:01:00.000Z") : current.archivedAt,
@@ -102,10 +123,21 @@ describe("entity service", () => {
     const created = await harness.service.createEntity({
       name: "Organization",
       description: "Organization instruction seed.",
+      featureName: "organizations",
+      scope: "root",
     });
 
     expect(created.entityId).toEqual(expect.any(String));
     expect(created.status).toBe("draft");
+    expect(created).toMatchObject({
+      entityKey: "organization",
+      featureName: "organizations",
+      tableName: "organization",
+      idField: "organizationId",
+      idColumn: "organization_id",
+      scope: "root",
+      routeBase: "/organizations",
+    });
     expect(created.createdAt).toBe("2026-05-24T00:00:00.000Z");
     expect(created.archivedAt).toBeNull();
   });
@@ -127,6 +159,8 @@ describe("entity service", () => {
       harness.service.createEntity({
         name: " organization ",
         description: "Duplicate current name.",
+        featureName: "organizations",
+        scope: "root",
       }),
     ).rejects.toMatchObject({ code: "ENTITY_NAME_ALREADY_EXISTS" });
 
@@ -134,6 +168,8 @@ describe("entity service", () => {
       harness.service.createEntity({
         name: "Archived Entity",
         description: "Name can be reused after archive.",
+        featureName: "archivedEntities",
+        scope: "root",
       }),
     ).resolves.toMatchObject({ name: "Archived Entity" });
   });
@@ -152,5 +188,76 @@ describe("entity service", () => {
     await expect(
       harness.service.getEntity({ entityId: entity.entityId, includeArchived: true }),
     ).resolves.toMatchObject({ status: "archived" });
+  });
+
+  it("TC-ENTITY-UNIT-004 stores explicit repo-generation identity fields without recalculating them", async () => {
+    const harness = createRepositoryHarness();
+
+    const created = await harness.service.createEntity({
+      name: "People",
+      description: "People instruction seed.",
+      featureName: "people",
+      entityKey: "person",
+      tableName: "person_record",
+      idField: "personRecordId",
+      idColumn: "person_record_id",
+      scope: "tenant",
+      routeBase: "/people-records",
+    });
+
+    expect(created).toMatchObject({
+      entityKey: "person",
+      featureName: "people",
+      tableName: "person_record",
+      idField: "personRecordId",
+      idColumn: "person_record_id",
+      scope: "tenant",
+      routeBase: "/people-records",
+    });
+
+    const updated = await harness.service.updateEntity({
+      entityId: created.entityId,
+      featureName: "renamedPeople",
+    });
+
+    expect(updated).toMatchObject({
+      featureName: "renamedPeople",
+      entityKey: "person",
+      tableName: "person_record",
+      idField: "personRecordId",
+      idColumn: "person_record_id",
+      routeBase: "/people-records",
+    });
+  });
+
+  it("TC-ENTITY-UNIT-005 requires explicit approval for shared cross-tenant scope", async () => {
+    const harness = createRepositoryHarness();
+
+    await expect(
+      harness.service.createEntity({
+        name: "Shared Report",
+        description: "Shared report instruction seed.",
+        featureName: "sharedReports",
+        scope: "shared-cross-tenant",
+      }),
+    ).rejects.toMatchObject({
+      code: "INVALID_REQUEST",
+      details: {
+        field: "scope",
+        reason: "shared_cross_tenant_requires_explicit_approval",
+      },
+    });
+
+    await expect(
+      harness.service.createEntity({
+        name: "Shared Report",
+        description: "Shared report instruction seed.",
+        featureName: "sharedReports",
+        scope: "shared-cross-tenant",
+        sharedCrossTenantApproved: true,
+      }),
+    ).resolves.toMatchObject({
+      scope: "shared-cross-tenant",
+    });
   });
 });

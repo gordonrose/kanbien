@@ -1,11 +1,10 @@
-import { randomUUID } from "node:crypto";
-import {
-  EntityAlreadyArchivedError,
-  EntityNameAlreadyExistsError,
-  EntityNotFoundError,
-} from "../contract/errors";
 import type { EntityRepository } from "../persistence/repository";
+import { createEntity } from "./createEntity";
+import { deleteEntity } from "./deleteEntity";
+import { getEntity } from "./getEntity";
+import { listEntities } from "./listEntities";
 import { toEntity, toEntityListResult } from "./presenters";
+import { updateEntity } from "./updateEntity";
 import type {
   CreateEntityInput,
   DeleteEntityInput,
@@ -25,34 +24,15 @@ export interface EntityService {
 }
 
 export function createEntityService(repository: EntityRepository): EntityService {
-  async function assertNameAvailable(name: string, currentEntityId?: string) {
-    const collision = await repository.findCurrentByName(name);
-    if (collision && collision.entityId !== currentEntityId) {
-      throw new EntityNameAlreadyExistsError();
-    }
-  }
-
   return {
     async createEntity(input) {
-      await assertNameAvailable(input.name);
-      return toEntity(await repository.create({
-        entityId: randomUUID(),
-        name: input.name,
-        description: input.description,
-        status: input.status ?? "draft",
-      }));
+      return toEntity(await createEntity(repository, input));
     },
     async getEntity(input) {
-      const record = input.includeArchived
-        ? await repository.findAnyById(input.entityId)
-        : await repository.findVisibleById(input.entityId);
-      if (!record) {
-        throw new EntityNotFoundError();
-      }
-      return toEntity(record);
+      return toEntity(await getEntity(repository, input));
     },
     async listEntities(input) {
-      const result = await repository.list(input);
+      const result = await listEntities(repository, input);
       return toEntityListResult(
         result.items,
         input.page,
@@ -62,28 +42,10 @@ export function createEntityService(repository: EntityRepository): EntityService
       );
     },
     async updateEntity(input) {
-      const current = await repository.findVisibleById(input.entityId);
-      if (!current) {
-        throw new EntityNotFoundError("We could not find a current entity with that ID.", {
-          field: "entityId",
-        });
-      }
-      if (input.name !== undefined && input.name !== current.name) {
-        await assertNameAvailable(input.name, input.entityId);
-      }
-      return toEntity(await repository.update(input));
+      return toEntity(await updateEntity(repository, input));
     },
     async deleteEntity(input) {
-      const current = await repository.findAnyById(input.entityId);
-      if (!current) {
-        throw new EntityNotFoundError("We could not find a current entity with that ID.", {
-          field: "entityId",
-        });
-      }
-      if (current.archivedAt) {
-        throw new EntityAlreadyArchivedError();
-      }
-      return toEntity(await repository.archive(input.entityId));
+      return toEntity(await deleteEntity(repository, input));
     },
   };
 }
