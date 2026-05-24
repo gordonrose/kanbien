@@ -285,6 +285,10 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).not.toContain('class="auth-panel"');
     expect(loginTemplateSource).toContain("export function renderRootAdminLoginTemplate");
     expect(loginTemplateSource).toContain('id="login-form"');
+    expect(loginTemplateSource).toContain('name="rootAdminEmail"');
+    expect(loginTemplateSource).toContain('name="rootAdminBootstrapPassword"');
+    expect(loginTemplateSource).not.toContain('name="email" type="email" autocomplete="username"');
+    expect(loginTemplateSource).not.toContain('name="password" type="password" autocomplete="current-password"');
     expect(loginTemplateSource).toContain('id="ssh-stage"');
     expect(usersPageSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
     expect(usersPageSource).toContain("createRootAdminDirectoryWorkspaceController");

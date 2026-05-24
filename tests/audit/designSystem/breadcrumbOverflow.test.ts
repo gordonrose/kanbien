@@ -98,6 +98,7 @@ describe("design system breadcrumb overflow", () => {
     expect(styles).toContain("html[dir=\"rtl\"] .sub-nav-preview-shell[data-breadcrumb-canonical-mode=\"button-truncation\"] #sub-nav-preview-page-minus-one-link,\nhtml[dir=\"rtl\"] .sub-nav-preview-shell[data-breadcrumb-canonical-mode=\"button-truncation\"] #sub-nav-preview-current-label {\n  width: 12rem;\n  max-width: 12rem;\n}");
     expect(styles).toContain("--tooltip-layer: 2147483000;");
     expect(styles).toContain(".shared-floating-tooltip {\n  position: fixed;\n  z-index: var(--tooltip-layer);");
+    expect(script).toContain('tooltip.className = "shared-floating-tooltip hidden token-paragraph-preview token-paragraph-main-minor";');
     expect(styles).toContain(".breadcrumb-button.breadcrumb-home-icon-only {");
     expect(styles).toContain("background-image: url(\"data:image/svg+xml,");
     expect(styles).toContain(".tooltip-anchor[data-tooltip]::before,\n.tooltip-anchor[data-tooltip]::after,\n.context-nav-item[data-tooltip]::before,\n.context-nav-item[data-tooltip]::after {\n  content: \"\";\n  display: none;\n}");

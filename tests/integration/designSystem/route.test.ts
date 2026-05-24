@@ -1,11 +1,67 @@
+import { readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../../src/app";
+
+const designSystemRoot = join(process.cwd(), "src/frontend/designSystem");
+
+function walkHtmlFiles(directory: string): string[] {
+  return readdirSync(directory).flatMap((entry) => {
+    const path = join(directory, entry);
+    return statSync(path).isDirectory() ? walkHtmlFiles(path) : path.endsWith(".html") ? [path] : [];
+  });
+}
+
+function routeForHtmlFile(path: string) {
+  const relativePath = relative(designSystemRoot, path).replace(/\\/g, "/");
+  if (relativePath === "index.html") {
+    return "/design-system";
+  }
+  if (relativePath.endsWith("/index.html")) {
+    return `/design-system/${relativePath.replace(/\/index\.html$/, "")}`;
+  }
+  return `/design-system/${relativePath.replace(/\.html$/, "")}`;
+}
 
 function expectShellTrio(html: string) {
   expect(html).toContain("class=\"top-nav");
   expect(html).toContain("class=\"sub-nav");
   expect(html).toContain("class=\"context-nav");
+}
+
+function expectGovernedBreadcrumb(html: string) {
+  expect(html).toContain('class="breadcrumb-nav"');
+  expect(html).toContain('class="breadcrumb-list"');
+  expect(html).toMatch(/class="[^"]*\bbreadcrumb-button\b[^"]*\bbreadcrumb-current\b/);
+  expect(html).toContain('aria-current="page"');
+}
+
+function expectElementClassTokens(html: string, id: string, tokens: readonly string[]) {
+  const tag = html.match(new RegExp(`<[^>]*\\bid="${id}"[^>]*>`))?.[0] ?? "";
+  expect(tag, id).not.toBe("");
+
+  const className = tag.match(/\bclass="([^"]*)"/)?.[1] ?? "";
+  for (const token of tokens) {
+    expect(className, id).toMatch(new RegExp(`\\b${token}\\b`));
+  }
+}
+
+function expectDisplaySettingsDrawer(html: string) {
+  expect(html).toContain('id="accessibility-button"');
+  expectElementClassTokens(html, "accessibility-button", ["context-nav-item", "context-nav-item-button"]);
+  expect(html).toContain('aria-expanded="false"');
+  expect(html).toContain('aria-controls="accessibility-drawer"');
+  expect(html).toContain('id="accessibility-drawer"');
+  expectElementClassTokens(html, "accessibility-drawer", ["side-panel", "accessibility-drawer", "hidden"]);
+  expect(html).toContain('aria-hidden="true"');
+  expect(html).toContain("Display Settings");
+  expect(html).toContain('id="accessibility-close"');
+  expect(html).toContain('data-theme-option="normal"');
+  expect(html).toContain('data-theme-option="dark"');
+  expect(html).toContain('data-theme-option="desert"');
+  expect(html).toContain('data-magnification-option="100"');
+  expect(html).toContain('data-direction-option="rtl"');
 }
 
 function expectCssJsSourceDrawer(html: string) {
@@ -24,13 +80,28 @@ function expectSingleItemContextNav(html: string, label: string) {
   const contextNavMatch = html.match(/<nav class="context-nav"[\s\S]*?<\/nav>/);
   expect(contextNavMatch).not.toBeNull();
   const contextNavHtml = contextNavMatch?.[0] ?? "";
-  const itemCount = (contextNavHtml.match(/class="context-nav-item/g) ?? []).length;
+  const mainMatch = contextNavHtml.match(/<div class="context-nav-main">([\s\S]*?)<\/div>/);
+  const itemCount = (mainMatch?.[1].match(/class="context-nav-item/g) ?? []).length;
 
   expect(itemCount).toBe(1);
-  expect(contextNavHtml).toContain(`>${label}<`);
+  expect(mainMatch?.[1] ?? "").toContain(`>${label}<`);
 }
 
 describe("design system route", () => {
+  it("serves every design-system HTML page with breadcrumbs and a display settings drawer", async () => {
+    const routes = [...new Set(walkHtmlFiles(designSystemRoot).map(routeForHtmlFile))].sort();
+
+    for (const route of routes) {
+      const response = await request(createApp()).get(route).set("host", "admin.example.test");
+
+      expect(response.status, route).toBe(200);
+      expectShellTrio(response.text);
+      expectGovernedBreadcrumb(response.text);
+      expectDisplaySettingsDrawer(response.text);
+      expect(response.text).toContain("/design-system/assets/app.mjs");
+    }
+  });
+
   it("renders the governed shell trio on every public design-system page", async () => {
     const routes = [
       "/design-system",
@@ -170,15 +241,53 @@ describe("design system route", () => {
     expect(response.text).toContain("Token Families To Build Out");
     expect(response.text).toContain("paragraph");
     expect(response.text).toContain("/design-system/tokens/paragraph");
+    expect(response.text).toContain("header");
+    expect(response.text).toContain("/design-system/tokens/header");
+    expect(response.text).toContain("tooltip");
+    expect(response.text).toContain("/design-system/tokens/tooltip");
+    expect(response.text).toContain("dropdowns");
+    expect(response.text).toContain("/design-system/tokens/dropdowns");
+    expect(response.text).toContain("container");
+    expect(response.text).toContain("/design-system/tokens/container");
+    expect(response.text).toContain("container-section");
+    expect(response.text).toContain("/design-system/tokens/container-section");
+    expect(response.text).toContain("icon-button");
+    expect(response.text).toContain("/design-system/tokens/icon-button");
+    expect(response.text.indexOf(">Controls<")).toBeLessThan(response.text.indexOf(">Cards<"));
+    expect(response.text.indexOf(">Cards<")).toBeLessThan(response.text.indexOf(">Page Structure<"));
+    expect(response.text).toContain("index-cards");
+    expect(response.text).toContain("Index Cards");
+    expect(response.text).toContain("list-cards");
+    expect(response.text).toContain("/design-system/tokens/index-card");
+    expect(response.text).not.toContain("primary-list-cards");
+    expect(response.text).not.toContain("/design-system/tokens/primary-list-card");
+    expect(response.text).toContain(">List Card<");
+    expect(response.text).toContain("/design-system/tokens/list-card");
+    expect(response.text).toContain("count-cards");
+    expect(response.text).toContain("button-cards");
+    expect(response.text).toContain("/design-system/tokens/button-card");
+    expect(response.text).toContain("select-cards");
+    expect(response.text).not.toContain("tab-cards");
+    expect(response.text).toContain("/design-system/tokens/count-card");
+    expect(response.text).not.toContain("#token-header-1");
+    expect(response.text).not.toContain("#token-header-6");
     expect(response.text).not.toContain("font-main-extra-large");
     expect(response.text).toContain("entity-drawers");
     expect(response.text).toContain("list-page-structure");
     expect(response.text).toContain("list-page-record-structure");
     expect(response.text).toContain("entity-page-structure");
+    expect(response.text).toContain("nested-entity-record");
+    expect(response.text).toContain("page-header");
+    expect(response.text).toContain("search-panel");
+    expect(response.text).toContain("/design-system/tokens/page-header");
+    expect(response.text).toContain("/design-system/tokens/search-panel");
     expect(response.text).toContain("/design-system/tokens/background");
+    expect(response.text).toContain("/design-system/tokens/container");
     expect(response.text).toContain("/design-system/tokens/colours");
     expect(response.text).toContain("/design-system/tokens/list-page-structure");
+    expect(response.text).toContain("/design-system/tokens/list-page-record-structure");
     expect(response.text).toContain("/design-system/tokens/entity-page-structure");
+    expect(response.text).toContain("/design-system/tokens/nested-entity-record");
     expect(response.text).toContain("colours");
     expect(response.text).toContain(">Canonical Renderings<");
     expect(response.text).toContain(">Canonicals<");
@@ -187,10 +296,24 @@ describe("design system route", () => {
   it("requires the CSS/JS source drawer on governed token detail pages", async () => {
     const routes = [
       "/design-system/tokens/background",
+      "/design-system/tokens/container",
+      "/design-system/tokens/container-section",
+      "/design-system/tokens/icon-button",
       "/design-system/tokens/colours",
       "/design-system/tokens/paragraph",
+      "/design-system/tokens/header",
+      "/design-system/tokens/tooltip",
       "/design-system/tokens/list-page-structure",
+      "/design-system/tokens/list-page-record-structure",
       "/design-system/tokens/entity-page-structure",
+      "/design-system/tokens/nested-entity-record",
+      "/design-system/tokens/page-header",
+      "/design-system/tokens/search-panel",
+      "/design-system/tokens/count-card",
+      "/design-system/tokens/index-card",
+      "/design-system/tokens/button-card",
+      "/design-system/tokens/dropdowns",
+      "/design-system/tokens/list-card",
     ];
 
     for (const route of routes) {
@@ -217,36 +340,109 @@ describe("design system route", () => {
     expect(response.text).toContain('data-theme-option="desert"');
     expect(response.text).toContain('data-magnification-option="100"');
     expect(response.text).toContain('data-direction-option="rtl"');
-    expect(response.text).toContain("Main Extra Large");
-    expect(response.text).toContain("Main Minor");
-    expect(response.text).toContain("<code>1rem</code>");
-    expect(response.text).toContain("<code>1.25rem</code>");
-    expect(response.text).toContain("<code>1.5rem</code>");
-    expect(response.text).toContain("<code>0.75rem</code>");
-    expect(response.text).toContain("<code>1.2</code>");
-    expect(response.text).toContain("<code>600</code>");
-    expect(response.text).toContain("<code>800</code>");
-    expect(response.text).toContain("<code>uppercase</code>");
-    expect(response.text).toContain("computed as 1.2em");
-    expect(response.text).toContain("var(--paragraph-main-ink)");
-    expect(response.text).toContain("var(--paragraph-label-ink)");
-    expect(response.text).toContain("var(--colour-text-20)");
-    expect(response.text).toContain("var(--colour-primary-100)");
-    expect(response.text).toContain("var(--colour-dark-100)");
-    expect(response.text).toContain("var(--colour-desert-100)");
-    expect(response.text).toContain('aria-label="Main theme previews"');
-    expect(response.text).toContain('aria-label="Main Large theme previews"');
-    expect(response.text).toContain('aria-label="Main Extra Large theme previews"');
-    expect(response.text).toContain('aria-label="Main Minor theme previews"');
-    expect(response.text).toContain('aria-label="Label theme previews"');
-    expect(response.text).toContain('data-theme-scope="dark"');
-    expect(response.text).toContain('data-theme-scope="desert"');
-    expect(response.text).toContain("paragraph.mainExtraLarge");
+    expect(response.text).toContain("data-token-paragraph-seam-mount");
+    expect(response.text).toContain("/design-system/assets/tokenParagraph.mjs");
     expect(response.text).toContain(">Canonical Renderings<");
     expect(response.text).toContain(">Canonicals<");
 
     expect(singularAlias.status).toBe(200);
     expect(singularAlias.text).toContain("Paragraph Token");
+  });
+
+  it("serves the shared paragraph token model seam", async () => {
+    const pageModule = await request(createApp()).get("/design-system/assets/tokenParagraph.mjs").set("host", "admin.example.test");
+    const modelModule = await request(createApp()).get("/design-system/assets/tokenParagraphModel.mjs").set("host", "admin.example.test");
+
+    expect(pageModule.status).toBe(200);
+    expect(pageModule.type).toMatch(/javascript/);
+    expect(pageModule.text).toContain("hydrateParagraphTokenPage");
+    expect(pageModule.text).toContain("./tokenParagraphModel.mjs");
+
+    expect(modelModule.status).toBe(200);
+    expect(modelModule.type).toMatch(/javascript/);
+    expect(modelModule.text).toContain("paragraphColourVariants");
+    expect(modelModule.text).toContain("token-paragraph-colour-warning");
+    expect(modelModule.text).toContain("token-paragraph-colour-success");
+    expect(modelModule.text).toContain("token-paragraph-colour-error");
+    expect(modelModule.text).not.toContain('token: "paragraph.warning"');
+    expect(modelModule.text).not.toContain('token: "paragraph.success"');
+    expect(modelModule.text).not.toContain('token: "paragraph.error"');
+    expect(modelModule.text).toContain("renderParagraphTokenSections");
+    expect(modelModule.text).toContain("hydrateParagraphTokenPage");
+  });
+
+  it("serves the header typography token page as one family with relative sizing sections", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/header").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/header").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Header Token");
+    expect(response.text).toContain('aria-label="Header token navigation"');
+    expect(response.text).toContain('id="accessibility-button"');
+    expect(response.text).toContain('aria-controls="accessibility-drawer"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+    expect(response.text).toContain("Display Settings");
+    expect(response.text).toContain('data-theme-option="dark"');
+    expect(response.text).toContain('data-theme-option="desert"');
+    expect(response.text).toContain('data-magnification-option="100"');
+    expect(response.text).toContain('data-direction-option="rtl"');
+    expect(response.text).toContain("data-token-header-seam-mount");
+    expect(response.text).toContain("/design-system/assets/tokenHeader.mjs");
+    expect(response.text).toContain(">Canonical Renderings<");
+    expect(response.text).toContain(">Canonicals<");
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Header Token");
+  });
+
+  it("serves the shared header token model seam", async () => {
+    const pageModule = await request(createApp()).get("/design-system/assets/tokenHeader.mjs").set("host", "admin.example.test");
+    const modelModule = await request(createApp()).get("/design-system/assets/tokenHeaderModel.mjs").set("host", "admin.example.test");
+
+    expect(pageModule.status).toBe(200);
+    expect(pageModule.type).toMatch(/javascript/);
+    expect(pageModule.text).toContain("hydrateHeaderTokenPage");
+    expect(pageModule.text).toContain("./tokenHeaderModel.mjs");
+
+    expect(modelModule.status).toBe(200);
+    expect(modelModule.type).toMatch(/javascript/);
+    expect(modelModule.text).toContain("header.1");
+    expect(modelModule.text).toContain("header.6");
+    expect(modelModule.text).toContain("renderHeaderTokenSections");
+    expect(modelModule.text).toContain("hydrateHeaderTokenPage");
+  });
+
+  it("serves the tooltip token page with shared overlay token cards", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/tooltip").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/tooltip").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Tooltip Token");
+    expect(response.text).toContain('aria-label="Tooltip token navigation"');
+    expect(response.text).toContain("--tooltip-bg");
+    expect(response.text).toContain("--tooltip-fg");
+    expect(response.text).toContain("--tooltip-shadow");
+    expect(response.text).toContain("--tooltip-radius");
+    expect(response.text).toContain("--tooltip-arrow-size");
+    expect(response.text).toContain("--tooltip-layer");
+    expect(response.text).toContain("--tooltip-max-width");
+    expect(response.text).toContain("--tooltip-max-height");
+    expect(response.text).toContain("typography: paragraph.mainMinor / .token-paragraph-main-minor");
+    expect(response.text).toContain("token-tooltip-content-sample token-paragraph-preview token-paragraph-main-minor");
+    expect(response.text).toContain('data-tooltip="Shared tooltip preview"');
+    expect(response.text).toContain('aria-label="Long tooltip content preview"');
+    expect(response.text).toContain('data-token-tooltip-placement="top"');
+    expect(response.text).toContain('data-token-tooltip-placement="right"');
+    expect(response.text).toContain('data-token-tooltip-placement="bottom"');
+    expect(response.text).toContain('data-token-tooltip-placement="left"');
+    expect(response.text).toContain('aria-label="Tooltip escape layer preview"');
+    expect(response.text).toContain("Tooltip Escape Layer");
+    expect(response.text).toContain("#shared-floating-tooltip");
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Tooltip Token");
   });
 
   it("serves the list page structure token starter with display-controlled layout", async () => {
@@ -267,6 +463,7 @@ describe("design system route", () => {
     expect(response.text).toContain('data-list-page-structure-mobile-layer-option="top"');
     expect(response.text).toContain('data-list-page-structure-mobile-layer-option="bottom"');
     expect(response.text).toContain('data-list-page-structure-secondary-columns="12"');
+    expect(response.text).toContain('data-structure-content-option="extended"');
     expect(response.text).toContain('id="accessibility-drawer"');
     expectCssJsSourceDrawer(response.text);
     expect(response.text).toContain(">Canonical Renderings<");
@@ -284,6 +481,27 @@ describe("design system route", () => {
     expect(response.text).toContain("listPageStructureMobileLayer");
   });
 
+  it("serves the list page record structure token starter with a nested entity record in the split main region", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/list-page-record-structure").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("List Page Record Structure");
+    expect(response.text).toContain('data-token-layer-surface="list-page-record-structure"');
+    expect(response.text).toContain('data-list-page-structure-canvas');
+    expect(response.text).toContain('data-list-page-structure-layout="split"');
+    expect(response.text).toContain('data-list-page-structure-layout-option="split"');
+    expect(response.text).toContain('data-list-page-structure-resize-handle');
+    expect(response.text).toContain('data-nested-entity-record-structure-mount');
+    expect(response.text).toContain('aria-label="Record structure column"');
+    expect(response.text).toContain('data-list-page-structure-header-toggle="first"');
+    expect(response.text).toContain('data-list-page-structure-header-toggle="second"');
+    expect(response.text).toContain('data-list-page-structure-secondary-columns-option="24"');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="top"');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="bottom"');
+    expect(response.text).toContain('data-structure-content-option="extended"');
+    expectCssJsSourceDrawer(response.text);
+  });
+
   it("serves the entity page structure token starter with shared header and background foundation", async () => {
     const response = await request(createApp()).get("/design-system/tokens/entity-page-structure").set("host", "admin.example.test");
 
@@ -296,18 +514,43 @@ describe("design system route", () => {
     expect(response.text).toContain('data-structure-header-toggle="entity"');
     expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="top"');
     expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="bottom"');
-    expect(response.text).toContain('data-entity-page-structure-canvas');
-    expect(response.text).toContain('data-entity-page-structure-resize-handle');
-    expect(response.text).toContain('aria-label="Navigation index columns"');
-    expect(response.text).toContain('aria-label="Record panel columns"');
-    expect(response.text).toContain('aria-label="Record panel header columns"');
-    expect(response.text).toContain('aria-label="Record panel body columns"');
-    expect(response.text).toContain('aria-label="Panel index columns"');
-    expect(response.text).toContain('aria-label="Panel content columns"');
-    expect(response.text).toContain('data-entity-page-structure-panel-resize-handle');
+    expect(response.text).toContain('data-structure-content-option="extended"');
+    expect(response.text).toContain('data-entity-record-body-mount');
+    expect(response.text).toContain('/design-system/assets/app.mjs');
     expect(response.text).not.toContain('data-list-page-structure-subheader');
     expect(response.text).not.toContain("Secondary Header Columns");
     expectCssJsSourceDrawer(response.text);
+  });
+
+  it("serves the nested entity record token starter with the shared entity page top header", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/nested-entity-record").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Nested Entity Record");
+    expect(response.text).toContain('data-token-layer-surface="nested-entity-record"');
+    expect(response.text).toContain('class="token-foundation-header token-entity-page-structure-header"');
+    expect(response.text).toContain('data-structure-header="entity"');
+    expect(response.text).toContain('aria-label="Twenty-four header columns"');
+    expect(response.text).toContain('data-nested-entity-record-structure-mount');
+    expect(response.text).toContain('/design-system/assets/app.mjs');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="top"');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="bottom"');
+    expect(response.text).toContain('data-structure-content-option="extended"');
+    expectCssJsSourceDrawer(response.text);
+  });
+
+  it("serves the shared entity record render seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/entityRecordStructure.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderEntityRecordBody");
+    expect(response.text).toContain("renderNestedEntityRecordStructure");
+    expect(response.text).toContain("hydrateEntityRecordStructures");
+    expect(response.text).toContain("data-entity-page-structure-canvas");
+    expect(response.text).toContain("data-nested-entity-record-frame-shell");
+    expect(response.text).toContain("data-nested-entity-record-bottom-resize-handle");
+    expect(response.text).toContain("Resize nested entity record container height");
   });
 
   it("serves the shared foundation structure controller seam", async () => {
@@ -316,12 +559,17 @@ describe("design system route", () => {
     expect(response.status).toBe(200);
     expect(response.type).toMatch(/javascript/);
     expect(response.text).toContain("createStructureHeaderController");
+    expect(response.text).toContain("createStructureContentController");
     expect(response.text).toContain("createEntityPageStructureController");
+    expect(response.text).toContain("createNestedEntityRecordController");
     expect(response.text).toContain("data-structure-header-toggle");
     expect(response.text).toContain("structureVisible");
     expect(response.text).toContain("entityPageStructureIndexSize");
     expect(response.text).toContain("entityPageStructurePanelIndexSize");
     expect(response.text).toContain("entityPageStructureMobileLayer");
+    expect(response.text).toContain("nestedEntityRecordWidth");
+    expect(response.text).toContain("nestedEntityRecordHeight");
+    expect(response.text).toContain("structureScrollProbe");
   });
 
   it("serves the shared page background foundation seam", async () => {
@@ -364,6 +612,390 @@ describe("design system route", () => {
 
     expect(singularAlias.status).toBe(200);
     expect(singularAlias.text).toContain('aria-label="Background token navigation"');
+  });
+
+  it("serves the container token page with an opaque theme-aware card surface", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/container").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/container").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Container Token");
+    expect(response.text).toContain('aria-label="Container token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="container"');
+    expect(response.text).toContain("token-container-sample");
+    expect(response.text).toContain("--token-container-background");
+    expect(response.text).toContain('data-container-variant="success"');
+    expect(response.text).toContain('data-container-variant="error"');
+    expect(response.text).toContain('data-container-variant="warning"');
+    expect(response.text).toContain("--colour-success-10");
+    expect(response.text).toContain("--colour-error-10");
+    expect(response.text).toContain("--colour-warning-10");
+    expect(response.text).toContain("--colour-primary-30");
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expect(response.text).toContain('id="accessibility-button"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Container Token");
+  });
+
+  it("serves the container section token page with four-sided square section borders", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/container-section").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/container-section").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Container Section Token");
+    expect(response.text).toContain('aria-label="Container section token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="container-section"');
+    expect(response.text).toContain("token-container-section-sample");
+    expect(response.text).toContain("--token-container-section-background");
+    expect(response.text).toContain("--colour-primary-30");
+    expect(response.text).toContain("Four-sided square border");
+    expect(response.text).toContain('data-container-variant="success"');
+    expect(response.text).toContain('data-container-variant="error"');
+    expect(response.text).toContain('data-container-variant="warning"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Container Section Token");
+  });
+
+  it("serves the page header token page with the Page Header grouping", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/page-header").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/page-header").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Page Header");
+    expect(response.text).toContain('data-token-layer-surface="page-header"');
+    expect(response.text).toContain("Page Header maps over the twenty-four list-structure header columns");
+    expect(response.text).toContain("<span>01</span><span>02</span><span>03</span>");
+    expect(response.text).toContain("<span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span>");
+    expect(response.text).toContain("token-page-header-map");
+    expect(response.text).toContain('data-page-header-span="1"');
+    expect(response.text).toContain('data-page-header-span="2"');
+    expect(response.text).toContain('data-page-header-span="3-5"');
+    expect(response.text).toContain('data-page-header-span="6-8"');
+    expect(response.text).toContain('data-page-header-span="9-19"');
+    expect(response.text).toContain('data-page-header-span="20"');
+    expect(response.text).toContain('data-page-header-span="24"');
+    expect(response.text).toContain("token-list-page-structure-header");
+    expect(response.text).toContain('data-list-page-structure-subheader');
+    expect(response.text).toContain('data-list-page-structure-canvas');
+    expect(response.text).not.toContain("canonical-launcher-page");
+    expect(response.text).not.toContain("token-page-header-card");
+    expectDisplaySettingsDrawer(response.text);
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Page Header");
+  });
+
+  it("serves the search panel token page with the fixed search row structure", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/search-panel").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/search-panel").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Search Panel");
+    expect(response.text).toContain('data-token-layer-surface="search-panel"');
+    expect(response.text).toContain('data-search-panel-structure-mount');
+    expect(response.text).not.toContain('data-search-panel-query-section');
+    expect(response.text).not.toContain('data-search-panel-query-slot');
+    expect(response.text).not.toContain('data-filter-panel-structure-scroll-stack');
+    expect(response.text).toContain("/design-system/tokens/filter-panel-structure");
+    expectDisplaySettingsDrawer(response.text);
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Search Panel");
+  });
+
+  it("serves the search panel render seam from the shared panel structure module", async () => {
+    const response = await request(createApp()).get("/design-system/assets/filterPanelStructure.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderSearchPanelStructure");
+    expect(response.text).toContain("hydratePanelStructures");
+    expect(response.text).toContain("data-search-panel-query-section");
+    expect(response.text).toContain("data-search-panel-query-slot");
+    expect(response.text).toContain("createFilterPanelStructureController");
+  });
+
+  it("serves the icon button token page with fluid centered theme variants", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/icon-button").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/icon-button").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Icon Button Token");
+    expect(response.text).toContain('aria-label="Icon button token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="icon-button"');
+    expect(response.text).toContain("token-icon-button-host-cell");
+    expect(response.text).toContain("token-icon-button-control");
+    expect(response.text).toContain("token-icon-button-size-min");
+    expect(response.text).toContain("token-icon-button-size-max");
+    expect(response.text).toContain('aria-label="Normal base icon button"');
+    expect(response.text).toContain('data-tooltip="Normal base icon button"');
+    expect(response.text).toContain('data-tooltip="Dark base icon button"');
+    expect(response.text).toContain('data-tooltip="Desert base icon button"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Icon Button Token");
+  });
+
+  it("serves the count card token page with compatibility routes and the compact count-slot specimen", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/count-card").set("host", "admin.example.test");
+    const pluralCompatibilityAlias = await request(createApp()).get("/design-system/tokens/filter-card").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/count-card").set("host", "admin.example.test");
+    const singularCompatibilityAlias = await request(createApp()).get("/design-system/token/filter-card").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Count Card Token");
+    expect(response.text).toContain('aria-label="Count card token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="filter-card"');
+    expect(response.text).toContain("data-token-filter-card-mount");
+    expect(response.text).toContain('data-token-filter-card-label="Org"');
+    expect(response.text).toContain('data-token-filter-card-helper="Owning group"');
+    expect(response.text).toContain('data-token-filter-card-count="0"');
+    expect(response.text).toContain("Interaction and status states");
+    expect(response.text).toContain('data-token-filter-card-state="hover"');
+    expect(response.text).toContain('data-token-filter-card-state="selected"');
+    expect(response.text).toContain('data-token-filter-card-state="disabled"');
+    expect(response.text).toContain('data-token-filter-card-state="warning"');
+    expect(response.text).toContain('data-token-filter-card-state="error"');
+    expect(response.text).toContain("Overflowing text with tooltip support");
+    expect(response.text).toContain("data-token-filter-card-rtl");
+    expect(response.text).toContain('data-token-filter-card-zoom="-50"');
+    expect(response.text).toContain('data-token-filter-card-zoom="100"');
+    expect(response.text).toContain("data-token-filter-card-mobile");
+    expect(response.text).toContain('data-token-filter-card-label-tooltip="Very long organization ownership group"');
+    expect(response.text).toContain('data-token-filter-card-aria-label="Org count card with count zero"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(pluralCompatibilityAlias.status).toBe(200);
+    expect(pluralCompatibilityAlias.text).toContain("Count Card Token");
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Count Card Token");
+    expect(singularCompatibilityAlias.status).toBe(200);
+    expect(singularCompatibilityAlias.text).toContain("Count Card Token");
+  });
+
+  it("serves the shared count card render seam with filter-card compatibility aliases", async () => {
+    const response = await request(createApp()).get("/design-system/assets/filterCard.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderCountCard");
+    expect(response.text).toContain("hydrateCountCards");
+    expect(response.text).toContain("renderFilterCard");
+    expect(response.text).toContain("hydrateFilterCards");
+    expect(response.text).toContain("token-filter-card-control");
+    expect(response.text).toContain("supportedStates");
+    expect(response.text).toContain("aria-pressed");
+    expect(response.text).toContain("disabled aria-disabled");
+    expect(response.text).toContain("token-header-preview token-header-six");
+    expect(response.text).toContain("token-paragraph-preview token-paragraph-main-minor");
+    expect(response.text).toContain("token-filter-card-count token-paragraph-preview token-paragraph-main");
+  });
+
+  it("serves the index card token page with secondary compatibility aliases", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/index-card").set("host", "admin.example.test");
+    const pluralCompatibilityAlias = await request(createApp()).get("/design-system/tokens/secondary-list-card").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/index-card").set("host", "admin.example.test");
+    const singularCompatibilityAlias = await request(createApp()).get("/design-system/token/secondary-list-card").set("host", "admin.example.test");
+    const removedPrimary = await request(createApp()).get("/design-system/tokens/primary-list-card").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Index Card Token");
+    expect(response.text).toContain('aria-label="Index card token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="index-card"');
+    expect(response.text).toContain("data-token-index-card-mount");
+    expect(response.text).toContain('data-token-index-card-label="Details"');
+    expect(response.text).toContain('data-token-index-card-count="3 items"');
+    expect(response.text).toContain("Interaction and status states");
+    expect(response.text).toContain('data-token-index-card-state="hover"');
+    expect(response.text).toContain('data-token-index-card-state="active"');
+    expect(response.text).toContain('data-token-index-card-state="selected"');
+    expect(response.text).toContain('data-token-index-card-state="disabled"');
+    expect(response.text).toContain('data-token-index-card-state="warning"');
+    expect(response.text).toContain('data-token-index-card-state="error"');
+    expect(response.text).toContain("Overflowing text with tooltip support");
+    expect(response.text).toContain("data-token-index-card-rtl");
+    expect(response.text).toContain('data-token-index-card-zoom="-50"');
+    expect(response.text).toContain('data-token-index-card-zoom="100"');
+    expect(response.text).toContain("data-token-index-card-mobile");
+    expect(response.text).toContain('data-token-index-card-label-tooltip="Historical details and supporting records"');
+    expect(response.text).toContain('data-token-index-card-aria-label="Details index card with three items"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expect(response.text).not.toContain("Primary List Card Token");
+    expectCssJsSourceDrawer(response.text);
+
+    expect(pluralCompatibilityAlias.status).toBe(200);
+    expect(pluralCompatibilityAlias.text).toContain("Index Card Token");
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Index Card Token");
+    expect(singularCompatibilityAlias.status).toBe(200);
+    expect(singularCompatibilityAlias.text).toContain("Index Card Token");
+    expect(removedPrimary.status).toBe(404);
+  });
+
+  it("serves the button card token page", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/button-card").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/button-card").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Button Card Token");
+    expect(response.text).toContain('aria-label="Button card token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="button-card"');
+    expect(response.text).toContain("data-token-button-card-mount");
+    expect(response.text).toContain('data-token-button-card-label="Details"');
+    expect(response.text).toContain('data-token-button-card-icon="details"');
+    expect(response.text).toContain("Interaction and status states");
+    expect(response.text).toContain('data-token-button-card-state="hover"');
+    expect(response.text).toContain('data-token-button-card-state="active"');
+    expect(response.text).toContain('data-token-button-card-state="selected"');
+    expect(response.text).toContain('data-token-button-card-state="disabled"');
+    expect(response.text).toContain('data-token-button-card-state="warning"');
+    expect(response.text).toContain('data-token-button-card-state="error"');
+    expect(response.text).toContain("Overflowing text with tooltip support");
+    expect(response.text).toContain("data-token-button-card-rtl");
+    expect(response.text).toContain('data-token-button-card-zoom="-50"');
+    expect(response.text).toContain('data-token-button-card-zoom="100"');
+    expect(response.text).toContain("data-token-button-card-mobile");
+    expect(response.text).toContain('data-token-button-card-label-tooltip="Historical details and supporting records"');
+    expect(response.text).toContain('data-token-button-card-aria-label="Details button card"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Button Card Token");
+  });
+
+  it("serves the dropdown token page with simple-select compatibility aliases", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/dropdowns").set("host", "admin.example.test");
+    const pluralCompatibilityAlias = await request(createApp()).get("/design-system/tokens/simple-dropdown").set("host", "admin.example.test");
+    const simpleSelectCompatibilityAlias = await request(createApp()).get("/design-system/tokens/simple-select").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/dropdowns").set("host", "admin.example.test");
+    const singularCompatibilityAlias = await request(createApp()).get("/design-system/token/simple-dropdown").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Dropdowns Token");
+    expect(response.text).toContain('aria-label="Dropdown token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="dropdowns"');
+    expect(response.text).toContain("data-token-simple-dropdown");
+    expect(response.text).toContain("data-token-simple-dropdown-open");
+    expect(response.text).toContain("data-token-simple-dropdown-rtl");
+    expect(response.text).toContain("token-simple-dropdown-trigger-label");
+    expect(response.text).toContain("token-simple-dropdown-trigger-value");
+    expect(response.text).toContain("Current");
+    expect(response.text).toContain("Historical details and supporting records");
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expect(response.text).toContain('aria-haspopup="listbox"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(pluralCompatibilityAlias.status).toBe(200);
+    expect(pluralCompatibilityAlias.text).toContain("Dropdowns Token");
+    expect(simpleSelectCompatibilityAlias.status).toBe(200);
+    expect(simpleSelectCompatibilityAlias.text).toContain("Dropdowns Token");
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Dropdowns Token");
+    expect(singularCompatibilityAlias.status).toBe(200);
+    expect(singularCompatibilityAlias.text).toContain("Dropdowns Token");
+  });
+
+  it("serves the list card token page with canonical list-card routes", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/list-card").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/list-card").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("List Card Token");
+    expect(response.text).toContain('aria-label="List card token navigation"');
+    expect(response.text).toContain('data-token-layer-surface="list-card"');
+    expect(response.text).toContain("data-token-list-card-mount");
+    expect(response.text).toContain('data-token-list-card-title="Northstar Operations"');
+    expect(response.text).toContain('data-token-list-card-subtitle="Operations"');
+    expect(response.text).toContain('data-token-list-card-status="Ready"');
+    expect(response.text).toContain("Interaction and status states");
+    expect(response.text).toContain('data-token-list-card-state="hover"');
+    expect(response.text).toContain('data-token-list-card-state="selected"');
+    expect(response.text).toContain('data-token-list-card-state="disabled"');
+    expect(response.text).toContain('data-token-list-card-state="warning"');
+    expect(response.text).toContain('data-token-list-card-state="error"');
+    expect(response.text).toContain("Overflowing text with tooltip support");
+    expect(response.text).toContain("data-token-list-card-rtl");
+    expect(response.text).toContain("data-token-list-card-mobile");
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expectCssJsSourceDrawer(response.text);
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("List Card Token");
+  });
+
+  it("serves the shared index card render seam with secondary compatibility exports", async () => {
+    const response = await request(createApp()).get("/design-system/assets/indexCard.mjs").set("host", "admin.example.test");
+    const compatibilityResponse = await request(createApp()).get("/design-system/assets/secondaryListCard.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderIndexCard");
+    expect(response.text).toContain("hydrateIndexCards");
+    expect(response.text).toContain("renderSecondaryListCard");
+    expect(response.text).toContain("hydrateSecondaryListCards");
+    expect(response.text).toContain("token-index-card-control");
+    expect(response.text).toContain("supportedStates");
+    expect(response.text).toContain("token-container-sample");
+    expect(response.text).toContain("token-container-section-sample");
+    expect(response.text).toContain("data-container-variant");
+    expect(response.text).toContain("aria-pressed");
+    expect(response.text).toContain("disabled aria-disabled");
+    expect(response.text).toContain("token-header-preview token-header-six");
+    expect(response.text).toContain("token-paragraph-preview token-paragraph-main-minor");
+
+    expect(compatibilityResponse.status).toBe(200);
+    expect(compatibilityResponse.text).toContain('from "./indexCard.mjs"');
+  });
+
+  it("serves the shared button card render seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/buttonCard.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderButtonCard");
+    expect(response.text).toContain("hydrateButtonCards");
+    expect(response.text).toContain("token-button-card-control");
+    expect(response.text).toContain("token-button-card-icon-circle");
+    expect(response.text).toContain("supportedStates");
+    expect(response.text).toContain("token-container-sample");
+    expect(response.text).toContain("token-container-section-sample");
+    expect(response.text).toContain("data-container-variant");
+    expect(response.text).toContain("aria-pressed");
+    expect(response.text).toContain("disabled aria-disabled");
+    expect(response.text).toContain("token-paragraph-preview token-paragraph-label");
+  });
+
+  it("serves the shared list card render seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/listCard.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("renderListCard");
+    expect(response.text).toContain("hydrateListCards");
+    expect(response.text).toContain("token-list-card-control");
+    expect(response.text).toContain("data-token-list-card-state");
+    expect(response.text).toContain("data-token-list-card-rtl");
+    expect(response.text).toContain("disabled aria-disabled");
   });
 
   it("serves the colours token page with generated colour scale sections and display drawer controls", async () => {
@@ -497,7 +1129,7 @@ describe("design system route", () => {
     expect(response.text).toContain("context-nav");
     expect(response.text).toContain(">Explore<");
     expect(response.text).toContain(">Canonicals<");
-    expect(response.text).not.toContain(">Display<");
+    expectDisplaySettingsDrawer(response.text);
     expect(response.text).not.toContain(">Catalog<");
     expect(response.text).not.toContain(">Filters<");
     expect(response.text).not.toContain(">Access<");
@@ -620,6 +1252,25 @@ describe("design system route", () => {
     expect(response.text).not.toContain("INTERNAL_ERROR");
   });
 
+  it("serves the list page pattern demo route", async () => {
+    const response = await request(createApp()).get("/design-system/patterns/listPagePattern").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("List Page Pattern");
+    expect(response.text).toContain("data-list-page-pattern-demo");
+    expect(response.text).toContain("list-page-pattern-header-grid");
+    expect(response.text).toContain("data-page-header-span=\"3-5\"");
+    expect(response.text).toContain("data-page-header-span=\"6-8\"");
+    expect(response.text).toContain("data-form-select");
+    expect(response.text).toContain("token-filter-panel-structure-panel");
+    expect(response.text).toContain("token-container-section-fill");
+    expect(response.text).toContain("data-token-filter-card-mount");
+    expect(response.text).toContain("data-token-list-card-mount");
+    expect(response.text).not.toContain("<span>01</span>");
+    expect(response.text).not.toContain("INTERNAL_ERROR");
+  });
+
   it("serves the launcher template detail page", async () => {
     const response = await request(createApp()).get("/design-system/templates/launcher").set("host", "admin.example.test");
 
@@ -676,7 +1327,7 @@ describe("design system route", () => {
     expect(launcher.text).toContain("context-nav");
     expect(launcher.text).toContain(">Explore<");
     expect(launcher.text).toContain(">Canonicals<");
-    expect(launcher.text).not.toContain(">Display<");
+    expectDisplaySettingsDrawer(launcher.text);
     expect(launcher.text).not.toContain(">Catalog<");
     expect(launcher.text).not.toContain(">Filters<");
     expect(launcher.text).not.toContain(">Access<");

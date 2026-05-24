@@ -3,7 +3,7 @@ import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const designSystemRoot = join(process.cwd(), "src/frontend/designSystem");
-const expectedPrimaryNavLabels = ["Overview", "Canonical Renderings", "Canonicals"];
+const expectedPrimaryNavLabels = ["Overview", "Tokens", "Canonical Renderings", "Canonicals"];
 
 function walkHtmlFiles(directory: string): string[] {
   return readdirSync(directory).flatMap((entry) => {

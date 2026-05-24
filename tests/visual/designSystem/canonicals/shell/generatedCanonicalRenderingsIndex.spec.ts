@@ -187,7 +187,7 @@ test.describe("design-system generated canonical renderings index", () => {
     await page.goto("/design-system");
 
     const labels = page.locator(".design-system-shell > .top-nav .primary-nav-links .nav-link");
-    await expect(labels).toHaveText(["Overview", "Canonical Renderings", "Canonicals"]);
+    await expect(labels).toHaveText(["Overview", "Tokens", "Canonical Renderings", "Canonicals"]);
     await expect(page.locator(".design-system-shell > .top-nav .brand-copy strong")).toHaveText("Kanbien Design System");
     await expect(
       page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Foundations" }),

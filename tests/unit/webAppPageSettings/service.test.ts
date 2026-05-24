@@ -48,6 +48,17 @@ describe("web app page settings service", () => {
           sortOrder: 1,
         }),
         createPageRecord({
+          webAppPageId: "55555555-5555-4555-8555-555555555555",
+          rootFamilyId: "design-system",
+          pageKey: "design-system-canonical-renderings",
+          displayLabel: "Canonical Renderings",
+          routeSegment: "canonical-renderings",
+          normalizedRouteSegment: "canonical-renderings",
+          resolvedFullRoutePath: "/design-system/canonical-renderings",
+          status: "live",
+          sortOrder: 2,
+        }),
+        createPageRecord({
           webAppPageId: "44444444-4444-4444-8444-444444444444",
           rootFamilyId: "design-system",
           pageKey: "design-system-canonicals",
@@ -56,7 +67,7 @@ describe("web app page settings service", () => {
           normalizedRouteSegment: "canonicals",
           resolvedFullRoutePath: "/design-system/canonicals",
           status: "live",
-          sortOrder: 2,
+          sortOrder: 3,
         }),
       ],
     });
@@ -74,12 +85,23 @@ describe("web app page settings service", () => {
           updatedAt: now,
         },
         {
+          webAppPageSettingsId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa3",
+          webAppPageId: "55555555-5555-4555-8555-555555555555",
+          parentPageId: null,
+          iconKey: null,
+          showInTopNav: true,
+          topNavOrder: 1,
+          pageTemplateKey: "static-html-page",
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
           webAppPageSettingsId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
           webAppPageId: "44444444-4444-4444-8444-444444444444",
           parentPageId: null,
           iconKey: null,
           showInTopNav: true,
-          topNavOrder: 1,
+          topNavOrder: 3,
           pageTemplateKey: "static-html-page",
           createdAt: now,
           updatedAt: now,
@@ -94,8 +116,10 @@ describe("web app page settings service", () => {
     await expect(service.getPublicDesignSystemTopNav()).resolves.toEqual({
       items: [
         { href: "/design-system", label: "Overview" },
-        { href: "/design-system/canonicals", label: "Canonicals" },
+        { href: "/design-system/tokens", label: "Tokens" },
+        { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
         { href: "/design-system/components", label: "Components" },
+        { href: "/design-system/canonicals", label: "Canonicals" },
       ],
     });
   });
