@@ -35,7 +35,7 @@ describeIfPostgres("entity postgres repository", () => {
     await pool.end();
   });
 
-  it("TC-ENTITY-PERSIST-001 stores normalized names, enforces current-name uniqueness, and archives without hard delete", async () => {
+  it("TC-ENTITY-INT-002 stores normalized names, enforces current-name uniqueness, and archives without hard delete", async () => {
     const repository = createPostgresEntityRepository(pool);
 
     const created = await repository.create({
