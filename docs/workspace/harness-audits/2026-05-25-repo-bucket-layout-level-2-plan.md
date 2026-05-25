@@ -224,6 +224,41 @@ PRDs are outside the immediate `docs/workspace` Level 2A physical-layout scope,
 but they must be included in the Level 2B repo-wide docs destination model.
 New PRDs should continue using `docs/prd/` until that model is approved.
 
+## PRD-Derived Test Case Posture
+
+PRD-derived test cases are cross-bucket verification source-of-truth artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket verification source-of-truth artifact
+- bucket owner: determined by the source PRD and subject being tested
+- current physical home: `docs/prd/test_cases/`
+- move readiness: not ready for physical relocation while ADRs, scripts,
+  skills, and validation expect the current folder
+
+Authority:
+
+- planned verification inventory
+- stable `TC-*` IDs
+- lifecycle and status of planned test cases
+- traceability between PRD intent and executable proof
+
+Producer:
+
+- `prd-test-case-planner`
+
+Consumers:
+
+- `prd-test-case-implementer`
+- test traceability and coverage scripts
+- Task Breakdown validation
+- issue reconciliation
+- standards, repo-health, production-readiness, and AI-assistance reviews
+
+PRD-derived test cases are not ordinary testing notes. They are reviewed
+change-control artifacts. Any future move must be planned with the PRD
+destination strategy in the Level 2B repo-wide docs destination model.
+
 ## Future Artifact-Type Index Target
 
 When bucket-first canonical homes exist, add a top-level artifact-type index
