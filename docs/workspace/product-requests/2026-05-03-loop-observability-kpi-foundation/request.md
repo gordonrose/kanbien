@@ -42,7 +42,7 @@
 - Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-03-loop-observability-kpi-foundation-steering.md`
 - Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-03-loop-observability-kpi-foundation-story-breakdown/epic.md`
+  `docs/workspace/story-breakdown/2026-05-03-loop-observability-kpi-foundation-story-breakdown`
 - Task Breakdown:
   not created yet
 - PRD:

@@ -286,6 +286,65 @@ The story folder validates from the parent request.
     }
   });
 
+  it("allows folder requests without local epics when an external story breakdown is linked", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "product-request-linked-story-"));
+    const storyBreakdownDir = path.join(dir, "linked-story-breakdown");
+    mkdirSync(path.join(storyBreakdownDir, "stories", "S-001-example-story"), { recursive: true });
+    writeFileSync(path.join(storyBreakdownDir, "epic.md"), validStoryBreakdown);
+    writeFileSync(
+      path.join(storyBreakdownDir, "stories", "S-001-example-story", "story.md"),
+      `# Story S-001
+
+## Story Narrative
+
+**Situation**
+This story lives outside the Product Request epics folder.
+
+**Goal**
+The Product Request can link to an existing Story Breakdown folder.
+
+**Decisions Needed**
+The linked story remains the planning source of truth.
+
+**Work That Follows**
+Task planning can continue from the linked Story Breakdown.
+
+**Evidence Of Success**
+The folder Product Request validates without local epics.
+`,
+    );
+    writeFileSync(
+      path.join(dir, "request.md"),
+      requestContent.replace("- Story Breakdown:\n  pending", `- Story Breakdown:\n  \`${storyBreakdownDir}\``),
+    );
+
+    try {
+      expect(validateProductRequestPath(dir)).toEqual({
+        status: "PASS",
+        errors: [],
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("treats not-created artifact links as pending", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "product-request-not-created-"));
+    writeFileSync(
+      path.join(dir, "request.md"),
+      requestContent.replace("- Story Breakdown:\n  pending", "- Story Breakdown:\n  not created yet"),
+    );
+
+    try {
+      const result = validateProductRequestPath(dir);
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.errors).toContain(`folder Product Request missing epics directory: ${path.join(dir, "epics")}`);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it("blocks folder requests when an epic is missing from the index", () => {
     const dir = mkdtempSync(path.join(tmpdir(), "product-request-missing-index-"));
     const epicDir = path.join(dir, "epics", "EPIC-002-unlisted");

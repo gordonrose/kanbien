@@ -173,7 +173,14 @@ function validateProductRequestFolder(rootPath: string, requestContent: string):
   const epicsPath = path.join(rootPath, "epics");
 
   if (!existsSync(epicsPath) || !statSync(epicsPath).isDirectory()) {
-    errors.push(`folder Product Request missing epics directory: ${epicsPath}`);
+    const currentStatus = parseBulletValue(requestContent, "Current status");
+    const storyPath = parseBulletValue(requestContent, "Story Breakdown");
+    const hasLinkedStoryBreakdown = Boolean(storyPath && !isPending(storyPath));
+    const isDraftRequest = currentStatus === "draft-request";
+
+    if (!hasLinkedStoryBreakdown && !isDraftRequest) {
+      errors.push(`folder Product Request missing epics directory: ${epicsPath}`);
+    }
     return errors;
   }
 
@@ -323,7 +330,14 @@ function validateRequiredBullet(content: string, label: string, errors: string[]
 function parseBulletValue(content: string, label: string): string {
   const lines = content.split(/\r?\n/);
   for (let index = 0; index < lines.length; index += 1) {
-    if (lines[index]?.trim() !== `- ${label}:`) {
+    const trimmed = lines[index]?.trim() ?? "";
+    const inlinePrefix = `- ${label}: `;
+
+    if (trimmed.startsWith(inlinePrefix)) {
+      return stripTicks(trimmed.slice(inlinePrefix.length));
+    }
+
+    if (trimmed !== `- ${label}:`) {
       continue;
     }
 
@@ -352,6 +366,10 @@ function isPending(value: string): boolean {
   return normalized === "pending" ||
     normalized.startsWith("pending ") ||
     normalized === "none yet" ||
+    normalized === "not created" ||
+    normalized.startsWith("not created ") ||
+    normalized === "not applicable" ||
+    normalized.startsWith("not applicable ") ||
     normalized.startsWith("not-applicable");
 }
 
