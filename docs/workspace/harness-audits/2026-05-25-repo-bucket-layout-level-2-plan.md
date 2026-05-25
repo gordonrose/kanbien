@@ -273,6 +273,61 @@ packet should be classified by the story and subject it delivers, not by the
 artifact type alone. Existing Task Breakdown packets should not be physically
 migrated until Layer 5 tooling and legacy path compatibility are planned.
 
+## Implementation Blueprint Posture
+
+Implementation Blueprints are cross-bucket implementation-planning artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket implementation-planning artifact
+- bucket owner: determined by the feature slice, route family, capability
+  group, or vertical slice being planned
+- producing machinery: `discovery-harness`, through
+  `implementation-blueprint-maintainer`
+- current physical home: `docs/workspace/implementation-blueprints/`
+- move readiness: not ready for physical relocation while skills, templates,
+  standards, and downstream planning references expect the current folder
+
+Authority:
+
+- repo-shaped build plan for an approved slice
+- expected owning feature, route family, UI surface, or capability group
+- expected files, modules, migrations, manifests, docs, and tests
+- required cross-feature seams and platform seams
+- authz seed and default role-grant implications when protected behavior is in
+  scope
+- artifact completeness and verification expectations before code starts
+
+Inputs:
+
+- approved capability matrix rows
+- PRD or PRD refinement
+- Story Breakdown packet and approved story when the change has gone through
+  Technical Steering
+- Task Breakdown packet when the approved story has already been split into
+  isolated delivery tasks
+- exact ADR discovery results
+- current architecture, feature conventions, API contracts, data dictionaries,
+  permission mappings, and PRD-derived test cases when relevant
+
+Consumers:
+
+- implementation planning
+- Task Breakdown and Layer 5 delivery preparation
+- API contract maintenance
+- data dictionary maintenance
+- PRD-derived test planning
+- rebuild readiness
+- AI-assisted change review
+- standards and artifact-completeness reviews
+
+Implementation Blueprints must not invent story scope, delivery task
+isolation, product intent, or architecture decisions. For bucket-layout
+purposes, each blueprint should be classified by the slice it plans, not by the
+artifact type alone. Existing blueprints should not be physically migrated
+until lookup behavior for the current folder and future bucket homes is
+planned.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -387,7 +442,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- Implementation Blueprints
 - API contracts
 - Data dictionaries
 - Permission mappings
