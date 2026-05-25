@@ -4,14 +4,14 @@
 
 | Field | Value |
 | --- | --- |
-| Design system | `default` |
+| Contract scope | `shared across design systems` |
 | UI family | `colours` |
 | Harness layer | `01-behavior-rule` |
 | Rule status | `review-ready` |
 | Existing design-system URL | `/design-system/tokens/colours` |
 | Proposed design-system URL | `/design-system/tokens/colours` |
-| Behavior artifact path | `docs/design-system/02-token/colours/behaviour-rules/Colours-Behaviour.md` |
-| Files affected now | `docs/design-system/02-token/colours/behaviour-rules/Colours-Behaviour.md` |
+| Behavior artifact path | `docs/design-system/01-behavior-rule/shared/colours/Colours-Behaviour.md` |
+| Files affected now | `docs/design-system/01-behavior-rule/shared/colours/Colours-Behaviour.md` |
 
 ## Purpose
 
@@ -39,7 +39,7 @@ Each row must describe observable behavior.
 | default-review | The route presents reusable colour decisions as governed design-system choices, not route-local decorative swatches. |
 | palette-family-review | Palette families remain identifiable as foundations for later semantic mapping rather than direct app styling instructions. |
 | semantic-family-review | Success, warning, error, accent, text, surface, and border meanings remain distinguishable as different colour responsibilities. |
-| theme-review | Default, dark, and desert theme colour decisions remain visibly and conceptually separate. |
+| theme-review | Original, dark, and desert theme colour decisions remain visibly and conceptually separate. |
 | constrained-review | Long colour labels, swatches, and meaning descriptions remain inspectable without incoherent overlap. |
 | unavailable-or-undecided | Missing or undecided token decisions are shown as unresolved governance work rather than filled with invented values. |
 
@@ -50,7 +50,7 @@ List only interactions that create behavior decisions for this family.
 | Interaction | Observable Behavior |
 | --- | --- |
 | review colour family | The user can inspect a colour family without losing the distinction between palette foundations and semantic meaning. |
-| compare themes | The user can compare theme variants without treating dark or desert values as aliases of the default theme. |
+| compare themes | The user can compare theme variants without treating dark or desert values as aliases of the original theme. |
 | inspect token identity | The user can identify the governed colour decision well enough to avoid raw local literals in downstream work. |
 | encounter missing token work | The user is directed to the owning later layer instead of receiving a guessed token value. |
 
@@ -85,8 +85,8 @@ They are review dimensions, not product states.
 | right-to-left | Later layers must prove colour meaning and token identity remain understandable when layout direction changes. |
 | zoomed in 150% | Later layers must prove colour labels, swatches, and unresolved-decision messaging remain readable and do not overlap incoherently. |
 | zoomed out 75% | Later layers must prove colour families remain distinguishable and do not collapse into decorative noise. |
-| dark theme | Later layers must prove dark theme colour decisions remain separate from default theme decisions. |
-| desert theme | Later layers must prove desert theme colour decisions remain separate from default and dark theme decisions. |
+| dark theme | Later layers must prove dark theme colour decisions remain separate from original theme decisions. |
+| desert theme | Later layers must prove desert theme colour decisions remain separate from original and dark theme decisions. |
 | dark theme with error | Later layers must prove error meaning remains distinguishable in dark theme without relying on color alone. |
 | desert theme with error | Later layers must prove error meaning remains distinguishable in desert theme without relying on color alone. |
 
@@ -125,8 +125,8 @@ Consumers must not weaken the governed accessibility behavior with wrapper marku
 
 | Field | Value |
 | --- | --- |
-| Store this behavior rule at | `docs/design-system/02-token/colours/behaviour-rules/Colours-Behaviour.md` |
-| Stable lookup key | `kanbien/colours/01-behavior-rule` |
+| Store this behavior rule at | `docs/design-system/01-behavior-rule/shared/colours/Colours-Behaviour.md` |
+| Stable lookup key | `shared/colours/01-behavior-rule` |
 | How later layers consume it | Later layers read this artifact by path or stable lookup key before making their own decisions. |
 | What later layers must preserve | Later layers preserve behavior states, required interactions, mandatory review dimensions, accessibility promise, and consumer restrictions unless a behavior-rule revision is approved. |
 | What must not consume it | Runtime UI modules must not import this governance artifact. |
@@ -139,7 +139,7 @@ Consumers must not weaken the governed accessibility behavior with wrapper marku
 | Field | Value |
 | --- | --- |
 | Later layer | `02-token` |
-| Ask summary | Define or confirm the reusable color palette token families and scale steps needed to support governed colour decisions across default, dark, and desert themes. |
+| Ask summary | Define or confirm the reusable color palette token families and scale steps needed to support governed colour decisions across original, dark, and desert themes. |
 | Recognition result | The ask is a reusable color foundation decision; local hard-coding would create drift across semantic tokens, themes, contrast review, and downstream consumers. |
 
 | Needed Information | Status |
@@ -148,12 +148,12 @@ Consumers must not weaken the governed accessibility behavior with wrapper marku
 | Existing token inventory check | Missing: Layer 2 must inspect current colour token inventory before adding or replacing palette families or scale steps. |
 | Exact visual decision needed | Partially known: palette roles, scale coverage, color space, theme mappings, and direct-consumer rules are needed; exact names and values are undecided. |
 | Expected consumers | Known: semantic color tokens may need direct palette access; app surfaces must not consume raw literals. |
-| Supported themes | Known: default, dark, and desert themes must be reviewed. |
+| Supported themes | Known: original, dark, and desert themes must be reviewed. |
 | Direction and magnification expectations | Known: direction does not change colour meaning; 150% zoom must keep labels and swatches inspectable. |
 | Review evidence needed | Missing: Layer 2 must define contrast, theme comparison, color-space, and color-independent-state evidence before downstream work claims completion. |
 
 Layer 2 must confirm whether the existing colour token inventory can support the
-family's required review states across default, dark, and desert themes. If the
+family's required review states across original, dark, and desert themes. If the
 inventory is insufficient, Layer 2 must define the smallest palette additions
 needed for semantic token mapping.
 
@@ -163,7 +163,7 @@ needed for semantic token mapping.
 | --- | --- | --- | --- |
 | 1 | `01-behavior-rule` | Review this behavior rule against `EVAL.md` and `ACCESSIBILITY-EVAL.md`. | No known behavior-rule blocker remains. |
 | 2 | `02-token` | Define or confirm color palette token families, scale steps, values, theme mappings, and direct-consumer rules. | No known behavior-rule blocker remains. |
-| 3 | `03-primitive` | Wait for primitive harness activation before consuming the token artifact in primitive work. | The orchestrator currently marks `03-primitive` as scaffold-only. |
+| 3 | `03-primitive` | Define the smallest primitive that can consume signed color token decisions when a real primitive need appears. | Primitive work is now allowed only after required token seams are consumable for the selected design system. |
 
 ## Next Layer
 

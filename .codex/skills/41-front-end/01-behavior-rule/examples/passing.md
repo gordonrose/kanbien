@@ -4,14 +4,14 @@
 
 | Field | Value |
 | --- | --- |
-| Design system | `kanbien` |
+| Contract scope | `shared across design systems` |
 | UI family | `filter-panel` |
 | Harness layer | `01-behavior-rule` |
 | Rule status | `review-ready` |
 | Existing design-system URL | `none` |
 | Proposed design-system URL | `/design-system/patterns/filter-panel` |
-| Behavior artifact path | `docs/workspace/design-system/behavior-rules/filter-panel-behavior-rule.md` |
-| Files affected now | `docs/workspace/design-system/behavior-rules/filter-panel-behavior-rule.md` |
+| Behavior artifact path | `docs/design-system/01-behavior-rule/shared/filter-panel/FilterPanel-Behaviour.md` |
+| Files affected now | `docs/design-system/01-behavior-rule/shared/filter-panel/FilterPanel-Behaviour.md` |
 
 ## Purpose
 
@@ -117,8 +117,8 @@ Consumers must not weaken the governed accessibility behavior with wrapper marku
 
 | Field | Value |
 | --- | --- |
-| Store this behavior rule at | `docs/workspace/design-system/behavior-rules/filter-panel-behavior-rule.md` |
-| Stable lookup key | `kanbien/filter-panel/01-behavior-rule` |
+| Store this behavior rule at | `docs/design-system/01-behavior-rule/shared/filter-panel/FilterPanel-Behaviour.md` |
+| Stable lookup key | `shared/filter-panel/01-behavior-rule` |
 | How later layers consume it | Later layers read this artifact by path or stable lookup key before making their own decisions. |
 | What later layers must preserve | Later layers preserve behavior states, required interactions, mandatory review dimensions, accessibility promise, and consumer restrictions unless a behavior-rule revision is approved. |
 | What must not consume it | Runtime UI modules must not import this governance artifact. |

@@ -7,7 +7,7 @@
   "contracts": {
     "tokens.background-color": {
       "contractModule": "src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs",
-      "implementationModule": "src/frontend/designSystem/systems/default/tokens/definitions/backgroundColor.tokens.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs",
       "implementationExport": "backgroundColorTokenSpec",
       "pageRoute": "/design-system/default/tokens/background-color"
     }

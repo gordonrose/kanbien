@@ -7,15 +7,19 @@ description: Use when creating or revising governed Layer 2 design-system TokenD
 
 ## Purpose
 
-Define the smallest approved reusable token specification needed by one UI
-family.
+Define the smallest approved reusable token contract and system implementation
+needed by one UI family.
 
 The token layer turns behavior-rule needs into governed visual, sizing, motion,
 spacing, typography, surface, focus, color, or layout values.
 
-Tokens are reusable facts. The TokenDefinitionArtifact must be deterministic enough for a
-human to review and for code to be generated or validated from the TokenDefinitionArtifact
-without LLM interpretation.
+The shared token contract defines the roles, fields, and consumer rules every
+design system must preserve. A system token implementation defines the concrete
+values, mappings, review route, and evidence for one registered design system.
+
+Tokens are reusable facts. A system token implementation must be deterministic
+enough for a human to review and for proof routes or runtime seams to be
+generated or validated without LLM interpretation.
 
 Tokens must not become component anatomy, product workflow, app adoption, or
 demo-only styling.
@@ -41,6 +45,9 @@ You need an accepted or review-ready behavior rule path for the same UI family.
 
 You need the specific token need named by the behavior rule or downstream
 blocker.
+
+You need the implementation system key when concrete values, routes, runtime
+modules, or proof are being defined.
 
 You need the existing token inventory or a recorded statement that the
 inventory check is missing and blocks approval.
@@ -68,14 +75,18 @@ moves into or out of consumable readiness.
 
 Define only token-layer decisions:
 
-- token category and scope
+- token category and shared contract scope
 - existing-token reuse or smallest new token set
-- token names, values, mappings, and allowed consumers
+- token names, roles, required fields, and allowed consumers that every system
+  must preserve
+- system-specific values, mappings, page route, governed runtime seam, and
+  proof for one implementation system
 - deterministic variant structure with preview, metadata, and use-case
   instructions
 - required design-system page route under `/design-system/<system-key>/tokens/`
-- reusable contract, system-token, and renderer seams consumed by token pages,
-  primitives, and patterns
+- reusable governed Layer 2 runtime seam consumed by primitives and later
+  layers
+- proof-route support modules and renderer seams consumed by token proof pages
 - review evidence needed to trust the token across required dimensions
 - downstream restrictions that prevent local literals or route-only CSS
 
@@ -84,9 +95,28 @@ later layers.
 
 ## Allowed Files
 
-TokenDefinitionArtifacts may be created in:
+Shared token contract artifacts must be created in:
 
-docs/design-system/02-token/<UI Family Name>/tokens/<UI Family Name>-Tokens.md
+docs/design-system/02-token/shared/<token-type-or-family>/<TokenType>-Contract.md
+
+System implementation and proof artifacts must be created in:
+
+docs/design-system/02-token/systems/<system-key>/<token-type-or-family>/<TokenType>-Implementation.md
+
+The shared contract path owns roles, fields, and consumer restrictions that
+must remain stable across design systems.
+
+The system implementation path owns concrete values, proof route support, and
+verification evidence for one design system.
+
+These governance artifacts are not runtime construction APIs. Downstream source
+may consult them for readiness and allowed-use rules, but must consume governed
+Layer 2 runtime seams under `src/frontend/designSystem/layers/02-token/` when
+those seams exist.
+
+Layer 2 governed runtime seams for later layers must be planned under:
+
+src/frontend/designSystem/layers/02-token/<token-type-or-family>/
 
 Layer 2 token pages for a design-system implementation must be planned under:
 
@@ -96,9 +126,9 @@ Layer 2 token contracts must be planned under:
 
 src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs
 
-Layer 2 system token implementations must be planned under:
+Layer 2 system token proof modules must be planned under:
 
-src/frontend/designSystem/systems/<system-key>/tokens/definitions/<token-type-or-family>.tokens.mjs
+src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs
 
 Layer 2 token route bootstraps must be planned beside their route HTML under:
 
@@ -110,7 +140,7 @@ src/frontend/designSystem/shared/renderers/renderTokenSpecPage.mjs
 
 Behavior-rule handoff artifacts for token work may exist in:
 
-docs/design-system/02-token/<UI Family Name>/behaviour-rules/<UI Family Name>-Behaviour.md
+docs/design-system/01-behavior-rule/shared/<UI Family Name>/<UI Family Name>-Behaviour.md
 
 This skill may update this layer's own examples, template, evals, and README
 when the user is building or refining the harness.
@@ -133,11 +163,26 @@ Do not define product workflow states.
 Do not choose component props, slots, DOM structure, app import paths, route
 wrappers, or demo fixture behavior.
 
-Do not define a TokenDefinitionArtifact as prose only. Each TokenDefinitionArtifact must include
-the deterministic `tokenDefinitionV1` block from `TEMPLATE.md`.
+Do not define a system token implementation as prose only when it creates or
+updates concrete values, proof-route data, or a governed runtime seam. That
+implementation must include the deterministic `tokenDefinitionV1` block from
+`TEMPLATE.md`.
+
+Shared token contracts do not need a `tokenDefinitionV1` block unless they also
+define system implementation values, which they should avoid by default.
 
 Do not define a token page that cannot be fed by the reusable contract,
-system-token, and renderer seams.
+system proof module, and renderer seams.
+
+Do not let primitives, patterns, components, demos, canonicals, app pages, or
+LLM-generated page work reconstruct token values from governance prose,
+screenshots, route-local CSS, or chat history when a governed runtime seam
+exists.
+
+Do not treat a system implementation value as a shared token contract rule.
+
+Do not treat a shared token contract rule as belonging only to one design
+system unless an explicit exception is recorded.
 
 Do not add a token just because a value appears once.
 
@@ -234,7 +279,8 @@ blocked.
 
 Define token names, values, mappings, variant preview metadata, use-case
 instructions, page route, and seam exports only when the inventory and evidence
-support approval.
+support approval. Classify each decision as shared contract or system
+implementation.
 
 Name required evidence for themes, direction, magnification, density, and any
 accessibility-relevant state.
@@ -247,7 +293,7 @@ the token decision.
 
 Complete the page and code seam plan so the output has a deterministic
 `/design-system/<system-key>/tokens/` review surface backed by reusable
-contract and system-token data.
+contract and system proof data.
 
 If the request includes primitive, pattern, component, demo, canonical, or app
 work, write a short implementation-plan recommendation instead of merging the
@@ -278,7 +324,7 @@ Stop if the TokenDefinitionArtifact cannot express every variant with preview,
 metadata, and use-case instructions.
 
 Stop if the token page would require page-local one-off rendering instead of
-the reusable contract, system-token, and renderer seams.
+the reusable contract, system proof module, and renderer seams.
 
 Stop if the token decision would conflict with WCAG 2.2 AA and no explicit
 exception has been approved.

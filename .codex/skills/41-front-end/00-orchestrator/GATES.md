@@ -24,6 +24,11 @@ The shared harness quality bar must be preserved:
 
 The layer output must state whether the next layer is allowed, blocked, or scaffold-only.
 
+Governance docs are not construction APIs. When a governed runtime seam exists
+for a token, primitive, pattern, component, or later layer, downstream source
+must consume that seam instead of reconstructing UI from prose docs,
+screenshots, route-local markup, copied CSS, or chat history.
+
 ## Gate 01: Behavior Rule To Token
 
 Current status: active.
@@ -44,7 +49,7 @@ The behavior rule must name `02-token` as `allowed` or explain why token work is
 
 ## Gate 02: Token To Primitive
 
-Current status: active for token evaluation; primitive layer is scaffold-only.
+Current status: active.
 
 Required token files:
 
@@ -58,13 +63,45 @@ The token accessibility eval must pass `accessibility-pass` or have an explicit 
 
 The token artifact must name the next expected layer.
 
-Because `03-primitive` is currently scaffold-only, the orchestrator must stop after this gate and say the primitive layer needs its full harness files before real primitive work can proceed.
+The token artifact must name `03-primitive` as `allowed` or explain why
+primitive work is blocked.
+
+Required primitive harness files:
+
+- `../03-primitive/SKILL.md`
+- `../03-primitive/TEMPLATE.md`
+- `../03-primitive/EVAL.md`
+- `../03-primitive/ACCESSIBILITY-EVAL.md`
+
+The primitive may consume only token seams listed as consumable in
+`docs/design-system/02-token/token-readiness-index.md`.
+
+## Gate 03: Primitive To Pattern Contract
+
+Current status: active for primitive evaluation; pattern-contract layer is scaffold-only.
+
+Required primitive files:
+
+- primitive artifact for the target UI family
+- `../03-primitive/EVAL.md`
+- `../03-primitive/ACCESSIBILITY-EVAL.md`
+
+The primitive artifact must pass `primitive-pass`.
+
+The primitive accessibility eval must pass `accessibility-pass` or have an
+explicit approved exception.
+
+The primitive artifact must name the next expected layer.
+
+Because `04-pattern-contract` is currently scaffold-only, the orchestrator must
+stop after this gate and say the pattern-contract layer needs its full harness
+files before real pattern work can proceed.
 
 ## Later Gates
 
-The later gates are intentionally not active yet.
+Gates after Gate 03 are intentionally not active yet.
 
-Do not invent pass conditions for layers `03` through `10` until each layer has its own full structure.
+Do not invent pass conditions for layers `04` through `10` until each layer has its own full structure.
 
 When a later layer becomes active, add its gate here in the same style as Gate 01.
 

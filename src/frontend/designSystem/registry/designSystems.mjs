@@ -4,7 +4,7 @@ export const designSystems = {
     label: "Default",
     assetsBase: "/design-system/systems/default/assets",
     tokens: {
-      backgroundColor: () => import("../systems/default/tokens/definitions/backgroundColor.tokens.mjs"),
+      backgroundColor: () => import("../systems/default/tokens/proofs/backgroundColor.tokens.mjs"),
     },
   },
 };

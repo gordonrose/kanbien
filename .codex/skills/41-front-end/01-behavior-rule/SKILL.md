@@ -61,11 +61,15 @@ Record explicit override instructions when the user approves using an ungoverned
 
 ## Allowed Files
 
-Behavior rule artifacts may be created in the new design-system behavior-rule location for the repo:
+Behavior rule artifacts may be created in the governed shared behavior-rule
+location for the repo:
 
-docs/design-system/<later-layer-name>/<UI Family Name>/behaviour-rules/<UI Family Name>-Behaviour.md
+docs/design-system/01-behavior-rule/shared/<ui-family-name>/<UIFamilyName>-Behaviour.md
 
-This location is intentionally separate from the legacy `docs/workspace/design-system/behavior-locks` tree, which is scheduled to migrate to the newer `41-front-end` standards.
+This location is intentionally separate from older workspace and route-local
+design-system docs. Behavior rules are shared contracts by default; they do not
+belong under a design-system implementation key unless an explicit exception is
+approved.
 
 This skill may suggest an update to this layer's own examples or templates when the user is changing the harness itself but MUST not make an update without the user's explicit permission.
 

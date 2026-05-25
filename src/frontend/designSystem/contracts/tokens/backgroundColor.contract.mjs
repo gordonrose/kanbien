@@ -3,7 +3,7 @@ export const backgroundColorTokenContract = {
   contractId: "tokens.background-color",
   tokenType: "background-color",
   requiredVariantRoles: ["page foundation", "surface foundation", "subtle foundation"],
-  requiredThemes: ["default", "dark", "desert"],
+  requiredThemes: ["original", "dark", "desert"],
   requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
   valueFields: [
     "backgroundRole",

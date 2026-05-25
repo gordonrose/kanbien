@@ -21,7 +21,9 @@ Do not perform detailed layer work inside this skill.
 
 `02-token` is active.
 
-Layers `03` through `10` are scaffolded and not yet active as full skills.
+`03-primitive` is active.
+
+Layers `04` through `10` are scaffolded and not yet active as full skills.
 
 Do not treat a scaffolded layer as implementation-ready.
 
@@ -45,6 +47,8 @@ When behavior-rule work is needed, use `../01-behavior-rule/SKILL.md`.
 
 When token work is needed and Gate 01 passes, use `../02-token/SKILL.md`.
 
+When primitive work is needed and Gate 02 passes, use `../03-primitive/SKILL.md`.
+
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 
 ## Accessibility Rule
@@ -67,6 +71,17 @@ Reject fake determinism.
 Do not accept tables, status values, layer splits, required fields, or artifact files unless they change allowed behavior, improve evaluation, or prevent a real drift or failure mode.
 
 Prefer the smallest structure that creates an enforceable boundary.
+
+## Construction API Rule
+
+Governance docs are review and readiness sources, not construction APIs.
+
+Later layers and app code may consult docs to know what is allowed, but must
+consume governed runtime seams when those seams exist.
+
+Do not let downstream work reconstruct tokens, primitive markup, ARIA rules,
+states, controller behavior, or CSS from prose docs, screenshots, route-local
+markup, copied CSS, or chat history.
 
 ## Stop Conditions
 

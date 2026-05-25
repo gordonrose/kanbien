@@ -100,11 +100,19 @@ Current role:
 - expose generated canonical render routes through an explicit router registry
   when canonical truth is backed by design-system canonical metadata
 - expose the first switchable-system contract boundary through
-  `contracts/`, `registry/`, `shared/`, and `systems/<system-key>/`, with the
-  default system currently proving the `background-color` token route
-- require switchable token implementations to expose the Layer 2 token seam
+  `contracts/`, `registry/`, `shared/`, `layers/`, and
+  `systems/<system-key>/`, with the default system currently proving the
+  `background-color` token route
+- expose governed source seams for new layered design-system work under
+  `src/frontend/designSystem/layers/<layer-number>/`
+- keep `systems/<system-key>/` as the selectable system implementation and
+  rendered proof area for assets, manifests, proof modules, and review routes
+- require switchable token proof modules to expose the Layer 2 token proof
   exports `tokenDefinitionV1`, `tokenTypeTemplate`, `variants`, and the manifest
   named system token spec export
+- require later governed layers to consume token seams through
+  `src/frontend/designSystem/layers/02-token/` rather than importing directly
+  from `systems/<system-key>/tokens/proofs/`
 
 Current route model:
 
@@ -113,6 +121,14 @@ Current route model:
 - system-scoped token proof routes use `/design-system/<system-key>/tokens/*`
   so visual implementations can vary while the contract name and consumer
   obligations remain stable
+- Layer 2 token proof modules live under
+  `src/frontend/designSystem/systems/<system-key>/tokens/proofs/`; governed
+  runtime imports for later layers live under
+  `src/frontend/designSystem/layers/02-token/`
+- Layer 3 primitive runtime seams live under
+  `src/frontend/designSystem/layers/03-primitive/`; primitive code must consume
+  Layer 2 tokens through the governed Layer 2 seam, not through system proof
+  modules directly
 - a design system is selectable only after its system key is registered in
   `src/frontend/designSystem/registry/designSystems.mjs` and its
   `systems/<system-key>/system.manifest.json` declares the contract

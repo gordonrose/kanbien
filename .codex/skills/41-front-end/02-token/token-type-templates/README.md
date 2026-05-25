@@ -7,7 +7,7 @@ Each token type has its own file named `<token-type>.md`.
 Each file defines four things:
 
 - `outputGeneration`: how a TokenDefinitionArtifact becomes a system token page and
-  system token module.
+  system proof module.
 - `reusableCodeSeam`: what the generated/shared seam must export and who may
   consume it.
 - `pageStructure`: which sections and preview renderer the token page must
@@ -26,7 +26,7 @@ That combined contract is enough to create:
 
 - the page under `/design-system/<system-key>/tokens/<pageKey>`
 - the page file under `src/frontend/designSystem/systems/<system-key>/tokens/<pageKey>/`
-- the reusable system token module under `src/frontend/designSystem/systems/<system-key>/tokens/definitions/`
+- the reusable system proof module under `src/frontend/designSystem/systems/<system-key>/tokens/proofs/`
 - the shared renderer call that turns variants into preview cards, metadata,
   use-case instructions, restrictions, and evidence sections
 

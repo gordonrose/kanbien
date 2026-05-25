@@ -42,13 +42,33 @@ Required evals:
 - `../02-token/EVAL.md`
 - `../02-token/ACCESSIBILITY-EVAL.md`
 
+### 03 Primitive
+
+Status: active.
+
+Use for requests that ask to define, confirm, revise, retire, or govern a
+low-level reusable UI building block after the behavior-rule and token gates
+have passed.
+
+Use when a pattern, component, demo, canonical, or app adoption ask is blocked
+by missing governed primitive behavior, accessibility semantics, token
+dependencies, state rules, or public consumption boundary.
+
+Layer skill:
+
+- `../03-primitive/SKILL.md`
+
+Required evals:
+
+- `../03-primitive/EVAL.md`
+- `../03-primitive/ACCESSIBILITY-EVAL.md`
+
 ## Scaffolded Layers
 
 The following layers currently have README scaffolds only.
 
 They must not be used as full governed layer skills until their skill structure exists.
 
-- `03-primitive`
 - `04-pattern-contract`
 - `05-component-seam`
 - `06-demo-page`
@@ -71,6 +91,13 @@ If the request asks for a primitive but the behavior rule is missing or not pass
 
 If the request asks for a primitive and required tokens are missing, route to `02-token` before allowing primitive work.
 
+If the request asks for a primitive and required tokens are consumable, route to
+`03-primitive`.
+
+If the request asks for a pattern, component, demo, canonical, app adoption, or
+parity test before required primitive work has passed, route to `03-primitive`
+when behavior-rule and token gates already pass.
+
 If the request asks for a pattern, component, demo, canonical, app adoption, or parity test before a passed behavior rule, route to `01-behavior-rule`.
 
 If the request asks to scaffold one of the later layers, allow scaffold work for that layer.
@@ -78,6 +105,11 @@ If the request asks to scaffold one of the later layers, allow scaffold work for
 If the request asks to use a scaffolded later layer for real governed work, stop and ask to build that layer's harness files first.
 
 If the request asks for app implementation, route only after a behavior rule, token, primitive, pattern contract, component seam, demo, canonical scenarios, and adoption gate exist for the target family.
+
+If a later-layer or app request tries to build from governance prose,
+screenshots, route-local markup, copied CSS, or chat history while a governed
+runtime seam exists, route back to the layer that owns the seam and require
+consumption through that seam.
 
 ## Harness Maintenance Routing
 

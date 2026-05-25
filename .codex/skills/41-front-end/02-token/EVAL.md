@@ -17,9 +17,10 @@ Pass only if the token category is explicit.
 Pass only if the token category maps to a predefined structure under
 `token-type-templates/`.
 
-Pass only if the TokenDefinitionArtifact's page route, page file, contract module,
-system token module, system token export, renderer module, renderer export,
-preview kind, and variant fields match the selected token-type template.
+Pass only if the TokenDefinitionArtifact's page route, page file, contract
+module, governed runtime module, system proof module, system token export,
+renderer module, renderer export, preview kind, and variant fields match the
+selected token-type template.
 
 Pass only if `Token Type Template Rationale` explains what drift or product
 failure the selected token-type template prevents, what references inform it,
@@ -39,9 +40,10 @@ rule.
 
 Pass only if the TokenDefinitionArtifact uses the fixed lean template sections.
 
-Pass only if `Token Metadata` names the design system, UI family, harness
-layer, token status, behavior rule path, relevant URLs, TokenDefinitionArtifact path,
-and files affected now.
+Pass only if `Token Metadata` names the contract scope, implementation system,
+UI family, harness layer, token status, behavior rule path, shared token
+contract path, system implementation path, relevant URLs, and files affected
+now.
 
 Pass only if the output governs one UI family and one coherent token need.
 
@@ -56,17 +58,31 @@ template without claiming a universal industry-best-practice shape.
 Pass only if new token decisions are the smallest set needed to satisfy the
 behavior rule.
 
-Pass only if `Approved Token Decisions` contains only token-layer decisions.
+Pass only if `Approved Token Decisions` contains only token-layer decisions and
+classifies each decision as shared contract or system implementation.
 
-Pass only if exactly one `tokenDefinitionV1` JSON block is present and its
-required paths, exports, and variants match the human-readable sections.
+Pass only if `Shared Token Contract` names the contract module, required roles
+or fields, and the cross-system consumer rule.
+
+Pass only if `System Token Implementation` names the implementation system,
+governed runtime module, system proof module, system token export, system page
+route, and proof status.
+
+Pass only if a system implementation artifact that defines concrete token
+values, proof-route data, or a governed runtime seam includes exactly one
+`tokenDefinitionV1` JSON block and its behavior rule path, shared token
+contract path, system implementation path, exports, and variants match the
+human-readable sections.
+
+Pass if a shared token contract artifact omits `tokenDefinitionV1`, provided
+the shared contract does not define concrete system values.
 
 Pass only if every variant includes a stable id, preview, metadata, and
 use-case instructions.
 
 Pass only if `Page And Code Seam` names a page under
-`/design-system/<system-key>/tokens/` and reusable contract/system-token/render
-seams.
+`/design-system/<system-key>/tokens/`, the reusable contract seam, the governed
+Layer 2 runtime seam, the system proof module, and render seams.
 
 Pass only if `Allowed Consumers` changes what downstream layers may do.
 
@@ -76,9 +92,11 @@ magnification, constrained layout or density, and accessibility.
 Pass only if consumer restrictions prevent local hard-coding, route-local CSS,
 and screenshot/demo copying.
 
-Pass only if `Storage And Consumption Plan` names the stored TokenDefinitionArtifact path,
-stable lookup key, how later layers consume it, what later layers preserve,
-what must not consume it, what must not be used instead, and required evals.
+Pass only if `Storage And Consumption Plan` names the stored shared contract
+path, stored system implementation path, shared contract lookup key, system
+implementation lookup key, how later layers consume them, what later layers
+preserve, what must not consume them, what must not be used instead, and
+required evals.
 
 Pass only if `Next Layer` states whether the next layer is allowed, blocked,
 or scaffold-only.
@@ -102,8 +120,8 @@ Fail if placeholder values invite fake precision.
 Fail if the TokenDefinitionArtifact creates a token category or state matrix where one clear
 rule would do.
 
-Fail if the deterministic JSON block contains prose placeholders in an
-TokenDefinitionArtifact with status `review-ready` or `accepted`.
+Fail if the deterministic JSON block contains prose placeholders in a system
+implementation artifact with status `review-ready` or `accepted`.
 
 ## Layer Boundary Checks
 
@@ -129,12 +147,22 @@ Fail if the TokenDefinitionArtifact defines app wrappers, app imports, or app-lo
 the first-app-adoption layer.
 
 Fail if the TokenDefinitionArtifact defines a one-off token page that is not fed by the shared
-contract, system-token, and renderer seams.
+contract, system proof module, and renderer seams.
+
+Fail if later layers are told to import directly from
+`src/frontend/designSystem/systems/<system-key>/` when a governed Layer 2
+runtime seam exists under `src/frontend/designSystem/layers/02-token/`.
 
 Fail if the TokenDefinitionArtifact encodes product-specific workflow meaning as a token.
 
 Fail if the TokenDefinitionArtifact duplicates or renames an existing approved token without
 recording compatibility and migration posture.
+
+Fail if a concrete system value, mapping, route, or proof claim is presented as
+a shared token contract rule.
+
+Fail if a shared token contract rule is presented as belonging only to one
+design system without an explicit exception.
 
 Fail if a local literal remains allowed where the TokenDefinitionArtifact now governs
 the decision.

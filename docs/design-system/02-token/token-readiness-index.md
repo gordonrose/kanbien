@@ -4,14 +4,14 @@ This index prevents token-type templates from being mistaken for signed-off
 token decisions.
 
 A token type is consumable by later layers only when it has a review-ready or
-accepted TokenDefinitionArtifact and a registered runtime seam for the selected
-design system.
+accepted shared contract, a review-ready or accepted implementation artifact,
+and a registered runtime seam for the selected design system.
 
 ## Consumable For Later Layers
 
-| Token type | System key | Token status | Runtime seam | Evidence |
-| --- | --- | --- | --- | --- |
-| `background-color` | `default` | `review-ready` | `src/frontend/designSystem/systems/default/tokens/definitions/backgroundColor.tokens.mjs` | `docs/design-system/02-token/background-color/tokens/BackgroundColor-Tokens.md`; `tests/visual/designSystem/tokens/backgroundColorTokenRoute.spec.ts`; `tests/integration/frontend/designSystemSystemRegistryGuard.test.ts` |
+| Token type | Shared contract status | System key | System implementation status | Governed runtime seam | Proof implementation | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| `background-color` | `review-ready` | `default` | `review-ready` | `src/frontend/designSystem/layers/02-token/background-color/systems/default.mjs#backgroundColorTokenSpec` | `src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs` | `docs/design-system/02-token/shared/background-color/BackgroundColor-Contract.md`; `docs/design-system/02-token/systems/default/background-color/BackgroundColor-Implementation.md`; `tests/visual/designSystem/tokens/backgroundColorTokenRoute.spec.ts`; `tests/integration/frontend/designSystemSystemRegistryGuard.test.ts` |
 
 ## Template Only
 

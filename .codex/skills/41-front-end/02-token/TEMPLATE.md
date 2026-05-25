@@ -4,15 +4,17 @@
 
 | Field | Value |
 | --- | --- |
-| Design system | `<system-key>` |
+| Contract scope | `shared across design systems` |
+| Implementation system | `<system-key>` |
 | UI family | `<ui-family-name>` |
 | Harness layer | `02-token` |
 | Token status | `<draft | review-ready | accepted | blocked>` |
 | Behavior rule path | `<path-to-layer-1-behavior-rule>` |
 | Existing design-system URL | `<url-or-none>` |
 | Proposed design-system URL | `<url-or-none>` |
-| TokenDefinitionArtifact path | `<path>` |
-| Files affected now | `<token-definition-artifact-path-only>` |
+| Shared token contract path | `docs/design-system/02-token/shared/<token-type-or-family>/<TokenType>-Contract.md` |
+| System implementation path | `docs/design-system/02-token/systems/<system-key>/<token-type-or-family>/<TokenType>-Implementation.md` |
+| Files affected now | `<contract-path-and-or-system-implementation-path>` |
 
 ## Purpose
 
@@ -32,20 +34,27 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 
 ## Deterministic Token Spec
 
-The TokenDefinitionArtifact must include exactly one `tokenDefinitionV1` JSON block.
+System implementation artifacts that define concrete token values, proof-route
+data, or governed runtime seams must include exactly one `tokenDefinitionV1`
+JSON block.
 
-The block is the source that can be translated into the token page and reusable
-code seam without LLM interpretation.
+The block is the source that can be translated into the token page, system
+proof module, and reusable runtime seam without LLM interpretation.
+
+Shared token contracts do not need this block unless they are intentionally
+combined with a system implementation, which should be avoided by default.
 
 ```json
 {
   "schema": "kanbien.designSystem.tokenDefinition.v1",
-  "designSystem": "<system-key>",
+  "contractScope": "shared",
+  "designSystem": "<implementation-system-key>",
   "uiFamily": "<ui-family-name>",
   "tokenType": "<token-type-key>",
   "status": "<draft | review-ready | accepted | blocked>",
   "behaviorRulePath": "<path-to-layer-1-behavior-rule>",
-  "tokenDefinitionPath": "<path>",
+  "tokenContractPath": "docs/design-system/02-token/shared/<token-type-or-family>/<TokenType>-Contract.md",
+  "tokenDefinitionPath": "docs/design-system/02-token/systems/<system-key>/<token-type-or-family>/<TokenType>-Implementation.md",
   "page": {
     "route": "/design-system/<system-key>/tokens/<token-type-or-family>",
     "htmlPath": "src/frontend/designSystem/systems/<system-key>/tokens/<token-type-or-family>/index.html",
@@ -55,7 +64,8 @@ code seam without LLM interpretation.
   "codeSeam": {
     "contractModule": "src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs",
     "contractExport": "<camelCaseTokenContractExport>",
-    "systemTokenModule": "src/frontend/designSystem/systems/<system-key>/tokens/definitions/<token-type-or-family>.tokens.mjs",
+    "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs",
+    "systemProofModule": "src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs",
     "systemTokenExport": "<camelCaseTokenSpecExport>",
     "rendererModule": "src/frontend/designSystem/shared/renderers/renderTokenSpecPage.mjs",
     "rendererExport": "renderTokenSpecPage",
@@ -74,7 +84,7 @@ code seam without LLM interpretation.
       },
       "metadata": {
         "role": "<variant-role>",
-        "theme": "<default | dark | desert | all>",
+        "theme": "<original | dark | desert | all>",
         "state": "<state-or-none>",
         "accessibility": "<required-accessibility-note>"
       },
@@ -118,11 +128,31 @@ code seam without LLM interpretation.
 
 ## Approved Token Decisions
 
-Use only the rows and columns needed for the token category.
+Use only the rows and columns needed for the token category. Classify each
+decision as shared contract or system implementation.
 
-| Token Decision | Value |
+| Scope | Token Decision | Value |
+| --- | --- | --- |
+| `<shared contract | system implementation>` | `<token name, role, mapping, value, or rule>` | `<approved value or rule>` |
+
+## Shared Token Contract
+
+| Field | Value |
 | --- | --- |
-| `<token name, role, mapping, or rule>` | `<approved value or rule>` |
+| Contract module | `src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs` |
+| Required roles or fields | `<roles, fields, or not-applicable reason>` |
+| Cross-system consumer rule | `<what every design-system implementation and downstream consumer must preserve>` |
+
+## System Token Implementation
+
+| Field | Value |
+| --- | --- |
+| Implementation system | `<system-key>` |
+| Governed runtime module | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs` |
+| System proof module | `src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs` |
+| System token export | `<camelCaseTokenSpecExport>` |
+| System page route | `/design-system/<system-key>/tokens/<token-type-or-family>` |
+| System proof status | `<draft | review-ready | accepted | blocked>` |
 
 ## Token Variants
 
@@ -140,12 +170,13 @@ human review.
 | Required page route | `/design-system/<system-key>/tokens/<token-type-or-family>` |
 | Required page file | `src/frontend/designSystem/systems/<system-key>/tokens/<token-type-or-family>/index.html` |
 | Token contract module | `src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs` |
-| System token module | `src/frontend/designSystem/systems/<system-key>/tokens/definitions/<token-type-or-family>.tokens.mjs` |
+| Governed runtime module | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs` |
+| System proof module | `src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs` |
 | Token spec export | `<camelCaseTokenSpecExport>` |
 | Token variant section description | `<token-specific sentence used by the shared renderer above the variant list>` |
 | Shared renderer module | `src/frontend/designSystem/shared/renderers/renderTokenSpecPage.mjs` |
 | Shared renderer export | `renderTokenSpecPage` |
-| Seam consumers | `<token pages, primitives, patterns, or blocked>` |
+| Seam consumers | `<token pages through proof modules; primitives and later layers through governed runtime modules; or blocked>` |
 
 ## Allowed Consumers
 
@@ -178,10 +209,12 @@ Consumers must not weaken the accessibility requirements recorded here.
 
 | Field | Value |
 | --- | --- |
-| Store this TokenDefinitionArtifact at | `<path>` |
-| Stable lookup key | `<system-key>/<ui-family-name>/02-token` |
-| How later layers consume it | Later layers read this TokenDefinitionArtifact by path or stable lookup key before making primitive, pattern, component, demo, canonical, or app decisions. |
-| What later layers must preserve | Later layers preserve the deterministic token spec, approved token decisions, variants, page route, code seam, allowed consumers, required evidence, and consumer restrictions unless a token revision is approved. |
+| Store shared contract at | `docs/design-system/02-token/shared/<token-type-or-family>/<TokenType>-Contract.md` |
+| Store system implementation at | `docs/design-system/02-token/systems/<system-key>/<token-type-or-family>/<TokenType>-Implementation.md` |
+| Shared contract lookup key | `shared/<ui-family-name>/02-token-contract` |
+| System implementation lookup key | `<system-key>/<ui-family-name>/02-token-implementation` |
+| How later layers consume it | Later layers read this TokenDefinitionArtifact by path or stable lookup keys before making primitive, pattern, component, demo, canonical, or app decisions. |
+| What later layers must preserve | Later layers preserve the shared token contract, implementation system, deterministic token spec, approved token decisions, variants, page route, code seam, allowed consumers, required evidence, and consumer restrictions unless a token revision is approved. |
 | What must not consume it | Runtime UI modules must not import this governance TokenDefinitionArtifact. |
 | What must not be used instead | Chat history, screenshots, demo routes, app implementation, or copied fragments. |
 | Required next eval | `02-token/EVAL.md` |

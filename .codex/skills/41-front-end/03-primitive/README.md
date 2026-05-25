@@ -1,5 +1,7 @@
 # Primitive Layer
 
+Status: active.
+
 ## What It Is For
 
 The primitive layer defines the smallest reusable structural or behavioral building block needed by the UI family.
@@ -16,9 +18,30 @@ The layer also needs the target primitive name, the state set it must support, a
 
 ## Output
 
-The output is a primitive definition with a narrow responsibility, allowed states, required accessibility behavior, and public consumption boundary.
+The output is a shared primitive contract with a narrow responsibility, allowed
+states, required accessibility behavior, and public consumption boundary.
+
+System-specific proof lives separately under
+`docs/design-system/03-primitive/systems/<system-key>/`.
 
 If implementation is in scope later, the primitive should expose a small public seam rather than asking consumers to copy markup.
+
+The docs shape is:
+
+```text
+docs/design-system/03-primitive/
+  shared/<primitive-name>/<PrimitiveName>-Contract.md
+  systems/<system-key>/<primitive-name>/<PrimitiveName>-Proof.md
+```
+
+Use:
+
+- `SKILL.md`
+- `TEMPLATE.md`
+- `EVAL.md`
+- `ACCESSIBILITY-EVAL.md`
+- `examples/good.md`
+- `examples/bad.md`
 
 ## Evaluation For 99% No-Rework Confidence
 

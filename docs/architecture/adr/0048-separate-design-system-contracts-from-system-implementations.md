@@ -30,12 +30,15 @@ The frontend design-system source tree uses these boundaries:
 - `src/frontend/designSystem/contracts/` stores stable contracts for token,
   primitive, pattern, and component names, required fields, states, usage
   rules, and accessibility obligations.
+- `src/frontend/designSystem/layers/` stores governed runtime seams by harness
+  layer. Later governed layers consume earlier layers through this numbered
+  source tree, such as `layers/02-token/` and `layers/03-primitive/`.
 - `src/frontend/designSystem/shared/` stores reusable renderer, shell,
   validation, and explorer infrastructure that is not owned by any one design
   system.
 - `src/frontend/designSystem/systems/<system-key>/` stores each design
-  system's implementation, assets, token values, primitive styling, pattern
-  styling, component styling, and system manifest.
+  system's implementation namespace: assets, manifest, proof modules, rendered
+  review routes, and system-specific visual support.
 - `src/frontend/designSystem/registry/` stores the known design systems and
   their contract-to-implementation lookup.
 
@@ -55,6 +58,13 @@ color, shape, and other visual decisions only behind those contracts.
   system's implementation folder.
 - System-specific CSS and token values must live under
   `systems/<system-key>/`, not top-level `assets/`.
+- Token proof modules for a selected system live under
+  `systems/<system-key>/tokens/proofs/`.
+- Governed runtime token seams consumed by primitives and later layers live
+  under `layers/02-token/`.
+- Governed primitive runtime seams live under `layers/03-primitive/`.
+- Later governed layers must not import directly from
+  `systems/<system-key>/` when a numbered layer seam exists.
 - Top-level `assets/` remains compatibility/shared design-system asset space
   for existing v1 surfaces until they are explicitly migrated.
 - A system implementation must not silently change a contract's token names,
@@ -63,8 +73,8 @@ color, shape, and other visual decisions only behind those contracts.
 - Downstream primitives, patterns, components, demos, canonicals, and apps must
   consume the contract-approved implementation seam rather than copying values
   or route-local markup.
-- New Layer 2 token artifacts must name both the contract module and the
-  system implementation module.
+- New Layer 2 token artifacts must name the shared contract artifact, governed
+  runtime seam, system proof module, and rendered proof route support.
 
 ## Consequences
 

@@ -12,13 +12,13 @@ This file defines how this token type is validated, how its variants render on t
     "tokenDefinitionSchema": "kanbien.designSystem.tokenDefinition.v1",
     "pageRoutePattern": "/design-system/{designSystem}/tokens/{pageKey}",
     "pageHtmlPathPattern": "src/frontend/designSystem/systems/{designSystem}/tokens/{pageKey}/index.html",
-    "systemTokenModulePathPattern": "src/frontend/designSystem/systems/{designSystem}/tokens/definitions/{camelPageKey}.tokens.mjs",
+    "systemProofModulePathPattern": "src/frontend/designSystem/systems/{designSystem}/tokens/proofs/{camelPageKey}.tokens.mjs",
     "systemTokenExportPattern": "{camelPageKey}TokenSpec",
     "rendererModule": "src/frontend/designSystem/shared/renderers/renderTokenSpecPage.mjs",
     "rendererExport": "renderTokenSpecPage"
   },
   "reusableCodeSeam": {
-    "systemTokenModuleMustExport": [
+    "systemProofModuleMustExport": [
       "tokenDefinitionV1",
       "tokenTypeTemplate",
       "variants"
@@ -85,7 +85,7 @@ This file defines how this token type is validated, how its variants render on t
     "pageKey": "border-radius",
     "pageRoute": "/design-system/default/tokens/border-radius",
     "pageHtmlPath": "src/frontend/designSystem/systems/default/tokens/border-radius/index.html",
-    "systemTokenModule": "src/frontend/designSystem/systems/default/tokens/definitions/borderRadius.tokens.mjs",
+    "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/borderRadius.tokens.mjs",
     "systemTokenExport": "borderRadiusTokenSpec"
   }
 }
