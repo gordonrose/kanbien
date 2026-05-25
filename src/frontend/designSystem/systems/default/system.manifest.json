@@ -1,0 +1,15 @@
+{
+  "schema": "kanbien.designSystem.systemManifest.v1",
+  "systemKey": "default",
+  "label": "Default",
+  "description": "Default design-system implementation for review-ready governed frontend contracts.",
+  "assetsBase": "/design-system/systems/default/assets",
+  "contracts": {
+    "tokens.background-color": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/definitions/backgroundColor.tokens.mjs",
+      "implementationExport": "backgroundColorTokenSpec",
+      "pageRoute": "/design-system/default/tokens/background-color"
+    }
+  }
+}

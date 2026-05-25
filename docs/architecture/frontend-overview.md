@@ -102,6 +102,9 @@ Current role:
 - expose the first switchable-system contract boundary through
   `contracts/`, `registry/`, `shared/`, and `systems/<system-key>/`, with the
   default system currently proving the `background-color` token route
+- require switchable token implementations to expose the Layer 2 token seam
+  exports `tokenDefinitionV1`, `tokenTypeTemplate`, `variants`, and the manifest
+  named system token spec export
 
 Current route model:
 
@@ -110,6 +113,10 @@ Current route model:
 - system-scoped token proof routes use `/design-system/<system-key>/tokens/*`
   so visual implementations can vary while the contract name and consumer
   obligations remain stable
+- a design system is selectable only after its system key is registered in
+  `src/frontend/designSystem/registry/designSystems.mjs` and its
+  `systems/<system-key>/system.manifest.json` declares the contract
+  implementations it owns
 - discovery logic that walks the HTML tree and reports implemented routes as
   discovered frontend truth
 - generated canonical route entries for approved or review-candidate governed

@@ -59,3 +59,4 @@ evolves.
 - `0045-use-app-controlled-public-asset-delivery-for-rendered-domain-assets.md`
 - `0046-defer-recurring-maintenance-scheduler-until-platform-cadence-is-approved.md`
 - `0047-use-mocked-root-admin-chat-workspace-proof-route-before-production-adoption.md`
+- `0048-separate-design-system-contracts-from-system-implementations.md`

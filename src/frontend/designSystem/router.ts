@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { env } from "../../config/env";
+import { getDesignSystem } from "./registry/designSystems.mjs";
 
 type GeneratedCanonicalRenderRouteDefinition = {
   htmlPath: readonly string[];
@@ -381,6 +382,18 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
   const normalizedPath = requestPath.replace(/^\/+|\/+$/g, "");
   const pathSegments = normalizedPath === "" ? [] : normalizedPath.split("/");
 
+  if (pathSegments[0] && getDesignSystem(pathSegments[0]) && pathSegments.length > 1) {
+    const systemIndexCandidate = join(frontendRoot, "systems", ...pathSegments, "index.html");
+    if (existsSync(systemIndexCandidate)) {
+      return systemIndexCandidate;
+    }
+
+    const systemHtmlCandidate = join(frontendRoot, "systems", ...pathSegments) + ".html";
+    if (existsSync(systemHtmlCandidate)) {
+      return systemHtmlCandidate;
+    }
+  }
+
   if (
     pathSegments[0] === "tokens" &&
     pathSegments[1] === "count-card" &&
@@ -593,6 +606,27 @@ export function createDesignSystemRouter(): Router {
   router.use(
     "/assets",
     express.static(join(frontendRoot, "assets"), {
+      fallthrough: false,
+    }),
+  );
+
+  router.use(
+    "/systems",
+    express.static(join(frontendRoot, "systems"), {
+      fallthrough: false,
+    }),
+  );
+
+  router.use(
+    "/shared",
+    express.static(join(frontendRoot, "shared"), {
+      fallthrough: false,
+    }),
+  );
+
+  router.use(
+    "/contracts",
+    express.static(join(frontendRoot, "contracts"), {
       fallthrough: false,
     }),
   );

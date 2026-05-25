@@ -18,6 +18,10 @@ function routeForHtmlFile(path: string) {
   if (relativePath === "index.html") {
     return "/design-system";
   }
+  const systemIndexMatch = relativePath.match(/^systems\/([^/]+)\/(.+)\/index\.html$/);
+  if (systemIndexMatch) {
+    return `/design-system/${systemIndexMatch[1]}/${systemIndexMatch[2]}`;
+  }
   if (relativePath.endsWith("/index.html")) {
     return `/design-system/${relativePath.replace(/\/index\.html$/, "")}`;
   }

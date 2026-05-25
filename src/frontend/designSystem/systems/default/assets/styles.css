@@ -1,0 +1,260 @@
+.token-spec-page {
+  min-height: calc(100vh - var(--top-nav-height, 4rem));
+  padding: 0 0 3rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 18rem),
+    var(--paper);
+}
+
+.token-spec-layout {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 84rem;
+  margin: 0 auto;
+}
+
+.token-spec-intro {
+  display: grid;
+  gap: 0.45rem;
+  padding-block: 0.5rem 0.25rem;
+}
+
+.token-spec-intro h1 {
+  margin: 0;
+  font-size: clamp(1.75rem, 2.2vw, 2.5rem);
+  line-height: 1.05;
+}
+
+.token-spec-intro p {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.token-spec-kicker {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.token-spec-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(12rem, 0.65fr));
+  gap: 0.9rem;
+}
+
+.token-spec-page-preview {
+  display: grid;
+  min-height: 13rem;
+  align-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.token-spec-page-preview span,
+.token-spec-page-preview strong {
+  display: block;
+}
+
+.token-spec-page-preview span {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.token-spec-page-preview strong {
+  max-width: 14rem;
+  font-size: 1.05rem;
+}
+
+.token-spec-preview-surface {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 24rem;
+  padding: 1rem;
+  border: 0.0625rem solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+.token-spec-preview-surface p {
+  margin: 0;
+}
+
+.token-spec-section,
+.token-spec-note {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.token-spec-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  padding-block-start: 0.4rem;
+  border-top: 0.0625rem solid var(--line);
+}
+
+.token-spec-section-header h2,
+.token-spec-note h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.token-spec-section-header p {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.token-spec-card-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.token-spec-card {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.9fr) minmax(16rem, 1.4fr) minmax(12rem, 1fr) minmax(15rem, 1.25fr);
+  gap: 0;
+  overflow: hidden;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.token-spec-card > * {
+  min-width: 0;
+  padding: 1rem;
+}
+
+.token-spec-card > * + * {
+  border-inline-start: 0.0625rem solid var(--line);
+}
+
+.token-spec-card-preview,
+.token-spec-card-main,
+.token-spec-card-side {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.token-spec-swatch {
+  min-height: 5.5rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.token-spec-preview-label,
+.token-spec-card h3,
+.token-spec-card h4 {
+  margin: 0;
+}
+
+.token-spec-card h3 {
+  font-size: 1.05rem;
+}
+
+.token-spec-card h4 {
+  font-size: 0.82rem;
+}
+
+.token-spec-card code {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.22rem 0.4rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--accent) 5%, var(--paper));
+  color: var(--ink);
+  font-size: 0.78rem;
+}
+
+.token-spec-definition-grid,
+.token-spec-mini-list {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.token-spec-definition-grid div,
+.token-spec-mini-list div {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 0.6fr) minmax(0, 1fr);
+  gap: 0.6rem;
+}
+
+.token-spec-card dt {
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.token-spec-card dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.token-spec-usage ul,
+.token-spec-note ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding-inline-start: 1.1rem;
+}
+
+.token-spec-two-column {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-block-start: 0.4rem;
+  border-top: 0.0625rem solid var(--line);
+}
+
+.token-spec-note {
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+}
+
+@media (max-width: 72rem) {
+  .token-spec-stage,
+  .token-spec-card,
+  .token-spec-two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .token-spec-card > * + * {
+    border-inline-start: 0;
+    border-block-start: 0.0625rem solid var(--line);
+  }
+}
+
+@media (max-width: 44rem) {
+  .token-spec-page {
+    padding-inline: 0;
+  }
+
+  .token-spec-section-header {
+    display: grid;
+  }
+
+  .token-spec-definition-grid div,
+  .token-spec-mini-list div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}

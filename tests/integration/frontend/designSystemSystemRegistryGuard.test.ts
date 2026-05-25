@@ -75,6 +75,7 @@ describe("design-system system registry guard", () => {
       expect(manifest.assetsBase).toBe(registration.assetsBase);
       expect(manifest.assetsBase).toBe(`/design-system/systems/${systemKey}/assets`);
       expect(Object.keys(manifest.contracts).length, `${systemKey} must declare at least one contract`).toBeGreaterThan(0);
+      expect(registration.tokens, `${systemKey} must register token loaders`).toBeDefined();
 
       for (const [contractId, contract] of Object.entries(manifest.contracts)) {
         expect(existsSync(repoPath(contract.contractModule)), `${contractId} contract module is missing`).toBe(true);
@@ -84,13 +85,37 @@ describe("design-system system registry guard", () => {
         const contractModule = await importRepoModule(contract.contractModule);
         const implementationModule = await importRepoModule(contract.implementationModule);
         const implementationExport = implementationModule[contract.implementationExport] as
-          | { contractId?: unknown; systemKey?: unknown }
+          | { contractId?: unknown; systemKey?: unknown; variantSectionDescription?: unknown }
           | undefined;
 
         expect(moduleExportsContractId(contractModule, contractId), `${contract.contractModule} must export ${contractId}`).toBe(true);
         expect(implementationExport, `${contract.implementationModule} must export ${contract.implementationExport}`).toBeDefined();
         expect(implementationExport?.contractId).toBe(contractId);
         expect(implementationExport?.systemKey).toBe(systemKey);
+        expect(
+          typeof implementationExport?.variantSectionDescription === "string" &&
+            implementationExport.variantSectionDescription.trim().length > 0,
+          `${contract.contractModule} ${contract.implementationExport} must define a token-specific variantSectionDescription`,
+        ).toBe(true);
+        expect(implementationModule.tokenDefinitionV1, `${contract.implementationModule} must export tokenDefinitionV1`).toMatchObject({
+          schema: "kanbien.designSystem.tokenDefinition.v1",
+          designSystem: systemKey,
+        });
+        expect(implementationModule.tokenDefinitionV1).toHaveProperty(["codeSeam", "systemTokenExport"], contract.implementationExport);
+        expect(implementationModule.tokenTypeTemplate, `${contract.implementationModule} must export tokenTypeTemplate`).toHaveProperty(
+          "schema",
+          "kanbien.designSystem.tokenTypeTemplate.v1",
+        );
+        expect(Array.isArray(implementationModule.variants), `${contract.implementationModule} must export variants`).toBe(true);
+        expect((implementationModule.variants as unknown[]).length, `${contract.implementationModule} variants must not be empty`).toBeGreaterThan(
+          0,
+        );
+
+        if (contractId === "tokens.background-color") {
+          const registeredTokenModule = await registration.tokens?.backgroundColor?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
 
         const response = await request(createApp()).get(contract.pageRoute).set("host", "admin.example.test");
 
