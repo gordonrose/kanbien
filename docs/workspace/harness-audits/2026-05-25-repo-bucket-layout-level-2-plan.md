@@ -197,6 +197,56 @@ condition must be recorded before the twin exists.
 Do not build migration tooling or a dedicated migration skill until the target
 bucket layout and repeated move pattern are clearer.
 
+## PRD Posture
+
+PRDs are cross-bucket behavioral source-of-truth artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket behavioral source-of-truth artifact
+- bucket owner: determined by the subject and purpose of the specific PRD
+- current physical home: `docs/prd/`
+- related current homes: `docs/prd/test_cases/` and
+  `docs/prd/journey_inventories/`
+- move readiness: not ready for physical relocation while tooling, standards,
+  and downstream references expect the current folders
+
+Authority:
+
+- intended behavior and scope
+- actors and requirements
+- acceptance criteria and product/system rules
+- source truth for PRD-derived test cases
+- behavioral input to implementation blueprints, story/task breakdown, data
+  dictionaries, and compliance reviews
+
+PRDs are outside the immediate `docs/workspace` Level 2A physical-layout scope,
+but they must be included in the Level 2B repo-wide docs destination model.
+New PRDs should continue using `docs/prd/` until that model is approved.
+
+## Future Artifact-Type Index Target
+
+When bucket-first canonical homes exist, add a top-level artifact-type index
+to help humans and LLMs find artifacts by type when the owning bucket is not
+yet known.
+
+Example future home:
+
+```text
+docs/artifact-index/
+```
+
+The artifact-type index should complement bucket-first ownership rather than
+replace it:
+
+- bucket folders answer "who owns this?"
+- artifact-type index pages answer "where are artifacts of this type?"
+- legacy paths and compatibility bridges answer "how do old links keep
+  resolving during migration?"
+
+Do not create the artifact-type index until enough artifact postures have been
+analyzed to define useful pages without guesswork.
+
 ## Next Artifact Types To Analyze
 
 - Product Discovery packets
