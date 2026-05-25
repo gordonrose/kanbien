@@ -780,6 +780,15 @@ producer, consumer, authority, likely bucket fit, cross-bucket handoff points,
 validation, known gaps or inconsistencies, move risk, and whether each folder
 is active source truth or archive/history.
 
+### Remaining Workspace Folder Inventory Scope
+
+The next pass should start from the current top-level `docs/workspace/` folder
+list, not from artifact-type assumptions. It should compare each folder against
+folder READMEs, representative files, script references, standards references,
+and active-vs-historical usage before assigning a bucket.
+
+Do not classify a folder by name alone.
+
 ## Non-Goals
 
 - Do not move runtime code.
