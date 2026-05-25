@@ -114,6 +114,32 @@ bucket by artifact type. If a future bucket-first layout is introduced, either
 `discovery-harness` bucket or validation tooling must be updated before packet
 instances move.
 
+## Product Request Posture
+
+Product Requests are cross-bucket tracking and index artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket tracking/index artifact
+- creator: `discovery-harness`, usually through `product-discovery-maintainer`
+- current physical home: `docs/workspace/product-requests/`
+- validation: `npm run product-request:validate -- --all`
+- move readiness: not ready for physical relocation while validation tooling
+  defaults to the current folder
+
+Purpose:
+
+- summarize the request for humans
+- track current status and next step
+- index related Product Discovery, Technical Steering, Story Breakdown, Task
+  Breakdown, loop runs, PRs, and evidence
+
+Product Requests must not replace the Product Discovery packet, Technical
+Steering packet, PRD, API contract, schema, UI, automation, or implementation
+truth. They may become the navigation spine for future bucket maps because
+they can point across bucket-owned artifacts without owning those artifacts'
+source truth.
+
 ## Next Artifact Types To Analyze
 
 - Product Discovery packets
