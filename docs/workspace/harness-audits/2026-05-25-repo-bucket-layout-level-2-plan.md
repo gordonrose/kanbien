@@ -456,6 +456,74 @@ dictionaries should eventually be discoverable through the artifact-type index
 because their canonical home may become bucket-owned while consumers still need
 to find all data dictionary artifacts by type.
 
+## Permission Mapping Posture
+
+Permission mappings are platform-owned source-independent authorization
+contract artifacts.
+
+Current posture:
+
+- artifact type: platform-owned authorization contract artifact
+- primary bucket: `platform`
+- governance rules: `shared-governance-kernel`
+- current canonical home: `docs/architecture/permission-mappings/`
+- current secondary/export/transitional home: `docs/workspace/permission-mappings/`
+- producing machinery: `discovery-harness`, through `DOC:permission-mapping`
+  task work and permission-mapping guardrails, when the work is artifact
+  maintenance
+- move readiness: not ready for physical relocation while architecture docs,
+  skills, standards, Layer 5 artifact obligations, validators, API/data/test
+  guardrails, and CSV export references expect the current folders
+
+Authority:
+
+- source-independent authorization model truth
+- backend capability to authz capability mapping
+- role to authz capability mapping
+- capability status such as `current`, `target`, `architecture-target`, or
+  `blocked`
+- authority world such as root, tenant, system, public, support, emergency, or
+  shared-cross-tenant only with explicit approval
+- grant source posture such as documentation-only, seed-backed,
+  corrective-migration-backed, runtime-enforced, or blocked
+- tenant context, object/lifecycle boundary, cross-tenant deny, safe denial,
+  audit/proof, and UI eligibility expectations
+
+Inputs:
+
+- `AGENTS.md`
+- authorization ADRs and architecture docs
+- Technical Steering and approved authz model sources
+- capability matrices, PRDs, API contracts, data dictionaries, implementation
+  blueprints, feature manifests, migrations, runtime enforcement evidence, and
+  executable allow/deny tests when relevant
+
+Consumers:
+
+- backend authorization and protected route planning
+- grant seed and corrective migration planning
+- API contract authn/authz wording
+- data dictionary tenant/object-boundary alignment
+- frontend/UI eligibility checks
+- PRD-derived permission and security test planning
+- Task Breakdown `DOC:permission-mapping` guardrails
+- Layer 5 artifact-obligation checks
+- standards, compliance, production-readiness, and rebuild-from-spec reviews
+
+Permission mappings are not ordinary documentation and are not merely bucketed
+by the feature that caused a row to exist. They define platform access-control
+truth that runtime authorization, role grants, API contracts, data
+dictionaries, UI eligibility, and tests must align with. A feature- or
+harness-specific protected capability may create or update a permission row,
+but the permission mapping artifact remains platform-owned security posture.
+The rules for maintaining permission mappings belong to shared governance; the
+mapping artifacts themselves belong to the platform bucket. Physical moves
+require compatibility planning for old links, architecture references,
+workspace exports, validation/tool lookup, and downstream security evidence.
+Permission mappings should eventually be discoverable through the artifact-type
+index because consumers need to find all authorization mapping artifacts by
+type even if supporting evidence or future references become bucket-scoped.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -570,7 +638,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- Permission mappings
 - QA evidence and test-run summaries
 - Decision evidence
 
