@@ -392,6 +392,70 @@ tool lookup. API contracts should eventually be discoverable through the
 artifact-type index because their canonical home may become bucket-owned while
 consumers still need to find all API contract artifacts by type.
 
+## Data Dictionary Posture
+
+Data dictionaries are cross-bucket durable-data contract artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket durable-data contract artifact
+- bucket owner: determined by the owning entity, domain, feature, durable
+  record, or lifecycle being documented
+- producing machinery: `discovery-harness`, through
+  `data-dictionary-maintainer`, when the work is artifact maintenance
+- current physical home: `docs/data-dictionary/`
+- current type-local index: `docs/data-dictionary/index.md`
+- validation and health: `npm run data:compliance-health`
+- move readiness: not ready for physical relocation while skills, standards,
+  Layer 5 artifact obligations, validators, compliance-health checks, and
+  rebuild docs expect the current folder
+
+Authority:
+
+- source-independent durable entity and persistence contract truth
+- owning feature and capabilities that rely on the entity
+- storage model, tables, durable records, fields, indexes, and constraints
+- normalization, uniqueness, searchable-storage, lifecycle, and mutation
+  semantics
+- migration compatibility and live-schema alignment notes
+- cross-feature read seam model when applicable
+- data classification, privacy, security, audit, retention, cleanup,
+  export/delete, legal-hold, and operational-evidence posture
+- compliance and enforcement trace
+
+Inputs:
+
+- `AGENTS.md`
+- architecture docs and ADRs
+- change-artifact requirements
+- migrations, persistence types, repositories, domain services, transport
+  routes, contract errors, feature seams, and executable tests
+- existing data dictionary entries
+- API contracts, PRDs, PRD-derived test cases, permission mappings,
+  implementation blueprints, standards, privacy, operations, and
+  platform-status docs when relevant
+
+Consumers:
+
+- backend persistence and migration planning
+- API contract maintenance when data shape is API-visible
+- permission mapping when data access or tenant boundaries are sensitive
+- PRD-derived test planning and implementation
+- issue reconciliation and mock-honesty checks
+- Layer 5 artifact-obligation checks
+- standards, compliance, production-readiness, and rebuild-from-spec reviews
+
+Data dictionaries are not ordinary field lists. They record durable data truth
+that future implementation, audits, compliance review, and rebuild-from-spec
+work may rely on. For bucket-layout purposes, each data dictionary entry should
+be classified by the entity, domain, feature, durable record, or lifecycle it
+documents, not by the artifact type alone. Physical moves require
+compatibility planning for old links, the current type-local index,
+compliance-health lookup, validators, and downstream tool references. Data
+dictionaries should eventually be discoverable through the artifact-type index
+because their canonical home may become bucket-owned while consumers still need
+to find all data dictionary artifacts by type.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -506,7 +570,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- Data dictionaries
 - Permission mappings
 - QA evidence and test-run summaries
 - Decision evidence
