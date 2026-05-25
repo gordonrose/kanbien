@@ -328,6 +328,70 @@ artifact type alone. Existing blueprints should not be physically migrated
 until lookup behavior for the current folder and future bucket homes is
 planned.
 
+## API Contract Posture
+
+API contracts are cross-bucket backend/platform contract artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket backend/platform contract artifact
+- bucket owner: determined by the route family, feature, capability group, or
+  public/backend seam being described
+- producing machinery: `discovery-harness`, through `api-contract-maintainer`,
+  when the work is artifact maintenance
+- current physical home: `docs/api-contracts/`
+- related maintained artifacts:
+  - `docs/swagger/openapi.yaml`
+  - `docs/postman/collections/*.postman_collection.json`
+- move readiness: not ready for physical relocation while skills, standards,
+  Layer 5 artifact obligations, OpenAPI/Postman references, tests, and rebuild
+  docs expect the current folders
+
+Authority:
+
+- source-independent backend route contract truth
+- route family and capability scope
+- HTTP methods and paths
+- request params, query, body, and validation rules
+- success, status, and error response shapes
+- authentication, authorization, root, tenant, public, and middleware boundary
+  behavior
+- persistence, audit, side-effect, compatibility, lifecycle, and traceability
+  notes where contract-visible
+
+Inputs:
+
+- `AGENTS.md`
+- architecture docs and ADRs
+- change-artifact requirements
+- current runtime source and executable tests
+- PRDs and PRD-derived test cases
+- OpenAPI, feature docs, existing API contract docs, implementation blueprints,
+  and relevant middleware behavior
+
+Consumers:
+
+- backend implementation and compatibility planning
+- frontend and browser-session consumers
+- OpenAPI and Postman maintenance
+- PRD-derived test planning and implementation
+- issue reconciliation and mock-honesty checks
+- data dictionary and permission mapping maintenance
+- Layer 5 artifact-obligation checks
+- rebuild-from-spec and compliance reviews
+
+API contracts are not ordinary documentation. They record the backend behavior
+that callers may rely on. OpenAPI and Postman artifacts may mirror or exercise
+that truth, but they do not replace the human-readable contract when
+middleware, browser sessions, auth failures, tenant/root/public boundaries, or
+cross-feature seams materially affect behavior. For bucket-layout purposes,
+each API contract should be classified by the route family or feature seam it
+describes, not by the artifact type alone. Physical moves require compatibility
+planning for old links, maintained machine-readable artifacts, and downstream
+tool lookup. API contracts should eventually be discoverable through the
+artifact-type index because their canonical home may become bucket-owned while
+consumers still need to find all API contract artifacts by type.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -442,7 +506,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- API contracts
 - Data dictionaries
 - Permission mappings
 - QA evidence and test-run summaries
