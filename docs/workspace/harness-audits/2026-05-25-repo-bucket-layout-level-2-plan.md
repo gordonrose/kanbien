@@ -83,6 +83,37 @@ Phased approach:
 4. Move selected matrices only after references and lookup expectations are
    compatible.
 
+## Product Discovery Packet Posture
+
+Product Discovery packets are discovery-harness source artifacts.
+
+Current posture:
+
+- artifact type: discovery-harness source artifact
+- bucket owner: `discovery-harness`
+- current physical home: `docs/workspace/product-discovery/`
+- move readiness: not ready for physical relocation while validation tooling
+  and downstream templates expect the current folder
+
+Producer:
+
+- `product-discovery-maintainer`
+- Product Discovery draft and validation tooling
+
+Consumers:
+
+- Technical Steering packet templates
+- Product Request cover sheets
+- Story Breakdown and Task Breakdown templates
+- downstream PRD, capability-matrix, test-case, and implementation planning
+  flows
+
+Unlike capability matrices, Product Discovery packets have a strong natural
+bucket by artifact type. If a future bucket-first layout is introduced, either
+`docs/workspace/product-discovery/` should be treated as part of the
+`discovery-harness` bucket or validation tooling must be updated before packet
+instances move.
+
 ## Next Artifact Types To Analyze
 
 - Product Discovery packets
