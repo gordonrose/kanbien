@@ -524,6 +524,83 @@ Permission mappings should eventually be discoverable through the artifact-type
 index because consumers need to find all authorization mapping artifacts by
 type even if supporting evidence or future references become bucket-scoped.
 
+## QA Evidence And Test-Run Summary Posture
+
+QA evidence and test-run summaries are cross-bucket proof artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket proof/evidence artifact
+- bucket owner: determined by the slice, gate, defect, workflow, standard, or
+  harness behavior being proven
+- possible bucket classifications:
+  - `platform` for backend, runtime, security, permission, persistence,
+    migration, or tenant-boundary proof
+  - `frontend-harness` for design-system, visual, browser, accessibility, or
+    app-adoption proof
+  - `discovery-harness` for planning-harness, interview, artifact-generation,
+    or product-builder proof
+  - `shared-governance-kernel` for repo-wide standards, release-gate, or
+    compliance evidence
+  - `archive/history` when retained only as historical proof and no longer
+    used as active gate truth
+- current known homes:
+  - `docs/workspace/test-run-summaries/`
+  - issue reconciliation and runtime evidence notes under `docs/workspace/`
+  - task-packet evidence sections for `EVIDENCE:qa-evidence`
+  - frontend/design-system verification artifacts when applicable
+- validation and summaries:
+  - `npm run qa:evidence-summary -- <task-packet-path>`
+  - `npm run test:coverage-strength` when required by the scoped task
+- move readiness: not ready for physical relocation while standards, runtime
+  bug-fix gates, Task Breakdown, Layer 5 tooling, frontend verification, and
+  issue-reconciliation workflows expect current evidence paths and formats
+
+Authority:
+
+- proof target and command plan
+- deterministic test or proof command results
+- runtime/live data/API/process/served-asset evidence when required
+- mock-honesty or fixture-honesty evidence
+- screenshot, browser, accessibility, or visual verification evidence when
+  applicable
+- evidence status, remaining gap, waiver, quarantine, or blocked posture
+- curated source-controlled run summary when used as blocking-gate,
+  standards-evidence, reusable QA example, audit trail, or release-gate proof
+
+Inputs:
+
+- Task Breakdown `EVIDENCE:qa-evidence` rows
+- runtime bug-fix evidence requirements
+- issue reconciliation notes
+- PRD-derived test cases and executable test results
+- QA coverage matrix, QA release gate, and standards requirements
+- frontend/design-system verification artifacts when the proof is visual or
+  browser-facing
+- live runtime, API, persistence, process, served-asset, fixture, screenshot,
+  or command outputs when required
+
+Consumers:
+
+- Task Breakdown and Layer 5 closeout
+- issue reconciliation
+- runtime bug-fix verification
+- PRD-derived test lifecycle review
+- frontend/design-system signoff and app-adoption parity review
+- standards, compliance, production-readiness, and release-gate reviews
+- future audits that need to know what was proven, when, and by which evidence
+
+QA evidence is not one stable source-of-truth category. Active evidence proves
+a current gate, defect fix, signoff, or standards claim. Historical evidence
+records what was checked at a point in time. For bucket-layout purposes, each
+evidence artifact should be classified by what it proves and whether it is
+still active gate truth or only archive/history. Physical moves require
+compatibility planning for task-packet references, test-run summary paths,
+runtime evidence links, screenshots, standards evidence, and downstream audit
+lookup. QA evidence and test-run summaries should eventually be discoverable
+through the artifact-type index because review workflows often need to find
+all proof records by type even when canonical evidence homes are bucket-owned.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -638,7 +715,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- QA evidence and test-run summaries
 - Decision evidence
 
 For each artifact type, identify producer, consumer, authority, likely bucket
