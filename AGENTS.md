@@ -387,10 +387,16 @@ the implementation is otherwise considered delivered.
 
 ## Product Discovery Conversation And Fast Path
 
-Product Discovery conversation is not a material repo edit. When a user asks to
-use Layer 1, Product Discovery, product discovery, or discovery to define,
-shape, explore, or clarify a requirement, start with the Product Discovery
-interview instead of the material-change git loop.
+Product Discovery conversation is not a material repo edit.
+
+When a user asks to use Layer 1, Product Discovery, product discovery, or
+discovery to define, shape, explore, or clarify a requirement, start with the
+Product Discovery interview instead of the material-change git loop.
+
+Use `.codex/skills/20-planning-artifacts/product-discovery-maintainer/SKILL.md`
+as the detailed source of truth for Product Discovery interview style, packet
+creation, draft fast path behavior, governed mode, taxonomy routing, and
+completion gates.
 
 The following chat openers are Product Discovery shortcuts:
 
@@ -405,90 +411,16 @@ When a chat starts with one of these phrases or a close plain-language
 equivalent, treat it as a request to launch the Layer 1 discovery conversation
 immediately.
 
-The first response in that mode must be a user-facing plain-language summary
-and exactly one next question in the requester's everyday language. Do not call
-tools, create a packet, draft files, or inspect the repo before that first
-response. Target an immediate first response, normally under 30 seconds.
+The first response in that mode must be user-facing, plain-language, and
+exactly one next question before any tool use, repo inspection, preflight,
+branch check, packet drafting, or document creation.
 
-The first response should also prepare the requester for the conversation in
-plain language, for example: "I'll walk through this one step at a time so we
-get the everyday version clear before we worry about awkward cases."
-
-For that conversation-only mode, do not begin by running `npm run
-git:preflight`, checking branch/worktree state, inspecting broad repo docs,
-searching for PRD/design-system implementation templates, or reporting repo
-state to the user. Start with a plain-language summary and one warm,
-business-facing question. Run repo guardrails only if the user later asks for a
-governed artifact, reusable harness change, implementation work, or another
-material repo edit.
+Run repo guardrails only if the user later asks for a governed artifact,
+reusable harness change, implementation work, or another material repo edit.
 
 Do not create or fill a Product Discovery packet until the requester has seen
 the summary and has answered, corrected, or explicitly deferred the first
 question.
-
-Once the interview has enough confidence for the chosen scope, do not ask
-whether to turn the conversation into a Product Discovery packet. Move into the
-next step with a clear expectation-setting message. State what you will do,
-roughly how long it may take, and what the requester should expect next.
-Only pause for confirmation if a real unresolved business decision, scope cut,
-explicit deferral signoff, or repo-write permission boundary remains.
-
-Do not use a "first-pass draft, then questions" pattern for Product Discovery
-conversation mode. If important product questions are already known, ask the
-next single most useful question before creating, filling, or assigning
-confidence/status to a packet.
-
-Do not present a grouped list of follow-up questions in the first response.
-Do not preface the response with process narration such as "Using Product
-Discovery mode". The user should experience the first reply as a helpful
-person summarizing their request and asking one clear next question.
-
-The first question must be a gentle orientation question about the normal thing
-the requester wants to happen, such as who this is for, what the person should
-be able to do, where they expect to do it, or what a successful first version
-looks like. Do not start with edge cases, failure handling, session revocation,
-ownership conflicts, pending work, audit history, billing, permissions
-internals, or technical mechanism choices unless the requester explicitly made
-that the main concern.
-
-After each answer, summarize what you heard in plain language, offer a simple
-best-practice recommendation when helpful, and confirm whether that summary
-should be treated as the rule, a usual case, an exception, out of scope, or
-deferred until later before asking the next question.
-
-For UX questions, ask about the value the person needs from the experience, not
-which widget or component should be used. Do not ask the requester to choose
-between controls such as dropdown, picker, drawer, table, modal, or
-multi-select unless they already framed the decision that way. Ask about real
-needs such as list size, search, comparison, confidence before saving, mistake
-recovery, and whether the list may grow. Then make the UX recommendation in
-plain language.
-
-When a choice list could grow large, such as choosing tenants for a tenant
-admin, assume a searchable selection drawer or equivalent governed picker is
-the likely best-practice recommendation. Ask to confirm the value it must
-provide rather than asking the requester to pick the control.
-
-Baseline non-functional and compliance requirements are not optional business
-choices in Layer 1. Do not ask the business owner whether baseline audit,
-history, security, privacy, accessibility, tenant-boundary protection,
-operational evidence, or abuse-prevention behavior is needed for the first
-version. Assume those are required when the feature touches access, roles,
-permissions, customer data, billing, compliance, user-managed assets, or other
-sensitive business records.
-
-Record those assumptions as baseline requirements for the next planning step,
-then package technical details for technical stakeholders. Ask the requester
-only when there is a business-visible policy decision, such as who should see
-history, how long it should remain visible to business users, whether customers
-should see it, or whether an unusual exception is explicitly requested.
-
-Use the requester's world, not platform vocabulary. Avoid words such as
-`tenant`, `authz`, `capability`, `entity`, `persistence`, `API`, `migration`,
-`route`, `contract`, `state matrix`, `taxonomy`, `artifact`, `governed`,
-`implementation-ready`, and `Technical Steering` in the interview unless the
-requester used them first. When the domain itself uses a term such as tenant,
-use it only as the business noun and avoid turning it into platform jargon.
 
 When the user explicitly asks for a draft Product Discovery packet, draft
 discovery packet, discovery pack, or product discovery packet, the assistant

@@ -1,9 +1,33 @@
 {
   "artifactKey": "decision_registry",
-  "generatedAt": "2026-05-20T16:37:47.656Z",
+  "generatedAt": "2026-05-25T13:15:18.577Z",
   "storagePosture": "repo_artifact_until_capabilities_exist",
   "migrationTarget": "decision_entity_capabilities",
   "decisions": [
+    {
+      "decisionKey": "decision.agents.product_discovery_delegate_to_skill",
+      "decisionType": "harness_policy",
+      "statement": "AGENTS.md keeps only the Product Discovery doorway and fast-path safety rules, while detailed Product Discovery interview and packet workflow instructions live in .codex/skills/20-planning-artifacts/product-discovery-maintainer/SKILL.md.",
+      "status": "approved",
+      "appliesTo": {
+        "artifactPath": "AGENTS.md"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "AGENTS.md",
+          "sourceType": "repo_artifact",
+          "sourceLocationType": "repo_path",
+          "repoPath": "AGENTS.md",
+          "proofStatement": "Gordon approved the instruction-boundary decision, and AGENTS.md now delegates detailed Product Discovery interview style, packet creation, draft fast path behavior, governed mode, taxonomy routing, and completion gates to the Product Discovery maintainer skill."
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-25T13:15:18.577Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": "2026-05-25T13:15:18.577Z",
+      "reviewedByActorKey": "gordon.rose",
+      "approvedByActorKey": "gordon.rose"
+    },
     {
       "decisionKey": "decision.capability.create_decision.first_executable_packet_scope",
       "decisionType": "capability_packet_scope",
