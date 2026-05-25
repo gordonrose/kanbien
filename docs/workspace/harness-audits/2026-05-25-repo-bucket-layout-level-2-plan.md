@@ -175,6 +175,28 @@ Technical Steering packets are closer to capability matrices than Product
 Discovery packets for bucket-layout purposes: the artifact type is
 cross-bucket, and each packet should be classified by what it steers.
 
+## Future Physical Migration Principle
+
+Do not use editable duplicate artifacts as the default migration strategy.
+
+When physical artifact moves begin, prefer one canonical artifact plus a
+compatibility bridge:
+
+- move the editable source of truth to the approved canonical bucket path
+- keep the old path working through a small moved-file stub or an alias
+  registry
+- update tools and skills to resolve old and new paths during transition
+- validate that old and new access paths resolve to the same canonical truth
+- remove legacy paths only after an explicit cutover decision
+
+Editable twin copies are allowed only as a temporary exception when explicitly
+approved. If used, one copy must be marked canonical, the other must be marked
+as generated or mirrored, drift checks must prove equivalence, and the removal
+condition must be recorded before the twin exists.
+
+Do not build migration tooling or a dedicated migration skill until the target
+bucket layout and repeated move pattern are clearer.
+
 ## Next Artifact Types To Analyze
 
 - Product Discovery packets
