@@ -24,9 +24,9 @@ The shared harness quality bar must be preserved:
 
 The layer output must state whether the next layer is allowed, blocked, or scaffold-only.
 
-## Gate 01: Behavior Rule To Primitive
+## Gate 01: Behavior Rule To Token
 
-Current status: active for behavior-rule evaluation; primitive layer is scaffold-only.
+Current status: active.
 
 Required behavior-rule files:
 
@@ -40,13 +40,31 @@ The behavior rule accessibility eval must pass `accessibility-pass` or have an e
 
 The behavior rule must name the next expected layer.
 
-Because `02-primitive` is currently scaffold-only, the orchestrator must stop after this gate and say the primitive layer needs its full harness files before real primitive work can proceed.
+The behavior rule must name `02-token` as `allowed` or explain why token work is blocked.
+
+## Gate 02: Token To Primitive
+
+Current status: active for token evaluation; primitive layer is scaffold-only.
+
+Required token files:
+
+- token artifact for the target UI family
+- `../02-token/EVAL.md`
+- `../02-token/ACCESSIBILITY-EVAL.md`
+
+The token artifact must pass `token-pass`.
+
+The token accessibility eval must pass `accessibility-pass` or have an explicit approved exception.
+
+The token artifact must name the next expected layer.
+
+Because `03-primitive` is currently scaffold-only, the orchestrator must stop after this gate and say the primitive layer needs its full harness files before real primitive work can proceed.
 
 ## Later Gates
 
 The later gates are intentionally not active yet.
 
-Do not invent pass conditions for layers `02` through `10` until each layer has its own full structure.
+Do not invent pass conditions for layers `03` through `10` until each layer has its own full structure.
 
 When a later layer becomes active, add its gate here in the same style as Gate 01.
 
@@ -55,8 +73,8 @@ When a later layer becomes active, add its gate here in the same style as Gate 0
 App adoption is blocked until the following gates exist and pass for the target UI family:
 
 - behavior rule
-- primitive, unless explicitly not needed
 - token, unless explicitly not needed
+- primitive, unless explicitly not needed
 - pattern plus contract
 - component seam
 - demo page

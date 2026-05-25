@@ -1,6 +1,6 @@
 ---
 name: frontend-behavior-rule-maintainer
-description: Use when creating or revising the first governed front-end harness artifact for one UI family, before primitives, tokens, patterns, components, demos, canonicals, or app adoption are allowed.
+description: Use when creating or revising the first governed front-end harness artifact for one UI family, before tokens, primitives, patterns, components, demos, canonicals, or app adoption are allowed.
 ---
 
 # Frontend Behavior Rule Maintainer
@@ -17,13 +17,13 @@ The behavior rule protects layer purity before any lower-level or higher-level w
 
 ## Use When
 
-Use this skill when a governed UI family needs its first durable rule.
+Use this skill when a governed UI family needs its first durable rule or that rule needs to be updated.
 
-Use this skill when an existing behavior rule is too broad, vague, or mixed with later-layer decisions.
+Use this skill when an existing behavior rule is too broad, vague, stale, contradictory, or mixed with later-layer decisions.
 
-Use this skill before primitive, token, pattern, component, demo, canonical, or app adoption work for the same family.
+Use this skill when later-layer work reveals missing, stale, or contradictory behavior-rule guidance for the same UI family.
 
-Use this skill when a request appears to mix behavior, primitive, token, pattern, component, demo, canonical, or app adoption decisions in one pass.
+Use this skill when a request appears to mix behavior, token, primitive, pattern, component, demo, canonical, or app adoption decisions in one pass.
 
 ## Required Inputs
 
@@ -37,7 +37,7 @@ You need known non-goals or a clear statement that none were provided.
 
 You need any accessibility, responsive, or interaction constraints already stated by the requester.
 
-You need to know whether the request depends on any ungoverned primitive, token, pattern, component, or app behavior.
+You need to know whether the request depends on any ungoverned token, primitive, pattern, component, or app behavior.
 
 ## Allowed Outputs
 
@@ -45,45 +45,47 @@ Create or update one behavior rule artifact.
 
 Use `TEMPLATE.md` as the output shape unless a repo-local template already exists for the same layer.
 
-Keep the template tables and status values intact.
+Keep the template lean.
 
-Use only the allowed checklist statuses: `included`, `excluded`, and `deferred`.
+Do not add broad status matrices.
+
+Use tables only when they create a clear boundary, ownership rule, or evidence requirement.
 
 Keep the artifact short enough for sentence-level review.
 
 Produce an implementation-plan recommendation when the request spans multiple layers.
 
+When the request includes a later-layer ask, use the Layer Bucket Template Map below to choose the correct bucket skeleton and output template, decide what information is missing, and recommend the correct future output shape.
+
 Record explicit override instructions when the user approves using an ungoverned lower layer temporarily.
 
 ## Allowed Files
 
-Behavior rule artifacts may be created in the approved design-system behavior-rule location for the repo.
+Behavior rule artifacts may be created in the new design-system behavior-rule location for the repo:
 
-This skill may update this layer's own examples or templates when the user is changing the harness itself.
+docs/design-system/<later-layer-name>/<UI Family Name>/behaviour-rules/<UI Family Name>-Behaviour.md
+
+This location is intentionally separate from the legacy `docs/workspace/design-system/behavior-locks` tree, which is scheduled to migrate to the newer `41-front-end` standards.
+
+This skill may suggest an update to this layer's own examples or templates when the user is changing the harness itself but MUST not make an update without the user's explicit permission.
 
 This skill must not edit implementation files.
 
 ## Forbidden Moves
 
 Do not create primitives.
-
 Do not create tokens.
-
 Do not create pattern contracts.
-
 Do not create component seams.
-
 Do not create demo routes.
-
 Do not create canonical scenarios.
-
 Do not adopt anything into the app.
 
 Do not choose file paths, CSS selectors, component APIs, or app import paths unless the behavior itself cannot be understood without them.
 
 Do not hide a missing business decision behind implementation language.
 
-Do not solve a missing primitive, token, pattern, component, demo, canonical, or app-adoption decision inside the behavior rule.
+Do not solve a missing token, primitive, pattern, component, demo, canonical, or app-adoption decision inside the behavior rule.
 
 Do not combine two harness layers into one artifact because the next layer seems obvious.
 
@@ -92,8 +94,8 @@ Do not combine two harness layers into one artifact because the next layer seems
 Before writing the behavior rule, classify every requested detail as one of:
 
 - behavior rule
-- primitive
 - token
+- primitive
 - pattern plus contract
 - component seam
 - demo page
@@ -106,17 +108,52 @@ Only behavior-rule details may be written as decisions in the behavior rule.
 
 Later-layer details may be recorded only as open decisions, dependencies, or recommended next steps.
 
-If a token detail appears while defining behavior, do not define the token.
+Do not define token, primitive, pattern, component, demo, canonical, or app-adoption decisions inside the behavior rule.
 
-If a primitive detail appears while defining behavior, do not define the primitive.
+## Cross-Layer Name Boundary
 
-If a pattern detail appears while defining behavior, do not define the pattern.
+Do not classify a request by the UI noun alone.
 
-If the user asks for a later-layer decision, steer toward an implementation plan that builds the foundation layers first.
+The same noun can appear in multiple layers. Classify by the decision being requested:
+
+- token: reusable visual, sizing, motion, layout, or state values
+- primitive: one low-level affordance or structural building block
+- pattern plus contract: reusable composition of primitives, tokens, states, data, slots, or consumer rules
+- component seam: public consumption boundary used by demos, canonicals, tests, and apps
+
+If the noun spans layers, split the ask into layer-specific decisions.
+
+Record only behavior-rule decisions in the behavior rule. Record later-layer decisions as dependencies, blockers, open decisions, or recommended next steps.
+
+## Layer Bucket Template Map
+
+Use this map before choosing what later-layer bucket skeleton or output shape to recommend.
+
+The bucket skeleton is used to classify the ask and record missing information in the behavior rule. It is not a later-layer artifact and must not be treated as later-layer completion.
+
+| Later-layer ask | Bucket skeleton | Output template |
+| --- | --- | --- |
+| token | `layer-bucket-templates/02-token.md` | `layer-output-templates/02-token/TEMPLATE.md` |
+| primitive | `layer-bucket-templates/03-primitive.md` | `layer-output-templates/03-primitive/TEMPLATE.md` |
+| pattern plus contract | `layer-bucket-templates/04-pattern-contract.md` | `layer-output-templates/04-pattern-contract/TEMPLATE.md` |
+| component seam | `layer-bucket-templates/05-component-seam.md` | `layer-output-templates/05-component-seam/TEMPLATE.md` |
+| demo page | `layer-bucket-templates/06-demo-page.md` | `layer-output-templates/06-demo-page/TEMPLATE.md` |
+| canonical scenario | `layer-bucket-templates/07-canonical-scenarios.md` | `layer-output-templates/07-canonical-scenarios/TEMPLATE.md` |
+| first app adoption | `layer-bucket-templates/08-first-app-adoption.md` | `layer-output-templates/08-first-app-adoption/TEMPLATE.md` |
+| adoption/parity test | `layer-bucket-templates/09-adoption-parity-test.md` | `layer-output-templates/09-adoption-parity-test/TEMPLATE.md` |
+| artifact/index update | `layer-bucket-templates/10-artifact-index-update.md` | `layer-output-templates/10-artifact-index-update/TEMPLATE.md` |
+
+Use the output template to populate the later-layer classification section in the behavior rule.
+
+Before populating it, read that layer's `examples/good.md` and `examples/bad.md`.
+
+Do not populate a bucket skeleton or output template from guesswork. If required information is missing, record the missing information as a blocker or open decision in the behavior rule's implementation-plan recommendation.
+
+Read only the bucket skeletons, output templates, and examples that match the request.
 
 ## Ungoverned Dependency Rules
 
-If the behavior rule depends on an ungoverned primitive, token, pattern, component, or app behavior, do not silently treat that dependency as approved.
+If the behavior rule depends on an ungoverned token, primitive, pattern, component, or app behavior, do not silently treat that dependency as approved.
 
 Record the dependency as ungoverned.
 
@@ -138,7 +175,7 @@ It must not say only that the family is "accessible" or "WCAG compliant."
 
 It must identify keyboard, focus, naming, error, status, motion, contrast, or target-size expectations when those concerns apply.
 
-It must reference the shared WCAG 2.2 AA default when accessibility is in scope:
+It must reference the shared WCAG 2.2 AA default:
 
 - `../accessibility/WCAG-2.2-AA-DEFAULT.md`
 
@@ -148,19 +185,29 @@ Read the request and identify the single UI family being governed.
 
 Classify requested details by harness layer.
 
+Use the Layer Bucket Template Map to identify the future bucket skeleton and output template for any non-behavior-rule ask.
+
+Compare the request against the selected layer's recognition test, information needed, things that do not belong, and outputs needed.
+
+Read the selected output template and its good and bad examples before filling the behavior rule's later-layer classification.
+
+Record missing later-layer information as a blocker or open decision rather than filling it from inference.
+
 Identify any ungoverned lower-layer dependency.
 
 Separate behavior from implementation.
 
 Write the purpose in plain user-facing language.
 
-List only states that change behavior, meaning, or accessibility.
+List only states that apply to this UI family and change behavior, meaning, or accessibility.
 
 Write interaction rules as observable outcomes.
 
+List only interactions that create behavior decisions for this family.
+
 Write accessibility expectations as concrete responsibilities.
 
-Write responsive expectations only as behavior, not layout implementation.
+Carry mandatory review dimensions forward without treating them as product states.
 
 Write consumer restrictions that prevent app-local recreation.
 
@@ -178,7 +225,7 @@ Run the checks in `EVAL.md`.
 
 Run the checks in `ACCESSIBILITY-EVAL.md`.
 
-Do not hand off to the primitive layer until both evals pass or an explicit exception is recorded.
+Do not name a later layer as allowed until both evals pass or an explicit exception is recorded.
 
 ## Stop Conditions
 
@@ -190,12 +237,14 @@ Stop if the requested behavior would conflict with WCAG 2.2 AA and no explicit e
 
 Stop if the user is really asking for implementation, app adoption, or visual polish before a behavior rule exists.
 
-Stop if the behavior rule cannot be written without inventing a primitive, token, pattern, component seam, demo, canonical, or app adoption detail.
+Stop if the behavior rule cannot be written without inventing a token, primitive, pattern, component seam, demo, canonical, or app adoption detail.
 
 Stop if the request depends on an ungoverned lower layer and the user has not approved either formalizing that layer first or using a scoped temporary override.
 
 ## Handoff
 
-When the behavior rule passes, the next layer is usually `02-primitive`.
+When the behavior rule passes, name the next expected layer and whether it is allowed, blocked, or scaffold-only.
 
-If the rule proves that no new primitive is needed, hand off to the earliest layer that can consume the existing governed decisions.
+If the next expected layer is scaffold-only, do not hand off to real layer work. State that the later layer needs its own `SKILL.md`, `TEMPLATE.md`, `EVAL.md`, `ACCESSIBILITY-EVAL.md`, and examples before it can govern real work.
+
+If the rule proves that no new primitive is needed, name the earliest layer that can consume the existing governed decisions and its current gate status.

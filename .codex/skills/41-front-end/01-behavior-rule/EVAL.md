@@ -16,17 +16,21 @@ Pass only if requested details were classified by harness layer when the request
 
 ## Required Output Checks
 
-Pass only if the artifact uses the fixed template sections.
+Pass only if the artifact uses the fixed lean template sections.
 
-Pass only if `Rule Metadata` names the design system, UI family, harness layer, rule status, relevant URLs, and affected files.
+Pass only if `Rule Metadata` names the design system, UI family, harness layer, rule status, relevant URLs, behavior artifact path, and files affected now.
 
 Pass only if the output governs one UI family.
 
 Pass only if the purpose is written in plain language.
 
-Pass only if every required state has observable behavior or meaning.
+Pass only if `Behavior States` includes only states that apply to the UI family.
 
-Pass only if interaction rules can be tested or reviewed.
+Pass only if every behavior state has observable behavior or meaning.
+
+Pass only if `Required Interactions` includes only interactions that create behavior decisions.
+
+Pass only if every required interaction can be tested or reviewed.
 
 Pass only if consumer restrictions prevent app-local recreation.
 
@@ -42,15 +46,15 @@ Fail if the consumption plan allows runtime UI code to import the behavior-rule 
 
 Pass only if `Next Layer` states whether the next layer is allowed, blocked, or scaffold-only.
 
-Pass only if open decisions are explicit.
+Pass only if `Explicitly Out Of Scope` names excluded items only when the exclusion prevents confusion or future drift.
+
+Pass only if `Deferred Decisions` names real later-layer decisions and their owning layer.
 
 Pass only if ungoverned dependencies are named or explicitly absent.
 
-Pass only if temporary overrides are named or explicitly absent.
-
 Pass only if multi-layer requests produce an implementation-plan recommendation instead of a merged artifact.
 
-## Checklist Determinism Checks
+## No Fake Determinism Checks
 
 Apply the shared harness quality bar:
 
@@ -62,25 +66,15 @@ Fail if a simpler sentence would create the same enforcement.
 
 Fail if placeholder values invite fake precision.
 
-Pass only if state rows use one of `included`, `excluded`, or `deferred`.
+Fail if a broad checklist forces the author to classify non-applicable states.
 
-Pass only if interaction rows use one of `included`, `excluded`, or `deferred`.
+Fail if review dimensions are treated as product states.
 
-Pass only if accessibility rows use one of `included`, `excluded`, or `deferred`.
+Fail if the artifact includes an `included`, `excluded`, or `deferred` status matrix.
 
-Pass only if responsive rows use one of `included`, `excluded`, or `deferred`.
+Pass only if `Mandatory Review Dimensions` includes right-to-left, zoomed in 150%, zoomed out 75%, dark theme, desert theme, dark theme with error, and desert theme with error.
 
-Pass only if theme and direction rows use one of `included`, `excluded`, or `deferred`.
-
-Pass only if the state checklist includes right-to-left, zoomed in 150%, zoomed out 75%, dark theme, desert theme, dark theme with error, and desert theme with error.
-
-Pass only if dark theme with error and desert theme with error are classified independently from the base error state.
-
-Pass only if every `deferred` row names the owning later layer.
-
-Pass only if every `included` row has an observable behavior or requirement.
-
-Pass only if every `excluded` row has a clear reason when exclusion could be surprising.
+Pass only if dark theme with error and desert theme with error are tracked independently from the base error state.
 
 ## Layer Boundary Checks
 

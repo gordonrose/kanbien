@@ -116,9 +116,9 @@ ARIA must not be used to hide broken semantics or invent behavior that is not im
 
 The behavior-rule layer owns the plain-language accessibility promise for the UI family.
 
-The primitive layer owns roles, keyboard operation, focus behavior, accessible names, disabled behavior, and target-size expectations for primitives.
-
 The token layer owns contrast, focus visibility, color-independent meaning, text sizing, spacing effects, and motion defaults introduced by tokens.
+
+The primitive layer owns roles, keyboard operation, focus behavior, accessible names, disabled behavior, and target-size expectations for primitives, while consuming signed token decisions.
 
 The pattern-contract layer owns structure, landmarks, headings, slots, field relationships, state announcements, error handling, and accessibility responsibilities across composed pieces.
 
@@ -145,4 +145,3 @@ Automated checks may include axe, semantic queries, keyboard traversal, focus-vi
 Manual review is still required for meaningful names, understandable instructions, logical focus order, usable error recovery, content meaning, and cases tooling cannot prove.
 
 Evidence must use representative data and must not rely on convenience mocks that hide production accessibility risk.
-

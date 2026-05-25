@@ -10,7 +10,7 @@ Primitives consume tokens but must not invent product-specific composition.
 
 ## Input
 
-The input is a signed or accepted behavior rule and any existing primitive inventory.
+The input is a signed or accepted behavior rule, any existing primitive inventory, and the signed token decisions the primitive must consume.
 
 The layer also needs the target primitive name, the state set it must support, and the consumers or patterns that are expected to need it.
 
@@ -24,11 +24,12 @@ If implementation is in scope later, the primitive should expose a small public 
 
 Check that the primitive is smaller than a pattern and does not contain product workflow logic.
 
-Check that it consumes existing tokens or declares the need for a token instead of hard-coding visual decisions.
+Check that it consumes existing signed tokens instead of hard-coding visual decisions.
+
+Check that any missing required token blocks primitive work and routes back to the token layer.
 
 Check that it has a named public boundary.
 
 Check that it defines state and accessibility behavior without relying on demo-page examples.
 
 Check that consumers cannot reasonably mistake the primitive for a page-local helper.
-

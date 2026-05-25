@@ -19,7 +19,9 @@ Do not perform detailed layer work inside this skill.
 
 `01-behavior-rule` is active.
 
-Layers `02` through `10` are scaffolded and not yet active as full skills.
+`02-token` is active.
+
+Layers `03` through `10` are scaffolded and not yet active as full skills.
 
 Do not treat a scaffolded layer as implementation-ready.
 
@@ -40,6 +42,8 @@ Use `ROUTING.md` to select the layer.
 Use `GATES.md` before allowing handoff to a later layer.
 
 When behavior-rule work is needed, use `../01-behavior-rule/SKILL.md`.
+
+When token work is needed and Gate 01 passes, use `../02-token/SKILL.md`.
 
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 
