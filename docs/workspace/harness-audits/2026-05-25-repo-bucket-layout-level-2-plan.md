@@ -140,6 +140,41 @@ truth. They may become the navigation spine for future bucket maps because
 they can point across bucket-owned artifacts without owning those artifacts'
 source truth.
 
+## Technical Steering Packet Posture
+
+Technical Steering packets are cross-bucket architecture and governance
+handoff artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket architecture/governance handoff artifact
+- bucket owner: determined by the subject and purpose of the specific packet
+- current physical home: `docs/workspace/technical-steering/`
+- validation: `npm run technical-steering:validate -- <packet-path>`
+- move readiness: not ready for physical relocation while validation tooling,
+  skills, and downstream references expect the current folder
+
+Authority:
+
+- architecture posture
+- risk flags
+- blockers
+- artifact obligations
+- approved, deferred, or revisit decisions
+
+Consumers:
+
+- Story Breakdown
+- Task Breakdown
+- implementation blueprinting
+- architecture and foundation tasks
+- permission, data, backend, and platform-seam guardrails
+- Product Request cover sheets
+
+Technical Steering packets are closer to capability matrices than Product
+Discovery packets for bucket-layout purposes: the artifact type is
+cross-bucket, and each packet should be classified by what it steers.
+
 ## Next Artifact Types To Analyze
 
 - Product Discovery packets
