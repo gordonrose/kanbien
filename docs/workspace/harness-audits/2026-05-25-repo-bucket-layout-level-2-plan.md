@@ -221,6 +221,58 @@ should be classified by what it breaks down, not by the artifact type alone.
 Existing Story Breakdown packets should not be physically migrated just to
 change format.
 
+## Task Breakdown Packet Posture
+
+Task Breakdown packets are cross-bucket delivery handoff artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket delivery handoff artifact
+- bucket owner: determined by the source story and subject being delivered
+- producing machinery: `discovery-harness`, through `task-breakdown-maintainer`
+- current physical homes:
+  - `docs/workspace/task-breakdown/`
+  - story-local task breakdowns under
+    `docs/workspace/story-breakdown/<epic-slug>/stories/<story-slug>/`
+- validation:
+  `npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>`
+- move readiness: not ready for physical relocation while validation tooling,
+  Layer 5 delivery scripts, skills, templates, and downstream references expect
+  the current folders
+
+Authority:
+
+- stable task IDs
+- isolated delivery task boundaries
+- allowed write sets and forbidden work
+- branch, worktree, and bootstrap strategy
+- task-type guardrail checks
+- required artifacts and proof commands
+- Layer 5 delivery handoff status
+
+Inputs:
+
+- validated Story Breakdown packet
+- selected story marked `ready-for-task-breakdown`
+- story acceptance criteria, capability rows, proof obligations, dependencies,
+  artifact ledger, and blockers from Story Breakdown
+- git workflow guardrails
+
+Consumers:
+
+- Layer 5 delivery scripts and run records
+- branch and commit governance
+- implementation work
+- proof and closeout commands
+- Product Request cover sheets
+- implementation blueprinting when a story has already been split into tasks
+
+Task Breakdown must not redefine story scope, acceptance criteria, product
+intent, or Technical Steering architecture. For bucket-layout purposes, each
+packet should be classified by the story and subject it delivers, not by the
+artifact type alone. Existing Task Breakdown packets should not be physically
+migrated until Layer 5 tooling and legacy path compatibility are planned.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -335,7 +387,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- Task Breakdown packets
 - Implementation Blueprints
 - API contracts
 - Data dictionaries
