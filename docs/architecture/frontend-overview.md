@@ -39,6 +39,9 @@ Today that means:
   `@zip.js/zip.js`; that dependency is used by server-side generated exports
   and does not introduce a frontend bundler, frontend framework, or browser
   package-delivery change
+- `package.json` includes `check:design-system-registry` in the static gate to
+  verify that switchable design-system registrations, manifests, contract
+  modules, implementation exports, and served system-scoped routes stay aligned
 
 Primary architecture decisions behind this shape live in:
 
@@ -96,11 +99,17 @@ Current role:
   structure
 - expose generated canonical render routes through an explicit router registry
   when canonical truth is backed by design-system canonical metadata
+- expose the first switchable-system contract boundary through
+  `contracts/`, `registry/`, `shared/`, and `systems/<system-key>/`, with the
+  default system currently proving the `background-color` token route
 
 Current route model:
 
 - one HTML page per route or per `index.html` folder entry
 - a router that resolves request paths directly to matching HTML files
+- system-scoped token proof routes use `/design-system/<system-key>/tokens/*`
+  so visual implementations can vary while the contract name and consumer
+  obligations remain stable
 - discovery logic that walks the HTML tree and reports implemented routes as
   discovered frontend truth
 - generated canonical route entries for approved or review-candidate governed

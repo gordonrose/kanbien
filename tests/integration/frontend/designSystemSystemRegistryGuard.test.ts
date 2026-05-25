@@ -1,0 +1,106 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import request from "supertest";
+import { describe, expect, it } from "vitest";
+import { createApp } from "../../../src/app";
+
+const designSystemRoot = resolve(process.cwd(), "src/frontend/designSystem");
+
+type DesignSystemRegistration = {
+  systemKey: string;
+  label: string;
+  assetsBase: string;
+  tokens?: Record<string, () => Promise<Record<string, unknown>>>;
+};
+
+type SystemManifest = {
+  schema: string;
+  systemKey: string;
+  label: string;
+  assetsBase: string;
+  contracts: Record<
+    string,
+    {
+      contractModule: string;
+      implementationModule: string;
+      implementationExport: string;
+      pageRoute: string;
+    }
+  >;
+};
+
+function repoPath(path: string): string {
+  return resolve(process.cwd(), path);
+}
+
+async function importRepoModule(path: string): Promise<Record<string, unknown>> {
+  return import(pathToFileURL(repoPath(path)).href) as Promise<Record<string, unknown>>;
+}
+
+function readSystemManifest(systemKey: string): SystemManifest {
+  const manifestPath = resolve(designSystemRoot, "systems", systemKey, "system.manifest.json");
+  expect(existsSync(manifestPath), `Missing design-system manifest for ${systemKey}`).toBe(true);
+  return JSON.parse(readFileSync(manifestPath, "utf8")) as SystemManifest;
+}
+
+function moduleExportsContractId(moduleExports: Record<string, unknown>, contractId: string): boolean {
+  return Object.values(moduleExports).some((value) => {
+    return (
+      typeof value === "object" &&
+      value !== null &&
+      "contractId" in value &&
+      (value as { contractId?: unknown }).contractId === contractId
+    );
+  });
+}
+
+describe("design-system system registry guard", () => {
+  it("keeps registered systems aligned with manifests, contract modules, implementation exports, and served routes", async () => {
+    const registry = (await importRepoModule("src/frontend/designSystem/registry/designSystems.mjs")) as {
+      designSystems: Record<string, DesignSystemRegistration>;
+      getDesignSystem: (systemKey?: string) => DesignSystemRegistration | null;
+    };
+
+    expect(Object.keys(registry.designSystems).length).toBeGreaterThan(0);
+
+    for (const [systemKey, registration] of Object.entries(registry.designSystems)) {
+      const manifest = readSystemManifest(systemKey);
+
+      expect(registration.systemKey).toBe(systemKey);
+      expect(registry.getDesignSystem(systemKey)).toBe(registration);
+      expect(manifest.schema).toBe("kanbien.designSystem.systemManifest.v1");
+      expect(manifest.systemKey).toBe(systemKey);
+      expect(manifest.label).toBe(registration.label);
+      expect(manifest.assetsBase).toBe(registration.assetsBase);
+      expect(manifest.assetsBase).toBe(`/design-system/systems/${systemKey}/assets`);
+      expect(Object.keys(manifest.contracts).length, `${systemKey} must declare at least one contract`).toBeGreaterThan(0);
+
+      for (const [contractId, contract] of Object.entries(manifest.contracts)) {
+        expect(existsSync(repoPath(contract.contractModule)), `${contractId} contract module is missing`).toBe(true);
+        expect(existsSync(repoPath(contract.implementationModule)), `${contractId} implementation module is missing`).toBe(true);
+        expect(contract.pageRoute).toMatch(new RegExp(`^/design-system/${systemKey}/`));
+
+        const contractModule = await importRepoModule(contract.contractModule);
+        const implementationModule = await importRepoModule(contract.implementationModule);
+        const implementationExport = implementationModule[contract.implementationExport] as
+          | { contractId?: unknown; systemKey?: unknown }
+          | undefined;
+
+        expect(moduleExportsContractId(contractModule, contractId), `${contract.contractModule} must export ${contractId}`).toBe(true);
+        expect(implementationExport, `${contract.implementationModule} must export ${contract.implementationExport}`).toBeDefined();
+        expect(implementationExport?.contractId).toBe(contractId);
+        expect(implementationExport?.systemKey).toBe(systemKey);
+
+        const response = await request(createApp()).get(contract.pageRoute).set("host", "admin.example.test");
+
+        expect(response.status, contract.pageRoute).toBe(200);
+        expect(response.text, contract.pageRoute).toContain(`${registration.assetsBase}/styles.css`);
+        expect(response.text, contract.pageRoute).toContain("/design-system/assets/styles.css");
+        expect(response.text, contract.pageRoute).toContain("/design-system/assets/app.mjs");
+      }
+    }
+
+    expect(registry.getDesignSystem("missing-system")).toBeNull();
+  });
+});
