@@ -601,6 +601,68 @@ lookup. QA evidence and test-run summaries should eventually be discoverable
 through the artifact-type index because review workflows often need to find
 all proof records by type even when canonical evidence homes are bucket-owned.
 
+## Decision Evidence Posture
+
+Decision evidence is shared-governance-kernel accountability infrastructure.
+
+Current posture:
+
+- artifact type: repo-wide decision and evidence registry artifact
+- primary bucket: `shared-governance-kernel`
+- current physical home: `docs/workspace/decision-evidence/`
+- current registry files:
+  - `decision-registry.json`
+  - `evidence-packet-registry.json`
+- validation: `npm run decision-evidence -- validate`
+- current storage posture: `repo_artifact_until_capabilities_exist`
+- future migration target:
+  - `decision_entity_capabilities`
+  - `evidence_packet_entity_capabilities`
+- move readiness: not ready for physical relocation while git closeout
+  standards, validators, scripts, and planning artifacts expect the current
+  registry root
+
+Authority:
+
+- material decision record
+- status such as draft, needs review, reviewed, approved, superseded, or
+  deferred
+- source references and proof statements
+- actor, review, and approval metadata
+- evidence packet records
+- links between evidence packets and source decisions
+- decision relations such as supports, clarifies, narrows, expands,
+  supersedes, conflicts with, or implements
+
+Inputs:
+
+- material Codex or human decisions
+- approvals, deferrals, constraints, model-shape decisions, migration postures,
+  design-system signoffs, provenance rules, and implementation constraints
+- real source refs such as repo paths, commit SHAs, runtime observations,
+  persistent chat/transcript identifiers, or manual notes
+- evidence packets and artifacts that support or implement decisions
+
+Consumers:
+
+- git workflow closeout
+- Technical Steering, Story Breakdown, and Task Breakdown decision/evidence
+  fields
+- audits that need to trace why a rule, posture, or artifact changed
+- future platform/runtime decision and evidence capabilities
+- cross-chat and cross-machine continuity
+
+Decision evidence is not bucketed by the subject of each decision as a physical
+storage rule today. Individual decisions may apply to `platform`,
+`discovery-harness`, `frontend-harness`, `shared-governance-kernel`, or
+`archive/history`, but the registry itself remains central shared governance
+until the planned decision/evidence capabilities exist. Physical moves require
+compatibility planning for the script default root, validation command,
+registry links, and planning-artifact references. Decision evidence should
+eventually be discoverable through the artifact-type index, but it should not
+be split into bucket-local editable registries without a stronger platform
+capability or compatibility plan.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -708,18 +770,15 @@ replace it:
 Do not create the artifact-type index until enough artifact postures have been
 analyzed to define useful pages without guesswork.
 
-## Next Artifact Types To Analyze
+## Artifact Types Analyzed In This Pass
 
-- Product Discovery packets
-- Product Requests
-- Technical Steering packets
-- PRDs
-- PRD-derived test cases
-- Decision evidence
+This pass recorded postures for the planned Level 2 artifact types above.
+It does not classify every `docs/workspace/` folder.
 
-For each artifact type, identify producer, consumer, authority, likely bucket
-fit, cross-bucket handoff points, validation, known gaps or inconsistencies,
-and move risk.
+The next pass should inventory remaining workspace folders by current purpose,
+producer, consumer, authority, likely bucket fit, cross-bucket handoff points,
+validation, known gaps or inconsistencies, move risk, and whether each folder
+is active source truth or archive/history.
 
 ## Non-Goals
 
