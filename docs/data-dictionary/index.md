@@ -16,6 +16,7 @@ and approved cross-feature read seams.
 
 | Entity | Owning Feature | Description | Dictionary File |
 | --- | --- | --- | --- |
+| Entity | `entity` | Implemented root-managed platform self-definition seed with durable repo-generation identity fields for future capability generation. | [entity.md](./entity.md) |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
 | Tenant | `tenants` | Durable platform tenant record and lifecycle root. | [tenant.md](./tenant.md) |
 | Tenant Branding | `tenantBranding` | Planned durable tenant-owned branding configuration for display name, primary colour, fallback posture, and lifecycle timestamps. | [tenant-branding.md](./tenant-branding.md) |

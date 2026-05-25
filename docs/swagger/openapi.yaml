@@ -5623,6 +5623,10 @@ components:
       type: string
       enum: [draft, active, superseded, archived]
 
+    EntityScope:
+      type: string
+      enum: [root, tenant, shared-cross-tenant]
+
     Entity:
       type: object
       properties:
@@ -5632,6 +5636,20 @@ components:
         name:
           type: string
         description:
+          type: string
+        entityKey:
+          type: string
+        featureName:
+          type: string
+        tableName:
+          type: string
+        idField:
+          type: string
+        idColumn:
+          type: string
+        scope:
+          $ref: "#/components/schemas/EntityScope"
+        routeBase:
           type: string
         status:
           $ref: "#/components/schemas/EntityStatus"
@@ -5648,6 +5666,13 @@ components:
         - entityId
         - name
         - description
+        - entityKey
+        - featureName
+        - tableName
+        - idField
+        - idColumn
+        - scope
+        - routeBase
         - status
         - createdAt
         - updatedAt
@@ -5662,11 +5687,35 @@ components:
         description:
           type: string
           minLength: 1
+        featureName:
+          type: string
+          minLength: 1
+        entityKey:
+          type: string
+          minLength: 1
+        tableName:
+          type: string
+          minLength: 1
+        idField:
+          type: string
+          minLength: 1
+        idColumn:
+          type: string
+          minLength: 1
+        scope:
+          $ref: "#/components/schemas/EntityScope"
+        routeBase:
+          type: string
+          minLength: 1
+        sharedCrossTenantApproved:
+          type: boolean
         status:
           $ref: "#/components/schemas/EntityStatus"
       required:
         - name
         - description
+        - featureName
+        - scope
       additionalProperties: false
 
     UpdateEntityBody:
@@ -5678,6 +5727,28 @@ components:
         description:
           type: string
           minLength: 1
+        featureName:
+          type: string
+          minLength: 1
+        entityKey:
+          type: string
+          minLength: 1
+        tableName:
+          type: string
+          minLength: 1
+        idField:
+          type: string
+          minLength: 1
+        idColumn:
+          type: string
+          minLength: 1
+        scope:
+          $ref: "#/components/schemas/EntityScope"
+        routeBase:
+          type: string
+          minLength: 1
+        sharedCrossTenantApproved:
+          type: boolean
         status:
           $ref: "#/components/schemas/EntityStatus"
       minProperties: 1

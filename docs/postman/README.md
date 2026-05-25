@@ -25,6 +25,7 @@ Current maintained collections live under `docs/postman/collections/`:
 - `tenantAdmins.postman_collection.json`
 - `tenantAuth.postman_collection.json`
 - `tenantConfiguration.postman_collection.json`
+- `entity.postman_collection.json`
 - `notificationDelivery.postman_collection.json`
 - `webAppHierarchyBuilder.postman_collection.json`
 - `webAppPageSettings.postman_collection.json`

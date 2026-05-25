@@ -1,0 +1,297 @@
+{
+  "info": {
+    "_postman_id": "e48f465a-7086-4cc1-9ae4-91db935f80c4",
+    "name": "Kanbien Entity",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected root-only /entity API. It exercises Entity create, list, exact read, update, archive, archived read, explicit identity values, and shared-cross-tenant approval behavior. Set rootSessionId in the active Postman environment or run a root-auth collection first."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "rootSessionId",
+      "value": "sess_replace_me"
+    },
+    {
+      "key": "entityId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "explicitEntityId",
+      "value": "00000000-0000-0000-0000-000000000002"
+    },
+    {
+      "key": "sharedEntityId",
+      "value": "00000000-0000-0000-0000-000000000003"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Create Entity - Suggested Identity",
+      "description": "Creates a root-scoped Entity and lets the API resolve entityKey, tableName, idField, idColumn, and routeBase from featureName.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Organization\",\n  \"description\": \"Organization is the first platform self-definition seed.\",\n  \"featureName\": \"organizations\",\n  \"scope\": \"root\",\n  \"status\": \"active\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.entityId) pm.collectionVariables.set(\"entityId\", json.entityId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Entities",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&status=active",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" },
+            { "key": "orderBy", "value": "updatedAt" },
+            { "key": "orderDirection", "value": "desc" },
+            { "key": "status", "value": "active" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Entity",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity/{{entityId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity", "{{entityId}}"]
+        }
+      }
+    },
+    {
+      "name": "Update Entity - Preserve Stored Identity",
+      "description": "Updates featureName and tableName explicitly. Stored identity fields that are not supplied remain unchanged rather than being recalculated.",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Organization remains the first platform self-definition seed.\",\n  \"featureName\": \"organizationCore\",\n  \"tableName\": \"organization_record\",\n  \"status\": \"draft\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity/{{entityId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity", "{{entityId}}"]
+        }
+      }
+    },
+    {
+      "name": "Archive Entity",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity/{{entityId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity", "{{entityId}}"]
+        }
+      }
+    },
+    {
+      "name": "Get Archived Entity",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity/{{entityId}}?includeArchived=true",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity", "{{entityId}}"],
+          "query": [
+            { "key": "includeArchived", "value": "true" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Entity - Explicit Identity",
+      "description": "Creates a tenant-scoped Entity with all repo-generation identity fields accepted and stored as supplied.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"People\",\n  \"description\": \"People instruction seed.\",\n  \"featureName\": \"people\",\n  \"entityKey\": \"person\",\n  \"tableName\": \"person_record\",\n  \"idField\": \"personRecordId\",\n  \"idColumn\": \"person_record_id\",\n  \"scope\": \"tenant\",\n  \"routeBase\": \"/people-records\",\n  \"status\": \"draft\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.entityId) pm.collectionVariables.set(\"explicitEntityId\", json.entityId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Shared Cross-Tenant Entity - Missing Approval",
+      "description": "Expected 400 INVALID_REQUEST because shared-cross-tenant scope requires explicit approval.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Shared Report\",\n  \"description\": \"Shared report instruction seed.\",\n  \"featureName\": \"sharedReports\",\n  \"scope\": \"shared-cross-tenant\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity"]
+        }
+      }
+    },
+    {
+      "name": "Create Shared Cross-Tenant Entity - Approved",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Shared Report Approved\",\n  \"description\": \"Approved shared report instruction seed.\",\n  \"featureName\": \"sharedReports\",\n  \"scope\": \"shared-cross-tenant\",\n  \"sharedCrossTenantApproved\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/entity",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "entity"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.entityId) pm.collectionVariables.set(\"sharedEntityId\", json.entityId);"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{rootSessionId}}",
+        "type": "string"
+      }
+    ]
+  }
+}
