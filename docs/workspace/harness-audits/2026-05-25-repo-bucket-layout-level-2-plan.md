@@ -175,6 +175,52 @@ Technical Steering packets are closer to capability matrices than Product
 Discovery packets for bucket-layout purposes: the artifact type is
 cross-bucket, and each packet should be classified by what it steers.
 
+## Story Breakdown Packet Posture
+
+Story Breakdown packets are cross-bucket planning handoff artifacts.
+
+Current posture:
+
+- artifact type: cross-bucket planning handoff artifact
+- bucket owner: determined by the subject and purpose of the specific packet
+- producing machinery: `discovery-harness`, through
+  `story-breakdown-maintainer`
+- current physical home: `docs/workspace/story-breakdown/`
+- validation: `npm run story-breakdown:validate -- <packet-path>`
+- move readiness: not ready for physical relocation while validation tooling,
+  skills, templates, and downstream references expect the current folder
+
+Authority:
+
+- smallest independently deliverable and verifiable stories
+- stable story IDs
+- acceptance criteria and acceptance-criterion IDs
+- dependency and seam mapping
+- story-level proof obligations
+- artifact ledger and unblock questions before Task Breakdown
+
+Inputs:
+
+- Product Discovery packet
+- Technical Steering packet
+- relevant PRDs, capability matrices, architecture, ADRs, standards, and
+  design-system or permission guidance named by steering
+
+Consumers:
+
+- Task Breakdown
+- PRD-derived test-case planning and implementation
+- implementation blueprinting
+- Product Request cover sheets
+- branch and commit governance
+- downstream delivery planning
+
+Story Breakdown must preserve Technical Steering classifications rather than
+re-deciding architecture posture. For bucket-layout purposes, each packet
+should be classified by what it breaks down, not by the artifact type alone.
+Existing Story Breakdown packets should not be physically migrated just to
+change format.
+
 ## Future Physical Migration Principle
 
 Do not use editable duplicate artifacts as the default migration strategy.
@@ -289,7 +335,6 @@ analyzed to define useful pages without guesswork.
 - Technical Steering packets
 - PRDs
 - PRD-derived test cases
-- Story Breakdown packets
 - Task Breakdown packets
 - Implementation Blueprints
 - API contracts
