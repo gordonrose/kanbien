@@ -66,7 +66,7 @@
 - Implementation Blueprint:
   `docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md`
 - Layer 5 delivery pilot:
-  `docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
+  `docs/workspace-buckets/archive-history/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
 - Work runs / Loop Runs:
   `docs/workspace/layer5-task-runs/2026-05-08/`
 - Pull requests, config changes, or extension changes:

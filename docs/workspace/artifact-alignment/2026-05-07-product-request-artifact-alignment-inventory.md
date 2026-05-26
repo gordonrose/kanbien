@@ -142,7 +142,7 @@ Remaining drift:
   - `stories/S-009-data-permissions-api-and-feature-manifest-artifact-sweep/tasks/T-S009-05-product-request-docs-closure.md`
 - A Layer 5 delivery pilot now defines the full task queue, dependency status,
   KPI contract, and execution order:
-  `docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
+  `docs/workspace-buckets/archive-history/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
 
 This remains a good first migration candidate because it already uses the
 Product Request folder and nested epic shape, and the 2026-05-08 Layer 5 run

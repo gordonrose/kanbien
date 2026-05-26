@@ -8,6 +8,7 @@ Use it for:
 - completed task-run or audit evidence kept only for traceability
 - historical snapshots, old examples, and retired design notes
 - retired blog drafts, outlines, and communication workflow notes
+- retired delivery pilots whose rules have moved into active harnesses
 - records useful for learning or reconstruction but not current source truth
 
 Do not use it for:

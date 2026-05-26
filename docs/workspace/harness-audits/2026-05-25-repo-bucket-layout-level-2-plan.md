@@ -1381,25 +1381,27 @@ Move posture: completed as an archive/history move. Do not recreate active
 approved.
 
 `docs/workspace/layer5-pilots/` is currently classified as
-`unsure / needs decision`.
+`archive/history`.
 
-Inspected evidence: the folder contains a Layer 5 delivery pilot for the chat
-interface root-admin MVP. It defines delivery-task sequencing, pilot rules,
-KPI interpretation, route-away boundaries, and task closure posture before the
-formal scripted Layer 5 runner existed.
+Inspected evidence: the original folder contained one Layer 5 delivery pilot
+for the chat interface root-admin MVP. It defined delivery-task sequencing,
+pilot rules, KPI interpretation, route-away boundaries, and task closure
+posture before the formal scripted Layer 5 runner existed.
 
-Authority/currentness posture: genuinely ambiguous. It may be historical pilot
-evidence now that `docs/workspace/layer5-task-runs/` and the Layer 5 scripts
-exist, or it may still explain current delivery-harness intent that has not
-been fully promoted elsewhere.
+Authority/currentness posture: historical pilot evidence. The active Layer 5
+source of truth now lives in `src/scripts/layer5/`,
+`docs/workspace/layer5-task-runs/README.md`, task-breakdown validation, and
+task-type contract artifacts. The pilot's durable ideas have either graduated
+into those active surfaces or remain feature-specific historical sequencing
+for the chat-interface delivery flow.
 
-Cleanup pressure: decide whether this is active governance evidence or
-archive/history. If the pilot still carries active rules, promote those rules
-into the Layer 5 README, standards, scripts, or skills instead of leaving them
-only in a one-off pilot note.
+Cleanup pressure: reduced after the 2026-05-26 archive move. The pilot file now
+lives under `docs/workspace-buckets/archive-history/layer5-pilots/`, and the
+old workspace path is a breadcrumb.
 
-Move posture: do not physically move it yet. Product Request closure and
-artifact-alignment records still reference the pilot file.
+Move posture: completed as an archive/history move. Do not add new active
+Layer 5 rules under `docs/workspace/layer5-pilots/`; promote enduring rules
+into the active Layer 5 harness instead.
 
 `docs/workspace/layer5-task-runs/` is currently classified as
 `shared-governance-kernel`.
