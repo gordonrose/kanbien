@@ -226,6 +226,37 @@ Avoid phrasing:
 > Should this create an audit/history entry, or is that not needed for the
 > first version?
 
+### Runtime Acceptance Rules
+
+Treat Layer 1 runtime behavior as a validated discovery loop, not as direct
+authority from the model or client.
+
+When Product Discovery is driven by a chat, app panel, website widget, IDE,
+CLI, API, or any other runtime surface:
+
+- the LLM proposes replies, facts, routing, blockers, and readiness; it is not
+  the source of truth
+- accept structured facts, routing values, blockers, and readiness only after
+  checking them against the Product Discovery template, taxonomy, current
+  conversation state, and user-confirmed answers
+- client, page, route, role, tenant, locale, timezone, or selected starter
+  prompt context is helpful input only; do not treat it as actor, tenant,
+  object, artifact, history, generation, or download authority
+- server-side or harness-owned state must derive actor context, root/tenant
+  context, permissions, artifact visibility, and accepted lifecycle status
+- artifact creation is allowed only when readiness gates pass; low confidence,
+  missing product answers, technical blockers, or invalid proposals must stay
+  blocked, ask the next single useful question, or become a safe fallback
+- invalid proposals should be rejected, repaired through a constrained retry,
+  or converted into a safe requester-facing response rather than persisted as
+  accepted discovery truth
+- requester-facing output must not expose hidden prompts, hidden reasoning,
+  raw policy internals, unapproved tenant context, or sensitive technical
+  evidence
+- Layer 1 runtime must not trigger source code, schema, route, migration, API,
+  UI, PR, automation, or downstream execution work unless a later governed
+  layer explicitly authorizes that action
+
 ### Discovery Completion Gate
 
 Before ending a discovery interview or creating a packet, classify the request
