@@ -1429,16 +1429,17 @@ and artifact-obligation logic depend on the current path.
 Inspected evidence: retrospective files record lessons from delivered feature
 or frontend adoption loops, including artifact drift, test traceability gaps,
 permission-mapping misses, and design-system adoption risks. Harness audits
-reference them as learning inputs.
+reference them as learning inputs. A 2026-05-26 README now states their
+archive/history posture and promotion boundary.
 
 Authority/currentness posture: durable lesson memory, not current executable
 harness truth. A retrospective lesson becomes active governance only when
 promoted into standards, skills, validators, tests, templates, or architecture
 guidance.
 
-Cleanup pressure: add a README or promotion-status note so future maintainers
-can distinguish lessons already incorporated into guardrails from unresolved
-learning debt.
+Cleanup pressure: low after the 2026-05-26 README. Future work can still audit
+whether specific lessons have been promoted into active guardrails, but the
+folder boundary is now explicit.
 
 Move posture: do not physically move it yet. First check whether any
 retrospective lessons still need promotion into active guardrails.
