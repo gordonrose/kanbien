@@ -45,6 +45,11 @@ An artifact type can appear in multiple buckets. For example, a Technical
 Steering packet, PRD, capability matrix, runbook, QA evidence note, or
 implementation blueprint should be bucketed by what it governs or enables.
 
+The future harness-platform extraction lens is separate from these repo
+buckets. Repo buckets classify ownership inside Kanbien; the extraction lens
+classifies whether a rule is project-specific, reusable policy,
+harness-core behavior, adapter-specific behavior, or reference-only evidence.
+
 ## Current Decisions
 
 - `harnessChat` is classified as `discovery-harness` for the current MVP
