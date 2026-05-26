@@ -1340,16 +1340,23 @@ any tests or operator workflow relying on the current path.
 
 Inspected evidence: branch-stack reconciliation records document git hygiene,
 branch-stack audit findings, preserved refs, stash inventory, cleanup ledgers,
-and promotion/replay safety decisions. Tests and `src/scripts/gitBranchStackAudit.ts`
-reference this folder as the default reconciliation directory.
+and promotion/replay safety decisions. `src/scripts/gitBranchStackAudit.ts`
+uses this folder as its default reconciliation directory, `package.json`
+exposes it through `git:branch-stack-audit`, and unit tests reference records
+under this path.
 
 Authority/currentness posture: active when tied to a current branch-stack,
-worktree, or promotion cleanup decision. Older records become historical
-evidence after the associated branch, stash, or cleanup ledger is closed.
+worktree, or promotion cleanup decision. The folder contains two artifact
+types: machine-readable reconciliation records and human cleanup ledgers.
+Machine-readable records must include exact `Branch`, `Head Commit`,
+`Disposition`, and `Accounted By` Markdown fields; the script currently
+recognizes only `superseded-by-current` and `intentionally-parked`
+dispositions. Human ledgers may remain useful evidence, but they do not satisfy
+branch-stack accounting unless they include the parser-visible fields.
 
-Cleanup pressure: add a README or standards pointer so maintainers can tell
-which records are active blockers, supersession notes, or historical cleanup
-evidence.
+Cleanup pressure: moderate after the 2026-05-26 README. Future cleanup should
+retire or archive closed ledgers only after the associated refs, stashes, or
+promotion risks are no longer active.
 
 Move posture: do not physically move it yet. Script defaults, tests, and git
 workflow standards reference the current path.
