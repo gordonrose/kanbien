@@ -3,7 +3,7 @@
 ## Archive Status
 
 - Archived from:
-  `docs/workspace/harness-audits/2026-05-06-product-request-example-loop-observability-kpi.md`
+  earlier `docs/workspace/harness-audits/` Product Request example draft
 - Archive reason:
   early Product Request example retained for history; do not copy as a current
   template or current request status example
@@ -33,7 +33,7 @@
 - Priority:
   `not-set`
 - Related model:
-  `docs/workspace/harness-audits/2026-05-06-product-request-backlog-model.md`
+  `docs/workspace/product-requests/README.md`
 
 ## Human Summary
 

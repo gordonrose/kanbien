@@ -5,7 +5,7 @@
 - Status: `layer-4-2-implementation-updated`
 - Date opened: 2026-04-29
 - Related design lock:
-  `docs/workspace/harness-audits/2026-04-29-story-task-layer-design-lock.md`
+  `docs/workspace-buckets/archive-history/story-task-layer-design/2026-04-29-story-task-layer-design-lock.md`
 - Archive reference:
   `docs/workspace-buckets/archive-history/harness-archives/2026-04-29-pre-story-task-split/`
 

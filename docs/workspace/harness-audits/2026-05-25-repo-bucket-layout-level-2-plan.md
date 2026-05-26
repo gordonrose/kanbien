@@ -893,8 +893,8 @@ workspace artifacts still reference the current path, so a future move would
 need compatibility updates before relocation.
 
 `docs/workspace/harness-audits/` started as `unsure / needs decision`; after
-the first cleanup pass it is now an active audit workspace with temporary
-breadcrumbs.
+the cleanup sweep it is now an active audit workspace containing only the
+folder README and this Level 2 plan.
 
 Reason: the folder is a mixed collection rather than one artifact class. The
 inspected files include active governance evidence, draft harness-product
@@ -903,16 +903,14 @@ Request templates/examples, and historical story/task transition records. Some
 files are source-truth candidates, some are examples, and some are likely
 archive/history, so the folder should not be forced into one confident bucket.
 
-Cleanup pressure: this folder still needs a final breadcrumb/link sweep, but
-the mixed artifact problem has been reduced. Future audit folders should not
-become the default home for active contracts, templates, examples, draft
-product models, and historical evidence without an explicit promotion or
-archive path.
+Cleanup pressure: the breadcrumb/link sweep for inspected moved artifacts was
+completed on 2026-05-27. Future audit folders should not become the default
+home for active contracts, templates, examples, draft product models, and
+historical evidence without an explicit promotion or archive path.
 
-Move posture: keep the active Level 2 plan and the folder README here. Move
-historical audit evidence to `archive/history`, reusable or ambiguous harness
-product direction to its owning bucket or `unsure / needs decision`, and leave
-temporary breadcrumbs until the final compatibility sweep.
+Move posture: keep the active Level 2 plan and the folder README here. Moved
+historical audit evidence, reusable templates/examples, and promoted discovery
+contracts now live in their owning locations.
 
 `docs/workspace/chat-bootstraps/` is currently classified as
 `shared-governance-kernel`.
@@ -1532,20 +1530,18 @@ table unless the table changes allowed behavior or prevents a real drift mode.
 
 The highest-risk cleanup candidates are:
 
-1. `docs/workspace/harness-audits/`
-2. `docs/workspace/exports/`
+1. `docs/workspace/exports/`
 
-Reason: these folders either still mix artifact purposes or require a handoff
-before the current path can be retired.
+Reason: this folder requires a generator/API/operator handoff before the
+current path can be retired.
 
 `docs/workspace/imports/` was removed from this remaining-risk list during the
 2026-05-27 cleanup sweep because it now contains only `.gitkeep` and a README;
 the completed legacy provenance files already live under `archive/history`.
 
-The next execution step should not move files. It should pick one high-risk
-folder, inspect representative files and references, then decide whether the
-right cleanup is a README, a freshness note, promotion into standards or
-skills, archive/history classification, or a later physical split.
+`docs/workspace/harness-audits/` was removed from this remaining-risk list
+during the 2026-05-27 cleanup sweep because the folder now contains only its
+README and this active Level 2 plan.
 
 ### First Cleanup Inspection: `docs/workspace/harness-audits/`
 
@@ -1598,8 +1594,8 @@ Story Breakdown test design guide, and related templates. Keep the original as
 `archive/history` design evidence, but do not leave it in `harness-audits/` as
 if it is current harness law.
 
-Follow-up decision: do not move, archive, or breadcrumb
-`2026-05-06-layer-one-runtime-contract.md` yet. It is a mixed
+Follow-up decision: split and promote
+`2026-05-06-layer-one-runtime-contract.md`. It was a mixed
 `discovery-harness` artifact: behavioral runtime rules plus
 request/response/state contract reference. Behavioral rules such as "LLM is a
 proposer only", validation before persistence, client context not being
@@ -1613,13 +1609,17 @@ the same time.
 Closeout update: this split has started. Behavioral runtime rules were promoted
 to the Product Discovery maintainer skill, the durable contract was promoted to
 `docs/product-discovery/layer-one-runtime-contract.md`, and the old
-`docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md` path
-was replaced with a breadcrumb.
+workspace harness-audits path was replaced with a breadcrumb.
+
+Follow-up cleanup update: the old Layer One runtime breadcrumb was removed
+during the 2026-05-27 breadcrumb compatibility sweep after maintained
+references were updated.
 
 Follow-up cleanup update: on 2026-05-26, the dated historical harness audit
 and reconciliation notes were archived to
-`docs/workspace-buckets/archive-history/harness-audits/` with breadcrumbs left
-at the old paths:
+`docs/workspace-buckets/archive-history/harness-audits/`. The temporary
+breadcrumbs left at the old paths were removed during the 2026-05-27
+breadcrumb compatibility sweep:
 
 - `2026-04-29-lessons-led-agentic-harness-audit.md`
 - `2026-04-29-story-task-split-reconciliation-audit.md`
@@ -1633,16 +1633,14 @@ current blocker.
 Follow-up decision resolved: on 2026-05-26, Gordon chose option B for
 `2026-05-05-harness-platform-boundary-map.md`. It is classified as
 `discovery-harness` future product/workstream material and moved to
-`docs/workspace-buckets/discovery-harness/harness-platform-boundary-map/` with
-a breadcrumb at the old `harness-audits/` path. Treat it as a future Product
+`docs/workspace-buckets/discovery-harness/harness-platform-boundary-map/`.
+The temporary breadcrumb at the old `harness-audits/` path was removed during
+the 2026-05-27 breadcrumb compatibility sweep. Treat it as a future Product
 Discovery or Technical Steering candidate for a portable repo-mapping harness,
 not as current Kanbien repo law.
 
 Cleanup pause point: after this cleanup pass, `docs/workspace/harness-audits/`
-is intentionally left with its README, this active plan, and temporary
-breadcrumbs for moved artifacts. Do not treat breadcrumbs as current authority.
-Remove them during the later final docs cleanup sweep after upstream
-references have been updated or confirmed obsolete.
+is intentionally left with its README and this active plan only.
 
 ## Non-Goals
 

@@ -5,7 +5,8 @@
 - Canonical home:
   `docs/product-discovery/layer-one-runtime-contract.md`
 - Promoted from:
-  `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
+  earlier `docs/workspace/harness-audits/` Layer One runtime draft during the
+  2026-05-26 cleanup
 - Bucket:
   `discovery-harness`
 - Behavior note:

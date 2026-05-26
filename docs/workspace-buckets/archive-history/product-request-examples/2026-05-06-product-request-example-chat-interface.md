@@ -3,7 +3,7 @@
 ## Archive Status
 
 - Archived from:
-  `docs/workspace/harness-audits/2026-05-06-product-request-example-chat-interface.md`
+  earlier `docs/workspace/harness-audits/` Product Request example draft
 - Archive reason:
   early Product Request example retained for history; do not copy as a current
   template or current request status example
@@ -22,7 +22,7 @@
 - Date: 2026-05-06
 - Product Request ID: `PRQ-2026-05-05-chat-interface-layer-one-discovery`
 - Related model:
-  `docs/workspace/harness-audits/2026-05-06-product-request-backlog-model.md`
+  `docs/workspace/product-requests/README.md`
 - Guardrail posture:
   Created as a workspace example only. It does not create a database entity,
   official backlog template, source code, migrations, API contracts, feature
