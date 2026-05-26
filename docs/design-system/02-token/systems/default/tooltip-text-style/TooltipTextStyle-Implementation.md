@@ -42,7 +42,7 @@
     "title": "Tooltip Text Style Tokens"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/tooltipTextStyle.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs",
     "contractExport": "tooltipTextStyleTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/tooltip-text-style/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/tooltipTextStyle.tokens.mjs",
@@ -101,7 +101,7 @@
 | Field | Value |
 | --- | --- |
 | Required page route | `/design-system/default/tokens/tooltip-text-style` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/tooltipTextStyle.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/tooltip-text-style/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/tooltipTextStyle.tokens.mjs` |
 | Token spec export | `tooltipTextStyleTokenSpec` |

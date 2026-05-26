@@ -59,7 +59,7 @@ and exports `tokenDefinitionV1`.
 
 | Field | Value |
 | --- | --- |
-| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/contracts/tokens`; existing route-local control CSS evidence |
+| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/layers/02-token`; existing route-local control CSS evidence |
 | Existing token covers need | `no` |
 | Reuse decision | Define a new `minimum-target-size` token contract and `default` implementation. |
 | Duplication risk | Existing route-local control sizes remain evidence only; later layers must consume a governed runtime seam once it exists instead of copying local dimensions. |
@@ -89,7 +89,7 @@ and exports `tokenDefinitionV1`.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/minimumTargetSize.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/minimum-target-size/contract.mjs` |
 | Required roles or fields | Roles: `interactive target`, `adjacent target spacing`; fields: `inputModality`, `minimumWidth`, `minimumHeight`, `exceptionRule`, `spacingRelationship`, `proofRequirement` |
 | Cross-system consumer rule | Every design system must preserve operable hit areas, governed exception rules, and rendered proof before primitives consume target-size tokens. |
 
@@ -110,7 +110,7 @@ and exports `tokenDefinitionV1`.
 | --- | --- |
 | Required page route | `/design-system/default/tokens/minimum-target-size` |
 | Required page file | `src/frontend/designSystem/systems/default/tokens/minimum-target-size/index.html` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/minimumTargetSize.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/minimum-target-size/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/minimum-target-size/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/minimumTargetSize.tokens.mjs` |
 | Token spec export | `minimumTargetSizeTokenSpec` |

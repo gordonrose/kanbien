@@ -1,4 +1,4 @@
-import { tooltipTextStyleTokenContract } from "../../../../contracts/tokens/tooltipTextStyle.contract.mjs";
+import { tooltipTextStyleTokenContract } from "../../../../layers/02-token/tooltip-text-style/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -40,7 +40,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed typography for full-text disclosure content inside tooltip surfaces.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/tooltipTextStyle.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs",
     contractExport: "tooltipTextStyleTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/tooltip-text-style/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/tooltipTextStyle.tokens.mjs",

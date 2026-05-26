@@ -1,4 +1,4 @@
-import { backgroundColorTokenContract } from "../../../../contracts/tokens/backgroundColor.contract.mjs";
+import { backgroundColorTokenContract } from "../../../../layers/02-token/background-color/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -35,7 +35,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed background color variants, metadata, and use-case rules.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/background-color/contract.mjs",
     contractExport: "backgroundColorTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/background-color/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs",

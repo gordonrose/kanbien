@@ -52,7 +52,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
     "description": "Review governed visible-focus ring variants, metadata, and use-case rules."
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
     "contractExport": "focusRingTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs",
@@ -178,7 +178,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 
 | Field | Value |
 | --- | --- |
-| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/contracts/tokens`; `src/frontend/designSystem/assets/styles.css` focus selectors |
+| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/assets/styles.css` focus selectors |
 | Existing token covers need | `no` |
 | Reuse decision | Define a new `focus-ring` token contract and draft `default` implementation. |
 | Duplication risk | Existing route-local focus styles remain evidence only; later layers must consume a governed runtime seam once it exists instead of copying local outline values. |
@@ -211,7 +211,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs` |
 | Required roles or fields | Role: `visible focus ring`; fields: `focusRole`, `sourceTokenId`, `sourceTokenName`, `sourceColorValue`, `ringValue`, `offsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
 | Cross-system consumer rule | Every design system must preserve visible focus, theme-specific proof, and layout-stable rendering before primitives consume focus-ring tokens. |
 
@@ -243,7 +243,7 @@ human review.
 | --- | --- |
 | Required page route | `/design-system/default/tokens/focus-ring` |
 | Required page file | `src/frontend/designSystem/systems/default/tokens/focus-ring/index.html` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs` |
 | Token spec export | `focusRingTokenSpec` |

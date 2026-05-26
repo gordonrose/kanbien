@@ -1,4 +1,4 @@
-import { primaryTintedBackgroundTokenContract } from "../../../../contracts/tokens/primaryTintedBackground.contract.mjs";
+import { primaryTintedBackgroundTokenContract } from "../../../../layers/02-token/primary-tinted-background/contract.mjs";
 import { variants as primaryColorSourceVariants } from "./primaryColorSource.tokens.mjs";
 
 const primarySourceByTheme = new Map(primaryColorSourceVariants.map((variant) => [variant.value.themeMapping, variant]));
@@ -56,7 +56,7 @@ export const tokenDefinitionV1 = {
       "Review governed primary-tinted background variants derived from primary color source tokens.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/primaryTintedBackground.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/primary-tinted-background/contract.mjs",
     contractExport: "primaryTintedBackgroundTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/primary-tinted-background/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs",

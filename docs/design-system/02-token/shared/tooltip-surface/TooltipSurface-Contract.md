@@ -25,7 +25,7 @@ validation state, menu behavior, popover behavior, or app adoption.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/tooltipSurface.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs` |
 | Contract export | `tooltipSurfaceTokenContract` |
 | Token type template | `tooltip-surface` |
 | Required roles | `text overflow disclosure surface` |

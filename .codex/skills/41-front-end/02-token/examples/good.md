@@ -39,7 +39,7 @@ but every variant must use the same deterministic structure.
     "description": "Review governed color palette tokens before semantic mapping or downstream consumption."
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/colours.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/colours/contract.mjs",
     "contractExport": "coloursTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/colours/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/colours.tokens.mjs",
@@ -133,7 +133,7 @@ changes only rendered previews, not signed token values.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/colours.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/colours/contract.mjs` |
 | Required roles or fields | Variant id, token name, preview, metadata, and use-case instructions. |
 | Cross-system consumer rule | Every design system must preserve token identity and usage constraints before downstream layers consume palette tokens. |
 

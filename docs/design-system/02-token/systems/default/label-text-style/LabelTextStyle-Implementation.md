@@ -42,7 +42,7 @@
     "title": "Label Text Style Tokens"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/labelTextStyle.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
     "contractExport": "labelTextStyleTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",
@@ -98,7 +98,7 @@
 | Field | Value |
 | --- | --- |
 | Required page route | `/design-system/default/tokens/label-text-style` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/labelTextStyle.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs` |
 | Token spec export | `labelTextStyleTokenSpec` |

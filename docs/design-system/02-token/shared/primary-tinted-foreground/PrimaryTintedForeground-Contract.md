@@ -25,7 +25,7 @@ warning, error, success, or validation meaning.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/primaryTintedForeground.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/primary-tinted-foreground/contract.mjs` |
 | Contract export | `primaryTintedForegroundTokenContract` |
 | Token type template | `text-color` |
 | Derived from | `tokens.primary-tinted-background` |

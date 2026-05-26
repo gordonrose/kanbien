@@ -23,7 +23,7 @@ selected state, error text, body text, or link text.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/labelTextStyle.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs` |
 | Contract export | `labelTextStyleTokenContract` |
 | Token type template | `text-style` |
 | Required roles | `short label text` |

@@ -1,4 +1,4 @@
-import { primaryTintedForegroundTokenContract } from "../../../../contracts/tokens/primaryTintedForeground.contract.mjs";
+import { primaryTintedForegroundTokenContract } from "../../../../layers/02-token/primary-tinted-foreground/contract.mjs";
 import { variants as primaryTintedBackgroundVariants } from "./primaryTintedBackground.tokens.mjs";
 
 const backgroundByTheme = new Map(primaryTintedBackgroundVariants.map((variant) => [variant.value.themeMapping, variant]));
@@ -76,7 +76,7 @@ export const tokenDefinitionV1 = {
       "Review governed foreground variants paired with primary-tinted background tokens.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/primaryTintedForeground.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/primary-tinted-foreground/contract.mjs",
     contractExport: "primaryTintedForegroundTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/primary-tinted-foreground/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs",

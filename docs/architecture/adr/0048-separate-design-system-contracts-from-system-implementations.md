@@ -27,12 +27,11 @@ Separate design-system contracts from design-system implementations.
 
 The frontend design-system source tree uses these boundaries:
 
-- `src/frontend/designSystem/contracts/` stores stable contracts for token,
-  primitive, pattern, and component names, required fields, states, usage
-  rules, and accessibility obligations.
 - `src/frontend/designSystem/layers/` stores governed runtime seams by harness
   layer. Later governed layers consume earlier layers through this numbered
   source tree, such as `layers/02-token/` and `layers/03-primitive/`.
+  Executable contract modules live beside the numbered layer seam that owns
+  them, such as `layers/02-token/<token-key>/contract.mjs`.
 - `src/frontend/designSystem/shared/` stores reusable renderer, shell,
   validation, and explorer infrastructure that is not owned by any one design
   system.
@@ -62,11 +61,16 @@ color, shape, and other visual decisions only behind those contracts.
   `systems/<system-key>/tokens/proofs/`.
 - Governed runtime token seams consumed by primitives and later layers live
   under `layers/02-token/`.
+- Executable Layer 2 token contract modules live under
+  `layers/02-token/<token-key>/contract.mjs`, not under a separate
+  top-level contract folder.
 - Governed primitive runtime seams live under `layers/03-primitive/`.
 - Later governed layers must not import directly from
   `systems/<system-key>/` when a numbered layer seam exists.
-- Top-level `assets/` remains compatibility/shared design-system asset space
-  for existing v1 surfaces until they are explicitly migrated.
+- Top-level `assets/`, `tokens/`, `patterns`, `components/`, `templates/`,
+  `canonicals/`, `canonical-renderings/`, and `exploration/` remain legacy or
+  pre-governed inventory until a governed artifact explicitly promotes a seam
+  into `layers/` or a system proof namespace.
 - A system implementation must not silently change a contract's token names,
   required variant fields, accessibility obligations, or allowed consumer
   rules.

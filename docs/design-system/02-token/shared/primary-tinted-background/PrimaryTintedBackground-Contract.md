@@ -25,7 +25,7 @@ meaning. Those states require separate governed token decisions.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/primaryTintedBackground.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/primary-tinted-background/contract.mjs` |
 | Contract export | `primaryTintedBackgroundTokenContract` |
 | Derived from | `tokens.primary-color-source` |
 | Required roles | `primary tinted subtle background` |

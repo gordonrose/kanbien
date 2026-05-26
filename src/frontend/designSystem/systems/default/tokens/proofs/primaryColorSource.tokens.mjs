@@ -1,4 +1,4 @@
-import { primaryColorSourceTokenContract } from "../../../../contracts/tokens/primaryColorSource.contract.mjs";
+import { primaryColorSourceTokenContract } from "../../../../layers/02-token/primary-color-source/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -28,7 +28,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed primary source-color variants before downstream color tokens derive visual roles from them.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
     contractExport: "primaryColorSourceTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/primary-color-source/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs",

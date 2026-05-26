@@ -57,7 +57,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
     "description": "Review governed background color variants, metadata, and use-case rules."
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/background-color/contract.mjs",
     "contractExport": "backgroundColorTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/background-color/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs",
@@ -327,7 +327,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/background-color/contract.mjs` |
 | Required roles or fields | Page foundation, surface foundation, subtle foundation; original, dark, and desert themes; variant id, token name, value, preview, metadata, and use-case instructions. |
 | Cross-system consumer rule | Every design-system implementation must preserve background roles, theme names, variant identity, usage constraints, and approved metadata before downstream primitives or patterns consume background-color tokens. |
 
@@ -360,7 +360,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | --- | --- |
 | Required page route | `/design-system/default/tokens/background-color` |
 | Required page file | `src/frontend/designSystem/systems/default/tokens/background-color/index.html` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/background-color/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/background-color/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs` |
 | Token spec export | `backgroundColorTokenSpec` |

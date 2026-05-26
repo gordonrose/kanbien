@@ -62,7 +62,7 @@ combined with a system implementation, which should be avoided by default.
     "description": "<one-sentence-review-purpose>"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/<token-type-or-family>/contract.mjs",
     "contractExport": "<camelCaseTokenContractExport>",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs",
@@ -173,7 +173,7 @@ If the token is standalone, state `none` and why.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/contract.mjs` |
 | Required roles or fields | `<roles, fields, or not-applicable reason>` |
 | Cross-system consumer rule | `<what every design-system implementation and downstream consumer must preserve>` |
 
@@ -203,7 +203,7 @@ human review.
 | --- | --- |
 | Required page route | `/design-system/<system-key>/tokens/<token-type-or-family>` |
 | Required page file | `src/frontend/designSystem/systems/<system-key>/tokens/<token-type-or-family>/index.html` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs` |
 | System proof module | `src/frontend/designSystem/systems/<system-key>/tokens/proofs/<token-type-or-family>.tokens.mjs` |
 | Token spec export | `<camelCaseTokenSpecExport>` |

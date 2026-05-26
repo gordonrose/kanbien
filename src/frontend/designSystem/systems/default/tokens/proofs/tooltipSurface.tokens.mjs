@@ -1,4 +1,4 @@
-import { tooltipSurfaceTokenContract } from "../../../../contracts/tokens/tooltipSurface.contract.mjs";
+import { tooltipSurfaceTokenContract } from "../../../../layers/02-token/tooltip-surface/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -43,7 +43,7 @@ export const tokenDefinitionV1 = {
       "Review governed visual values for full-text disclosure tooltip surfaces before tooltip primitives consume them.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/tooltipSurface.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs",
     contractExport: "tooltipSurfaceTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/tooltip-surface/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/tooltipSurface.tokens.mjs",

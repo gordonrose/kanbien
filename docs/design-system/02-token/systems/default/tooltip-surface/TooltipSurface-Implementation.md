@@ -42,7 +42,7 @@
     "title": "Tooltip Surface Tokens"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/tooltipSurface.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs",
     "contractExport": "tooltipSurfaceTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/tooltip-surface/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/tooltipSurface.tokens.mjs",
@@ -106,7 +106,7 @@ set.
 | Field | Value |
 | --- | --- |
 | Required page route | `/design-system/default/tokens/tooltip-surface` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/tooltipSurface.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/tooltip-surface/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/tooltipSurface.tokens.mjs` |
 | Token spec export | `tooltipSurfaceTokenSpec` |

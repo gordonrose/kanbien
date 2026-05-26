@@ -6,6 +6,8 @@ const governedLayerRoot = resolve(process.cwd(), "src/frontend/designSystem/laye
 const tokenLayerRoot = join(governedLayerRoot, "02-token");
 const primitiveLayerRoot = join(governedLayerRoot, "03-primitive");
 const systemRoot = resolve(process.cwd(), "src/frontend/designSystem/systems");
+const legacyContractRoot = resolve(process.cwd(), "src/frontend/designSystem/contracts");
+const designSystemTopologyReadme = resolve(process.cwd(), "src/frontend/designSystem/README.md");
 
 function collectFiles(dir: string): string[] {
   if (!existsSync(dir)) {
@@ -73,5 +75,33 @@ describe("governed design-system layer import guard", () => {
     });
 
     expect(violations).toEqual([]);
+  });
+
+  it("keeps the retired top-level design-system contract folder from coming back", () => {
+    expect(existsSync(legacyContractRoot)).toBe(false);
+  });
+
+  it("documents governed and legacy design-system source areas", () => {
+    const readme = readFileSync(designSystemTopologyReadme, "utf8");
+
+    for (const governedFolder of ["layers/", "systems/", "shared/", "registry/"]) {
+      expect(readme).toContain(governedFolder);
+    }
+
+    for (const legacyFolder of [
+      "assets/",
+      "tokens/",
+      "patterns/",
+      "components/",
+      "templates/",
+      "canonicals/",
+      "canonical-renderings/",
+      "exploration/",
+    ]) {
+      expect(readme).toContain(legacyFolder);
+    }
+
+    expect(readme).toContain("legacy or pre-governed inventory");
+    expect(readme.replace(/\s+/g, " ")).toContain("New governed work must use the numbered layer structure");
   });
 });

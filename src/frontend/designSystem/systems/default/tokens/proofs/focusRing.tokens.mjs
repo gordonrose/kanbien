@@ -1,4 +1,4 @@
-import { focusRingTokenContract } from "../../../../contracts/tokens/focusRing.contract.mjs";
+import { focusRingTokenContract } from "../../../../layers/02-token/focus-ring/contract.mjs";
 import { variants as primaryColorSourceVariants } from "./primaryColorSource.tokens.mjs";
 
 const primarySourceByTheme = new Map(primaryColorSourceVariants.map((variant) => [variant.value.themeMapping, variant]));
@@ -54,7 +54,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed visible-focus ring variants, metadata, and use-case rules.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
     contractExport: "focusRingTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs",

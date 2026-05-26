@@ -52,7 +52,7 @@ semantic state meaning.
     "title": "Primary Tinted Background Tokens"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/primaryTintedBackground.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/primary-tinted-background/contract.mjs",
     "contractExport": "primaryTintedBackgroundTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/primary-tinted-background/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs",
@@ -128,7 +128,7 @@ validation meaning. Theme-specific evidence must not be aliased across themes.
 | Field | Value |
 | --- | --- |
 | Required page route | `/design-system/default/tokens/primary-tinted-background` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/primaryTintedBackground.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/primary-tinted-background/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/primary-tinted-background/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs` |
 | Source token module | `src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs` |

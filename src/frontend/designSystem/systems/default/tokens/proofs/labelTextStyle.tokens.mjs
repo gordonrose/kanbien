@@ -1,4 +1,4 @@
-import { labelTextStyleTokenContract } from "../../../../contracts/tokens/labelTextStyle.contract.mjs";
+import { labelTextStyleTokenContract } from "../../../../layers/02-token/label-text-style/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -40,7 +40,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed typography for short text labels before text primitives consume it.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/labelTextStyle.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
     contractExport: "labelTextStyleTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",

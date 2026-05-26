@@ -53,7 +53,7 @@ derived semantic color roles.
     "description": "Review governed primary source-color variants before downstream color tokens derive visual roles from them."
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
     "contractExport": "primaryColorSourceTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/primary-color-source/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs",
@@ -169,7 +169,7 @@ derived semantic color roles.
 
 | Field | Value |
 | --- | --- |
-| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/contracts/tokens` |
+| Inventory source checked | `docs/design-system/02-token/token-readiness-index.md`; `docs/design-system/02-token/shared`; `docs/design-system/02-token/systems/default`; `src/frontend/designSystem/layers/02-token`; `src/frontend/designSystem/layers/02-token` |
 | Existing token covers need | `no` |
 | Reuse decision | Use the existing `color-palette` token-type template to define a smaller signed `primary-color-source` token family. |
 | Duplication risk | Without this source token, future text, focus, selected, and subtle-background tokens can drift into unrelated primary values. |
@@ -201,7 +201,7 @@ derived semantic color roles.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs` |
 | Required roles or fields | Role: `primary color source`; fields: `paletteRole`, `scaleStep`, `colorValue`, `colorSpace`, `themeMapping`, `allowedDerivations` |
 | Cross-system consumer rule | Every design system must preserve an approved primary source role before downstream derived color tokens consume it. |
 
@@ -234,7 +234,7 @@ human review.
 | --- | --- |
 | Required page route | `/design-system/default/tokens/primary-color-source` |
 | Required page file | `src/frontend/designSystem/systems/default/tokens/primary-color-source/index.html` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/primary-color-source/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs` |
 | Token spec export | `primaryColorSourceTokenSpec` |

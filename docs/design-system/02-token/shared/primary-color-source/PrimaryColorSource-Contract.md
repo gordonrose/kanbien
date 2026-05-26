@@ -26,7 +26,7 @@ its own role, accessibility evidence, and consumer restrictions.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs` |
 | Contract export | `primaryColorSourceTokenContract` |
 | Token type template | `color-palette` |
 | Required roles | `primary color source` |

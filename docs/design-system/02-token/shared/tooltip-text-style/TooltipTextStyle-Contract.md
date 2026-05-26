@@ -25,7 +25,7 @@ label text, or link text.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/tooltipTextStyle.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs` |
 | Contract export | `tooltipTextStyleTokenContract` |
 | Token type template | `text-style` |
 | Required roles | `tooltip disclosure text` |

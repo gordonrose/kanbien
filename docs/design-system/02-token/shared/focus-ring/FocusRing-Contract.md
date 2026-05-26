@@ -26,7 +26,7 @@ design system proves its own focus-ring values in
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs` |
 | Contract export | `focusRingTokenContract` |
 | Required roles | `visible focus ring` |
 | Required themes | `original`, `dark`, `desert` |

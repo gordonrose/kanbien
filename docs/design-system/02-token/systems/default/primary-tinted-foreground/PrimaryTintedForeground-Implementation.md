@@ -42,7 +42,7 @@
     "title": "Primary Tinted Foreground Tokens"
   },
   "codeSeam": {
-    "contractModule": "src/frontend/designSystem/contracts/tokens/primaryTintedForeground.contract.mjs",
+    "contractModule": "src/frontend/designSystem/layers/02-token/primary-tinted-foreground/contract.mjs",
     "contractExport": "primaryTintedForegroundTokenContract",
     "governedRuntimeModule": "src/frontend/designSystem/layers/02-token/primary-tinted-foreground/systems/default.mjs",
     "systemProofModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs",
@@ -112,7 +112,7 @@
 | Field | Value |
 | --- | --- |
 | Required page route | `/design-system/default/tokens/primary-tinted-foreground` |
-| Token contract module | `src/frontend/designSystem/contracts/tokens/primaryTintedForeground.contract.mjs` |
+| Token contract module | `src/frontend/designSystem/layers/02-token/primary-tinted-foreground/contract.mjs` |
 | Governed runtime module | `src/frontend/designSystem/layers/02-token/primary-tinted-foreground/systems/default.mjs` |
 | System proof module | `src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs` |
 | Source token module | `src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs` |

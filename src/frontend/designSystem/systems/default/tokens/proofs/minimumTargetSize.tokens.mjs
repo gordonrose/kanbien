@@ -1,4 +1,4 @@
-import { minimumTargetSizeTokenContract } from "../../../../contracts/tokens/minimumTargetSize.contract.mjs";
+import { minimumTargetSizeTokenContract } from "../../../../layers/02-token/minimum-target-size/contract.mjs";
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -35,7 +35,7 @@ export const tokenDefinitionV1 = {
     description: "Review governed interactive target-size variants, metadata, and use-case rules.",
   },
   codeSeam: {
-    contractModule: "src/frontend/designSystem/contracts/tokens/minimumTargetSize.contract.mjs",
+    contractModule: "src/frontend/designSystem/layers/02-token/minimum-target-size/contract.mjs",
     contractExport: "minimumTargetSizeTokenContract",
     governedRuntimeModule: "src/frontend/designSystem/layers/02-token/minimum-target-size/systems/default.mjs",
     systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/minimumTargetSize.tokens.mjs",

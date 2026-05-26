@@ -26,7 +26,7 @@ Each design system proves its concrete sizing values in
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/minimumTargetSize.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/minimum-target-size/contract.mjs` |
 | Contract export | `minimumTargetSizeTokenContract` |
 | Required roles | `interactive target`, `adjacent target spacing` |
 | Required themes | `all` |

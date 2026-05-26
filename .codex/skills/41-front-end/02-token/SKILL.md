@@ -128,7 +128,7 @@ src/frontend/designSystem/systems/<system-key>/tokens/<token-type-or-family>/ind
 
 Layer 2 token contracts must be planned under:
 
-src/frontend/designSystem/contracts/tokens/<token-type-or-family>.contract.mjs
+src/frontend/designSystem/layers/02-token/<token-type-or-family>/contract.mjs
 
 Layer 2 system token proof modules must be planned under:
 

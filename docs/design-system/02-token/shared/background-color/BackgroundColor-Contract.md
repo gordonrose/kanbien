@@ -25,7 +25,7 @@ proves its own values in `docs/design-system/02-token/systems/<system-key>/`.
 
 | Field | Value |
 | --- | --- |
-| Contract module | `src/frontend/designSystem/contracts/tokens/backgroundColor.contract.mjs` |
+| Contract module | `src/frontend/designSystem/layers/02-token/background-color/contract.mjs` |
 | Contract export | `backgroundColorTokenContract` |
 | Required roles | `page foundation`, `surface foundation`, `subtle foundation` |
 | Required themes | `original`, `dark`, `desert` |
