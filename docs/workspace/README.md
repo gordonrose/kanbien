@@ -19,8 +19,8 @@ finalized architecture, PRD, or standards artifact.
 - `exports/`
   Files generated from repo work for review or handoff.
 - `retrospectives/`
-  Dated lessons-learned or issue-summary notes for a delivered slice when the
-  repo should keep the context near other working artifacts.
+  Breadcrumb for archived retrospective lesson notes now stored under
+  `docs/workspace-buckets/archive-history/retrospectives/`.
 - `reviews/`
   Dated review notes for materially AI-assisted, standards-sensitive, or
   otherwise notable delivery slices when the repo needs a durable close-out

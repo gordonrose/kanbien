@@ -1437,12 +1437,15 @@ harness truth. A retrospective lesson becomes active governance only when
 promoted into standards, skills, validators, tests, templates, or architecture
 guidance.
 
-Cleanup pressure: low after the 2026-05-26 README. Future work can still audit
-whether specific lessons have been promoted into active guardrails, but the
-folder boundary is now explicit.
+Cleanup pressure: reduced after the 2026-05-26 archive move. Existing
+retrospectives now live under
+`docs/workspace-buckets/archive-history/retrospectives/`, and the old workspace
+path is a breadcrumb.
 
-Move posture: do not physically move it yet. First check whether any
-retrospective lessons still need promotion into active guardrails.
+Move posture: completed as an archive/history move. Future work can still
+audit whether specific lessons have been promoted into active guardrails, but
+new active governance should be recorded in standards, skills, validators,
+tests, templates, or architecture guidance instead of this folder.
 
 `docs/workspace/task-registry/` is currently classified as
 `shared-governance-kernel`.
@@ -1467,12 +1470,15 @@ standards references depend on the current path.
 ## Plan Review Findings
 
 The inventory is now complete enough to support a human-paced execution pass,
-but it is still an audit plan, not a move plan.
+and the cleanup posture is now more decisive than the initial audit posture.
 
-Classifications are not move approval. Every folder entry should be read as a
-current ownership and risk statement. Physical relocation still requires a
-separate compatibility pass for script defaults, standards references, skills,
-tests, generated artifacts, and existing document links.
+Archive historical records decisively. Keep folders in `docs/workspace/` only
+when they are active working areas, current handoff surfaces, or still
+referenced by executable tooling. If a folder is retained only because
+scripts/tests reference its path, mark it as an active relocation candidate
+with the required handoff. Physical relocation still requires a compatibility
+pass for script defaults, standards references, skills, tests, generated
+artifacts, and existing document links.
 
 Earlier folder entries sometimes use "Reason" where later entries use the more
 explicit "Inspected evidence" and "Authority/currentness posture" labels. This

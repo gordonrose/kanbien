@@ -1,26 +1,15 @@
-# Retrospectives
+# Retrospectives Breadcrumb
 
-This folder stores retained delivery retrospectives and lesson notes.
+Workspace retrospectives have been archived.
 
-Repo bucket classification: `archive/history`.
+Current location:
 
-Retrospectives are durable learning records. They are not executable harness
-truth by themselves.
+- `docs/workspace-buckets/archive-history/retrospectives/`
 
-A lesson from a retrospective becomes active governance only after it is
-promoted into an active repo surface such as:
+These files are retained delivery lessons and historical learning records. They
+are not active platform, discovery-harness, frontend-harness, or
+shared-governance source truth unless a lesson has been promoted into an active
+standard, skill, validator, test, or architecture decision.
 
-- `AGENTS.md`
-- `docs/standards/`
-- `.codex/skills/`
-- validators or scripts under `src/scripts/`
-- tests
-- architecture decisions or maintained architecture docs
-
-Use these files to understand why a guardrail exists, identify unresolved
-learning debt, or justify a future standards update. Do not rely on a
-retrospective alone as the current rule for implementation or review.
-
-Move caution: if these files are physically archived later, preserve links from
-any standards-update, task-breakdown, or audit records that cite them as source
-evidence.
+Do not add new active retrospectives here unless a renewed active retrospective
+workflow is approved.

@@ -9,6 +9,7 @@ Use it for:
 - historical snapshots, old examples, and retired design notes
 - retired blog drafts, outlines, and communication workflow notes
 - retired delivery pilots whose rules have moved into active harnesses
+- retained delivery retrospectives and lesson notes
 - records useful for learning or reconstruction but not current source truth
 
 Do not use it for:
