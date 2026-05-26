@@ -1512,6 +1512,15 @@ to the Product Discovery maintainer skill, the durable contract was promoted to
 `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md` path
 was replaced with a breadcrumb.
 
+Cleanup pause point: after the 2026-05-26 remaining-file inspection,
+`docs/workspace/harness-audits/` is intentionally left with its README, this
+active plan, temporary breadcrumbs, historical audit/reconciliation evidence,
+and the `discovery-harness` boundary-map promotion candidate. Do not continue
+moving files from this folder just because breadcrumbs remain. Breadcrumbs
+should be removed during the later final docs cleanup sweep, and the boundary
+map should move only after a future Kanbien project-profile or harness-platform
+planning home exists.
+
 ## Non-Goals
 
 - Do not move runtime code.
