@@ -1219,7 +1219,7 @@ Move posture: do not physically move it yet. Skills, standards, and downstream
 story/task artifacts reference the current path.
 
 `docs/workspace/artifact-alignment/` is currently classified as
-`unsure / needs decision`.
+`archive/history`.
 
 Inspected evidence: the folder currently contains a Product Request artifact
 alignment inventory that records validator evidence, target hierarchy,
@@ -1231,20 +1231,20 @@ not yet prove a stable artifact family. The inspected file looks like a
 specific reconciliation inventory rather than an established current source of
 truth.
 
-Cleanup pressure: high. Add a README or decide whether these records belong
-under `shared-governance-kernel`, `harness-audits`, `product-requests`, or
-archive/history before the folder becomes another mixed collection.
+Cleanup pressure: resolved for the inspected file. The dated Product Request
+artifact alignment inventory was treated as a one-off historical
+reconciliation note, not a recurring active artifact family.
 
-Move posture: do not physically move it yet. First decide whether artifact
-alignment is a recurring harness evidence type or a one-off historical
-reconciliation note.
+Move posture: completed as an archive/history move during the 2026-05-27
+cleanup sweep. The retained files now live under
+`docs/workspace-buckets/archive-history/artifact-alignment/`.
 
 Follow-up cleanup on 2026-05-26 added
-`docs/workspace/artifact-alignment/README.md`. The folder is now defined for
-dated artifact-chain inventories and reconciliation notes, not durable
-artifact-chain rules. The existing inventory remains useful evidence and should
-not be treated as current operating authority without re-checking referenced
-artifacts, validators, and downstream task records.
+`docs/workspace/artifact-alignment/README.md`, but the 2026-05-27 cleanup
+retired that active folder after deciding the inspected inventory was
+historical evidence. Future artifact alignment notes should live with the
+owning Product Request, review, or audit unless artifact alignment is
+deliberately promoted back into an active recurring artifact family.
 
 `docs/workspace/asset-consumer-decisions/` is currently classified as
 `shared-governance-kernel`, with subject-specific asset/security ownership.
@@ -1533,15 +1533,12 @@ table unless the table changes allowed behavior or prevents a real drift mode.
 The highest-risk cleanup candidates are:
 
 1. `docs/workspace/harness-audits/`
-2. `docs/workspace/frontend/`
-3. `docs/workspace/artifact-alignment/`
-4. `docs/workspace/imports/`
-5. `docs/workspace/exports/`
-6. `docs/workspace/layer5-pilots/`
+2. `docs/workspace/imports/`
+3. `docs/workspace/exports/`
 
 Reason: these folders either mix artifact purposes, lack a README, contain raw
-or generated material with unclear provenance, or carry pilot-era guidance that
-may already be superseded by newer harness scripts and standards.
+or generated material with unclear provenance, or still require a handoff
+before the current path can be retired.
 
 The next execution step should not move files. It should pick one high-risk
 folder, inspect representative files and references, then decide whether the

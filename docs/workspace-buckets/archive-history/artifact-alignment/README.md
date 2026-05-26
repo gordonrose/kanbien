@@ -1,9 +1,9 @@
-# Artifact Alignment
+# Archived Artifact Alignment Notes
 
-This folder stores dated, one-off alignment inventories and reconciliation notes
-for planning artifact chains.
+This folder stores retained dated alignment inventories and reconciliation
+notes for planning artifact chains.
 
-Use this folder for:
+Use these files as historical evidence for:
 
 - inspected artifact-chain inventories
 - source-of-truth alignment findings
@@ -18,3 +18,7 @@ active Product Request packets.
 Before treating an older alignment inventory as current, re-check the referenced
 artifacts, validators, and downstream task records. These notes may contain
 useful unresolved findings without being current operating authority.
+
+Do not recreate `docs/workspace/artifact-alignment/` unless artifact alignment
+is deliberately promoted back into an active recurring workspace artifact
+family.
