@@ -1201,6 +1201,13 @@ Move posture: do not physically move it yet. First decide whether artifact
 alignment is a recurring harness evidence type or a one-off historical
 reconciliation note.
 
+Follow-up cleanup on 2026-05-26 added
+`docs/workspace/artifact-alignment/README.md`. The folder is now defined for
+dated artifact-chain inventories and reconciliation notes, not durable
+artifact-chain rules. The existing inventory remains useful evidence and should
+not be treated as current operating authority without re-checking referenced
+artifacts, validators, and downstream task records.
+
 `docs/workspace/asset-consumer-decisions/` is currently classified as
 `shared-governance-kernel`, with subject-specific asset/security ownership.
 
