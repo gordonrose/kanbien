@@ -1476,6 +1476,14 @@ examples, reusable harness rules, and architecture decisions should be
 promoted to their owning standards, skills, templates, architecture docs, or
 artifact folders.
 
+Follow-up decision: do not archive
+`2026-05-05-harness-platform-boundary-map.md` as ordinary history yet. Its
+subject is `discovery-harness` future harness-product architecture, and it
+also touches `shared-governance-kernel` repo-split policy. It is not current
+implementation authority, but it remains a promotion candidate for durable
+harness-product boundary guidance. Archive or breadcrumb it only after the
+reusable decisions have been promoted into a better durable home.
+
 ## Non-Goals
 
 - Do not move runtime code.
