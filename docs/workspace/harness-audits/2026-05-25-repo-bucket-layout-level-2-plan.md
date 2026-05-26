@@ -1111,6 +1111,23 @@ belongs under `frontend-harness`, `platform`, or `archive/history`, and whether
 any active guidance must be promoted to architecture, standards,
 design-system, or implementation-planning artifacts.
 
+Follow-up inspection on 2026-05-26 classified the three current files without
+moving them:
+
+- `2026-04-20-visual-suite-second-wave-rebucketing-plan.md` is
+  `archive/history`: the plan states the second-wave visual rebucketing is
+  complete, and the current `tests/visual/` tree plus `package.json` scripts
+  match the target structure.
+- `2026-05-21-entity-management-page-seam-recovery-plan.md` remains
+  `frontend-harness`: newer design-system guides, standards, skills, and
+  Entity Management artifacts carry much of its guidance, but the recovery
+  plan should stay as a freshness-review note until the Entity Management
+  artifact chain is audited.
+- `page-shell-planning-feature-spec.md` is planned `platform` work with a
+  `frontend-harness` dependency: `pageShellPlanning` is referenced by PRD,
+  capability-matrix, data-dictionary, and implementation-blueprint artifacts,
+  but no `src/features/pageShellPlanning/` implementation exists yet.
+
 `docs/workspace/implementation-blueprints/` was already classified by artifact
 type earlier in this plan, and the folder inventory did not change that
 posture.
