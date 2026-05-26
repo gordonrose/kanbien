@@ -1048,8 +1048,14 @@ actually promoted into tests, standards, skills, templates, or runtime
 guardrails. The folder purpose is coherent, but many records are old enough
 that unresolved follow-up risks may have gone stale or been superseded.
 
-Move posture: do not physically move it yet. First separate active unresolved
-learning debt from historical defect evidence.
+Move posture: do not physically move it yet. A 2026-05-26 cleanup inspection
+found active hardcoded references from AGENTS, the
+`issue-reconciliation-maintainer` skill, the frontend design-system loop skill,
+`src/scripts/summarizeTestCoverageStrength.ts`, and
+`tests/integration/frontend/designSystemArchitecturalFirstHarnessAudit.test.ts`.
+This makes the folder an active `shared-governance-kernel` evidence surface,
+not just archive/history. A future relocation should first update the skill,
+script, test, and standards references or introduce a compatibility adapter.
 
 The following planning and handoff folders were already classified by artifact
 type earlier in this plan, and the folder inventory did not change that
