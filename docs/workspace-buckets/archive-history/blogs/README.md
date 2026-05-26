@@ -1,4 +1,4 @@
-# Archived Blog Workspace
+# Archived Blog Drafts
 
 This folder preserves historical draft blog ideas and outlines that grew out of
 the work in this repo.

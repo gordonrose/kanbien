@@ -21,9 +21,5 @@ Use these files to understand why a guardrail exists, identify unresolved
 learning debt, or justify a future standards update. Do not rely on a
 retrospective alone as the current rule for implementation or review.
 
-Archived from:
-
-- `docs/workspace/retrospectives/`
-
 Preserve links from any standards-update, task-breakdown, or audit records that
 cite these files as source evidence.

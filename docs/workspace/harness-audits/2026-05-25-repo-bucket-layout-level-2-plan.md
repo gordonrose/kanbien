@@ -949,8 +949,9 @@ matrices under `docs/workspace/capability-matrices/`.
 
 Cleanup pressure: reduced after the 2026-05-26 archive move. The old workspace
 archive contents now live under
-`docs/workspace-buckets/archive-history/workspace-archive/`, and the old
-workspace path is a breadcrumb.
+`docs/workspace-buckets/archive-history/workspace-archive/`. The temporary
+breadcrumb was removed during the 2026-05-27 breadcrumb compatibility sweep
+after references were checked.
 
 Move posture: completed as an archive/history move. Do not add new active
 workspace artifacts under `docs/workspace/archive/`.
@@ -965,8 +966,9 @@ files as current harness guidance.
 
 Cleanup pressure: reduced after the 2026-05-26 archive move. The historical
 snapshot now lives under
-`docs/workspace-buckets/archive-history/harness-archives/`, and the old
-workspace path is a breadcrumb.
+`docs/workspace-buckets/archive-history/harness-archives/`. The temporary
+breadcrumb was removed during the 2026-05-27 breadcrumb compatibility sweep
+after references were checked.
 
 Move posture: completed as an archive/history move. Keep it available for
 reconciliation and rollback analysis through the archive-history path while
@@ -1001,8 +1003,10 @@ as current QA truth. The folder is useful, but it may still mix examples and
 older completed records whose current enforcement status is unclear.
 
 Cleanup update: on 2026-05-26, the four reusable QA templates were promoted to
-`docs/templates/` and replaced with temporary breadcrumbs at their old
-`docs/workspace/qa/` paths:
+`docs/templates/` and temporarily replaced with breadcrumbs at their old
+`docs/workspace/qa/` paths. Those breadcrumbs were removed during the
+2026-05-27 breadcrumb compatibility sweep after reference checks found no
+remaining old-path consumers:
 
 - `qa-checklist-template.md`
 - `exploratory-qa-note-template.md`
@@ -1113,8 +1117,8 @@ Move posture: do not physically move it yet. Design-system skills, tests,
 adoption guards, visual artifacts, and frontend planning references depend on
 the current path.
 
-`docs/workspace/frontend/` is currently classified as a split/breadcrumb
-folder after the 2026-05-26 cleanup.
+`docs/workspace/frontend/` is currently classified as a retired split folder
+after the 2026-05-26 cleanup.
 
 Inspected evidence: the folder has no README and currently contains a
 page-shell planning feature spec, a visual-suite rebucketing plan, and an
@@ -1154,7 +1158,7 @@ Follow-up inspection on 2026-05-26 classified and moved the three current files:
   lives under `docs/workspace-buckets/platform/page-shell-planning/`.
 
 Move posture: completed as a split. Do not add new mixed frontend records under
-`docs/workspace/frontend/`.
+the retired mixed frontend workspace path.
 
 `docs/workspace/implementation-blueprints/` was already classified by artifact
 type earlier in this plan, and the folder inventory did not change that
@@ -1404,13 +1408,13 @@ Authority/currentness posture: useful learning and communication memory, but
 not platform, discovery, frontend, or governance source truth.
 
 Cleanup pressure: reduced after the 2026-05-26 archive move. Existing blog
-drafts now live under `docs/workspace-buckets/archive-history/blogs/`, the old
-workspace path is a breadcrumb, and the dormant blog skill now points to the
-archive-history location for any explicitly requested future use.
+drafts now live under `docs/workspace-buckets/archive-history/blogs/`, and the
+dormant blog skill now points to the archive-history location for any
+explicitly requested future use. The temporary breadcrumb was removed during
+the 2026-05-27 breadcrumb compatibility sweep after references were checked.
 
 Move posture: completed as an archive/history move. Do not recreate active
-`docs/workspace/blogs/` content unless a renewed publishing workflow is
-approved.
+blog workspace content unless a renewed publishing workflow is approved.
 
 `docs/workspace/layer5-pilots/` is currently classified as
 `archive/history`.
@@ -1428,11 +1432,12 @@ into those active surfaces or remain feature-specific historical sequencing
 for the chat-interface delivery flow.
 
 Cleanup pressure: reduced after the 2026-05-26 archive move. The pilot file now
-lives under `docs/workspace-buckets/archive-history/layer5-pilots/`, and the
-old workspace path is a breadcrumb.
+lives under `docs/workspace-buckets/archive-history/layer5-pilots/`. The
+temporary breadcrumb was removed during the 2026-05-27 breadcrumb
+compatibility sweep after Layer 5 run-record references were updated.
 
 Move posture: completed as an archive/history move. Do not add new active
-Layer 5 rules under `docs/workspace/layer5-pilots/`; promote enduring rules
+Layer 5 rules under a pilot folder; promote enduring rules
 into the active Layer 5 harness instead.
 
 `docs/workspace/layer5-task-runs/` is currently classified as
@@ -1471,8 +1476,9 @@ guidance.
 
 Cleanup pressure: reduced after the 2026-05-26 archive move. Existing
 retrospectives now live under
-`docs/workspace-buckets/archive-history/retrospectives/`, and the old workspace
-path is a breadcrumb.
+`docs/workspace-buckets/archive-history/retrospectives/`. The temporary
+breadcrumb was removed during the 2026-05-27 breadcrumb compatibility sweep
+after references were updated.
 
 Move posture: completed as an archive/history move. Future work can still
 audit whether specific lessons have been promoted into active guardrails, but

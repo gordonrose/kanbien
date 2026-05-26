@@ -36,7 +36,7 @@
 | Field | Value |
 | --- | --- |
 | Execution scope | Final source-independent Product Request, PRD/test planning, implementation-blueprint, pilot, and alignment inventory closure sweep. |
-| Allowed write set | docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/**; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md; docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md; docs/workspace/artifact-alignment/2026-05-07-product-request-artifact-alignment-inventory.md |
+| Allowed write set | docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/**; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md; docs/workspace-buckets/archive-history/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md; docs/workspace/artifact-alignment/2026-05-07-product-request-artifact-alignment-inventory.md |
 | Non-goals | specialized data/API/permission/architecture changes, runtime implementation, executable proof changes |
 | Shared seams | source-independent workspace docs |
 | Handoff blockers | none |
@@ -85,7 +85,7 @@
 | Status | pass |
 | Mode | enforced |
 | Reason | no changed files detected |
-| Allowed entries | docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/**; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md; docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md; docs/workspace/artifact-alignment/2026-05-07-product-request-artifact-alignment-inventory.md |
+| Allowed entries | docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/**; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md; docs/workspace-buckets/archive-history/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md; docs/workspace/artifact-alignment/2026-05-07-product-request-artifact-alignment-inventory.md |
 | Changed files | not-applicable |
 | Allowed changed files | not-applicable |
 | Forbidden changed files | not-applicable |

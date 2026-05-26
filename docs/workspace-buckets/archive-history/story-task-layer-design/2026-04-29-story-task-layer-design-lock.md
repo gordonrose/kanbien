@@ -412,7 +412,7 @@ harness state.
 
 Recommended archive path:
 
-- `docs/workspace/harness-archives/2026-04-29-pre-story-task-split/`
+- `docs/workspace-buckets/archive-history/harness-archives/2026-04-29-pre-story-task-split/`
 
 The archive should include copies or snapshots of current harness authorities
 and instruction surfaces, including:

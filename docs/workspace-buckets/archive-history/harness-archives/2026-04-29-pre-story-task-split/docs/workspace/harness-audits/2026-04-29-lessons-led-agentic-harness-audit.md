@@ -15,9 +15,9 @@ runtime reality, visible user review, or artifact traceability still disagreed.
 ## Evidence Reviewed
 
 - Retrospectives:
-  - `docs/workspace/retrospectives/2026-04-07-tenants-feature-retrospective.md`
-  - `docs/workspace/retrospectives/2026-04-18-list-page-first-consumer-adoption-retrospective.md`
-  - `docs/workspace/retrospectives/2026-04-20-root-admin-web-app-hierarchy-governed-adoption-retrospective.md`
+  - `docs/workspace-buckets/archive-history/retrospectives/2026-04-07-tenants-feature-retrospective.md`
+  - `docs/workspace-buckets/archive-history/retrospectives/2026-04-18-list-page-first-consumer-adoption-retrospective.md`
+  - `docs/workspace-buckets/archive-history/retrospectives/2026-04-20-root-admin-web-app-hierarchy-governed-adoption-retrospective.md`
 - Issue reconciliations under `docs/workspace/issue-reconciliations/`,
   especially visible parity, runtime verification, workspace verification, and
   feature-loop misses.

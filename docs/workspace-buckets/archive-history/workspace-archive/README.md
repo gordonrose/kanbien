@@ -1,9 +1,5 @@
 # Workspace Archive
 
-Archived from:
-
-- `docs/workspace/archive/`
-
 This folder preserves older workspace archive material that was already
 classified as `archive/history` before the repo bucket cleanup pass.
 
