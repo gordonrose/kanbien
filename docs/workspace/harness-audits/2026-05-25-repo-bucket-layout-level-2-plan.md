@@ -914,9 +914,9 @@ task-breakdown examples, and Codex task/split/preflight scripts reference this
 folder as the place where a material chat records base commit, branch,
 worktree, planned write set, shared seams, and non-goals before edits proceed.
 
-Cleanup pressure: this folder needs a README or equivalent source-of-truth
-pointer because its contract is enforced by scripts and standards but is not
-explained in the folder itself.
+Cleanup pressure: low after the 2026-05-26 README. The folder contract is now
+explained where future maintainers will see it before adding or moving
+bootstrap records.
 
 Move posture: do not physically move it yet. Script, standards, task-breakdown,
 and AGENTS references would need compatibility updates before relocation.
@@ -977,10 +977,9 @@ not passive archive records. Git workflow standards, tests, and
 `src/scripts/gitWorktreeAudit.ts` use this folder to distinguish intentionally
 parked stale WIP from unsafe dirty stale-base worktrees.
 
-Cleanup pressure: consider a README or standards pointer so maintainers do not
-mistake these records for ordinary archive notes. The key rule is that a marker
-keeps parked WIP visible while allowing unrelated clean work to proceed; it
-does not make that parked work promotable.
+Cleanup pressure: low after the 2026-05-26 README. The key rule is now explicit:
+a marker keeps parked WIP visible while allowing unrelated clean work to
+proceed; it does not make that parked work promotable.
 
 Move posture: do not physically move it yet. Script defaults, tests, and
 standards references would need compatibility updates first.
