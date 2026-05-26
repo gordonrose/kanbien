@@ -1009,10 +1009,11 @@ browser, and mock-honesty proof for specific task or journey evidence. The
 Task Breakdown harness has an `EVIDENCE:qa-evidence` lane, so this folder is
 part of shared proof collection rather than ordinary feature docs.
 
-Cleanup pressure: add a README or source-of-truth pointer and audit whether
-the active harness consistently writes or requires these evidence records. Do
-not assume existing evidence packages still prove current repo behavior without
-rerunning or reconciling the relevant commands, live data, and served assets.
+Cleanup pressure: moderate after the 2026-05-26 README. Future work should
+still audit whether the active harness consistently writes or requires these
+evidence records. Do not assume existing evidence packages still prove current
+repo behavior without rerunning or reconciling the relevant commands, live
+data, and served assets.
 
 Move posture: do not physically move it yet. Evidence-task guardrails and
 downstream story/task artifacts should be reviewed before relocation.
@@ -1175,9 +1176,9 @@ they are usually scoped to a point-in-time change or audit. They should not be
 treated as current implementation truth without checking the reviewed source
 and any follow-up findings.
 
-Cleanup pressure: add a README or source-of-truth pointer. The folder mixes AI
-provenance reviews, standards audits, and source-alignment reviews, so future
-maintainers need to know what belongs here and how review findings are closed.
+Cleanup pressure: low after the 2026-05-26 README. The folder now states that
+reviews are point-in-time governance evidence and must be reconciled with
+current source before being treated as implementation truth.
 
 Move posture: do not physically move it yet. Skills, standards, and downstream
 story/task artifacts reference the current path.
@@ -1225,9 +1226,10 @@ not implementation code. They are active only when reconciled with the current
 PRD, API contract, data dictionary, permission mapping, runbook, security tests,
 and technical signoff for the consuming feature.
 
-Cleanup pressure: add a README or source-of-truth pointer. Each decision record
-should make its status clear: draft, approved for planning, approved for task
-breakdown, technically signed off, superseded, or historical.
+Cleanup pressure: moderate after the 2026-05-26 README. Future file-level
+cleanup should still make each decision record's status clear: draft, approved
+for planning, approved for task breakdown, technically signed off, superseded,
+or historical.
 
 Move posture: do not physically move it yet. Asset decision templates,
 standards, task planning, and downstream feature artifacts reference the
@@ -1284,9 +1286,9 @@ Authority/currentness posture: runbooks are operational guidance, but each file
 must be checked against current implementation, scheduler/job posture, ADRs,
 and support commands before being treated as live operating truth.
 
-Cleanup pressure: add a README or source-of-truth pointer. The folder should
-distinguish active runbooks from story-specific planning or historical
-operations notes.
+Cleanup pressure: moderate after the 2026-05-26 README. Future file-level
+cleanup should still distinguish live runbooks from story-specific planning or
+historical operations notes.
 
 Move posture: do not physically move it yet. First classify runbooks by owning
 feature/platform subject and live-vs-historical status.
