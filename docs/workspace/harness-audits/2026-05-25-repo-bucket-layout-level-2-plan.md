@@ -1310,23 +1310,30 @@ Move posture: do not physically move it yet. If a future archive sweep moves
 binary provenance files, update the capability-matrix notes links in the same
 change.
 
-`docs/workspace/exports/` is currently classified as `unsure / needs decision`.
+`docs/workspace/exports/` is currently classified as
+`shared-governance-kernel`.
 
 Inspected evidence: the folder contains a generated capability contract catalog
-JSON export and no README. The JSON includes generation metadata and capability
-catalog data.
+JSON export plus a 2026-05-26 README. The export is written by the
+`capabilityContractCatalog` feature through
+`src/features/capabilityContractCatalog/generation/artifact.ts`, with the
+default path set to
+`docs/workspace/exports/capability-contract-catalog-v1.generated.json` and a
+test/controlled override available through `CAPABILITY_CATALOG_ARTIFACT_PATH`.
 
-Authority/currentness posture: unclear without a generation contract. The
-export may be useful evidence or a generated snapshot, but it should not be
-treated as canonical truth unless the source, generator command, freshness
-expectation, and regeneration rule are documented.
+Authority/currentness posture: generated governance snapshot, not hand-edited
+source truth. The owning source is the capability contract catalog
+materialization/export flow and its bounded source registry. Treat the JSON as
+reviewable generated evidence whose freshness must be checked against the
+catalog materialization and drift-audit posture.
 
-Cleanup pressure: high. Add a README or generation pointer that names the
-source artifacts, generator command, whether the export is committed source,
-review evidence, or disposable output, and how drift is detected.
+Cleanup pressure: moderate after the 2026-05-26 README. Keep the folder while
+the generator default path, API contract, feature docs, tests, and operator
+workflow still point here.
 
-Move posture: do not physically move it yet. First decide whether exports are a
-recurring maintained-artifact family or historical/generated snapshots.
+Move posture: do not physically move it yet. A future bucket move requires a
+handoff that updates the generator default path, API/feature documentation, and
+any tests or operator workflow relying on the current path.
 
 `docs/workspace/branch-stack-reconciliations/` is currently classified as
 `shared-governance-kernel`, with closure and freshness pressure.
