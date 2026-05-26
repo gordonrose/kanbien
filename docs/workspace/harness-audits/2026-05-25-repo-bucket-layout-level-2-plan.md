@@ -1484,6 +1484,14 @@ implementation authority, but it remains a promotion candidate for durable
 harness-product boundary guidance. Archive or breadcrumb it only after the
 reusable decisions have been promoted into a better durable home.
 
+Follow-up decision: archive and breadcrumb
+`2026-04-29-story-task-layer-design-lock.md`. Inspection on 2026-05-26 found
+that its useful behavioral rules have already been promoted into the active
+Story Breakdown and Task Breakdown skills, the change-artifact standard, the
+Story Breakdown test design guide, and related templates. Keep the original as
+`archive/history` design evidence, but do not leave it in `harness-audits/` as
+if it is current harness law.
+
 Follow-up decision: do not move, archive, or breadcrumb
 `2026-05-06-layer-one-runtime-contract.md` yet. It is a mixed
 `discovery-harness` artifact: behavioral runtime rules plus
