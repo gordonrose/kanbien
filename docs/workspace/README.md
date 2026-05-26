@@ -29,8 +29,8 @@ finalized architecture, PRD, or standards artifact.
   Breadcrumb for archived blog drafts now stored under
   `docs/workspace-buckets/archive-history/blogs/`.
 - `archive/`
-  Superseded or dated working artifacts that should be kept for reference but
-  are no longer active.
+  Breadcrumb for older workspace archive material now stored under
+  `docs/workspace-buckets/archive-history/workspace-archive/`.
 
 ## Matrix Vs Blueprint
 

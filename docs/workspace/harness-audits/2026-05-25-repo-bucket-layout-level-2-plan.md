@@ -944,12 +944,13 @@ older tenant-admin capability matrix draft and notes. The notes still contain
 useful domain context, but current capability-matrix posture keeps active
 matrices under `docs/workspace/capability-matrices/`.
 
-Cleanup pressure: add a README or pointer before broader split work so future
-maintainers know archived records are historical references, not active
-planning truth.
+Cleanup pressure: reduced after the 2026-05-26 archive move. The old workspace
+archive contents now live under
+`docs/workspace-buckets/archive-history/workspace-archive/`, and the old
+workspace path is a breadcrumb.
 
-Move posture: do not physically move it yet. First confirm whether any archived
-records are still referenced as active inputs elsewhere.
+Move posture: completed as an archive/history move. Do not add new active
+workspace artifacts under `docs/workspace/archive/`.
 
 `docs/workspace/harness-archives/` is currently classified as
 `archive/history`.

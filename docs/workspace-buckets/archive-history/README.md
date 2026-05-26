@@ -10,6 +10,7 @@ Use it for:
 - retired blog drafts, outlines, and communication workflow notes
 - retired delivery pilots whose rules have moved into active harnesses
 - retained delivery retrospectives and lesson notes
+- older workspace archive material retained for traceability
 - records useful for learning or reconstruction but not current source truth
 
 Do not use it for:
