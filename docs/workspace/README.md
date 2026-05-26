@@ -18,19 +18,10 @@ finalized architecture, PRD, or standards artifact.
   sources before they are normalized or reviewed.
 - `exports/`
   Files generated from repo work for review or handoff.
-- `retrospectives/`
-  Breadcrumb for archived retrospective lesson notes now stored under
-  `docs/workspace-buckets/archive-history/retrospectives/`.
 - `reviews/`
   Dated review notes for materially AI-assisted, standards-sensitive, or
   otherwise notable delivery slices when the repo needs a durable close-out
   artifact beyond chat history.
-- `blogs/`
-  Breadcrumb for archived blog drafts now stored under
-  `docs/workspace-buckets/archive-history/blogs/`.
-- `archive/`
-  Breadcrumb for older workspace archive material now stored under
-  `docs/workspace-buckets/archive-history/workspace-archive/`.
 
 ## Matrix Vs Blueprint
 
@@ -75,7 +66,8 @@ Prefer sortable, explicit names:
 - imported external file:
   `YYYY-MM-DD-<source>-<short-description>.<ext>`
 - archived file:
-  keep the original name and move it under `archive/`
+  keep the original name and move it under the appropriate
+  `docs/workspace-buckets/archive-history/` subfolder
 
 Examples:
 
@@ -90,8 +82,9 @@ Examples:
    `implementation-blueprints/`.
 3. Treat finalized architecture, PRD, and standards decisions as source-of-
    truth docs under `docs/`, not only here.
-4. Move obsolete working files into `archive/` rather than deleting them
-   immediately.
+4. Move obsolete working files into the appropriate
+   `docs/workspace-buckets/archive-history/` subfolder rather than deleting
+   them immediately.
 
 ## WSL And Windows Paths
 

@@ -14,6 +14,7 @@ Use it for:
 - historical harness snapshots retained for reconciliation and rollback
 - historical harness audits and reconciliation notes
 - historical frontend migration plans
+- historical traceability and semantic-test audit notes
 - historical imported source files retained for provenance after conversion
 - records useful for learning or reconstruction but not current source truth
 

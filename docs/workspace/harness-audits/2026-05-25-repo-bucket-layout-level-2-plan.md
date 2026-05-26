@@ -869,6 +869,12 @@ Progress so far: 35 of the 35 current top-level `docs/workspace/` folders have
 been inspected or cross-referenced in this inventory pass. This completes the
 folder inventory pass, but it does not make every folder move-ready.
 
+Root-level loose-file cleanup: the four dated traceability and semantic-test
+audit files that previously lived directly under `docs/workspace/` were
+classified as `archive/history` and moved to
+`docs/workspace-buckets/archive-history/traceability-audits/` during the
+2026-05-27 cleanup sweep. They had no live references outside themselves.
+
 ### Workspace Folder Inventory Decisions
 
 `docs/workspace/architecture-map/` is currently classified as
