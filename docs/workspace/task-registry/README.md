@@ -15,6 +15,11 @@ Current generated artifact:
 
 - `current-tasks.generated.json`
 
+Freshness note: this generated artifact is only current to its own
+`generatedAt` value. Regenerate it with `npm run codex:tasks:write` before
+using it for high-confidence task, branch, worktree, promotion, or retirement
+decisions.
+
 The inventory is produced by:
 
 ```bash

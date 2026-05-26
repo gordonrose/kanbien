@@ -1066,9 +1066,9 @@ skills, standards, and source implementation. Change-local workspace artifacts
 are not reusable harness law unless explicitly promoted to durable architecture,
 standards, templates, or skills.
 
-Cleanup pressure: `docs/workspace/capability-matrices/` needs a README or
-source-of-truth pointer. The other inspected folders have READMEs that explain
-their change-local posture and validation expectations.
+Cleanup pressure: reduced after the 2026-05-26 README. The folder now states
+that matrices are cross-bucket handoff artifacts and must be classified by
+subject before use or relocation.
 
 `docs/workspace/design-system/` is currently classified as `frontend-harness`,
 with freshness and migration pressure.
@@ -1464,9 +1464,9 @@ Authority/currentness posture: active git/task lifecycle machinery. The
 generated JSON is current only to the last registry generation run, so it
 should be refreshed before being used for high-confidence task decisions.
 
-Cleanup pressure: low to moderate. The README is explicit, but the generated
-artifact needs a clear freshness expectation when used in audits or promotion
-decisions.
+Cleanup pressure: low after the 2026-05-26 README update. The generated
+artifact now has an explicit freshness warning for audit, promotion, and
+retirement decisions.
 
 Move posture: do not physically move it yet. Task lifecycle scripts and
 standards references depend on the current path.
