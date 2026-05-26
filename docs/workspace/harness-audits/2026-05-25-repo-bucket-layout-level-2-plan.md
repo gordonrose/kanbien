@@ -1484,6 +1484,18 @@ implementation authority, but it remains a promotion candidate for durable
 harness-product boundary guidance. Archive or breadcrumb it only after the
 reusable decisions have been promoted into a better durable home.
 
+Follow-up decision: do not move, archive, or breadcrumb
+`2026-05-06-layer-one-runtime-contract.md` yet. It is a mixed
+`discovery-harness` artifact: behavioral runtime rules plus
+request/response/state contract reference. Behavioral rules such as "LLM is a
+proposer only", validation before persistence, client context not being
+authority, safe fallback behavior, and failure handling should be promoted into
+Product Discovery skill or future Layer One runtime skill instructions before
+the file moves. The remaining request/response/state contract should later
+move to a durable Product Discovery or discovery-harness docs home, with
+downstream API, data dictionary, Product Request, and PRD references updated at
+the same time.
+
 ## Non-Goals
 
 - Do not move runtime code.
