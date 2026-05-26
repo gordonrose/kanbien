@@ -11,7 +11,7 @@
 - Owning context:
 - Priority:
 - Related model:
-  `docs/workspace/harness-audits/2026-05-06-product-request-backlog-model.md`
+  `docs/workspace/product-requests/README.md`
 
 ## Human Summary
 
