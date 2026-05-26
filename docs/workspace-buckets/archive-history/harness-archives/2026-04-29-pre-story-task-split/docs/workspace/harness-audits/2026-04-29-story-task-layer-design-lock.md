@@ -5,7 +5,7 @@
 - Status: `design-lock-not-implemented`
 - Date: 2026-04-29
 - Related audit:
-  `docs/workspace/harness-audits/2026-04-29-lessons-led-agentic-harness-audit.md`
+  `docs/workspace-buckets/archive-history/harness-audits/2026-04-29-lessons-led-agentic-harness-audit.md`
 - Purpose:
   Lock the current design direction for splitting story-level planning from
   task-level delivery isolation before changing the repo harness.
@@ -439,7 +439,7 @@ After implementation, create or complete a reconciliation audit that records:
 
 Recommended audit path:
 
-- `docs/workspace/harness-audits/2026-04-29-story-task-split-reconciliation-audit.md`
+- `docs/workspace-buckets/archive-history/harness-audits/2026-04-29-story-task-split-reconciliation-audit.md`
 
 ## Open Decisions
 

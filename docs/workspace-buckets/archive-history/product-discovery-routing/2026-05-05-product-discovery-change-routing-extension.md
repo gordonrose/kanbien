@@ -5,7 +5,7 @@
 - Status: `draft-design-note`
 - Date: 2026-05-05
 - Related boundary map:
-  `docs/workspace/harness-audits/2026-05-05-harness-platform-boundary-map.md`
+  `docs/workspace-buckets/discovery-harness/harness-platform-boundary-map/2026-05-05-harness-platform-boundary-map.md`
 - Request:
   Define how Product Discovery should eventually classify tenant requests into
   config/builder work, tenant extension repository work, or core platform PR
