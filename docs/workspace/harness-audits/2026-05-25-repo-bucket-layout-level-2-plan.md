@@ -1289,22 +1289,26 @@ operations notes.
 Move posture: do not physically move it yet. First classify runbooks by owning
 feature/platform subject and live-vs-historical status.
 
-`docs/workspace/imports/` is currently classified as `unsure / needs decision`.
+`docs/workspace/imports/` is currently classified as `archive/history`.
 
-Inspected evidence: the folder contains imported Excel workbooks and no README.
-The files appear to be raw source imports from earlier capability or root-user
-planning work.
+Inspected evidence: the folder contains imported Excel workbooks plus a README.
+The current workbooks are cited by
+`docs/workspace/capability-matrices/2026-03-30-root-users-capability-matrix-from-rootuser-v2.3-notes.md`
+as the source inputs for a legacy Root Users capability-matrix conversion.
 
-Authority/currentness posture: unclear. Binary imports are especially risky
-because they can look like source truth while being hard to diff, validate, or
-reconcile with current maintained artifacts.
+Authority/currentness posture: preserved provenance, not current source truth.
+The converted notes explicitly say the generated matrix is a first-pass legacy
+conversion and must be reconciled against current PRDs, feature docs, and repo
+defaults before being treated as current authority.
 
-Cleanup pressure: high. Add provenance, owner, date, import purpose, derived
-artifacts, and current status before treating these files as active inputs.
+Cleanup pressure: low to moderate after the 2026-05-26 README. Keep the Excel
+files because converted notes cite them as source evidence, but do not use
+them for implementation without a fresh reconciliation against maintained
+artifacts.
 
-Move posture: do not physically move it yet. First decide whether each workbook
-is an active source input, a generated/exported convenience copy, or
-archive/history.
+Move posture: do not physically move it yet. If a future archive sweep moves
+binary provenance files, update the capability-matrix notes links in the same
+change.
 
 `docs/workspace/exports/` is currently classified as `unsure / needs decision`.
 
