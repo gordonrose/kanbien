@@ -11,6 +11,7 @@ Use it for:
 - retired delivery pilots whose rules have moved into active harnesses
 - retained delivery retrospectives and lesson notes
 - older workspace archive material retained for traceability
+- historical harness snapshots retained for reconciliation and rollback
 - records useful for learning or reconstruction but not current source truth
 
 Do not use it for:

@@ -960,12 +960,14 @@ snapshot as `historical-snapshot`, explains that it preserves prior harness
 authorities, templates, and skills, and explicitly says not to treat archived
 files as current harness guidance.
 
-Cleanup pressure: low. This folder already explains its historical posture and
-current-use boundary.
+Cleanup pressure: reduced after the 2026-05-26 archive move. The historical
+snapshot now lives under
+`docs/workspace-buckets/archive-history/harness-archives/`, and the old
+workspace path is a breadcrumb.
 
-Move posture: do not physically move it yet. Keep it available for
-reconciliation and rollback analysis while live harness truth remains in the
-current repo paths.
+Move posture: completed as an archive/history move. Keep it available for
+reconciliation and rollback analysis through the archive-history path while
+live harness truth remains in the current repo paths.
 
 `docs/workspace/preserved-worktrees/` is currently classified as
 `shared-governance-kernel`.
