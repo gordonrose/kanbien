@@ -91,7 +91,7 @@ Exceptional quarantine is allowed only when:
 
 Recommended template:
 
-- [qa-waiver-or-quarantine-template.md](/home/gordon/kanbien/docs/workspace/qa/qa-waiver-or-quarantine-template.md)
+- [qa-waiver-or-quarantine-template.md](/home/gordon/kanbien/docs/templates/qa-waiver-or-quarantine-template.md)
 
 ## Required Layer Rule
 
@@ -132,7 +132,7 @@ gap in the QA system.
 
 Recommended template:
 
-- [defect-feedback-review-template.md](/home/gordon/kanbien/docs/workspace/qa/defect-feedback-review-template.md)
+- [defect-feedback-review-template.md](/home/gordon/kanbien/docs/templates/defect-feedback-review-template.md)
 
 ## Structured Exploratory Rule
 
@@ -157,7 +157,7 @@ Minimum exploratory artifact:
 
 Recommended template:
 
-- [exploratory-qa-note-template.md](/home/gordon/kanbien/docs/workspace/qa/exploratory-qa-note-template.md)
+- [exploratory-qa-note-template.md](/home/gordon/kanbien/docs/templates/exploratory-qa-note-template.md)
 
 ## Contract And Compatibility Rule
 
@@ -189,7 +189,7 @@ A blocking feature-loop or release summary should record:
 
 Supporting checklist template:
 
-- [qa-checklist-template.md](/home/gordon/kanbien/docs/workspace/qa/qa-checklist-template.md)
+- [qa-checklist-template.md](/home/gordon/kanbien/docs/templates/qa-checklist-template.md)
 
 ## Waiver Rule
 

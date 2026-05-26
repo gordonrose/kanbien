@@ -18,11 +18,14 @@ See also:
 
 ## Expected Files
 
-- checklist templates and completed checklists
-- exploratory QA templates and completed notes
-- defect feedback templates and completed reviews
-- waiver or quarantine record templates and completed records
+- completed checklists
+- completed exploratory QA notes
+- completed defect feedback reviews
+- completed waiver or quarantine records
 - illustrative example records for operating-control training and reuse
+
+Maintained reusable QA templates live in `docs/templates/`. The old template
+paths in this folder are temporary breadcrumbs only.
 
 ## Relationship To Other QA Artifacts
 

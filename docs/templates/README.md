@@ -57,6 +57,18 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Decision gate for any feature, route, job, or UI surface that uploads,
   reads, links, displays, downloads, replaces, deletes, or publishes
   user-managed assets.
+- `qa-checklist-template.md`
+  Feature-loop or release QA checklist template for required layers,
+  execution evidence, residual risk, human QA checks, and final QA decision.
+- `exploratory-qa-note-template.md`
+  Structured exploratory QA note template for high-risk human review charters,
+  exercised areas, findings, and follow-up actions.
+- `defect-feedback-review-template.md`
+  QA feedback review template for escaped defects, missed coverage layers,
+  corrective checks, and reusable QA system learning.
+- `qa-waiver-or-quarantine-template.md`
+  QA waiver or quarantine template for explicitly approved, time-bounded
+  exceptions to blocking suites or release gates.
 - `design-system-principle-template.md`
   Durable-rule template for visual, interaction, and composition principles.
 - `design-system-pattern-template.md`

@@ -996,13 +996,23 @@ feedback reviews, waiver/quarantine records, templates, and examples. These
 artifacts are cross-cutting quality controls rather than feature-owned runtime
 truth.
 
-Cleanup pressure: run a freshness audit before treating the folder as current
-QA truth. The folder is useful, but it may mix templates, examples, and older
-completed records whose current enforcement status is unclear.
+Cleanup pressure: run a freshness audit before treating every completed record
+as current QA truth. The folder is useful, but it may still mix examples and
+older completed records whose current enforcement status is unclear.
 
-Move posture: do not physically move it yet. First verify which QA artifacts
-are still required by the active harness, which are historical examples, and
-which need promotion into standards, skills, validators, or task guardrails.
+Cleanup update: on 2026-05-26, the four reusable QA templates were promoted to
+`docs/templates/` and replaced with temporary breadcrumbs at their old
+`docs/workspace/qa/` paths:
+
+- `qa-checklist-template.md`
+- `exploratory-qa-note-template.md`
+- `defect-feedback-review-template.md`
+- `qa-waiver-or-quarantine-template.md`
+
+Move posture: do not physically move the remaining folder yet. First verify
+which completed QA artifacts are still required by the active harness, which
+are historical examples, and which need promotion into standards, skills,
+validators, or task guardrails.
 
 `docs/workspace/qa-evidence/` is currently classified as
 `shared-governance-kernel`, with freshness and enforcement uncertain.
