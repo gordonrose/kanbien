@@ -18,6 +18,4 @@ the ambiguity that prevented a stronger classification.
 
 Current decision folders:
 
-- `harness-platform-boundary-map/` for an exploratory reusable harness-platform
-  brief whose future owner may be `shared-governance-kernel`,
-  `discovery-harness`, or `archive/history`.
+- None.

@@ -1574,8 +1574,10 @@ and `shared-governance-kernel`, so leaving it in active `harness-audits/`
 would keep the mixed-bag problem alive, but assigning it directly to one
 confident owner would create fake certainty.
 
-Cleanup update: move it to `unsure / needs decision` with a breadcrumb and
-name the decision needed before promotion.
+Cleanup update: it was first moved to `unsure / needs decision` with a
+breadcrumb, then classified by Gordon on 2026-05-26 as `discovery-harness`
+future product/workstream material. Its current bucket path is
+`docs/workspace-buckets/discovery-harness/harness-platform-boundary-map/`.
 
 Follow-up decision: archive and breadcrumb
 `2026-04-29-story-task-layer-design-lock.md`. Inspection on 2026-05-26 found
@@ -1617,15 +1619,13 @@ named active `codex/*` branches were no longer present locally during cleanup,
 so it was archived as historical compliance evidence rather than retained as a
 current blocker.
 
-Follow-up decision needed: `2026-05-05-harness-platform-boundary-map.md` was
-moved to
-`docs/workspace-buckets/unsure-needs-decision/harness-platform-boundary-map/`
-with a breadcrumb. It should not remain in active `harness-audits/`, but its
-future owner is genuinely ambiguous: it may become reusable
-`shared-governance-kernel` harness-platform boundary law, a
-`discovery-harness` Product Discovery or Technical Steering packet for a future
-repo-mapping harness product, or `archive/history` after useful decisions are
-extracted.
+Follow-up decision resolved: on 2026-05-26, Gordon chose option B for
+`2026-05-05-harness-platform-boundary-map.md`. It is classified as
+`discovery-harness` future product/workstream material and moved to
+`docs/workspace-buckets/discovery-harness/harness-platform-boundary-map/` with
+a breadcrumb at the old `harness-audits/` path. Treat it as a future Product
+Discovery or Technical Steering candidate for a portable repo-mapping harness,
+not as current Kanbien repo law.
 
 Cleanup pause point: after this cleanup pass, `docs/workspace/harness-audits/`
 is intentionally left with its README, this active plan, and temporary
