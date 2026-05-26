@@ -716,6 +716,11 @@ the original example visible under `docs/workspace-buckets/archive-history/`
 while replacing the old active-looking path with a breadcrumb that points to
 the archived original and the current maintained guidance.
 
+Draft design notes whose reusable rules have already been promoted should use
+the same archive-then-breadcrumb pattern. The original note remains available
+as design history, while active guidance points to the promoted template,
+README, skill, standard, or architecture document.
+
 ## Future Bucket Skeleton
 
 The desired bucket-first documentation skeleton now exists under
