@@ -12,6 +12,10 @@ implementation planning begins.
   Reusable classification language for product discovery. Taxonomy values flag
   questions, likely downstream gates, and reuse paths; they do not decide
   implementation architecture.
+- `layer-one-runtime-contract.md`
+  Durable request/response/state contract for runtime Layer 1 Product
+  Discovery clients. Assistant behavior rules for this runtime live in the
+  Product Discovery maintainer skill.
 - `templates/`
   Reusable product discovery presets. The generic template is the fallback when
   no more specific product template exists.

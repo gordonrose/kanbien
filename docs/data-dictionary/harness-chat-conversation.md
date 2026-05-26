@@ -107,13 +107,13 @@
   should split official record references, evidence-backed inference, and
   session working memory instead of expanding this field into an unbounded
   transcript-derived catchall.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 - `compact_transcript_summary`
   Type / Shape: `TEXT | NULL`
   Description: Server-maintained summary used for future turns without loading
   excessive transcript context.
   Constraints / Notes: Must not replace durable message history.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 - `latest_packet_revision_id`
   Type / Shape: `UUID | NULL`
   Description: Current packet revision for this conversation, if one exists.
@@ -207,7 +207,7 @@
   append accepted message turn.
   Effect on stored fields:
   updates structured state, compact summary, `updated_at`, and audit evidence.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 - Mutation rule:
   generate packet.
   Effect on stored fields:

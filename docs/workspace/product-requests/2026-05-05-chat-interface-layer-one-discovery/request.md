@@ -53,7 +53,7 @@
 - Journey Inventory / QA Evidence Plan:
   `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - Layer 1 Runtime Contract:
-  `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
+  `docs/product-discovery/layer-one-runtime-contract.md`
 - Permission Mapping:
   `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 - API Contract:

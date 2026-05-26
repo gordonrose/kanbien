@@ -57,7 +57,7 @@
   Description: Message author class.
   Constraints / Notes: Allowed planned values are `user`, `assistant`, and
   `system`.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 - `body`
   Type / Shape: `TEXT`
   Description: User-visible message body.
@@ -69,7 +69,7 @@
   discovery state.
   Constraints / Notes: Raw proposals can be retained as transcript evidence
   without becoming accepted structured state.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 - `created_by_root_user_id`
   Type / Shape: `UUID | NULL`
   Description: Root builder that submitted a user turn.
@@ -146,7 +146,7 @@
   Effect on stored fields:
   creates transcript evidence and may update accepted structured discovery
   state on the parent conversation.
-  Source: Layer One Runtime Contract.
+  Source: Layer One Runtime Contract, `docs/product-discovery/layer-one-runtime-contract.md`.
 
 ## Cross-Feature Read Seams
 

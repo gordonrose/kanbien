@@ -1496,6 +1496,12 @@ move to a durable Product Discovery or discovery-harness docs home, with
 downstream API, data dictionary, Product Request, and PRD references updated at
 the same time.
 
+Closeout update: this split has started. Behavioral runtime rules were promoted
+to the Product Discovery maintainer skill, the durable contract was promoted to
+`docs/product-discovery/layer-one-runtime-contract.md`, and the old
+`docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md` path
+was replaced with a breadcrumb.
+
 ## Non-Goals
 
 - Do not move runtime code.
