@@ -37,6 +37,11 @@ Every design system may choose different background values, but it must preserve
 the same background roles, theme identities, metadata fields, and consumer
 restrictions before downstream primitives or patterns consume the token.
 
+Neutral page, surface, and subtle foundations do not automatically consume the
+primary color source. Primary-tinted backgrounds must be defined as a separate
+derived token decision so they can prove contrast and state meaning without
+changing neutral background roles.
+
 ## Consumer Restrictions
 
 Consumers must not hard-code background color values that this contract governs.

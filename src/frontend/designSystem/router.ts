@@ -631,6 +631,13 @@ export function createDesignSystemRouter(): Router {
     }),
   );
 
+  router.use(
+    "/layers",
+    express.static(join(frontendRoot, "layers"), {
+      fallthrough: false,
+    }),
+  );
+
   router.get("/templates/record_management_list_centric/organization-demo-fixture.json", (_request, response) => {
     response.sendFile(join(
       process.cwd(),

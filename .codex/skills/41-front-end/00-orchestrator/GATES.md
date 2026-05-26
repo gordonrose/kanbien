@@ -24,6 +24,14 @@ The shared harness quality bar must be preserved:
 
 The layer output must state whether the next layer is allowed, blocked, or scaffold-only.
 
+Passing a gate permits handoff only.
+
+It does not permit the assistant to work from memory in the next layer.
+
+The next layer's active `SKILL.md` owns all layer-specific advice, artifact
+shape, allowed files, forbidden moves, evals, and implementation
+recommendations.
+
 Governance docs are not construction APIs. When a governed runtime seam exists
 for a token, primitive, pattern, component, or later layer, downstream source
 must consume that seam instead of reconstructing UI from prose docs,

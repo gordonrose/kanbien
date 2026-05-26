@@ -78,6 +78,10 @@ product workflow, and unsigned visual values from becoming the primitive API.
 Pass only if `Required Evidence` changes what proof is needed before later
 layers can rely on the primitive.
 
+Pass only if `Rendered View` names the exact route to open when a rendered
+primitive proof exists, or explicitly states that no rendered view is available
+and why.
+
 Pass only if `Consumer Restrictions` prevent local hard-coding, copied markup,
 duplicated controller behavior, and route-local source-of-truth drift.
 

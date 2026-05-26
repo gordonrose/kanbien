@@ -105,6 +105,14 @@ consumer obligations.
 | rendered verification | `<desktop/mobile/zoom/focus/state proof, or not in scope because no implementation/proof route exists yet>` |
 | consumer boundary | `<proof consumers cannot reasonably copy local markup or CSS instead>` |
 
+## Rendered View
+
+| Field | Value |
+| --- | --- |
+| How to view | `<exact /design-system/<system-key>/primitives/<primitive-name> route, or none>` |
+| Rendered view status | `<available | blocked | not-created-for-docs-only | not-applicable>` |
+| If unavailable | `<blocker or not-applicable reason>` |
+
 ## Consumer Restrictions
 
 Consumers must not hard-code values governed by Layer 2 tokens.

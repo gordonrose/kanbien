@@ -71,11 +71,30 @@ combined with a system implementation, which should be avoided by default.
     "rendererExport": "renderTokenSpecPage",
     "allowedConsumers": ["02-token", "03-primitive", "04-pattern-contract"]
   },
+  "dependencies": [
+    {
+      "contractId": "<upstream-contract-id-or-none>",
+      "variantId": "<upstream-variant-id-or-none>",
+      "tokenName": "<upstream-token-name-or-none>",
+      "value": "<upstream-value-or-none>",
+      "relationship": "<derived-from | paired-with | aliases | none>"
+    }
+  ],
+  "diagnostic": {
+    "kind": "<dependency-hex-override | none>",
+    "rule": "<what the temporary rendered override may change and what it must not mutate>"
+  },
   "variants": [
     {
       "id": "<stable-variant-id>",
       "tokenName": "<token-name>",
       "value": "<token-value-or-mapping>",
+      "derivation": {
+        "sourceTokenName": "<upstream-token-name-or-none>",
+        "sourceValue": "<upstream-value-or-none>",
+        "formulaOrMapping": "<formula-mapping-or-none>",
+        "renderedValue": "<final-value-shown-in-proof>"
+      },
       "preview": {
         "kind": "<token-type-preview-kind>",
         "sample": "<sample-value-or-text>",
@@ -135,6 +154,21 @@ decision as shared contract or system implementation.
 | --- | --- | --- |
 | `<shared contract | system implementation>` | `<token name, role, mapping, value, or rule>` | `<approved value or rule>` |
 
+## Dependency Chain
+
+Complete this section for derived, paired, aliased, or source-dependent tokens.
+If the token is standalone, state `none` and why.
+
+| Field | Value |
+| --- | --- |
+| Upstream contract | `<contract-id-or-none>` |
+| Upstream variant or token | `<variant-id-or-token-name-or-none>` |
+| Upstream value | `<source-value-or-none>` |
+| Formula or mapping | `<formula-or-mapping-or-none>` |
+| Final rendered value | `<computed-or-signed-rendered-value>` |
+| What changes when upstream changes | `<rendered output or not-applicable reason>` |
+| What must not change | `<signed token values, behavior contract, accessibility contract, or not-applicable>` |
+
 ## Shared Token Contract
 
 | Field | Value |
@@ -178,6 +212,17 @@ human review.
 | Shared renderer export | `renderTokenSpecPage` |
 | Seam consumers | `<token pages through proof modules; primitives and later layers through governed runtime modules; or blocked>` |
 
+## Rendered View
+
+| Field | Value |
+| --- | --- |
+| How to view | `<exact /design-system/<system-key>/tokens/<token-type-or-family> route, or none>` |
+| Rendered view status | `<available | blocked | not-created-for-docs-only>` |
+| Dependency chain visible | `<yes | no | not-applicable>` |
+| Diagnostic override | `<available | not-applicable | blocked>` |
+| Diagnostic override scope | `<what temporary rendered proof values may change, or not-applicable>` |
+| If unavailable | `<blocker or not-applicable reason>` |
+
 ## Allowed Consumers
 
 | Consumer | Rule |
@@ -193,6 +238,7 @@ human review.
 | magnification | `<required zoom proof>` |
 | density or constrained layout | `<required proof or not applicable reason>` |
 | accessibility | `<contrast, focus, target-size, motion, text, or color-independent proof>` |
+| dependency rendering | `<source chain, formula or mapping, diagnostic override, or not-applicable reason>` |
 
 ## Consumer Restrictions
 

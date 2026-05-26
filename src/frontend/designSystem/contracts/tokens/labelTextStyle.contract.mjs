@@ -1,0 +1,28 @@
+export const labelTextStyleTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.label-text-style",
+  tokenType: "text-style",
+  requiredVariantRoles: ["short label text"],
+  requiredThemes: ["all"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "textStyleRole",
+    "fontFamilyValue",
+    "fontFallbackRule",
+    "fontSizeValue",
+    "fontWeightValue",
+    "lineHeightValue",
+    "letterSpacingValue",
+    "textTransform",
+    "overflowReadiness",
+    "zoomBehavior",
+  ],
+  metadataFields: ["textStyleRole", "theme", "state", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "overflowRule"],
+  consumerRules: [
+    "Consumers must use this token for governed short-label typography instead of local font-size, weight, line-height, or letter-spacing literals.",
+    "Consumers must preserve the complete font family fallback stack instead of extracting only the preferred font.",
+    "This token does not define truncation behavior, tooltip behavior, foreground color, selected state, or status meaning.",
+    "Text-based primitives that can truncate must also preserve the text-overflow-disclosure behavior rule.",
+  ],
+};

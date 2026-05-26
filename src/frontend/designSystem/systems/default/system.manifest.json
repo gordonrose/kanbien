@@ -10,6 +10,54 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs",
       "implementationExport": "backgroundColorTokenSpec",
       "pageRoute": "/design-system/default/tokens/background-color"
+    },
+    "tokens.focus-ring": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/focusRing.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs",
+      "implementationExport": "focusRingTokenSpec",
+      "pageRoute": "/design-system/default/tokens/focus-ring"
+    },
+    "tokens.label-text-style": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/labelTextStyle.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",
+      "implementationExport": "labelTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/label-text-style"
+    },
+    "tokens.minimum-target-size": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/minimumTargetSize.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/minimumTargetSize.tokens.mjs",
+      "implementationExport": "minimumTargetSizeTokenSpec",
+      "pageRoute": "/design-system/default/tokens/minimum-target-size"
+    },
+    "tokens.primary-color-source": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/primaryColorSource.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs",
+      "implementationExport": "primaryColorSourceTokenSpec",
+      "pageRoute": "/design-system/default/tokens/primary-color-source"
+    },
+    "tokens.primary-tinted-background": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/primaryTintedBackground.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs",
+      "implementationExport": "primaryTintedBackgroundTokenSpec",
+      "pageRoute": "/design-system/default/tokens/primary-tinted-background"
+    },
+    "tokens.primary-tinted-foreground": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/primaryTintedForeground.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs",
+      "implementationExport": "primaryTintedForegroundTokenSpec",
+      "pageRoute": "/design-system/default/tokens/primary-tinted-foreground"
+    },
+    "tokens.tooltip-surface": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/tooltipSurface.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/tooltipSurface.tokens.mjs",
+      "implementationExport": "tooltipSurfaceTokenSpec",
+      "pageRoute": "/design-system/default/tokens/tooltip-surface"
+    },
+    "tokens.tooltip-text-style": {
+      "contractModule": "src/frontend/designSystem/contracts/tokens/tooltipTextStyle.contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/tooltipTextStyle.tokens.mjs",
+      "implementationExport": "tooltipTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/tooltip-text-style"
     }
   }
 }

@@ -25,6 +25,10 @@ Use this skill when later-layer work reveals missing, stale, or contradictory be
 
 Use this skill when a request appears to mix behavior, token, primitive, pattern, component, demo, canonical, or app adoption decisions in one pass.
 
+Use this skill before proposing, planning, inventorying, evaluating blockers,
+explaining next steps, creating artifacts, or editing files for Layer 1
+behavior-rule work.
+
 ## Required Inputs
 
 You need the UI family name.

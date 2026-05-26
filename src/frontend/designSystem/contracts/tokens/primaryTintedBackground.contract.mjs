@@ -1,0 +1,28 @@
+export const primaryTintedBackgroundTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.primary-tinted-background",
+  tokenType: "primary-tinted-background",
+  derivedFrom: "tokens.primary-color-source",
+  requiredVariantRoles: ["primary tinted subtle background"],
+  requiredThemes: ["original", "dark", "desert"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "backgroundRole",
+    "sourceTokenId",
+    "sourceTokenName",
+    "sourceColorValue",
+    "backgroundValue",
+    "foregroundPairing",
+    "contrastRequirement",
+    "themeMapping",
+    "stateMapping",
+  ],
+  metadataFields: ["backgroundRole", "theme", "state", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "contrastRule"],
+  consumerRules: [
+    "Every design system must derive primary tinted backgrounds from its approved primary color source.",
+    "Consumers must not treat this token as selected, active, warning, error, success, or validation meaning.",
+    "Consumers must preserve approved foreground pairing and contrast evidence before using this token for text-bearing surfaces.",
+    "Consumers must import the system implementation or contract-approved seam, not copy tint literals into app CSS.",
+  ],
+};

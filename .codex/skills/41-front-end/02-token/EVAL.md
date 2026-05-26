@@ -80,9 +80,28 @@ the shared contract does not define concrete system values.
 Pass only if every variant includes a stable id, preview, metadata, and
 use-case instructions.
 
+Pass only if every derived, paired, aliased, or source-dependent token records
+the upstream contract or token, upstream variant when applicable, upstream
+value, formula or mapping, final rendered value, and consumer-visible
+relationship.
+
 Pass only if `Page And Code Seam` names a page under
 `/design-system/<system-key>/tokens/`, the reusable contract seam, the governed
 Layer 2 runtime seam, the system proof module, and render seams.
+
+Pass only if `Rendered View` names the exact route to open when a rendered
+proof exists, or explicitly states that no rendered view is available and why.
+
+Pass only if `Rendered View` says whether the dependency chain is visible and
+whether a diagnostic override is available, blocked, or not applicable.
+
+Pass only if a visual derived token's proof page renders the upstream token
+identity, upstream value, formula or mapping, final rendered value, and the
+rendered output affected by dependency changes.
+
+Pass only if a visual derived token has a focused browser test proving that any
+diagnostic override changes rendered proof previews without mutating signed
+token values, or records why an override is not applicable.
 
 Pass only if `Allowed Consumers` changes what downstream layers may do.
 
@@ -148,6 +167,13 @@ the first-app-adoption layer.
 
 Fail if the TokenDefinitionArtifact defines a one-off token page that is not fed by the shared
 contract, system proof module, and renderer seams.
+
+Fail if a derived token's rendered route hides where the value comes from or
+requires source inspection to understand the dependency chain.
+
+Fail if a diagnostic override can be mistaken for changing signed token values,
+readiness-index truth, behavior contracts, accessibility contracts, or system
+implementation approval.
 
 Fail if later layers are told to import directly from
 `src/frontend/designSystem/systems/<system-key>/` when a governed Layer 2

@@ -1,0 +1,27 @@
+export const tooltipTextStyleTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.tooltip-text-style",
+  tokenType: "text-style",
+  requiredVariantRoles: ["tooltip disclosure text"],
+  requiredThemes: ["all"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "textStyleRole",
+    "fontFamilyValue",
+    "fontFallbackRule",
+    "fontSizeValue",
+    "fontWeightValue",
+    "lineHeightValue",
+    "letterSpacingValue",
+    "textTransform",
+    "overflowReadiness",
+    "zoomBehavior",
+  ],
+  metadataFields: ["textStyleRole", "theme", "state", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "overflowRule"],
+  consumerRules: [
+    "Consumers must use this token for governed tooltip disclosure text instead of local font-size, weight, line-height, or letter-spacing literals.",
+    "Consumers must preserve the complete font family fallback stack instead of extracting only the preferred font.",
+    "This token does not define tooltip surface color, trigger behavior, placement, dismissal, ARIA behavior, selected state, or validation meaning.",
+  ],
+};

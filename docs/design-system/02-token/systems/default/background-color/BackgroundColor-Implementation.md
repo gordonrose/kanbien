@@ -25,6 +25,11 @@
 | Token job | Govern page and surface background colour variants before later primitives or patterns consume them. |
 | Non-goals | This TokenDefinitionArtifact does not define primitive behavior, pattern structure, component APIs, demo routes, canonical files, app wrappers, or app adoption. |
 
+This implementation intentionally does not consume `primary-color-source`.
+These variants are neutral page and surface foundations. A future
+primary-tinted subtle background should be created as a separate derived color
+token instead of changing these neutral roles.
+
 ## Layer Boundary
 
 This TokenDefinitionArtifact may define token decisions only.

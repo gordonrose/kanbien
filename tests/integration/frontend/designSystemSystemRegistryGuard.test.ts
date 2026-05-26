@@ -117,6 +117,54 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.focus-ring") {
+          const registeredTokenModule = await registration.tokens?.focusRing?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.label-text-style") {
+          const registeredTokenModule = await registration.tokens?.labelTextStyle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.minimum-target-size") {
+          const registeredTokenModule = await registration.tokens?.minimumTargetSize?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.primary-color-source") {
+          const registeredTokenModule = await registration.tokens?.primaryColorSource?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.primary-tinted-background") {
+          const registeredTokenModule = await registration.tokens?.primaryTintedBackground?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.primary-tinted-foreground") {
+          const registeredTokenModule = await registration.tokens?.primaryTintedForeground?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.tooltip-surface") {
+          const registeredTokenModule = await registration.tokens?.tooltipSurface?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.tooltip-text-style") {
+          const registeredTokenModule = await registration.tokens?.tooltipTextStyle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         const response = await request(createApp()).get(contract.pageRoute).set("host", "admin.example.test");
 
         expect(response.status, contract.pageRoute).toBe(200);

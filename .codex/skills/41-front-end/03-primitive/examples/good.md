@@ -26,6 +26,14 @@ the shared contract separate from the `default` proof, has no interactive
 behavior to fake, names the planned public boundary, and blocks consumers from
 copying route-local markup or hard-coded colors.
 
+## Rendered View
+
+| Field | Value |
+| --- | --- |
+| How to view | `none` |
+| Rendered view status | `not-created-for-docs-only` |
+| If unavailable | This example records the primitive contract and system proof only; no rendered primitive route exists yet. |
+
 ## Runtime Primitive Seam Policy
 
 | Field | Value |

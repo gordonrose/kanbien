@@ -48,6 +48,11 @@ but every variant must use the same deterministic structure.
     "rendererExport": "renderTokenSpecPage",
     "allowedConsumers": ["02-token", "03-primitive", "04-pattern-contract"]
   },
+  "dependencies": [],
+  "diagnostic": {
+    "kind": "none",
+    "rule": "No upstream dependency exists for this standalone palette token."
+  },
   "variants": [
     {
       "id": "colour-primary-500",
@@ -102,6 +107,28 @@ but every variant must use the same deterministic structure.
 | Shared renderer export | `renderTokenSpecPage` |
 | Seam consumers | token pages, primitives, and patterns |
 
+## Rendered View
+
+| Field | Value |
+| --- | --- |
+| How to view | `/design-system/default/tokens/colours` |
+| Rendered view status | `available` |
+| Dependency chain visible | `not-applicable` |
+| Diagnostic override | `not-applicable` |
+| Diagnostic override scope | `not-applicable` |
+| If unavailable | Not applicable. |
+
+## Derived Token Addendum
+
+If this example depended on another token, it would also need a `Dependency
+Chain` section naming the upstream token, source value, formula or mapping,
+final rendered value, and rendered proof behavior when the upstream value is
+temporarily overridden.
+
+For visual derived tokens, the rendered route would need to expose that chain
+to a human reviewer and include a browser test proving any diagnostic override
+changes only rendered previews, not signed token values.
+
 ## Shared Token Contract
 
 | Field | Value |
@@ -127,4 +154,5 @@ This example records the upstream behavior need, separates the shared contract
 from the `default` implementation, uses a predefined `color-palette` structure,
 includes a parseable spec block, defines a `default` system token page route,
 names the reusable code seam, and gives each variant preview, metadata, and
-use-case instructions.
+use-case instructions. Because it is standalone, it explicitly marks dependency
+rendering and diagnostic override as not applicable.

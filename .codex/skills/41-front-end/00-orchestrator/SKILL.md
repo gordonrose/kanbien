@@ -51,6 +51,19 @@ When primitive work is needed and Gate 02 passes, use `../03-primitive/SKILL.md`
 
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 
+## Layer Skill Handoff Rule
+
+Routing is not complete when the next layer is named.
+
+When the selected next layer is active, open and follow that layer's `SKILL.md`
+before giving layer-specific advice, proposing outputs, creating artifacts, or
+editing files for that layer.
+
+If the selected next layer is scaffold-only, stop and say the layer harness
+must be activated before real governed work can proceed.
+
+Do not continue from memory once a layer has been identified.
+
 ## Accessibility Rule
 
 The shared accessibility default applies to every layer:

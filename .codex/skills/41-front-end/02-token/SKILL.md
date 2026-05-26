@@ -37,6 +37,10 @@ Use this skill when existing token decisions may be duplicated, renamed, or
 hard-coded locally unless a governed TokenDefinitionArtifact clarifies the allowed
 source of truth.
 
+Use this skill before proposing, planning, inventorying readiness, choosing the
+next token seam, evaluating blockers, explaining implementation steps, creating
+artifacts, or editing files for Layer 2 token work.
+
 ## Required Inputs
 
 You need the UI family name.
@@ -145,9 +149,16 @@ docs/design-system/01-behavior-rule/shared/<UI Family Name>/<UI Family Name>-Beh
 This skill may update this layer's own examples, template, evals, and README
 when the user is building or refining the harness.
 
-This skill must not edit implementation files unless the user explicitly asks
-for token implementation after the TokenDefinitionArtifact is accepted. A TokenDefinitionArtifact
-may specify required page and seam paths without creating those files.
+When the user approves Layer 2 token work, the default path is to create or
+update the TokenDefinitionArtifact, governed runtime seam, proof route, renderer
+support, focused tests, and readiness-index status in one governed slice.
+
+Keep the token non-consumable until proof and verification pass.
+
+Stop before runtime or proof implementation only when the user asks for
+docs-only planning, when required input is missing, or when the token decision
+is blocked. In that case, the TokenDefinitionArtifact may specify required page
+and seam paths without creating those files.
 
 ## Forbidden Moves
 
@@ -282,6 +293,16 @@ instructions, page route, and seam exports only when the inventory and evidence
 support approval. Classify each decision as shared contract or system
 implementation.
 
+If the token depends on another token or token variant, record the dependency
+chain before proof implementation. The artifact and rendered proof must expose
+the upstream token id or name, upstream value, formula or mapping, final
+rendered value, and what changes when the upstream value changes.
+
+For visual derived tokens, add a rendered diagnostic override when it is safe
+to perturb the upstream value in review. The override must change only rendered
+proof previews. It must not mutate `tokenDefinitionV1.variants`, signed system
+values, or readiness-index truth.
+
 Name required evidence for themes, direction, magnification, density, and any
 accessibility-relevant state.
 
@@ -294,6 +315,24 @@ the token decision.
 Complete the page and code seam plan so the output has a deterministic
 `/design-system/<system-key>/tokens/` review surface backed by reusable
 contract and system proof data.
+
+For derived tokens, the review surface must make the dependency chain visible
+without source inspection. A human reviewer must be able to see where the value
+comes from, how it is calculated or mapped, and how the rendered proof responds
+to a temporary upstream override when such an override is applicable.
+
+Unless the user requested docs-only planning or a blocker stops implementation,
+create or update the planned contract module, governed runtime seam, system
+proof module, proof route, route bootstrap, renderer support, and focused tests
+in the same slice.
+
+Keep the readiness index in a non-consumable state while implementation or
+evidence is incomplete. Promote the token to consumable only after the runtime
+seam, proof route, verification evidence, and readiness-index entry agree.
+
+Record how to view the rendered token proof. If no rendered proof route exists
+because the work is docs-only or blocked, state that explicitly and name the
+blocker.
 
 If the request includes primitive, pattern, component, demo, canonical, or app
 work, write a short implementation-plan recommendation instead of merging the
@@ -323,6 +362,9 @@ Stop if the requested token type does not have a predefined
 Stop if the TokenDefinitionArtifact cannot express every variant with preview,
 metadata, and use-case instructions.
 
+Stop if a derived token cannot name its upstream token dependency, formula or
+mapping, final rendered value, and rendered proof behavior.
+
 Stop if the token page would require page-local one-off rendering instead of
 the reusable contract, system proof module, and renderer seams.
 
@@ -340,6 +382,14 @@ reusable visual fact.
 
 When the TokenDefinitionArtifact passes, name the next expected layer and whether it is
 allowed, blocked, or scaffold-only.
+
+Always include a rendered-view output for the completed loop: the exact
+`/design-system/<system-key>/tokens/<token-type-or-family>` route when it
+exists, or `none` with the reason it is unavailable.
+
+For derived tokens, also state whether the rendered proof exposes the upstream
+dependency chain and whether a diagnostic override is available or intentionally
+not applicable.
 
 If the next expected layer is scaffold-only, do not hand off to real layer
 work. State that the later layer needs its own `SKILL.md`, `TEMPLATE.md`,

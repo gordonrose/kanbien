@@ -39,6 +39,10 @@ Use this skill when a primitive artifact needs revision because a required
 behavior, accessibility rule, token dependency, or public boundary is stale or
 too broad.
 
+Use this skill before proposing, planning, inventorying readiness, choosing the
+next primitive, evaluating blockers, explaining implementation steps, creating
+artifacts, or editing files for Layer 3 primitive work.
+
 ## Required Inputs
 
 You need the UI family name.
@@ -319,6 +323,10 @@ semantics.
 Record required evidence, including rendered verification when implementation
 or a proof route is in scope.
 
+Record how to view the rendered primitive proof. If no rendered proof route
+exists because the work is docs-only, blocked, or proof is not yet implemented,
+state that explicitly and name the blocker.
+
 Write consumer restrictions that prevent app-local recreation, copied markup,
 local CSS values, and duplicated controller behavior.
 
@@ -330,3 +338,7 @@ recommendation instead of merging the layers.
 Run the checks in `EVAL.md`.
 
 Run the checks in `ACCESSIBILITY-EVAL.md`.
+
+Always include a rendered-view output for the completed loop: the exact
+`/design-system/<system-key>/primitives/<primitive-name>` route when it exists,
+or `none` with the reason it is unavailable.

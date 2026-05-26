@@ -79,6 +79,15 @@ They must not be used as full governed layer skills until their skill structure 
 
 ## Request Routing
 
+Layer routing is complete only when one of these is true:
+
+- the selected active layer skill has been opened and is being followed
+- the selected layer is scaffold-only and work has stopped
+- an upstream gate is missing and work has been routed back to that earlier
+  layer
+
+Naming the next layer is not enough.
+
 Before routing by layer name, classify by the decision being requested rather than by the UI noun. If a noun spans token, primitive, pattern, or component-seam decisions, route to `01-behavior-rule` to split and record the layer-specific decisions.
 
 If the request asks for a new governed UI family, route to `01-behavior-rule`.

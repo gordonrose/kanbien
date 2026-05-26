@@ -51,6 +51,80 @@ function renderDefinitionList(entries) {
     .join("");
 }
 
+function renderDependencyOverrideDiagnostic(pageModel) {
+  const diagnostic = pageModel.diagnostic;
+  if (
+    !diagnostic ||
+    !["primary-color-source-override", "dependency-hex-override"].includes(diagnostic.kind)
+  ) {
+    return "";
+  }
+
+  const previews = diagnostic.previews ?? [
+    {
+      role: "source",
+      label: diagnostic.sourceLabel,
+      sample: diagnostic.defaultHex,
+    },
+    {
+      role: "subtle",
+      label: diagnostic.subtleLabel,
+      sample: diagnostic.subtleSample,
+    },
+    {
+      role: "label",
+      label: diagnostic.labelColorLabel,
+      sample: diagnostic.labelSample,
+    },
+    {
+      role: "ring",
+      label: diagnostic.ringLabel,
+      sample: diagnostic.ringSample,
+    },
+  ];
+
+  return `
+    <section class="token-spec-diagnostic" aria-label="${escapeHtml(diagnostic.label)}">
+      <div class="token-spec-diagnostic-control">
+        <div>
+          <p class="token-spec-kicker">${escapeHtml(diagnostic.kicker)}</p>
+          <h2>${escapeHtml(diagnostic.label)}</h2>
+          <p>${escapeHtml(diagnostic.description)}</p>
+        </div>
+        <label>
+          <span>${escapeHtml(diagnostic.inputLabel)}</span>
+          <input
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            spellcheck="false"
+            value="${escapeHtml(diagnostic.defaultHex)}"
+            pattern="^#[0-9a-fA-F]{6}$"
+            data-token-diagnostic-hex-input
+          />
+        </label>
+        <button type="button" data-token-diagnostic-reset>${escapeHtml(diagnostic.resetLabel)}</button>
+      </div>
+      <div class="token-spec-diagnostic-previews" aria-label="${escapeHtml(diagnostic.previewLabel)}">
+        ${previews
+          .map(
+            (preview) => `
+              <div
+                class="${preview.role === "source" ? "token-spec-diagnostic-swatch" : "token-spec-diagnostic-derived"}"
+                data-token-diagnostic-role="${escapeHtml(preview.role)}"
+              >
+                <span>${escapeHtml(preview.label)}</span>
+                <strong ${preview.role === "source" ? "data-token-diagnostic-source-value" : ""}>${escapeHtml(preview.sample)}</strong>
+              </div>
+            `,
+          )
+          .join("")}
+      </div>
+      <p class="token-spec-diagnostic-status" data-token-diagnostic-status>${escapeHtml(diagnostic.validStatus)}</p>
+    </section>
+  `;
+}
+
 function renderVariantFields(pageModel, variant) {
   return renderDefinitionList(pageModel.variantFields.map(([key, label]) => [label, variant[key]]));
 }
@@ -61,11 +135,95 @@ function renderUsage(variant) {
     .join("");
 }
 
+function renderVariantPreview(variant) {
+  if (variant.preview.kind === "focus-ring-sample") {
+    return `
+      <div
+        class="token-spec-focus-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-ring="${escapeHtml(variant.preview.ringValue)}"
+        data-token-preview-offset="${escapeHtml(variant.preview.offsetValue)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-focus-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "target-size-box") {
+    return `
+      <div
+        class="token-spec-target-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-min-width="${escapeHtml(variant.preview.minimumWidth)}"
+        data-token-preview-min-height="${escapeHtml(variant.preview.minimumHeight)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-target-box">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "text-sample") {
+    return `
+      <div
+        class="token-spec-text-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-text-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "text-style-sample") {
+    return `
+      <div
+        class="token-spec-text-style-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-font-family="${escapeHtml(variant.preview.fontFamily)}"
+        data-token-preview-font-size="${escapeHtml(variant.preview.fontSize)}"
+        data-token-preview-font-weight="${escapeHtml(variant.preview.fontWeight)}"
+        data-token-preview-line-height="${escapeHtml(variant.preview.lineHeight)}"
+        data-token-preview-letter-spacing="${escapeHtml(variant.preview.letterSpacing)}"
+        data-token-preview-text-transform="${escapeHtml(variant.preview.textTransform)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-text-style-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "tooltip-surface-sample") {
+    return `
+      <div class="token-spec-tooltip-preview" aria-hidden="true">
+        <span
+          class="token-spec-tooltip-sample"
+          data-token-preview-background="${escapeHtml(variant.preview.background)}"
+          data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+          data-token-preview-border="${escapeHtml(variant.preview.border)}"
+          data-token-preview-shadow="${escapeHtml(variant.preview.shadow)}"
+          data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+          data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+          data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+          data-token-preview-max-inline-size="${escapeHtml(variant.preview.maxInlineSize)}"
+        >${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  return `<div class="token-spec-swatch" data-token-preview-background="${escapeHtml(variant.preview.background)}" aria-hidden="true"></div>`;
+}
+
 function renderVariantCard(pageModel, variant) {
   return `
     <article class="token-spec-card" data-token-variant-id="${escapeHtml(variant.id)}">
       <div class="token-spec-card-preview">
-        <div class="token-spec-swatch" data-token-preview-background="${escapeHtml(variant.preview.background)}" aria-hidden="true"></div>
+        ${renderVariantPreview(variant)}
         <p class="token-spec-preview-label">${escapeHtml(variant.preview.label)}</p>
       </div>
       <div class="token-spec-card-main">
@@ -107,6 +265,135 @@ function applyPreviewStyles(root) {
       element.style.color = element.dataset.tokenPreviewForeground ?? "";
     }
   }
+
+  for (const element of root.querySelectorAll("[data-token-preview-ring]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-ring", element.dataset.tokenPreviewRing ?? "");
+      element.style.setProperty("--token-preview-ring-offset", element.dataset.tokenPreviewOffset ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-min-width]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-min-width", element.dataset.tokenPreviewMinWidth ?? "");
+      element.style.setProperty("--token-preview-min-height", element.dataset.tokenPreviewMinHeight ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-font-size]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-font-family", element.dataset.tokenPreviewFontFamily ?? "");
+      element.style.setProperty("--token-preview-font-size", element.dataset.tokenPreviewFontSize ?? "");
+      element.style.setProperty("--token-preview-font-weight", element.dataset.tokenPreviewFontWeight ?? "");
+      element.style.setProperty("--token-preview-line-height", element.dataset.tokenPreviewLineHeight ?? "");
+      element.style.setProperty("--token-preview-letter-spacing", element.dataset.tokenPreviewLetterSpacing ?? "");
+      element.style.setProperty("--token-preview-text-transform", element.dataset.tokenPreviewTextTransform ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-border]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-border", element.dataset.tokenPreviewBorder ?? "");
+      element.style.setProperty("--token-preview-shadow", element.dataset.tokenPreviewShadow ?? "");
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-max-inline-size", element.dataset.tokenPreviewMaxInlineSize ?? "");
+    }
+  }
+}
+
+function isValidHex(value) {
+  return /^#[0-9a-fA-F]{6}$/.test(value);
+}
+
+function applyDependencyOverrideDiagnostic(root, pageModel) {
+  const diagnostic = pageModel.diagnostic;
+  if (
+    !diagnostic ||
+    !["primary-color-source-override", "dependency-hex-override"].includes(diagnostic.kind)
+  ) {
+    return;
+  }
+
+  const input = root.querySelector("[data-token-diagnostic-hex-input]");
+  const reset = root.querySelector("[data-token-diagnostic-reset]");
+  const sourceValue = root.querySelector("[data-token-diagnostic-source-value]");
+  const status = root.querySelector("[data-token-diagnostic-status]");
+  const source = root.querySelector("[data-token-diagnostic-role='source']");
+  const subtle = root.querySelector("[data-token-diagnostic-role='subtle']");
+  const label = root.querySelector("[data-token-diagnostic-role='label']");
+  const ring = root.querySelector("[data-token-diagnostic-role='ring']");
+  const tint = root.querySelector("[data-token-diagnostic-role='primary-tinted-background']");
+  const foreground = root.querySelector("[data-token-diagnostic-role='primary-tinted-foreground']");
+
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+
+  const tintMixTarget = diagnostic.tintMixTarget ?? "white";
+  const tintSourceRatio = diagnostic.tintSourceRatio ?? "12%";
+  const foregroundMixTarget = diagnostic.foregroundMixTarget ?? "var(--ink)";
+  const foregroundSourceRatio = diagnostic.foregroundSourceRatio ?? null;
+
+  function render(hex) {
+    const value = hex.trim();
+    const valid = isValidHex(value);
+    input.setAttribute("aria-invalid", valid ? "false" : "true");
+
+    if (status instanceof HTMLElement) {
+      status.textContent = valid ? diagnostic.validStatus : diagnostic.invalidStatus;
+    }
+
+    if (!valid) {
+      return;
+    }
+
+    if (source instanceof HTMLElement) {
+      source.style.background = value;
+    }
+    if (subtle instanceof HTMLElement) {
+      subtle.style.background = `color-mix(in srgb, ${value} 12%, white)`;
+      subtle.style.color = value;
+    }
+    if (tint instanceof HTMLElement) {
+      tint.style.background = `color-mix(in srgb, ${value} ${tintSourceRatio}, ${tintMixTarget})`;
+      tint.style.color = diagnostic.tintForeground ?? "var(--ink)";
+    }
+    if (foreground instanceof HTMLElement) {
+      foreground.style.background = `color-mix(in srgb, ${value} ${tintSourceRatio}, ${tintMixTarget})`;
+      foreground.style.color = foregroundSourceRatio
+        ? `color-mix(in srgb, ${value} ${foregroundSourceRatio}, ${foregroundMixTarget})`
+        : value;
+    }
+    if (label instanceof HTMLElement) {
+      label.style.background = "color-mix(in srgb, currentColor 5%, transparent)";
+      label.style.color = foregroundSourceRatio
+        ? `color-mix(in srgb, ${value} ${foregroundSourceRatio}, ${foregroundMixTarget})`
+        : value;
+    }
+    if (ring instanceof HTMLElement) {
+      ring.style.background = "var(--paper)";
+      ring.style.color = "var(--ink)";
+      ring.style.outline = `0.125rem solid color-mix(in srgb, ${value} 58%, white)`;
+      ring.style.outlineOffset = "0.125rem";
+    }
+    if (sourceValue instanceof HTMLElement) {
+      sourceValue.textContent = value.toLowerCase();
+    }
+  }
+
+  input.addEventListener("input", () => render(input.value));
+
+  if (reset instanceof HTMLButtonElement) {
+    reset.addEventListener("click", () => {
+      input.value = diagnostic.defaultHex;
+      render(input.value);
+      input.focus();
+    });
+  }
+
+  render(input.value);
 }
 
 export function renderTokenSpecPage({ pageModel, target = document }) {
@@ -125,6 +412,8 @@ export function renderTokenSpecPage({ pageModel, target = document }) {
         </section>
 
         ${renderSummaryPanels(pageModel)}
+
+        ${renderDependencyOverrideDiagnostic(pageModel)}
 
         <section class="token-spec-section" aria-label="Token variants">
           <div class="token-spec-section-header">
@@ -152,4 +441,5 @@ export function renderTokenSpecPage({ pageModel, target = document }) {
   `;
 
   applyPreviewStyles(root);
+  applyDependencyOverrideDiagnostic(root, pageModel);
 }

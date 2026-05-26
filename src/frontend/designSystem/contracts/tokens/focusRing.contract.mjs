@@ -1,0 +1,26 @@
+export const focusRingTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.focus-ring",
+  tokenType: "focus-ring",
+  requiredVariantRoles: ["visible focus ring"],
+  requiredThemes: ["original", "dark", "desert"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "focusRole",
+    "sourceTokenId",
+    "sourceTokenName",
+    "sourceColorValue",
+    "ringValue",
+    "offsetValue",
+    "contrastRequirement",
+    "themeMapping",
+    "layoutImpact",
+  ],
+  metadataFields: ["focusRole", "theme", "state", "layoutImpact", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "visibleFocusRule"],
+  consumerRules: [
+    "Every design system must expose a visible focus-ring token before interactive primitives consume focus styling.",
+    "Design-system implementations may change values and appearance, but must preserve visible focus, theme proof, and no-layout-shift requirements.",
+    "Consumers must import the system implementation or contract-approved seam, not copy focus-ring literals into app CSS.",
+  ],
+};
