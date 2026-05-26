@@ -23,6 +23,34 @@ If local `main` and `origin/main` differ:
 - no promotion or merge work should continue against local `main`
 - use a clean branch or worktree based on `origin/main` instead
 
+## Cautious Rebase Rule
+
+When the operator asks to rebase a task branch, treat the request as a request
+to update the branch onto the latest confirmed upstream baseline while
+preserving scoped work.
+
+Use this cautious flow by default:
+
+```bash
+git status --short --branch
+git fetch origin
+git rev-list --left-right --count HEAD...origin/main
+git rebase origin/main
+git status --short --branch
+```
+
+Before rebasing, explain whether the current branch is ahead of, behind, or
+diverged from `origin/main`, and whether dirty work is present. If dirty work is
+present, identify whether it is owned by the current task before continuing.
+
+If local `main` is stale after fetching, confirm whether it has unique commits
+before realigning it to `origin/main`. Do not move a branch ref that contains
+unique local commits without explicit approval.
+
+If the rebase stops for conflicts, stop and surface the conflicted files before
+resolving them. Do not use destructive cleanup commands to make the rebase
+succeed.
+
 ## Required Checks
 
 Before material work begins, run:
