@@ -1,52 +1,29 @@
-# Product Request: <Title>
+# Product Request Template Moved
 
-## Status
+This file is a breadcrumb for the older Product Request template copy that
+previously lived in `docs/workspace/harness-audits/`.
 
-- Product Request ID:
-- Date:
-- Current status:
-- Requester-facing status:
-- Source channel:
-  `chat | api | support | operator | ide | cli`
-- Owning context:
-- Priority:
-- Related model:
+Use the maintained template instead:
+
+- `docs/templates/product-request-template.md`
+
+Status:
+
+- superseded
+- retained only so old references have a clear redirect trail
+
+Why:
+
+- `docs/workspace/harness-audits/` is for audit and reconciliation notes, not
+  long-term maintained templates
+- the maintained template under `docs/templates/` includes newer Product
+  Request hierarchy, PRD, capability-matrix, test-case, API, permission, and
+  runtime-contract fields
+
+Compatibility note:
+
+- old chats or docs may still point to this path
+- follow the maintained template above for new Product Requests
+- the related Product Request backlog model currently remains at
   `docs/workspace/harness-audits/2026-05-06-product-request-backlog-model.md`
-
-## Human Summary
-
-- Target users:
-- Change type:
-- Routing layer:
-  `config-builder | tenant-extension-pr | core-platform-pr | needs-routing-decision`
-- What we are trying to accomplish:
-
-## Artifact Links
-
-- Product Discovery packet:
-- Technical Steering packet:
-- Story Breakdown:
-- Task Breakdown:
-- Work runs / Loop Runs:
-- Pull requests, config changes, or extension changes:
-
-## What The Chat Widget Should Show
-
-- Title:
-- Status:
-- Short update:
-- Waiting next:
-- User action needed:
-
-## Source-Of-Truth Boundary
-
-Product Request is a brief human-readable summary, status tracker, and artifact
-index. It must not replace the linked artifacts.
-
-- Product Discovery owns product intent.
-- Technical Steering owns architecture decisions.
-- Story Breakdown owns final story definitions.
-- Task Breakdown owns task write sets and execution handoff.
-- Loop Runs own execution evidence, scorecards, events, metrics, change sets,
-  and changed artifact traceability.
-- PRs own reviewable source-control changes.
+  until a separate inspected promotion or move decision is made

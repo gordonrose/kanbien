@@ -687,6 +687,30 @@ condition must be recorded before the twin exists.
 Do not build migration tooling or a dedicated migration skill until the target
 bucket layout and repeated move pattern are clearer.
 
+### Breadcrumb Lifecycle Rule
+
+Breadcrumbs are temporary migration aids, not permanent architecture.
+
+A breadcrumb may be left at a legacy path when an artifact is moved,
+superseded, archived, or split and old references may still exist.
+
+Every breadcrumb must state:
+
+- new canonical home, or the homes used when the artifact split
+- status: moved, superseded, archived, or split
+- why the breadcrumb exists
+- what compatibility it preserves
+- what must be true before the breadcrumb can be deleted
+
+Breadcrumbs must be removed during the final docs cleanup sweep once:
+
+- maintained references have been updated
+- scripts, skills, templates, and tests no longer depend on the legacy path
+- old path compatibility is no longer intentionally supported
+
+The goal is a clean, well-structured, well-boundaried `/docs` tree. Breadcrumbs
+exist only to make the transition safe and traceable.
+
 ## Future Bucket Skeleton
 
 The desired bucket-first documentation skeleton now exists under
