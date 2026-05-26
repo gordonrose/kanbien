@@ -9,6 +9,11 @@ Use it for documentation that governs or describes:
 - visual/browser proof surfaces for governed frontend families
 - frontend topology or app-adoption plans that are still frontend-harness owned
 
+Current subfolders:
+
+- `entity-management/`
+  Entity Management frontend-harness recovery and governance notes.
+
 Do not use it for:
 
 - real app UI implementation plans that bypass design-system signoff

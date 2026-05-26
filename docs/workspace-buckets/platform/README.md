@@ -10,6 +10,11 @@ Use it for documentation that governs or describes:
 - source-independent platform planning records that are still active before
   they move into implementation, data dictionary, API contract, or feature docs
 
+Current subfolders:
+
+- `page-shell-planning/`
+  Planned platform feature seam for governed page-shell planning.
+
 Do not use it for:
 
 - Product Discovery interview flow or packet-generation rules

@@ -12,6 +12,7 @@ Use it for:
 - retained delivery retrospectives and lesson notes
 - older workspace archive material retained for traceability
 - historical harness snapshots retained for reconciliation and rollback
+- historical frontend migration plans
 - records useful for learning or reconstruction but not current source truth
 
 Do not use it for:

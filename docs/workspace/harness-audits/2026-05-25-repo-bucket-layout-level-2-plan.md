@@ -1094,7 +1094,8 @@ Move posture: do not physically move it yet. Design-system skills, tests,
 adoption guards, visual artifacts, and frontend planning references depend on
 the current path.
 
-`docs/workspace/frontend/` is currently classified as `unsure / needs decision`.
+`docs/workspace/frontend/` is currently classified as a split/breadcrumb
+folder after the 2026-05-26 cleanup.
 
 Inspected evidence: the folder has no README and currently contains a
 page-shell planning feature spec, a visual-suite rebucketing plan, and an
@@ -1114,22 +1115,27 @@ belongs under `frontend-harness`, `platform`, or `archive/history`, and whether
 any active guidance must be promoted to architecture, standards,
 design-system, or implementation-planning artifacts.
 
-Follow-up inspection on 2026-05-26 classified the three current files without
-moving them:
+Follow-up inspection on 2026-05-26 classified and moved the three current files:
 
 - `2026-04-20-visual-suite-second-wave-rebucketing-plan.md` is
   `archive/history`: the plan states the second-wave visual rebucketing is
   complete, and the current `tests/visual/` tree plus `package.json` scripts
-  match the target structure.
+  match the target structure. It now lives under
+  `docs/workspace-buckets/archive-history/frontend/`.
 - `2026-05-21-entity-management-page-seam-recovery-plan.md` remains
   `frontend-harness`: newer design-system guides, standards, skills, and
   Entity Management artifacts carry much of its guidance, but the recovery
-  plan should stay as a freshness-review note until the Entity Management
-  artifact chain is audited.
+  plan should stay as a freshness-review note in
+  `docs/workspace-buckets/frontend-harness/entity-management/` until the Entity
+  Management artifact chain is audited.
 - `page-shell-planning-feature-spec.md` is planned `platform` work with a
   `frontend-harness` dependency: `pageShellPlanning` is referenced by PRD,
   capability-matrix, data-dictionary, and implementation-blueprint artifacts,
-  but no `src/features/pageShellPlanning/` implementation exists yet.
+  but no `src/features/pageShellPlanning/` implementation exists yet. It now
+  lives under `docs/workspace-buckets/platform/page-shell-planning/`.
+
+Move posture: completed as a split. Do not add new mixed frontend records under
+`docs/workspace/frontend/`.
 
 `docs/workspace/implementation-blueprints/` was already classified by artifact
 type earlier in this plan, and the folder inventory did not change that
