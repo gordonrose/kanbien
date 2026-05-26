@@ -1478,11 +1478,13 @@ artifact folders.
 
 Follow-up decision: do not archive
 `2026-05-05-harness-platform-boundary-map.md` as ordinary history yet. Its
-subject is `discovery-harness` future harness-product architecture, and it
-also touches `shared-governance-kernel` repo-split policy. It is not current
-implementation authority, but it remains a promotion candidate for durable
-harness-product boundary guidance. Archive or breadcrumb it only after the
-reusable decisions have been promoted into a better durable home.
+subject is `discovery-harness` future harness-product architecture. It also
+touches `shared-governance-kernel` repo-split policy, but its center of
+gravity is Product Discovery for the harness as a future platform product.
+It is not current implementation authority, but it remains a promotion
+candidate for durable harness-product boundary guidance. Archive or breadcrumb
+it only after the reusable decisions have been promoted into a better durable
+home, likely a future Product Discovery or harness-platform planning home.
 
 Follow-up decision: archive and breadcrumb
 `2026-04-29-story-task-layer-design-lock.md`. Inspection on 2026-05-26 found
