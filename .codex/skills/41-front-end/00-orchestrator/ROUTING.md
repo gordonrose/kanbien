@@ -63,13 +63,34 @@ Required evals:
 - `../03-primitive/EVAL.md`
 - `../03-primitive/ACCESSIBILITY-EVAL.md`
 
+### 04 Pattern Contract
+
+Status: active.
+
+Use for requests that ask to define, confirm, revise, retire, or govern a
+reusable UI composition after required behavior-rule, token, and primitive
+gates have passed.
+
+Use when a component, demo, canonical, or app adoption ask is blocked by
+missing governed pattern composition, slot ownership, data shape, state
+coordination, accessibility behavior across primitives, or public consumption
+boundary.
+
+Layer skill:
+
+- `../04-pattern-contract/SKILL.md`
+
+Required evals:
+
+- `../04-pattern-contract/EVAL.md`
+- `../04-pattern-contract/ACCESSIBILITY-EVAL.md`
+
 ## Scaffolded Layers
 
 The following layers currently have README scaffolds only.
 
 They must not be used as full governed layer skills until their skill structure exists.
 
-- `04-pattern-contract`
 - `05-component-seam`
 - `06-demo-page`
 - `07-canonical-scenarios`
@@ -103,9 +124,15 @@ If the request asks for a primitive and required tokens are missing, route to `0
 If the request asks for a primitive and required tokens are consumable, route to
 `03-primitive`.
 
-If the request asks for a pattern, component, demo, canonical, app adoption, or
-parity test before required primitive work has passed, route to `03-primitive`
-when behavior-rule and token gates already pass.
+If the request asks for a pattern but required primitive work has not passed,
+route to `03-primitive` when behavior-rule and token gates already pass.
+
+If the request asks for a pattern and required primitives are consumable, route
+to `04-pattern-contract`.
+
+If the request asks for a component, demo, canonical, app adoption, or parity
+test before required pattern contract work has passed, route to
+`04-pattern-contract` when upstream gates already pass.
 
 If the request asks for a pattern, component, demo, canonical, app adoption, or parity test before a passed behavior rule, route to `01-behavior-rule`.
 

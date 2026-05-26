@@ -21,6 +21,7 @@ The current governed source shape is:
 src/frontend/designSystem/
   layers/02-token/
   layers/03-primitive/
+  layers/04-pattern-contract/
   systems/<system-key>/tokens/proofs/
 ```
 
@@ -60,7 +61,8 @@ component seam, pattern, app adoption, or visual proof route.
 This readiness note does not claim that a component library exists.
 
 It does not approve app UI adoption, route-local markup reuse, copied
-`/design-system` HTML, component seams, Layer 4 patterns, or demo pages.
+`/design-system` HTML, component seams, specific Layer 4 patterns, or demo
+pages.
 
 It does not make interactive primitives available. A primitive such as
 `button` or `input` still needs its own shared primitive contract, selected
@@ -69,7 +71,13 @@ verification before later layers may consume it.
 
 ## Still Blocked
 
-Layer 4 remains scaffold-only. Do not create reusable patterns yet.
+Layer 4 is active as a harness, but no specific reusable patterns are
+consumable yet.
+
+Create pattern contracts through
+`docs/design-system/04-pattern-contract/` and
+`src/frontend/designSystem/layers/04-pattern-contract/`; do not promote legacy
+top-level `/design-system/patterns` route markup by assumption.
 
 Interactive primitives such as `button`, `icon-button`, `input`, `checkbox`,
 `radio`, and `switch` remain blocked until their required Layer 2 token seams

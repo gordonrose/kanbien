@@ -86,7 +86,7 @@ The primitive may consume only token seams listed as consumable in
 
 ## Gate 03: Primitive To Pattern Contract
 
-Current status: active for primitive evaluation; pattern-contract layer is scaffold-only.
+Current status: active.
 
 Required primitive files:
 
@@ -101,13 +101,41 @@ explicit approved exception.
 
 The primitive artifact must name the next expected layer.
 
-Because `04-pattern-contract` is currently scaffold-only, the orchestrator must
-stop after this gate and say the pattern-contract layer needs its full harness
-files before real pattern work can proceed.
+Required pattern-contract harness files:
+
+- `../04-pattern-contract/SKILL.md`
+- `../04-pattern-contract/TEMPLATE.md`
+- `../04-pattern-contract/EVAL.md`
+- `../04-pattern-contract/ACCESSIBILITY-EVAL.md`
+
+The pattern may compose only primitives listed as consumable in
+`docs/design-system/03-primitive/primitive-readiness-index.md`.
+
+## Gate 04: Pattern Contract To Component Seam
+
+Current status: active for pattern evaluation; component-seam layer is
+scaffold-only.
+
+Required pattern files:
+
+- pattern contract artifact for the target UI family
+- `../04-pattern-contract/EVAL.md`
+- `../04-pattern-contract/ACCESSIBILITY-EVAL.md`
+
+The pattern artifact must pass `pattern-contract-pass`.
+
+The pattern accessibility eval must pass `accessibility-pass` or have an
+explicit approved exception.
+
+The pattern artifact must name the next expected layer.
+
+Because `05-component-seam` is currently scaffold-only, the orchestrator must
+stop after this gate and say the component-seam layer needs its full harness
+files before real component seam work can proceed.
 
 ## Later Gates
 
-Gates after Gate 03 are intentionally not active yet.
+Gates after Gate 04 are intentionally not active yet.
 
 Do not invent pass conditions for layers `04` through `10` until each layer has its own full structure.
 

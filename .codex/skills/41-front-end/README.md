@@ -59,6 +59,7 @@ Example: `Menu Trigger` is a primitive. `icon-size`, `target-size`, and
 the trigger with menu surface and item behavior. `RowActionMenu` is a component
 seam if it is the exported interface apps consume.
 
-Layer ask guidance for layers `04` through `10` still lives in
+Layer ask guidance for layers `05` through `10` still lives in
 `01-behavior-rule/SKILL.md` until those layers become active. Layers
-`02-token` and `03-primitive` have their own active skills and evals.
+`02-token`, `03-primitive`, and `04-pattern-contract` have their own active
+skills and evals.

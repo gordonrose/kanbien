@@ -6,7 +6,8 @@ review inventory.
 Use these folders as the governed source of truth:
 
 - `layers/` stores numbered reusable runtime seams owned by the frontend
-  harness, such as Layer 2 tokens and Layer 3 primitives.
+  harness, such as Layer 2 tokens, Layer 3 primitives, and Layer 4 pattern
+  contracts.
 - `systems/` stores implementation-specific proof routes, assets, manifests,
   and rendered review surfaces for a selected design system.
 - `shared/` stores reusable renderer and shell infrastructure that is not owned

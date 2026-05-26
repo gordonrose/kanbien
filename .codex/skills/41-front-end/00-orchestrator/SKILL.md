@@ -23,7 +23,9 @@ Do not perform detailed layer work inside this skill.
 
 `03-primitive` is active.
 
-Layers `04` through `10` are scaffolded and not yet active as full skills.
+`04-pattern-contract` is active.
+
+Layers `05` through `10` are scaffolded and not yet active as full skills.
 
 Do not treat a scaffolded layer as implementation-ready.
 
@@ -48,6 +50,8 @@ When behavior-rule work is needed, use `../01-behavior-rule/SKILL.md`.
 When token work is needed and Gate 01 passes, use `../02-token/SKILL.md`.
 
 When primitive work is needed and Gate 02 passes, use `../03-primitive/SKILL.md`.
+
+When pattern contract work is needed and Gate 03 passes, use `../04-pattern-contract/SKILL.md`.
 
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 

@@ -159,12 +159,12 @@ Consumers must not weaken the accessibility requirements recorded here.
 | Step | Layer | Action | Blocking Reason |
 | --- | --- | --- | --- |
 | 1 | `03-primitive` | Accept the shared `surface-foundation` primitive contract for `default` proof review. | No known contract blocker remains. |
-| 2 | `04-pattern-contract` | Wait until Layer 4 is active before composing this primitive into panels, cards, page sections, or layout structures. | Layer 4 remains scaffold-only. |
+| 2 | `04-pattern-contract` | Compose this primitive into panels, cards, page sections, or layout structures only through a governed Layer 4 pattern contract. | No specific pattern has been created yet. |
 
 ## Next Layer
 
 | Field | Value |
 | --- | --- |
 | Next expected layer | `04-pattern-contract` |
-| Next layer status | `scaffold-only` |
-| Reason | The primitive contract exists, but composition into reusable patterns must wait until Layer 4 is activated. |
+| Next layer status | `allowed` |
+| Reason | The Layer 4 harness is active, but each reusable composition still needs its own pattern contract before later layers consume it. |
