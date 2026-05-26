@@ -3,9 +3,9 @@
 ## Inputs Used
 
 - Template:
-  [`New Capability Matrix - populated.xlsx`](/home/gordon/kanbien/docs/workspace/imports/New%20Capability%20Matrix%20-%20populated.xlsx)
+  [`New Capability Matrix - populated.xlsx`](/home/gordon/kanbien/docs/workspace-buckets/archive-history/imports/root-users-legacy-capability-matrix/New%20Capability%20Matrix%20-%20populated.xlsx)
 - Legacy source workbook:
-  [`RootUser V2.3.xlsx`](/home/gordon/kanbien/docs/workspace/imports/RootUser%20V2.3.xlsx)
+  [`RootUser V2.3.xlsx`](/home/gordon/kanbien/docs/workspace-buckets/archive-history/imports/root-users-legacy-capability-matrix/RootUser%20V2.3.xlsx)
 - Generated matrix:
   [`2026-03-30-root-users-capability-matrix-from-rootuser-v2.3.csv`](/home/gordon/kanbien/docs/workspace/capability-matrices/2026-03-30-root-users-capability-matrix-from-rootuser-v2.3.csv)
 

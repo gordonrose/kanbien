@@ -1,6 +1,7 @@
 # Imports
 
-This folder stores imported source files kept for provenance.
+This folder is the active inbox for imported source files that are being used
+to create or reconcile repo artifacts.
 
 Use this folder for:
 
@@ -14,6 +15,11 @@ Before using an imported file to guide implementation, compare it with current
 PRDs, feature docs, API contracts, architecture defaults, and maintained
 workspace artifacts.
 
-Current files are preserved as source inputs for the legacy Root Users
-capability-matrix conversion. The converted notes and CSV under
-`docs/workspace/capability-matrices/` explain their status.
+Current status:
+
+- No active imported source files are kept here.
+- Legacy Root Users capability-matrix workbooks were archived to
+  `docs/workspace-buckets/archive-history/imports/root-users-legacy-capability-matrix/`.
+
+When an import is only retained for historical provenance after conversion,
+move it to `archive/history` and update the converted artifact's source links.

@@ -1318,7 +1318,9 @@ historical operations notes.
 Move posture: do not physically move it yet. First classify runbooks by owning
 feature/platform subject and live-vs-historical status.
 
-`docs/workspace/imports/` is currently classified as `archive/history`.
+`docs/workspace/imports/` is currently classified as
+`shared-governance-kernel` active import inbox, while completed imported
+provenance files belong in `archive/history`.
 
 Inspected evidence: the folder contains imported Excel workbooks plus a README.
 The current workbooks are cited by
@@ -1330,14 +1332,15 @@ The converted notes explicitly say the generated matrix is a first-pass legacy
 conversion and must be reconciled against current PRDs, feature docs, and repo
 defaults before being treated as current authority.
 
-Cleanup pressure: low to moderate after the 2026-05-26 README. Keep the Excel
-files because converted notes cite them as source evidence, but do not use
-them for implementation without a fresh reconciliation against maintained
-artifacts.
+Cleanup pressure: reduced after the 2026-05-26 import cleanup. Keep the active
+`docs/workspace/imports/` folder as an inbox for current imported source files,
+but do not leave completed legacy provenance files there.
 
-Move posture: do not physically move it yet. If a future archive sweep moves
-binary provenance files, update the capability-matrix notes links in the same
-change.
+Move posture: the legacy Root Users workbook inputs were moved to
+`docs/workspace-buckets/archive-history/imports/root-users-legacy-capability-matrix/`,
+and the converted capability-matrix notes were updated to point at the archive
+paths. Future imported files should stay in `docs/workspace/imports/` only
+while they are active inputs.
 
 `docs/workspace/exports/` is currently classified as
 `shared-governance-kernel`.
