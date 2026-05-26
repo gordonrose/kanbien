@@ -15,3 +15,9 @@ name the decision needed before promotion, archival, or relocation.
 
 Before moving legacy files here, leave a breadcrumb at the old path and record
 the ambiguity that prevented a stronger classification.
+
+Current decision folders:
+
+- `harness-platform-boundary-map/` for an exploratory reusable harness-platform
+  brief whose future owner may be `shared-governance-kernel`,
+  `discovery-harness`, or `archive/history`.

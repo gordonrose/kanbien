@@ -886,8 +886,9 @@ task-breakdown guardrails, frontend architecture guidance, and existing
 workspace artifacts still reference the current path, so a future move would
 need compatibility updates before relocation.
 
-`docs/workspace/harness-audits/` is currently classified as
-`unsure / needs decision`.
+`docs/workspace/harness-audits/` started as `unsure / needs decision`; after
+the first cleanup pass it is now an active audit workspace with temporary
+breadcrumbs.
 
 Reason: the folder is a mixed collection rather than one artifact class. The
 inspected files include active governance evidence, draft harness-product
@@ -896,14 +897,16 @@ Request templates/examples, and historical story/task transition records. Some
 files are source-truth candidates, some are examples, and some are likely
 archive/history, so the folder should not be forced into one confident bucket.
 
-Cleanup pressure: this folder needs further split or stronger placement rules
-before any physical repo split. Future audit folders should not become the
-default home for active contracts, templates, examples, draft product models,
-and historical evidence without an explicit promotion or archive path.
+Cleanup pressure: this folder still needs a final breadcrumb/link sweep, but
+the mixed artifact problem has been reduced. Future audit folders should not
+become the default home for active contracts, templates, examples, draft
+product models, and historical evidence without an explicit promotion or
+archive path.
 
-Move posture: do not physically move files yet. First decide which records are
-active authority, which are discovery-harness source truth, which are examples
-or templates, and which are archive/history.
+Move posture: keep the active Level 2 plan and the folder README here. Move
+historical audit evidence to `archive/history`, reusable or ambiguous harness
+product direction to its owning bucket or `unsure / needs decision`, and leave
+temporary breadcrumbs until the final compatibility sweep.
 
 `docs/workspace/chat-bootstraps/` is currently classified as
 `shared-governance-kernel`.
@@ -1517,7 +1520,7 @@ skills, archive/history classification, or a later physical split.
 ### First Cleanup Inspection: `docs/workspace/harness-audits/`
 
 The first cleanup inspection found 12 markdown files and no folder README.
-The folder currently mixes at least five artifact kinds:
+That inspection showed the folder mixed at least five artifact kinds:
 
 - active audit plan:
   `2026-05-25-repo-bucket-layout-level-2-plan.md`
@@ -1546,14 +1549,14 @@ promoted to their owning standards, skills, templates, architecture docs, or
 artifact folders.
 
 Follow-up decision: do not archive
-`2026-05-05-harness-platform-boundary-map.md` as ordinary history yet. Its
-subject is `discovery-harness` future harness-product architecture. It also
-touches `shared-governance-kernel` repo-split policy, but its center of
-gravity is Product Discovery for the harness as a future platform product.
-It is not current implementation authority, but it remains a promotion
-candidate for durable harness-product boundary guidance. Archive or breadcrumb
-it only after the reusable decisions have been promoted into a better durable
-home, likely a future Product Discovery or harness-platform planning home.
+`2026-05-05-harness-platform-boundary-map.md` as ordinary history. Its subject
+is future harness-product architecture. It touches both `discovery-harness`
+and `shared-governance-kernel`, so leaving it in active `harness-audits/`
+would keep the mixed-bag problem alive, but assigning it directly to one
+confident owner would create fake certainty.
+
+Cleanup update: move it to `unsure / needs decision` with a breadcrumb and
+name the decision needed before promotion.
 
 Follow-up decision: archive and breadcrumb
 `2026-04-29-story-task-layer-design-lock.md`. Inspection on 2026-05-26 found
@@ -1581,14 +1584,35 @@ to the Product Discovery maintainer skill, the durable contract was promoted to
 `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md` path
 was replaced with a breadcrumb.
 
-Cleanup pause point: after the 2026-05-26 remaining-file inspection,
-`docs/workspace/harness-audits/` is intentionally left with its README, this
-active plan, temporary breadcrumbs, historical audit/reconciliation evidence,
-and the `discovery-harness` boundary-map promotion candidate. Do not continue
-moving files from this folder just because breadcrumbs remain. Breadcrumbs
-should be removed during the later final docs cleanup sweep, and the boundary
-map should move only after a future Kanbien project-profile or harness-platform
-planning home exists.
+Follow-up cleanup update: on 2026-05-26, the dated historical harness audit
+and reconciliation notes were archived to
+`docs/workspace-buckets/archive-history/harness-audits/` with breadcrumbs left
+at the old paths:
+
+- `2026-04-29-lessons-led-agentic-harness-audit.md`
+- `2026-04-29-story-task-split-reconciliation-audit.md`
+- `2026-05-05-harness-compliance-reconciliation.md`
+
+The compliance reconciliation note had status `needs-reconciliation`, but its
+named active `codex/*` branches were no longer present locally during cleanup,
+so it was archived as historical compliance evidence rather than retained as a
+current blocker.
+
+Follow-up decision needed: `2026-05-05-harness-platform-boundary-map.md` was
+moved to
+`docs/workspace-buckets/unsure-needs-decision/harness-platform-boundary-map/`
+with a breadcrumb. It should not remain in active `harness-audits/`, but its
+future owner is genuinely ambiguous: it may become reusable
+`shared-governance-kernel` harness-platform boundary law, a
+`discovery-harness` Product Discovery or Technical Steering packet for a future
+repo-mapping harness product, or `archive/history` after useful decisions are
+extracted.
+
+Cleanup pause point: after this cleanup pass, `docs/workspace/harness-audits/`
+is intentionally left with its README, this active plan, and temporary
+breadcrumbs for moved artifacts. Do not treat breadcrumbs as current authority.
+Remove them during the later final docs cleanup sweep after upstream
+references have been updated or confirmed obsolete.
 
 ## Non-Goals
 
