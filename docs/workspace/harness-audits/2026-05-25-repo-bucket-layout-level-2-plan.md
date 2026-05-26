@@ -687,6 +687,26 @@ condition must be recorded before the twin exists.
 Do not build migration tooling or a dedicated migration skill until the target
 bucket layout and repeated move pattern are clearer.
 
+## Future Bucket Skeleton
+
+The desired bucket-first documentation skeleton now exists under
+`docs/workspace-buckets/`.
+
+These folders are destination contracts, not evidence that legacy
+`docs/workspace/` artifacts have moved:
+
+- `docs/workspace-buckets/platform/`
+- `docs/workspace-buckets/discovery-harness/`
+- `docs/workspace-buckets/frontend-harness/`
+- `docs/workspace-buckets/shared-governance-kernel/`
+- `docs/workspace-buckets/archive-history/`
+- `docs/workspace-buckets/unsure-needs-decision/`
+
+Each bucket folder starts with a README that defines its intended ownership
+boundary, non-goals, move prerequisites, and breadcrumb expectations. Existing
+artifact paths remain authoritative until a future inspected migration moves or
+promotes specific files.
+
 ## PRD Posture
 
 PRDs are cross-bucket behavioral source-of-truth artifacts.
