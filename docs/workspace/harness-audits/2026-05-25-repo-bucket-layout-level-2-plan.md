@@ -711,6 +711,11 @@ Breadcrumbs must be removed during the final docs cleanup sweep once:
 The goal is a clean, well-structured, well-boundaried `/docs` tree. Breadcrumbs
 exist only to make the transition safe and traceable.
 
+Useful-but-stale examples should use archive-then-breadcrumb by default. Keep
+the original example visible under `docs/workspace-buckets/archive-history/`
+while replacing the old active-looking path with a breadcrumb that points to
+the archived original and the current maintained guidance.
+
 ## Future Bucket Skeleton
 
 The desired bucket-first documentation skeleton now exists under

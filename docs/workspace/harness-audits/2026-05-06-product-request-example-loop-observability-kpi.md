@@ -1,82 +1,36 @@
-# Product Request: Loop Observability And KPI Foundation
+# Product Request Example Archived
 
-## Status
+This file is a breadcrumb for an early Product Request example that previously
+lived in `docs/workspace/harness-audits/`.
 
-- Product Request ID:
-  `PRQ-2026-05-03-loop-observability-kpi-foundation`
-- Date:
-  2026-05-06
-- Current status:
-  `blocked-product-intent`
-- Requester-facing status:
-  Waiting for Product Discovery confirmation
-- Source channel:
-  `chat`
-- Owning context:
-  root/internal harness first
-- Priority:
-  `not-set`
-- Related model:
-  `docs/workspace/harness-audits/2026-05-06-product-request-backlog-model.md`
+Archived original:
 
-## Human Summary
+- `docs/workspace-buckets/archive-history/product-request-examples/2026-05-06-product-request-example-loop-observability-kpi.md`
 
-- Target users:
-  Internal harness/Codex maintainers first. Broader human-driven delivery
-  teams, customer visibility, tenant visibility, UI, and OLAP reporting are
-  later scope.
-- Change type:
-  Durable loop evidence, KPI, scorecard, and traceability foundation.
-- Routing layer:
-  `core-platform-pr`
-- What we are trying to accomplish:
-  Give the harness a durable way to record what happened in each work loop,
-  link tasks to changed artifacts, capture evidence and metrics, close loops
-  with scorecards, and trace later defects or regressions back to the likely
-  loop and task that caused them.
+Use current Product Request guidance instead:
 
-## Artifact Links
+- `docs/workspace/product-requests/README.md`
 
-- Product Discovery packet:
-  `docs/workspace/product-discovery/2026-05-03-loop-observability-kpi-foundation.md`
-- Technical Steering packet:
-  `docs/workspace/technical-steering/2026-05-03-loop-observability-kpi-foundation-steering.md`
-- Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-03-loop-observability-kpi-foundation-story-breakdown.md`
-- Task Breakdown:
-  not created yet
-- Work runs / Loop Runs:
-  none yet
-- Pull requests, config changes, or extension changes:
-  none yet
+Use the maintained Product Request template here:
 
-## What The Chat Widget Should Show
+- `docs/templates/product-request-template.md`
 
-- Title:
-  Loop observability and KPI foundation
-- Status:
-  Waiting for Product Discovery confirmation
-- Short update:
-  A Product Discovery draft, Technical Steering draft, and Story Breakdown
-  draft exist, but this Product Request is blocked until the requester confirms
-  that the prior-context summary is accurate enough to proceed or chooses to
-  re-run Product Discovery one question at a time.
-- Waiting next:
-  Product Discovery confirmation
-- User action needed:
-  Confirm that v0 should track internal harness/Codex loops first, with broader
-  human-driven delivery loops, customer/tenant visibility, UI, and OLAP
-  reporting deferred; or ask to re-run Product Discovery.
+Status:
 
-## Source-Of-Truth Boundary
+- archived
+- retained only so old references have a clear redirect trail
 
-Product Request is a brief human-readable summary, status tracker, and artifact
-index. It must not replace the linked artifacts.
+Why:
 
-- Product Discovery owns product intent.
-- Technical Steering owns architecture decisions.
-- Story Breakdown owns final story definitions.
-- Task Breakdown owns task write sets and execution handoff.
-- Loop Runs own execution evidence, scorecards, events, metrics, change sets,
-  and changed artifact traceability.
-- PRs own reviewable source-control changes.
+- this was an early draft example from Product Request model exploration
+- it reflects a point-in-time blocked discovery posture, not a current Product
+  Request template or active request model
+- it should not be copied for new Product Requests
+
+Compatibility note:
+
+- old chats or docs may still point to this path
+- inspect current request folders under `docs/workspace/product-requests/` for
+  live examples
+- this breadcrumb can be deleted only after maintained references are updated
+  and old path compatibility is no longer intentionally supported
