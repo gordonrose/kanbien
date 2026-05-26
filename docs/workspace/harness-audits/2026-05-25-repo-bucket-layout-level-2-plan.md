@@ -28,9 +28,11 @@ this plan until separately approved.
   workstreams, including the repo constitution, git workflow, decision
   evidence, artifact requirements, audits, agent instruction architecture,
   repo health, standards compliance, and cross-chat safety.
-- `archive/history`: historical records, old runs, preserved worktrees,
-  completed task-run evidence, backups, and records kept for traceability but
-  not active source-of-truth guidance.
+- `archive/history`: historical records, old runs, inactive preserved
+  snapshots, completed task-run evidence, backups, and records kept for
+  traceability but not active source-of-truth guidance. Active guardrail inputs,
+  such as current preserved-worktree markers consumed by git tooling, may belong
+  in `shared-governance-kernel` instead.
 - `unsure / needs decision`: artifacts whose current purpose, authority, or
   owner cannot be classified confidently from inspected evidence.
 
@@ -773,21 +775,652 @@ analyzed to define useful pages without guesswork.
 ## Artifact Types Analyzed In This Pass
 
 This pass recorded postures for the planned Level 2 artifact types above.
-It does not classify every `docs/workspace/` folder.
+Those artifact-type postures came first and did not, by themselves, classify
+every `docs/workspace/` folder.
 
-The next pass should inventory remaining workspace folders by current purpose,
-producer, consumer, authority, likely bucket fit, cross-bucket handoff points,
-validation, known gaps or inconsistencies, move risk, and whether each folder
-is active source truth or archive/history.
+The follow-up folder inventory below then classified the current top-level
+`docs/workspace/` folders by inspected purpose, producer or consumer evidence,
+authority, likely bucket fit, known gaps or inconsistencies, move risk, and
+whether each folder is active source truth or archive/history.
 
-### Remaining Workspace Folder Inventory Scope
+### Workspace Folder Inventory Scope
 
-The next pass should start from the current top-level `docs/workspace/` folder
-list, not from artifact-type assumptions. It should compare each folder against
+The folder inventory started from the current top-level `docs/workspace/`
+folder list, not from artifact-type assumptions. It compared folders against
 folder READMEs, representative files, script references, standards references,
 and active-vs-historical usage before assigning a bucket.
 
 Do not classify a folder by name alone.
+
+### Folder Inventory Entry Standard
+
+Folder inventory entries should stay small, but each entry should make the
+same decision points visible:
+
+- bucket classification
+- inspected evidence
+- authority and currentness posture
+- cleanup, split, or rule pressure
+- move posture
+
+This is not a required table. A short prose entry is enough when those points
+are evaluable by a future maintainer.
+
+Progress so far: 35 of the 35 current top-level `docs/workspace/` folders have
+been inspected or cross-referenced in this inventory pass. This completes the
+folder inventory pass, but it does not make every folder move-ready.
+
+### Workspace Folder Inventory Decisions
+
+`docs/workspace/architecture-map/` is currently classified as
+`shared-governance-kernel`.
+
+Reason: the folder is a repo-wide platform maturity map. Its README describes a
+working checklist for enterprise SaaS platform layers, and representative layer
+files cover backend platform, frontend design-system, security, data,
+operations, and governance status. Current skill and planning references use it
+as maintained architecture status truth rather than as a single feature,
+frontend, or discovery artifact.
+
+Move posture: do not physically move it yet. Implementation blueprint guidance,
+task-breakdown guardrails, frontend architecture guidance, and existing
+workspace artifacts still reference the current path, so a future move would
+need compatibility updates before relocation.
+
+`docs/workspace/harness-audits/` is currently classified as
+`unsure / needs decision`.
+
+Reason: the folder is a mixed collection rather than one artifact class. The
+inspected files include active governance evidence, draft harness-product
+architecture, Product Discovery and Product Request model notes, Product
+Request templates/examples, and historical story/task transition records. Some
+files are source-truth candidates, some are examples, and some are likely
+archive/history, so the folder should not be forced into one confident bucket.
+
+Cleanup pressure: this folder needs further split or stronger placement rules
+before any physical repo split. Future audit folders should not become the
+default home for active contracts, templates, examples, draft product models,
+and historical evidence without an explicit promotion or archive path.
+
+Move posture: do not physically move files yet. First decide which records are
+active authority, which are discovery-harness source truth, which are examples
+or templates, and which are archive/history.
+
+`docs/workspace/chat-bootstraps/` is currently classified as
+`shared-governance-kernel`.
+
+Reason: chat bootstraps are branch/worktree isolation and material-work
+start-gate evidence. Existing git workflow guardrails, AGENTS instructions,
+task-breakdown examples, and Codex task/split/preflight scripts reference this
+folder as the place where a material chat records base commit, branch,
+worktree, planned write set, shared seams, and non-goals before edits proceed.
+
+Cleanup pressure: this folder needs a README or equivalent source-of-truth
+pointer because its contract is enforced by scripts and standards but is not
+explained in the folder itself.
+
+Move posture: do not physically move it yet. Script, standards, task-breakdown,
+and AGENTS references would need compatibility updates before relocation.
+
+`docs/workspace/chat-records/` is currently classified as
+`shared-governance-kernel`.
+
+Reason: chat records are durable cross-chat decision and reconciliation
+summaries. The folder README explicitly says they are not replacements for chat
+bootstraps; they record conversation facts that may matter later, such as
+decisions, concerns, deferred work, rejected interpretations, compliance
+questions, and handoff notes.
+
+Cleanup pressure: low. The folder already has a README and a clear boundary.
+Keep the caveat that workspace chat records are supplemental summaries, not the
+primary transcript truth when a stable transcript source exists.
+
+Move posture: do not physically move it yet. Decision-evidence and
+product-discovery evidence records currently reference these paths.
+
+`docs/workspace/archive/` is currently classified as `archive/history`.
+
+Reason: the inspected contents are archived planning artifacts, including an
+older tenant-admin capability matrix draft and notes. The notes still contain
+useful domain context, but current capability-matrix posture keeps active
+matrices under `docs/workspace/capability-matrices/`.
+
+Cleanup pressure: add a README or pointer before broader split work so future
+maintainers know archived records are historical references, not active
+planning truth.
+
+Move posture: do not physically move it yet. First confirm whether any archived
+records are still referenced as active inputs elsewhere.
+
+`docs/workspace/harness-archives/` is currently classified as
+`archive/history`.
+
+Reason: the inspected archive README marks the pre-story/task split harness
+snapshot as `historical-snapshot`, explains that it preserves prior harness
+authorities, templates, and skills, and explicitly says not to treat archived
+files as current harness guidance.
+
+Cleanup pressure: low. This folder already explains its historical posture and
+current-use boundary.
+
+Move posture: do not physically move it yet. Keep it available for
+reconciliation and rollback analysis while live harness truth remains in the
+current repo paths.
+
+`docs/workspace/preserved-worktrees/` is currently classified as
+`shared-governance-kernel`.
+
+Reason: preserved-worktree records are active git/worktree coordination inputs,
+not passive archive records. Git workflow standards, tests, and
+`src/scripts/gitWorktreeAudit.ts` use this folder to distinguish intentionally
+parked stale WIP from unsafe dirty stale-base worktrees.
+
+Cleanup pressure: consider a README or standards pointer so maintainers do not
+mistake these records for ordinary archive notes. The key rule is that a marker
+keeps parked WIP visible while allowing unrelated clean work to proceed; it
+does not make that parked work promotable.
+
+Move posture: do not physically move it yet. Script defaults, tests, and
+standards references would need compatibility updates first.
+
+`docs/workspace/qa/` is currently classified as `shared-governance-kernel`,
+with freshness and enforcement uncertain.
+
+Reason: the folder README defines durable QA operating artifacts such as
+feature-loop and release QA checklists, exploratory QA notes, escaped-defect
+feedback reviews, waiver/quarantine records, templates, and examples. These
+artifacts are cross-cutting quality controls rather than feature-owned runtime
+truth.
+
+Cleanup pressure: run a freshness audit before treating the folder as current
+QA truth. The folder is useful, but it may mix templates, examples, and older
+completed records whose current enforcement status is unclear.
+
+Move posture: do not physically move it yet. First verify which QA artifacts
+are still required by the active harness, which are historical examples, and
+which need promotion into standards, skills, validators, or task guardrails.
+
+`docs/workspace/qa-evidence/` is currently classified as
+`shared-governance-kernel`, with freshness and enforcement uncertain.
+
+Reason: the inspected evidence records capture concrete runtime, live-data,
+browser, and mock-honesty proof for specific task or journey evidence. The
+Task Breakdown harness has an `EVIDENCE:qa-evidence` lane, so this folder is
+part of shared proof collection rather than ordinary feature docs.
+
+Cleanup pressure: add a README or source-of-truth pointer and audit whether
+the active harness consistently writes or requires these evidence records. Do
+not assume existing evidence packages still prove current repo behavior without
+rerunning or reconciling the relevant commands, live data, and served assets.
+
+Move posture: do not physically move it yet. Evidence-task guardrails and
+downstream story/task artifacts should be reviewed before relocation.
+
+`docs/workspace/test-run-summaries/` is currently classified as
+`shared-governance-kernel`, with freshness and enforcement uncertain.
+
+Reason: the folder README defines curated source-controlled summaries of
+important test runs that complement raw CI artifacts and remain useful after CI
+retention windows expire.
+
+Cleanup pressure: low for folder purpose, but currentness must be checked.
+Older summaries should be treated as historical evidence unless they are tied
+to an active release gate, current feature loop, or maintained status artifact.
+
+Move posture: do not physically move it yet. First confirm which summaries are
+active gate evidence versus retained historical proof.
+
+`docs/workspace/issue-reconciliations/` is currently classified as
+`shared-governance-kernel`, with freshness and follow-through uncertain.
+
+Reason: the folder README defines a running log of escaped bugs or runtime
+defects, why the feature loop missed them, and what changed to prevent repeats.
+The folder is tied to the `issue-reconciliation-maintainer` skill and
+cross-cutting feature-loop improvement.
+
+Cleanup pressure: audit whether lessons from older reconciliation notes were
+actually promoted into tests, standards, skills, templates, or runtime
+guardrails. The folder purpose is coherent, but many records are old enough
+that unresolved follow-up risks may have gone stale or been superseded.
+
+Move posture: do not physically move it yet. First separate active unresolved
+learning debt from historical defect evidence.
+
+The following planning and handoff folders were already classified by artifact
+type earlier in this plan, and the folder inventory did not change that
+posture:
+
+- `docs/workspace/product-discovery/`
+- `docs/workspace/product-requests/`
+- `docs/workspace/technical-steering/`
+- `docs/workspace/story-breakdown/`
+- `docs/workspace/task-breakdown/`
+- `docs/workspace/capability-matrices/`
+
+Folder-level finding: these folders remain useful current physical homes, but
+older packet instances should not be treated as current source truth without a
+freshness and enforcement check against the active templates, validators,
+skills, standards, and source implementation. Change-local workspace artifacts
+are not reusable harness law unless explicitly promoted to durable architecture,
+standards, templates, or skills.
+
+Cleanup pressure: `docs/workspace/capability-matrices/` needs a README or
+source-of-truth pointer. The other inspected folders have READMEs that explain
+their change-local posture and validation expectations.
+
+`docs/workspace/design-system/` is currently classified as `frontend-harness`,
+with freshness and migration pressure.
+
+Inspected evidence: the folder README defines this as the working artifact home
+for the design-system loop, including behavior locks, principles, patterns,
+templates, token reviews, components, adoption notes, verification checklists,
+reference packs, component inventory, and promotion framework. Tests, frontend
+skills, design-system adoption guards, and planning artifacts reference many of
+these paths directly.
+
+Authority/currentness posture: this folder is active governed frontend-harness
+truth, not passive documentation. However, currentness must be checked per
+family because newer `41-front-end` skill guidance says some legacy
+`behavior-locks` are scheduled to migrate to newer standards.
+
+Cleanup pressure: high. The folder is a large governed lab with many artifact
+families, so it likely needs indexing and freshness review before any split.
+Do not treat all old behavior locks, reference packs, or adoption contracts as
+equally current without checking their verification and migration posture.
+
+Move posture: do not physically move it yet. Design-system skills, tests,
+adoption guards, visual artifacts, and frontend planning references depend on
+the current path.
+
+`docs/workspace/frontend/` is currently classified as `unsure / needs decision`.
+
+Inspected evidence: the folder has no README and currently contains a
+page-shell planning feature spec, a visual-suite rebucketing plan, and an
+entity-management page seam recovery plan. These files have different purposes
+and lifecycles: future frontend/platform planning, likely historical visual-test
+layout migration, and active frontend-harness recovery/governance.
+
+Authority/currentness posture: mixed and unclear. The folder should not be
+treated as a stable frontend source-of-truth home until each file is classified
+as active frontend-harness guidance, platform planning, or archive/history.
+
+Cleanup pressure: high. Add a README or split decision before this folder
+continues to collect unrelated frontend-shaped plans.
+
+Move posture: do not physically move it yet. First decide whether each file
+belongs under `frontend-harness`, `platform`, or `archive/history`, and whether
+any active guidance must be promoted to architecture, standards,
+design-system, or implementation-planning artifacts.
+
+`docs/workspace/implementation-blueprints/` was already classified by artifact
+type earlier in this plan, and the folder inventory did not change that
+posture.
+
+Folder-level finding: the folder remains a useful current physical home for
+repo-shaped build plans derived from approved capability matrices, PRDs, and
+related artifacts. Its README names the `implementation-blueprint-maintainer`
+skill as the intended maintenance path.
+
+Cleanup pressure: check freshness per file. Older blueprints may be historical
+after implementation lands, while some draft capability blueprints are
+explicitly not implementation-ready.
+
+Move posture: do not physically move it yet. Skills, PRDs, test cases, QA
+artifacts, and downstream planning references depend on the current path.
+
+`docs/workspace/decision-evidence/` was already classified by artifact type
+earlier in this plan as `shared-governance-kernel`, and the folder inventory did
+not change that posture.
+
+Folder-level finding: the folder is active transitional repo-artifact storage
+for decision and evidence packet records until persistent runtime capabilities
+exist. It has a README, npm command support, and validation expectations.
+
+Cleanup pressure: moderate. The folder is active only if material chats record
+decisions and run `npm run decision-evidence -- validate`; otherwise the
+registry can lag behind the real decision trail.
+
+Move posture: do not physically move it yet. Script defaults, closeout
+standards, registry links, and planning-artifact references depend on the
+current path.
+
+`docs/workspace/reviews/` is currently classified as
+`shared-governance-kernel`, with freshness and review-scope pressure.
+
+Inspected evidence: the folder contains AI-and-standards review notes,
+standards audits, and alignment reviews. The `ai-change-reviewer` skill writes
+AI-assisted review notes here, and task/story artifacts reference review files
+as closeout or alignment evidence.
+
+Authority/currentness posture: reviews are durable governance evidence, but
+they are usually scoped to a point-in-time change or audit. They should not be
+treated as current implementation truth without checking the reviewed source
+and any follow-up findings.
+
+Cleanup pressure: add a README or source-of-truth pointer. The folder mixes AI
+provenance reviews, standards audits, and source-alignment reviews, so future
+maintainers need to know what belongs here and how review findings are closed.
+
+Move posture: do not physically move it yet. Skills, standards, and downstream
+story/task artifacts reference the current path.
+
+`docs/workspace/artifact-alignment/` is currently classified as
+`unsure / needs decision`.
+
+Inspected evidence: the folder currently contains a Product Request artifact
+alignment inventory that records validator evidence, target hierarchy,
+alignment classifications, recommendations, and drift findings for planning
+artifact chains.
+
+Authority/currentness posture: useful governance evidence, but the folder does
+not yet prove a stable artifact family. The inspected file looks like a
+specific reconciliation inventory rather than an established current source of
+truth.
+
+Cleanup pressure: high. Add a README or decide whether these records belong
+under `shared-governance-kernel`, `harness-audits`, `product-requests`, or
+archive/history before the folder becomes another mixed collection.
+
+Move posture: do not physically move it yet. First decide whether artifact
+alignment is a recurring harness evidence type or a one-off historical
+reconciliation note.
+
+`docs/workspace/asset-consumer-decisions/` is currently classified as
+`shared-governance-kernel`, with subject-specific asset/security ownership.
+
+Inspected evidence: AGENTS requires an asset consumer decision record before
+upload, read, link, display, download, replace, delete, publish, or delivery
+changes for user-managed assets. Inspected records define owning entity
+relationship, asset kind, visibility, actor permissions, delivery posture,
+authz, scanning, checksum/byte verification, accessibility metadata, cleanup,
+privacy, audit, and operational requirements.
+
+Authority/currentness posture: these records are asset/security decision gates,
+not implementation code. They are active only when reconciled with the current
+PRD, API contract, data dictionary, permission mapping, runbook, security tests,
+and technical signoff for the consuming feature.
+
+Cleanup pressure: add a README or source-of-truth pointer. Each decision record
+should make its status clear: draft, approved for planning, approved for task
+breakdown, technically signed off, superseded, or historical.
+
+Move posture: do not physically move it yet. Asset decision templates,
+standards, task planning, and downstream feature artifacts reference the
+current folder.
+
+`docs/workspace/permission-mappings/` is currently classified as
+`shared-governance-kernel`, but as exported review material rather than
+canonical permission truth.
+
+Inspected evidence: the README says this folder contains spreadsheet-friendly
+exports of source-of-truth permission mapping documents under
+`docs/architecture/permission-mappings/`.
+
+Authority/currentness posture: these CSV files are not the canonical permission
+mapping authority. The README says they cover the live implemented mapping
+boundary and have not yet expanded to the newer source-posture schema, so they
+must be treated as baseline review exports until regenerated or replaced.
+
+Cleanup pressure: high. Any future harness step that consumes these files must
+check whether the architecture permission mappings have changed since export.
+
+Move posture: do not physically move it yet. First decide whether workspace
+exports remain useful or should be regenerated through a controlled export
+command with a documented freshness check.
+
+`docs/workspace/entity-definitions/` is currently classified as `platform`
+planning truth, with cross-bucket handoff behavior.
+
+Inspected evidence: the README defines this as source-independent planning for
+durable entity truth that does not yet belong in `docs/data-dictionary/`
+because the backing feature and persistence do not exist. It feeds capability
+matrices, PRDs, tests, implementation blueprints, and generation/export loops.
+
+Authority/currentness posture: active only while the entity remains pre-code or
+not yet represented by the current data dictionary and runtime implementation.
+Once implemented, durable entity truth should move to or be reconciled with
+`docs/data-dictionary/` and feature-owned source.
+
+Cleanup pressure: high. Draft entity definitions need superseded/retained
+status when the implementation or data dictionary becomes authoritative.
+
+Move posture: do not physically move it yet. First decide which drafts are
+still planning authority, which are superseded by implementation, and which are
+historical source inputs.
+
+`docs/workspace/runbooks/` is currently classified as
+`shared-governance-kernel`, with platform/operations subject ownership.
+
+Inspected evidence: runbooks define operating rules, incident checks, required
+actions, and evidence to record for platform workflows such as public logo
+delivery, export bundles, job processing, cleanup, and privacy.
+
+Authority/currentness posture: runbooks are operational guidance, but each file
+must be checked against current implementation, scheduler/job posture, ADRs,
+and support commands before being treated as live operating truth.
+
+Cleanup pressure: add a README or source-of-truth pointer. The folder should
+distinguish active runbooks from story-specific planning or historical
+operations notes.
+
+Move posture: do not physically move it yet. First classify runbooks by owning
+feature/platform subject and live-vs-historical status.
+
+`docs/workspace/imports/` is currently classified as `unsure / needs decision`.
+
+Inspected evidence: the folder contains imported Excel workbooks and no README.
+The files appear to be raw source imports from earlier capability or root-user
+planning work.
+
+Authority/currentness posture: unclear. Binary imports are especially risky
+because they can look like source truth while being hard to diff, validate, or
+reconcile with current maintained artifacts.
+
+Cleanup pressure: high. Add provenance, owner, date, import purpose, derived
+artifacts, and current status before treating these files as active inputs.
+
+Move posture: do not physically move it yet. First decide whether each workbook
+is an active source input, a generated/exported convenience copy, or
+archive/history.
+
+`docs/workspace/exports/` is currently classified as `unsure / needs decision`.
+
+Inspected evidence: the folder contains a generated capability contract catalog
+JSON export and no README. The JSON includes generation metadata and capability
+catalog data.
+
+Authority/currentness posture: unclear without a generation contract. The
+export may be useful evidence or a generated snapshot, but it should not be
+treated as canonical truth unless the source, generator command, freshness
+expectation, and regeneration rule are documented.
+
+Cleanup pressure: high. Add a README or generation pointer that names the
+source artifacts, generator command, whether the export is committed source,
+review evidence, or disposable output, and how drift is detected.
+
+Move posture: do not physically move it yet. First decide whether exports are a
+recurring maintained-artifact family or historical/generated snapshots.
+
+`docs/workspace/branch-stack-reconciliations/` is currently classified as
+`shared-governance-kernel`, with closure and freshness pressure.
+
+Inspected evidence: branch-stack reconciliation records document git hygiene,
+branch-stack audit findings, preserved refs, stash inventory, cleanup ledgers,
+and promotion/replay safety decisions. Tests and `src/scripts/gitBranchStackAudit.ts`
+reference this folder as the default reconciliation directory.
+
+Authority/currentness posture: active when tied to a current branch-stack,
+worktree, or promotion cleanup decision. Older records become historical
+evidence after the associated branch, stash, or cleanup ledger is closed.
+
+Cleanup pressure: add a README or standards pointer so maintainers can tell
+which records are active blockers, supersession notes, or historical cleanup
+evidence.
+
+Move posture: do not physically move it yet. Script defaults, tests, and git
+workflow standards reference the current path.
+
+`docs/workspace/blogs/` is currently classified as `archive/history`.
+
+Inspected evidence: the folder README says it stores draft blog ideas,
+outline-first drafts, talking points, audience notes, and repeatable prompts
+for turning repo progress into posts. The `blog-accountability-partner` skill
+references these files as communication source material.
+
+Authority/currentness posture: useful learning and communication memory, but
+not platform, discovery, frontend, or governance source truth.
+
+Cleanup pressure: low. Keep the boundary that these are working drafts rather
+than harness rules or polished external copy.
+
+Move posture: do not physically move it yet. If moved later, update the blog
+skill references first.
+
+`docs/workspace/layer5-pilots/` is currently classified as
+`unsure / needs decision`.
+
+Inspected evidence: the folder contains a Layer 5 delivery pilot for the chat
+interface root-admin MVP. It defines delivery-task sequencing, pilot rules,
+KPI interpretation, route-away boundaries, and task closure posture before the
+formal scripted Layer 5 runner existed.
+
+Authority/currentness posture: genuinely ambiguous. It may be historical pilot
+evidence now that `docs/workspace/layer5-task-runs/` and the Layer 5 scripts
+exist, or it may still explain current delivery-harness intent that has not
+been fully promoted elsewhere.
+
+Cleanup pressure: decide whether this is active governance evidence or
+archive/history. If the pilot still carries active rules, promote those rules
+into the Layer 5 README, standards, scripts, or skills instead of leaving them
+only in a one-off pilot note.
+
+Move posture: do not physically move it yet. Product Request closure and
+artifact-alignment records still reference the pilot file.
+
+`docs/workspace/layer5-task-runs/` is currently classified as
+`shared-governance-kernel`.
+
+Inspected evidence: the folder README defines script-created Layer 5 task run
+records, the `npm run layer5:task` and `npm run layer5:closeout` contracts,
+run-record fields, closeout result codes, write-set enforcement, task-type
+plugin ownership, and script-hardening expectations. Source scripts and tests
+reference this folder directly.
+
+Authority/currentness posture: active delivery-harness evidence. Individual
+run records prove delivery readiness and command execution posture for a
+particular task run; they do not by themselves prove a product feature is
+complete forever.
+
+Cleanup pressure: moderate. The README is strong, but older run records should
+be read as point-in-time evidence unless connected to current closure status.
+
+Move posture: do not physically move it yet. Layer 5 script defaults, tests,
+and artifact-obligation logic depend on the current path.
+
+`docs/workspace/retrospectives/` is currently classified as
+`archive/history`, with shared-governance learning value.
+
+Inspected evidence: retrospective files record lessons from delivered feature
+or frontend adoption loops, including artifact drift, test traceability gaps,
+permission-mapping misses, and design-system adoption risks. Harness audits
+reference them as learning inputs.
+
+Authority/currentness posture: durable lesson memory, not current executable
+harness truth. A retrospective lesson becomes active governance only when
+promoted into standards, skills, validators, tests, templates, or architecture
+guidance.
+
+Cleanup pressure: add a README or promotion-status note so future maintainers
+can distinguish lessons already incorporated into guardrails from unresolved
+learning debt.
+
+Move posture: do not physically move it yet. First check whether any
+retrospective lessons still need promotion into active guardrails.
+
+`docs/workspace/task-registry/` is currently classified as
+`shared-governance-kernel`.
+
+Inspected evidence: the folder README defines the machine-readable anchor for
+the repo's Codex task lifecycle workflow, including generated task inventory,
+task start recommendations, retirement, tangent split, task-aware promotion,
+and review/push helpers. `src/scripts/lib/codexTaskRegistry.ts` defines the
+generated JSON path under this folder.
+
+Authority/currentness posture: active git/task lifecycle machinery. The
+generated JSON is current only to the last registry generation run, so it
+should be refreshed before being used for high-confidence task decisions.
+
+Cleanup pressure: low to moderate. The README is explicit, but the generated
+artifact needs a clear freshness expectation when used in audits or promotion
+decisions.
+
+Move posture: do not physically move it yet. Task lifecycle scripts and
+standards references depend on the current path.
+
+## Plan Review Findings
+
+The inventory is now complete enough to support a human-paced execution pass,
+but it is still an audit plan, not a move plan.
+
+Classifications are not move approval. Every folder entry should be read as a
+current ownership and risk statement. Physical relocation still requires a
+separate compatibility pass for script defaults, standards references, skills,
+tests, generated artifacts, and existing document links.
+
+Earlier folder entries sometimes use "Reason" where later entries use the more
+explicit "Inspected evidence" and "Authority/currentness posture" labels. This
+is acceptable for this audit note; future cleanup can normalize wording only
+where it improves maintainability. Do not turn the whole inventory into a large
+table unless the table changes allowed behavior or prevents a real drift mode.
+
+The highest-risk cleanup candidates are:
+
+1. `docs/workspace/harness-audits/`
+2. `docs/workspace/frontend/`
+3. `docs/workspace/artifact-alignment/`
+4. `docs/workspace/imports/`
+5. `docs/workspace/exports/`
+6. `docs/workspace/layer5-pilots/`
+
+Reason: these folders either mix artifact purposes, lack a README, contain raw
+or generated material with unclear provenance, or carry pilot-era guidance that
+may already be superseded by newer harness scripts and standards.
+
+The next execution step should not move files. It should pick one high-risk
+folder, inspect representative files and references, then decide whether the
+right cleanup is a README, a freshness note, promotion into standards or
+skills, archive/history classification, or a later physical split.
+
+### First Cleanup Inspection: `docs/workspace/harness-audits/`
+
+The first cleanup inspection found 12 markdown files and no folder README.
+The folder currently mixes at least five artifact kinds:
+
+- active audit plan:
+  `2026-05-25-repo-bucket-layout-level-2-plan.md`
+- historical audit and reconciliation evidence:
+  `2026-04-29-lessons-led-agentic-harness-audit.md`,
+  `2026-04-29-story-task-split-reconciliation-audit.md`, and
+  `2026-05-05-harness-compliance-reconciliation.md`
+- old or possibly still-influential harness design locks:
+  `2026-04-29-story-task-layer-design-lock.md`
+- active or semi-active Product Request model/template material:
+  `2026-05-06-product-request-backlog-model.md` and
+  `product-request-template.md`
+- Product Request examples:
+  `2026-05-06-product-request-example-chat-interface.md` and
+  `2026-05-06-product-request-example-loop-observability-kpi.md`
+- ambiguous harness-product direction records:
+  `2026-05-05-harness-platform-boundary-map.md`,
+  `2026-05-05-product-discovery-change-routing-extension.md`, and
+  `2026-05-06-layer-one-runtime-contract.md`
+
+Cleanup decision: add a narrow README first. The README should not classify
+or move every existing file. Its first job is to stop future drift by saying
+that this folder is for audit and reconciliation notes, while active templates,
+examples, reusable harness rules, and architecture decisions should be
+promoted to their owning standards, skills, templates, architecture docs, or
+artifact folders.
 
 ## Non-Goals
 
