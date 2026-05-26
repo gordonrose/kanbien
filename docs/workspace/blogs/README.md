@@ -1,25 +1,15 @@
-# Blog Workspace
+# Blog Workspace Breadcrumb
 
-This folder is for draft blog ideas and outlines that grow out of the work in
-this repo.
+The blog draft workspace has been archived.
 
-Use it for:
+Current location:
 
-- article ideas worth developing later
-- outline-first drafts
-- talking points tied to real delivery work
-- notes on audience, angle, and supporting repo artifacts
-- repeatable prompts and workflows for turning weekly repo progress into posts
+- `docs/workspace-buckets/archive-history/blogs/`
 
-Keep these as working drafts rather than polished marketing copy.
+These files are historical communication records and learning notes. They are
+not active platform, discovery-harness, frontend-harness, or shared-governance
+source truth.
 
-Recommended naming:
-
-- `YYYY-MM-DD-<topic>-ideas.md`
-- `YYYY-MM-DD-<topic>-outline.md`
-
-Examples:
-
-- `2026-04-08-engineering-blog-ideas.md`
-- `2026-04-08-notification-delivery-outline.md`
-- `2026-04-08-blog-accountability-workflow.md`
+New blog work should be created only when explicitly requested. If the dormant
+blog skill is used again, it should place draft material under the archive
+history blog folder unless a new active publishing workflow is approved.

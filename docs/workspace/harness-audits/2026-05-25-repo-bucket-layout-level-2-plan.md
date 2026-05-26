@@ -1363,19 +1363,22 @@ workflow standards reference the current path.
 
 `docs/workspace/blogs/` is currently classified as `archive/history`.
 
-Inspected evidence: the folder README says it stores draft blog ideas,
+Inspected evidence: the original folder README said it stored draft blog ideas,
 outline-first drafts, talking points, audience notes, and repeatable prompts
 for turning repo progress into posts. The `blog-accountability-partner` skill
-references these files as communication source material.
+referenced these files as communication source material.
 
 Authority/currentness posture: useful learning and communication memory, but
 not platform, discovery, frontend, or governance source truth.
 
-Cleanup pressure: low. Keep the boundary that these are working drafts rather
-than harness rules or polished external copy.
+Cleanup pressure: reduced after the 2026-05-26 archive move. Existing blog
+drafts now live under `docs/workspace-buckets/archive-history/blogs/`, the old
+workspace path is a breadcrumb, and the dormant blog skill now points to the
+archive-history location for any explicitly requested future use.
 
-Move posture: do not physically move it yet. If moved later, update the blog
-skill references first.
+Move posture: completed as an archive/history move. Do not recreate active
+`docs/workspace/blogs/` content unless a renewed publishing workflow is
+approved.
 
 `docs/workspace/layer5-pilots/` is currently classified as
 `unsure / needs decision`.

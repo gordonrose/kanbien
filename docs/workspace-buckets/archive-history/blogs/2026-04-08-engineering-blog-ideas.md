@@ -238,7 +238,7 @@
   `src/frontend/designSystem/*`
 - current maturity:
   active outline drafted in
-  `docs/workspace/blogs/2026-04-15-frontend-design-system-discovery-outline.md`
+  `docs/workspace-buckets/archive-history/blogs/2026-04-15-frontend-design-system-discovery-outline.md`
 - next step:
   turn the outline into a narrative/guide post centered on the `top-nav`
   family, the codified loop, and the first `/root-admin` POC adoption
@@ -266,7 +266,7 @@
   `AGENTS.md`
 - current maturity:
   active outline drafted in
-  `docs/workspace/blogs/2026-04-25-git-loop-guardrails-outline.md`
+  `docs/workspace-buckets/archive-history/blogs/2026-04-25-git-loop-guardrails-outline.md`
 - next step:
   turn the outline into a short process post that starts with the concrete
   cleanup mess and ends with the broader lesson: if the loop matters, test the

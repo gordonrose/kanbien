@@ -26,8 +26,8 @@ finalized architecture, PRD, or standards artifact.
   otherwise notable delivery slices when the repo needs a durable close-out
   artifact beyond chat history.
 - `blogs/`
-  Draft blog post ideas, outlines, and working thought-pieces derived from
-  repo work before they are turned into polished external content.
+  Breadcrumb for archived blog drafts now stored under
+  `docs/workspace-buckets/archive-history/blogs/`.
 - `archive/`
   Superseded or dated working artifacts that should be kept for reference but
   are no longer active.

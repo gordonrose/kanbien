@@ -5,6 +5,12 @@ description: Use when the user wants recurring help turning recent repo progress
 
 # Blog Accountability Partner
 
+Archived posture: this skill is dormant unless the user explicitly asks for
+blog or reflection help. Historical supporting files now live under
+`docs/workspace-buckets/archive-history/blogs/`; do not recreate an active
+`docs/workspace/blogs/` workspace unless the user approves a renewed publishing
+workflow.
+
 Use this skill to help the user consistently produce blog posts from the real
 evolution of the repo and their personal journey building the platform.
 
@@ -100,11 +106,11 @@ Avoid:
 
 Read these as needed:
 
-- `docs/workspace/blogs/2026-04-08-vibe-coding-guardrails-series.md`
-- `docs/workspace/blogs/2026-04-08-blog-series-interview-question-bank.md`
-- `docs/workspace/blogs/2026-04-08-blog-series-skill-plan.md`
-- `docs/workspace/blogs/2026-04-08-engineering-blog-ideas.md`
-- `docs/workspace/blogs/2026-04-08-blog-accountability-workflow.md`
+- `docs/workspace-buckets/archive-history/blogs/2026-04-08-vibe-coding-guardrails-series.md`
+- `docs/workspace-buckets/archive-history/blogs/2026-04-08-blog-series-interview-question-bank.md`
+- `docs/workspace-buckets/archive-history/blogs/2026-04-08-blog-series-skill-plan.md`
+- `docs/workspace-buckets/archive-history/blogs/2026-04-08-engineering-blog-ideas.md`
+- `docs/workspace-buckets/archive-history/blogs/2026-04-08-blog-accountability-workflow.md`
 
 ## Reusable Prompt Shape
 
