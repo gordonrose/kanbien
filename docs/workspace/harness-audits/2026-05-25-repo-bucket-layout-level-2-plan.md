@@ -1533,12 +1533,14 @@ table unless the table changes allowed behavior or prevents a real drift mode.
 The highest-risk cleanup candidates are:
 
 1. `docs/workspace/harness-audits/`
-2. `docs/workspace/imports/`
-3. `docs/workspace/exports/`
+2. `docs/workspace/exports/`
 
-Reason: these folders either mix artifact purposes, lack a README, contain raw
-or generated material with unclear provenance, or still require a handoff
+Reason: these folders either still mix artifact purposes or require a handoff
 before the current path can be retired.
+
+`docs/workspace/imports/` was removed from this remaining-risk list during the
+2026-05-27 cleanup sweep because it now contains only `.gitkeep` and a README;
+the completed legacy provenance files already live under `archive/history`.
 
 The next execution step should not move files. It should pick one high-risk
 folder, inspect representative files and references, then decide whether the
