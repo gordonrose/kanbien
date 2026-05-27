@@ -863,3 +863,37 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs. This archive does not mark
   the broader governed shell migration, page-shell banner wider reuse, or
   second-consumer proof complete.
+
+## Twenty-First Recheck: Display-Settings Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-17-display-settings-scrollbar-style-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-display-settings-selection-close-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-26-display-settings-dark-drawer-ink.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/behavior-locks/display-settings-behavior-lock.md`,
+  `docs/workspace/design-system/reference-packs/display-settings-reference-pack.md`,
+  `docs/workspace/design-system/verification/display-settings-verification-checklist.md`,
+  and `docs/workspace/design-system/adoption/root-admin-display-settings-adoption-contract.md`
+  now carry the active display-settings payload authority.
+- `docs/workspace/design-system/component-inventory.md` records
+  `display-settings` as `signed-off` with the second-consumer obligation still
+  active.
+- `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts`
+  covers `DSR-002` dark readability, in-drawer setting changes staying open,
+  and signed-off scrollbar styling.
+- `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts` covers the
+  first app subset for open/close, theme, magnification, mobile attachment,
+  and RTL localization.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these display-settings incidents now duplicate maintained
+  design-system artifact and visual-test authority.
+- cleanup implication: archived with breadcrumbs. This archive does not mark
+  display-settings `system-ready`; the component inventory still requires
+  second governed consumer proof.

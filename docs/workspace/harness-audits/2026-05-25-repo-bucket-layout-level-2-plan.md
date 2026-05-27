@@ -1919,6 +1919,16 @@ shell guidance, canonical/parity conventions, root-admin shell parity tests,
 and route-wide governed page-host posture tests. This does not close the
 broader governed shell migration or second-consumer banner proof obligations.
 
+Seventeenth follow-up cleanup on 2026-05-27: promoted display-settings incident
+notes for scrollbar styling, in-drawer selection close behavior, and dark
+drawer ink were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/display-settings/`
+with breadcrumbs at the old paths. Current authority is the display-settings
+behavior lock, reference pack, verification checklist, root-admin adoption
+contract, component inventory, generated canonical visual coverage, and first
+app subset visual coverage. This does not promote display-settings to
+`system-ready`; second governed consumer proof remains active.
+
 ## Non-Goals
 
 - Do not move runtime code.
