@@ -1854,6 +1854,13 @@ and capability-contract catalog QA checklists were moved to
 The job-processing foundation QA checklist stayed active because it still
 records partial release-gate status and missing Redis/Postgres evidence.
 
+Tenth follow-up recheck on 2026-05-27: asset foundation QA records stayed
+active in `docs/workspace/qa/`. The exploratory note, QA checklist, and
+waiver/quarantine record still name unresolved provider-contract,
+Postgres-backed persistence, SVG/security-review, tenant-route, and first
+consumer-readiness caveats. Do not archive these as stale history until an
+assets/provider readiness pass proves or supersedes those gates.
+
 ## Non-Goals
 
 - Do not move runtime code.

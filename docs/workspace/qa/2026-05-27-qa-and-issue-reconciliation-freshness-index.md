@@ -629,3 +629,32 @@ Freshness posture:
   capability-contract catalog records with breadcrumbs. Kept job-processing QA
   active until the provider/persistence/release-gate caveats are resolved or
   superseded.
+
+## Fourteenth Recheck: Asset Foundation QA Caveats
+
+Sampled records:
+
+- `docs/workspace/qa/2026-04-25-asset-foundation-v1-exploratory-qa-note.md`
+- `docs/workspace/qa/2026-04-25-asset-foundation-v1-qa-checklist.md`
+- `docs/workspace/qa/2026-04-25-asset-foundation-v1-qa-waiver-or-quarantine.md`
+
+Current evidence found:
+
+- The exploratory note says `concerns found` and keeps tenant-route
+  integration, expert SVG review, production provider proof, and
+  environment-backed Postgres proof as explicit remaining evidence items.
+- The QA checklist says the QA decision is `concerns found` and leaves the
+  Postgres-backed persistence suite unchecked.
+- The waiver/quarantine record is not approved. It says production provider
+  rollout and the first customer-facing asset upload UI remain blocked until
+  provider contract tests and Postgres-backed persistence proof exist.
+
+Freshness posture:
+
+- lane: `unresolved-caveat`
+- reason: these records are not stale historical notes. They still describe
+  active safety, provider, persistence, and consumer-readiness gates for the
+  assets foundation.
+- cleanup implication: keep the asset QA records active in `docs/workspace/qa/`
+  until an assets/provider readiness pass proves, supersedes, or reopens the
+  caveats.
