@@ -39,6 +39,13 @@ release gate, or task guardrail still cites them as active behavior.
 Do not move this folder without updating QA standards, templates, task-type
 guardrails, and any feature-loop artifacts that cite `docs/workspace/qa/`.
 
+Current freshness index:
+
+- [2026-05-27 QA and issue-reconciliation freshness index](./2026-05-27-qa-and-issue-reconciliation-freshness-index.md)
+
+The freshness index is sampled, not exhaustive. Use it to choose the next
+cleanup family before moving or archiving QA records.
+
 ## Relationship To Other QA Artifacts
 
 - `docs/workspace/test-run-summaries/`

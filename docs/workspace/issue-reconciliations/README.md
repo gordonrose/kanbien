@@ -46,3 +46,11 @@ skills, templates, or other maintained guardrails.
 Do not move this folder without updating the issue-reconciliation skill,
 frontend design-system loop skill, coverage-strength scripts, integration
 tests, and standards references that use this path.
+
+Current freshness index:
+
+- [2026-05-27 QA and issue-reconciliation freshness index](../qa/2026-05-27-qa-and-issue-reconciliation-freshness-index.md)
+
+The freshness index is sampled, not exhaustive. Use it to choose the next
+cleanup family before moving, archiving, or closing issue-reconciliation
+records.

@@ -1763,6 +1763,18 @@ evidence. The next safe cleanup is to add or generate a lightweight freshness
 index that marks sampled records as `promoted`, `unresolved`, `historical`, or
 `needs-recheck` without changing the underlying records.
 
+Current cleanup result: added
+`docs/workspace/qa/2026-05-27-qa-and-issue-reconciliation-freshness-index.md`
+and linked it from both QA and issue-reconciliation READMEs. The index uses the
+existing issue-reconciliation closure posture where possible and keeps the
+sampled records in place.
+
+Follow-up expansion: the index now records group-level inventory counts, the
+largest issue-reconciliation filename families, the count of records still
+using `candidate fix awaiting user confirmation`, and additional samples across
+root-admin runtime/adoption, generated canonical routing, tenant-auth audit
+persistence, and root-admin security matrix evidence.
+
 ## Non-Goals
 
 - Do not move runtime code.
