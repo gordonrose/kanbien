@@ -1,34 +1,12 @@
-# 2026-04-22 Dark Theme Heading Token Audit Gap
+# Archived Issue Reconciliation Breadcrumb
 
-## Symptom
+This issue-reconciliation record was archived on 2026-05-27.
 
-Dark-theme canonical render surfaces still showed some header text in the wrong
-color, including specimen-local titles such as the date-picker host-field
-heading.
+Current location:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/generated-canonical-infrastructure/2026-04-22-dark-theme-heading-token-audit-gap.md`
 
-Several shared heading classes relied on inherited `color` instead of pinning
-their foreground to theme-owned tokens. When a canonical render used a local
-dark theme scope, the scoped CSS variables changed, but inherited heading color
-from the surrounding page did not automatically recompute to the local dark
-foreground.
+Reason:
 
-## Why The Loop Missed It
-
-The existing checks focused on route truth, launcher truth, and a few
-family-specific dark-theme assertions. They did not maintain a shared audit for
-theme-sensitive typography tokens used across multiple canonical families.
-
-## Prevention Added
-
-- The shared form-page heading tokens now explicitly use `color: var(--ink)`.
-- Added `tests/integration/frontend/designSystemTypographyThemeAudit.test.ts`
-  to pin shared heading and eyebrow/copy tokens to theme-owned foreground
-  variables.
-
-## Follow-Up Rule
-
-When a design-system surface is expected to work inside a local theme scope,
-shared typography tokens must declare explicit foreground colors through theme
-variables rather than relying on inherited page color.
+- The dark heading token lesson has been promoted into active shared
+  typography and theme audit coverage.

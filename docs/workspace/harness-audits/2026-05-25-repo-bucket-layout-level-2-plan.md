@@ -1941,6 +1941,18 @@ drawer-form reference pack, drawer-form verification checklist, generated
 canonical route checks, drawer-form visual coverage, and design-system loop
 guidance. This does not mark drawer-form app adoption complete.
 
+Nineteenth follow-up cleanup on 2026-05-27: promoted top-nav shell, generated
+canonical infrastructure, hierarchy-tree, async-activity drawer,
+sub-nav/breadcrumb, icon-grid, and launcher-template incident notes were moved
+into their matching
+`docs/workspace-buckets/archive-history/issue-reconciliations/` family folders
+with breadcrumbs at the old paths. Current authority is the active
+design-system behavior/reference/verification/adoption chain, generated
+canonical route checks, route-smoke coverage, and visual tests for those
+families. This pass intentionally stopped before live root-admin, chat,
+entity, count-card, explicit user-review, and app-governance records because
+those still need governance or runtime-state decisions before archive.
+
 ## Non-Goals
 
 - Do not move runtime code.

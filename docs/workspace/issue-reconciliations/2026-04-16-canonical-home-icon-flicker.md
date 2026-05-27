@@ -1,29 +1,12 @@
-# Canonical Home Icon Flicker
+# Archived Issue Reconciliation Breadcrumb
 
-## Symptom
+This issue-reconciliation record was archived on 2026-05-27.
 
-On the locked sub-nav canonical renderer, the collapsed home icon could appear
-briefly and then disappear while the canonical state settled, even when the
-final approved breadcrumb structure did not require the home item to collapse.
+Current location:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/sub-nav-breadcrumb/2026-04-16-canonical-home-icon-flicker.md`
 
-The home-icon toggle lives inside the generic breadcrumb tooltip/overflow sync
-path. That sync was still running for preview breadcrumb nodes while the
-canonical surface was marked `settling`, so the home crumb could briefly be
-classified as truncated against pre-settle geometry and then be corrected after
-the final render pass.
+Reason:
 
-## Why The Loop Missed It
-
-- Existing coverage checked that the home icon fallback existed, but not that
-  canonical surfaces suppress transient pre-settle icon state.
-- Earlier debugging focused on width, reduction order, and RTL anchoring, which
-  were also real issues and masked this smaller rendering artifact.
-
-## Prevention Added
-
-- Canonical preview breadcrumb tooltip/icon sync now suppresses home-icon
-  collapse decisions until the canonical surface reports `renderStatus=ready`.
-- Breadcrumb audit coverage now checks for this canonical settling guard.
-
+- The canonical breadcrumb settling lesson has been promoted into active
+  breadcrumb overflow audit coverage.

@@ -938,3 +938,59 @@ Freshness posture:
   drawer-form app adoption complete; the active drawer-form reference pack
   still requires app consumers to use the shared drawer shell and form body
   seams or record an explicit approved adapter.
+
+## Twenty-Third Recheck: Design-System Infrastructure And Canonical Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-21-design-system-shared-top-nav-scaffold-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-21-design-system-top-nav-page-settings-unwired.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-canonical-responsive-width-contract-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-dark-theme-heading-token-audit-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-canonical-shell-navigation-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-canonical-stage-header-theme-ink-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-19-hierarchy-tree-csp-inline-assets.md`
+- `docs/workspace/issue-reconciliations/2026-04-26-hierarchy-tree-render-drawer-containment.md`
+- `docs/workspace/issue-reconciliations/2026-04-27-canonical-renderings-tree-sync-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-26-async-activity-waiting-progress-complete.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-design-system-breadcrumb-business-logic-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-canonical-home-icon-flicker.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-sub-nav-breadcrumb-truncation-contract-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-sub-nav-canonical-breadcrumb-tooltip-resync-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-sub-nav-reduced-canonical-width-truth-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-20-icon-grid-modal-layout-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-21-launcher-template-csp-inline-width-regression.md`
+
+Current evidence found:
+
+- Active top-nav shell runtime, static fallback, component inventory, and
+  visual-test authority now own the shared scaffold, page-setting wiring, and
+  governed hydration lessons.
+- Generated canonical render-page, template, reference, and verification
+  artifacts plus `designSystemCanonicalResponsiveWidthAudit`,
+  `designSystemTypographyThemeAudit`, `designSystemCanonicalRouting`,
+  `canonicalShell.spec`, and `generatedCanonicalRenderingsIndex.spec` now own
+  the responsive width, dark heading token, routing, and shell/stage-header
+  lessons.
+- Hierarchy-tree behavior, reference, verification, and adoption artifacts plus
+  `hierarchyTree.spec` and routing tests now own the CSP-safe rendering,
+  drawer containment, and generated tree-sync lessons.
+- Async activity drawer behavior, reference, verification, component inventory,
+  and `asyncActivityDrawer.spec` now own the waiting-progress completion
+  lesson.
+- Breadcrumb and sub-nav reference packs, audits, and `subNav.spec` now own the
+  breadcrumb content, truncation, tooltip resync, reduced-width, and home-icon
+  settling lessons.
+- Icon-grid behavior, reference, verification, and `iconGridCanonical.spec` now
+  own the modal layout lesson.
+- Launcher-template reference and verification artifacts plus `launcher.spec`
+  now own the inline width and geometry lesson.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these incidents now duplicate maintained design-system
+  infrastructure, canonical, route-smoke, and visual-test authority.
+- cleanup implication: archived with breadcrumbs. This archive is limited to
+  promoted lessons; live root-admin state, explicit user-review records, app
+  adoption governance, and unresolved frontend governance notes remain active.
