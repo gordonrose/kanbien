@@ -534,3 +534,71 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs. Leave unresolved waivers,
   security matrices, root-admin test backlogs, and current freshness indexes in
   `docs/workspace/qa/`.
+
+## Eleventh Recheck: Generated Canonical Routing Guardrails
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-21-generated-canonical-launcher-breadcrumb-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-canonical-renderings-batch-3-visible-routing-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-generated-canonical-index-launcher-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-generated-canonical-render-route-fallback.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/component-inventory.md` marks `launcher` and
+  `canonical-render-page` as `system-ready` and requires generated launcher
+  publication to stay coupled to persisted registry truth, render-surface
+  proof, specimen markers, fallback absence, theme scope, responsive width, and
+  overlay containment.
+- `docs/architecture/guides/design-system-loop-harness.md` now records the
+  generated canonical launcher and render-route contract, including direct
+  child render surfaces and the rule that launcher wiring must prove the full
+  click chain.
+- `src/frontend/designSystem/router.ts` contains the generated canonical
+  render route handling and fails unregistered design-system routes with `404`
+  rather than treating the overview shell as success.
+- `tests/integration/frontend/designSystemCanonicalRouting.test.ts` and
+  generated canonical visual specs cover direct generated route resolution,
+  launcher/index click-through, and exact render-surface truth.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these records describe generated routing/index/launcher classes that
+  now have maintained architecture guidance, router behavior, integration
+  tests, and visual route-chain proof.
+- cleanup implication: archived with breadcrumbs. Generated canonical records
+  that still name open localhost/user-confirmation or theme-scope caveats were
+  left active for later family review.
+
+## Twelfth Recheck: Tenant Auth QA Evidence
+
+Sampled records:
+
+- `docs/workspace/qa/2026-04-09-tenant-auth-foundation-exploratory-qa-note.md`
+- `docs/workspace/qa/2026-04-09-tenant-auth-foundation-qa-checklist.md`
+- `docs/workspace/qa/2026-04-10-tenant-auth-policy-foundation-exploratory-qa-note.md`
+- `docs/workspace/qa/2026-04-10-tenant-auth-policy-foundation-qa-checklist.md`
+- `docs/workspace/qa/2026-04-13-tenant-auth-policy-session-expiry-exploratory-qa-note.md`
+- `docs/workspace/qa/2026-04-13-tenant-auth-policy-session-expiry-qa-checklist.md`
+
+Current evidence found:
+
+- Current tenant-auth architecture authority lives in ADR-0019 and the
+  authentication/authorization guides.
+- Current planning authority lives in the related PRDs, journey inventories,
+  test-case docs, and implementation blueprints.
+- Current verification authority lives in the test summaries and executable
+  tenant-auth, tenant-auth-policy, security, audit, persistence, and E2E tests.
+- The QA files themselves are completed point-in-time exploratory notes and
+  checklists rather than active waivers or current test backlogs.
+
+Freshness posture:
+
+- lane: `historical-evidence`
+- reason: these records are useful release/provenance evidence, but they do not
+  carry current operating obligations once the test summaries, architecture
+  docs, source, and executable tests are the maintained authorities.
+- cleanup implication: archived with breadcrumbs. Unresolved waivers and active
+  QA operating records remain in `docs/workspace/qa/`.

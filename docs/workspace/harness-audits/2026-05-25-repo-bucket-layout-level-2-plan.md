@@ -1831,6 +1831,23 @@ point-in-time context-nav parent-owner QA checklist were moved to
 Unresolved waivers, security matrices, active test backlogs, and the current
 freshness index remain active in `docs/workspace/qa/`.
 
+Seventh follow-up cleanup on 2026-05-27: generated canonical routing/index
+records whose lessons are now promoted into router behavior, generated
+canonical launcher/index contracts, design-system loop guidance, integration
+tests, and visual route-chain proof were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/generated-canonical-routing/`
+with breadcrumbs at the old paths. Related canonical-rendering records that
+still name open localhost, user-confirmation, theme-scope, or visible-worktree
+caveats stayed active for later review.
+
+Eighth follow-up cleanup on 2026-05-27: completed tenant-auth QA exploratory
+notes and checklists were moved to
+`docs/workspace-buckets/archive-history/qa/tenant-auth/` with breadcrumbs at
+the old paths. Current tenant-auth authority remains in ADRs/guides, PRDs,
+test-case and journey artifacts, implementation blueprints, test summaries,
+source, and executable tests. Unresolved waivers and active QA operating
+records remain in `docs/workspace/qa/`.
+
 ## Non-Goals
 
 - Do not move runtime code.
