@@ -1,4 +1,13 @@
 import { indexNavPanelFrameTokenContract } from "../../../../layers/02-token/index-nav-panel-frame/contract.mjs";
+import { panelCornerRadiusTokenSpec } from "./panelCornerRadius.tokens.mjs";
+
+const flushPanelRadius = panelCornerRadiusTokenSpec.variants.find(
+  (variant) => variant.id === "panel-corner-radius-flush",
+);
+
+if (!flushPanelRadius) {
+  throw new Error("index-nav-panel-frame requires the signed panel-corner-radius-flush token.");
+}
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -67,7 +76,7 @@ export const tokenDefinitionV1 = {
         backgroundValue: "#ffffff",
         foregroundValue: "#111827",
         borderValue: "#dbe4f0",
-        radiusValue: "0.5rem",
+        radiusValue: flushPanelRadius.radiusValue,
         paddingBlockValue: "0.5rem",
         paddingInlineValue: "0.5rem",
         gapValue: "0.75rem",
@@ -81,9 +90,9 @@ export const tokenDefinitionV1 = {
         scrollBehavior: "desktop panel owns internal list scrolling; mobile panel expands to screen width and scrolls with page",
       },
       derivation: {
-        sourceTokenName: "none",
-        sourceValue: "default index-nav panel values",
-        formulaOrMapping: "system implementation value",
+        sourceTokenName: flushPanelRadius.tokenName,
+        sourceValue: flushPanelRadius.radiusValue,
+        formulaOrMapping: "panel radius derives from the signed flush panel corner token; width, padding, surface, and scroll values remain index-nav panel frame decisions",
         renderedValue: "10rem min / 13rem standard / 26rem double / 32rem max / 100vw below 44rem",
       },
       preview: {
@@ -92,6 +101,7 @@ export const tokenDefinitionV1 = {
         background: "#ffffff",
         foreground: "#111827",
         border: "#dbe4f0",
+        radius: flushPanelRadius.radiusValue,
         label: "Panel frame",
       },
       metadata: {
@@ -291,6 +301,7 @@ export const indexNavPanelFrameTokenSpec = {
     ["maxBlockSizeValue", "Header max height"],
     ["stickyInsetBlockStart", "Sticky top"],
     ["scrollBehavior", "Scroll behavior"],
+    ["sourceTokenName", "Source token"],
     ["formulaOrMapping", "Formula or mapping"],
   ],
   variants: indexNavPanelFrameTokenVariants,

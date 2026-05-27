@@ -19,7 +19,7 @@ test.describe("index nav panel header control primitive route", () => {
 
     const geometry = await header.evaluate((element) => {
       const title = element.querySelector(".ds-index-nav-panel-header-control-title");
-      const buttonElement = element.querySelector("[data-index-nav-icon-button-control]");
+      const buttonElement = element.querySelector("[data-icon-button-control]");
       const headerBox = element.getBoundingClientRect();
       const titleBox = title?.getBoundingClientRect();
       const buttonBox = buttonElement?.getBoundingClientRect();
@@ -49,5 +49,44 @@ test.describe("index nav panel header control primitive route", () => {
     expect(geometry.borderBottomColor).not.toBe("rgba(0, 0, 0, 0)");
     expect(Math.abs(geometry.titleCenter - geometry.buttonCenter)).toBeLessThanOrEqual(2);
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  });
+
+  test("reveals full header title only when the title is truncated", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+
+    const truncatedTitle = page.locator("[data-index-nav-panel-header-control]").first().locator("[data-truncating-label]");
+    await expect(truncatedTitle).toHaveAttribute("data-truncating-label-overflow", "true");
+    await truncatedTitle.focus();
+    await expect(truncatedTitle).toHaveAttribute("aria-expanded", "true");
+
+    const tooltip = truncatedTitle.locator("[role='tooltip']");
+    await expect(tooltip).toBeVisible();
+    const tooltipGeometry = await tooltip.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        top: rect.top,
+        left: rect.left,
+        right: rect.right,
+        bottom: rect.bottom,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        position: getComputedStyle(element).position,
+      };
+    });
+
+    expect(tooltipGeometry.position).toBe("fixed");
+    expect(tooltipGeometry.top).toBeGreaterThanOrEqual(0);
+    expect(tooltipGeometry.left).toBeGreaterThanOrEqual(0);
+    expect(tooltipGeometry.right).toBeLessThanOrEqual(tooltipGeometry.viewportWidth);
+    expect(tooltipGeometry.bottom).toBeLessThanOrEqual(tooltipGeometry.viewportHeight);
+
+    const fittingTitle = page
+      .locator("[data-index-nav-panel-header-control]")
+      .nth(1)
+      .locator("[data-truncating-label]");
+    await expect(fittingTitle).toHaveAttribute("data-truncating-label-overflow", "false");
+    await fittingTitle.focus();
+    await expect(fittingTitle).toHaveAttribute("aria-expanded", "false");
   });
 });

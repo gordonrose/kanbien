@@ -2,6 +2,14 @@ import {
   attachIndexNavPanelHeaderControlPrimitiveController,
   renderIndexNavPanelHeaderControlPrimitive,
 } from "../../03-primitive/index-nav-panel-header-control/index.mjs";
+import {
+  attachScrollRegionControlPrimitiveController,
+  renderScrollRegionControlPrimitive,
+} from "../../03-primitive/scroll-region-control/index.mjs";
+import {
+  attachResizeHandleControlPrimitiveController,
+  renderResizeHandleControlPrimitive,
+} from "../../03-primitive/resize-handle-control/index.mjs";
 import { indexNavPanelFrameTokenSpec } from "../../02-token/index-nav-panel-frame/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 import {
@@ -105,7 +113,7 @@ export const indexNavPanelPatternContract = {
   contractPath: "docs/design-system/04-pattern-contract/shared/index-nav-panel/IndexNavPanel-Contract.md",
   supportedSystems: ["default"],
   requiredPatterns: ["index-nav-list"],
-  requiredPrimitives: ["index-nav-panel-header-control", "index-nav-icon-button-control"],
+  requiredPrimitives: ["index-nav-panel-header-control", "icon-button-control", "scroll-region-control", "resize-handle-control"],
   directTokenDependencies: ["index-nav-panel-frame", "label-text-style"],
   consumerRules: [
     "Consumers must use this pattern for governed index-nav panel containers.",
@@ -125,7 +133,9 @@ export function indexNavPanelPattern(options = {}) {
   const mobileMode = options.mobileMode ?? "page-scroll";
   const items = normalizeItems(options.items ?? []);
   const emptyMessage = options.emptyMessage ?? "No index items available.";
+  const showHeader = options.showHeader !== false;
   const showAddAction = options.showAddAction !== false;
+  const resizable = options.resizable === true;
   const addLabel = options.addLabel ?? "Add";
 
   assertString(systemKey, "systemKey");
@@ -162,6 +172,8 @@ export function indexNavPanelPattern(options = {}) {
     items,
     emptyMessage,
     showAddAction,
+    showHeader,
+    resizable,
     addLabel,
     tokenDependencies: {
       panelFrame: {
@@ -182,6 +194,8 @@ export function indexNavPanelPattern(options = {}) {
       "data-index-nav-panel-theme": theme,
       "data-index-nav-panel-width-mode": widthMode,
       "data-index-nav-panel-mobile-mode": mobileMode,
+      "data-index-nav-panel-header-mode": showHeader ? "shown" : "hidden",
+      "data-index-nav-panel-resizable": resizable ? "true" : "false",
       "data-index-nav-panel-mobile-breakpoint": tokens.panelFrame.mobileBreakpointValue,
       "aria-label": ariaLabel,
     },
@@ -194,6 +208,8 @@ export function indexNavPanelPattern(options = {}) {
       "--pattern-index-nav-panel-padding-inline": tokens.panelFrame.paddingInlineValue,
       "--pattern-index-nav-panel-gap": tokens.panelFrame.gapValue,
       "--pattern-index-nav-panel-inline-size": inlineSize,
+      "--pattern-index-nav-panel-min-inline-size": tokens.panelFrame.minInlineSize,
+      "--pattern-index-nav-panel-max-inline-size": tokens.panelFrame.maxInlineSize,
       "--pattern-index-nav-panel-mobile-inline-size": tokens.panelFrame.mobileInlineSize,
       "--pattern-index-nav-panel-max-block-size": tokens.panelFrame.maxBlockSize,
       "--pattern-index-nav-panel-label-font-family": tokens.labelTextStyle.fontFamilyValue,
@@ -216,28 +232,52 @@ export function renderIndexNavPanelPattern(options = {}) {
 
   return `
     <section ${toAttributeString(attributes)}>
-      ${renderIndexNavPanelHeaderControlPrimitive({
+      ${
+        spec.showHeader
+          ? renderIndexNavPanelHeaderControlPrimitive({
+              systemKey: spec.systemKey,
+              theme: spec.theme,
+              id: `${spec.id}-header`,
+              title: spec.title,
+              showAddAction: spec.showAddAction,
+              addLabel: spec.addLabel,
+            })
+          : ""
+      }
+      ${renderScrollRegionControlPrimitive({
         systemKey: spec.systemKey,
         theme: spec.theme,
-        id: `${spec.id}-header`,
-        title: spec.title,
-        showAddAction: spec.showAddAction,
-        addLabel: spec.addLabel,
+        id: `${spec.id}-scroll`,
+        mobileMode: spec.mobileMode,
+        maxBlockSize: spec.styleVars["--pattern-index-nav-panel-max-block-size"],
+        extraAttributes: {
+          "data-index-nav-panel-scroll": "",
+        },
+        contentHtml: spec.items.length
+          ? renderIndexNavListPattern({
+              systemKey: spec.systemKey,
+              theme: spec.theme,
+              id: `${spec.id}-list`,
+              ariaLabel: spec.ariaLabel,
+              currentValue: spec.currentValue,
+              items: spec.items,
+            })
+          : `<p class="ds-index-nav-panel-empty" data-index-nav-panel-empty>${escapeHtml(spec.emptyMessage)}</p>`,
       })}
-      <div class="ds-index-nav-panel-scroll" data-index-nav-panel-scroll>
-        ${
-          spec.items.length
-            ? renderIndexNavListPattern({
-                systemKey: spec.systemKey,
-                theme: spec.theme,
-                id: `${spec.id}-list`,
-                ariaLabel: spec.ariaLabel,
-                currentValue: spec.currentValue,
-                items: spec.items,
-              })
-            : `<p class="ds-index-nav-panel-empty" data-index-nav-panel-empty>${escapeHtml(spec.emptyMessage)}</p>`
-        }
-      </div>
+      ${
+        spec.resizable
+          ? renderResizeHandleControlPrimitive({
+              systemKey: spec.systemKey,
+              theme: spec.theme,
+              id: `${spec.id}-resize`,
+              label: `Resize ${spec.title}`,
+              targetId: spec.id,
+              minInlineSize: spec.styleVars["--pattern-index-nav-panel-min-inline-size"],
+              currentInlineSize: spec.styleVars["--pattern-index-nav-panel-inline-size"],
+              maxInlineSize: spec.styleVars["--pattern-index-nav-panel-max-inline-size"],
+            })
+          : ""
+      }
     </section>
   `;
 }
@@ -275,7 +315,9 @@ export function attachIndexNavPanelPatternController(root = document) {
   }
 
   attachIndexNavPanelHeaderControlPrimitiveController(root);
+  attachScrollRegionControlPrimitiveController(root);
   attachIndexNavListPatternController(root);
+  attachResizeHandleControlPrimitiveController(root);
 }
 
 function toPixels(value, ownerDocument = document) {

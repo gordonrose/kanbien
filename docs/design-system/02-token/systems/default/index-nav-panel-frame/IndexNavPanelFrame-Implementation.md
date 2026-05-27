@@ -12,3 +12,7 @@
 
 The deterministic implementation lives in
 `src/frontend/designSystem/systems/default/tokens/proofs/indexNavPanelFrame.tokens.mjs#tokenDefinitionV1`.
+
+The panel frame radius derives from
+`src/frontend/designSystem/layers/02-token/panel-corner-radius/systems/default.mjs#panelCornerRadiusTokenSpec`
+variant `panel-corner-radius-flush`, currently `0`.

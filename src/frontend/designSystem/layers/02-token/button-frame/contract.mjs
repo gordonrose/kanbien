@@ -1,0 +1,27 @@
+export const buttonFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.button-frame",
+  tokenType: "button-frame",
+  requiredVariantRoles: ["icon button frame", "text action button frame"],
+  requiredThemes: ["original", "dark", "desert"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "frameRole",
+    "backgroundValue",
+    "foregroundValue",
+    "borderValue",
+    "radiusValue",
+    "paddingBlockValue",
+    "paddingInlineValue",
+    "gapValue",
+    "themeMapping",
+  ],
+  metadataFields: ["frameRole", "theme", "state", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "pairingRule"],
+  consumerRules: [
+    "Consumers must use this token for governed reusable button frame visuals instead of pattern-local frame values.",
+    "Button frame background and border must derive from primary-color-source over a signed host surface, using the theme surface as the fallback.",
+    "This token does not define button semantics, activation behavior, accessible names, icon glyph size, focus rings, or minimum target size.",
+    "Icon-only and text-action primitives must pair this token with minimum-target-size and focus-ring before later layers compose them.",
+  ],
+};

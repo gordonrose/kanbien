@@ -37,7 +37,7 @@ if (!(root instanceof HTMLElement)) {
 
 let currentState = null;
 
-root.addEventListener("index-nav-icon-button-control:activate", (event) => {
+root.addEventListener("icon-button-control:activate", (event) => {
   const log = root.querySelector("[data-index-nav-panel-log]");
   if (log instanceof HTMLElement) {
     log.textContent = `Activation log: add ${event.detail?.value ?? "unknown"}`;
@@ -106,6 +106,13 @@ function renderControls(state) {
         </select>
       </label>
       <label>
+        <span>Resize handle</span>
+        <select data-index-nav-panel-resize-control>
+          ${renderOption("off", "Hidden", state.resizeMode)}
+          ${renderOption("on", "Shown", state.resizeMode)}
+        </select>
+      </label>
+      <label>
         <span>Activation handling</span>
         <select data-index-nav-panel-activation-control>
           ${renderOption("log-only", "Log only", state.activationMode)}
@@ -168,6 +175,7 @@ function renderPage(state) {
                 currentValue,
                 items,
                 emptyMessage: "No sections yet.",
+                resizable: state.resizeMode === "on",
                 addLabel: "Add",
               })}
             </div>
@@ -212,6 +220,7 @@ function renderPage(state) {
   const countControl = root.querySelector("[data-index-nav-panel-count-control]");
   const activationControl = root.querySelector("[data-index-nav-panel-activation-control]");
   const directionControl = root.querySelector("[data-index-nav-panel-direction-control]");
+  const resizeControl = root.querySelector("[data-index-nav-panel-resize-control]");
 
   if (viewportControl instanceof HTMLSelectElement) {
     viewportControl.addEventListener("change", () => renderPage({ ...state, viewportMode: viewportControl.value, currentValue }));
@@ -231,6 +240,9 @@ function renderPage(state) {
   if (directionControl instanceof HTMLSelectElement) {
     directionControl.addEventListener("change", () => renderPage({ ...state, direction: directionControl.value, currentValue }));
   }
+  if (resizeControl instanceof HTMLSelectElement) {
+    resizeControl.addEventListener("change", () => renderPage({ ...state, resizeMode: resizeControl.value, currentValue }));
+  }
 }
 
 const initialViewportMode = window.innerWidth <= 704 ? "mobile" : "desktop";
@@ -239,6 +251,7 @@ renderPage({
   viewportMode: initialViewportMode,
   widthMode: "standard",
   mobileMode: "page-scroll",
+  resizeMode: "off",
   itemCount: "10",
   activationMode: "log-only",
   direction: "ltr",

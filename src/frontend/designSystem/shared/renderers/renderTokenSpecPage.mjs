@@ -82,6 +82,23 @@ function renderDependencyOverrideDiagnostic(pageModel) {
       sample: diagnostic.ringSample,
     },
   ];
+  const surfaceOptions = Array.isArray(diagnostic.surfaceOptions) ? diagnostic.surfaceOptions : [];
+  const surfaceControl =
+    surfaceOptions.length > 0
+      ? `
+        <label>
+          <span>${escapeHtml(diagnostic.surfaceInputLabel ?? "Host surface")}</span>
+          <select data-token-diagnostic-surface-select>
+            ${surfaceOptions
+              .map(
+                (option) =>
+                  `<option value="${escapeHtml(option.value)}" data-token-name="${escapeHtml(option.tokenName)}">${escapeHtml(option.label)}</option>`,
+              )
+              .join("")}
+          </select>
+        </label>
+      `
+      : "";
 
   return `
     <section class="token-spec-diagnostic" aria-label="${escapeHtml(diagnostic.label)}">
@@ -103,6 +120,7 @@ function renderDependencyOverrideDiagnostic(pageModel) {
             data-token-diagnostic-hex-input
           />
         </label>
+        ${surfaceControl}
         <button type="button" data-token-diagnostic-reset>${escapeHtml(diagnostic.resetLabel)}</button>
       </div>
       <div class="token-spec-diagnostic-previews" aria-label="${escapeHtml(diagnostic.previewLabel)}">
@@ -269,9 +287,80 @@ function renderVariantPreview(variant) {
         data-token-preview-background="${escapeHtml(variant.preview.background)}"
         data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
         data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius ?? "")}"
         aria-hidden="true"
       >
         <span class="token-spec-surface-card-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "button-frame-sample") {
+    return `
+      <div
+        class="token-spec-button-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-gap="${escapeHtml(variant.preview.gap)}"
+        data-token-preview-font-family="${escapeHtml(variant.preview.fontFamily)}"
+        data-token-preview-font-size="${escapeHtml(variant.preview.fontSize)}"
+        data-token-preview-font-weight="${escapeHtml(variant.preview.fontWeight)}"
+        data-token-preview-line-height="${escapeHtml(variant.preview.lineHeight)}"
+        data-token-preview-letter-spacing="${escapeHtml(variant.preview.letterSpacing)}"
+        data-token-preview-text-transform="${escapeHtml(variant.preview.textTransform)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-button-frame-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "scrollbar-sample") {
+    return `
+      <div
+        class="token-spec-scrollbar-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-scrollbar-width="${escapeHtml(variant.preview.width)}"
+        data-token-preview-scrollbar-thumb="${escapeHtml(variant.preview.thumb)}"
+        data-token-preview-scrollbar-track="${escapeHtml(variant.preview.track)}"
+        data-token-preview-scrollbar-radius="${escapeHtml(variant.preview.radius)}"
+        aria-hidden="true"
+      >
+        <span>${escapeHtml(variant.preview.sample)}</span>
+        <span>Identity</span>
+        <span>Workflows</span>
+        <span>Relationships</span>
+        <span>Attributes</span>
+        <span>Compliance</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "resize-handle-sample") {
+    return `
+      <div
+        class="token-spec-resize-handle-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-resize-hit-area-inline-size="${escapeHtml(variant.preview.hitAreaInlineSize)}"
+        data-token-preview-resize-visual-inline-size="${escapeHtml(variant.preview.visualInlineSize)}"
+        data-token-preview-resize-visual-radius="${escapeHtml(variant.preview.visualRadius)}"
+        data-token-preview-resize-min-block-size="${escapeHtml(variant.preview.minBlockSize)}"
+        data-token-preview-resize-cursor="${escapeHtml(variant.preview.cursor)}"
+        data-token-preview-resize-visual-color="${escapeHtml(variant.preview.visualColor)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-resize-panel">Panel edge</span>
+        <span class="token-spec-resize-hit-area">
+          <span class="token-spec-resize-rail"></span>
+        </span>
       </div>
     `;
   }
@@ -451,6 +540,7 @@ function applyPreviewStyles(root) {
   for (const element of root.querySelectorAll(".token-spec-surface-card-preview[data-token-preview-border]")) {
     if (element instanceof HTMLElement) {
       element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
     }
   }
 
@@ -474,6 +564,28 @@ function applyPreviewStyles(root) {
       element.style.blockSize = element.dataset.tokenPreviewIconBlockSize ?? "";
     }
   }
+
+  for (const element of root.querySelectorAll("[data-token-preview-scrollbar-width]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-scrollbar-width", element.dataset.tokenPreviewScrollbarWidth ?? "");
+      element.style.setProperty("--token-preview-scrollbar-thumb", element.dataset.tokenPreviewScrollbarThumb ?? "");
+      element.style.setProperty("--token-preview-scrollbar-track", element.dataset.tokenPreviewScrollbarTrack ?? "");
+      element.style.setProperty("--token-preview-scrollbar-radius", element.dataset.tokenPreviewScrollbarRadius ?? "");
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-resize-hit-area-inline-size]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-resize-hit-area-inline-size", element.dataset.tokenPreviewResizeHitAreaInlineSize ?? "");
+      element.style.setProperty("--token-preview-resize-visual-inline-size", element.dataset.tokenPreviewResizeVisualInlineSize ?? "");
+      element.style.setProperty("--token-preview-resize-visual-radius", element.dataset.tokenPreviewResizeVisualRadius ?? "");
+      element.style.setProperty("--token-preview-resize-min-block-size", element.dataset.tokenPreviewResizeMinBlockSize ?? "");
+      element.style.setProperty("--token-preview-resize-cursor", element.dataset.tokenPreviewResizeCursor ?? "");
+      element.style.setProperty("--token-preview-resize-visual-color", element.dataset.tokenPreviewResizeVisualColor ?? "");
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+    }
+  }
 }
 
 function isValidHex(value) {
@@ -490,6 +602,7 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   }
 
   const input = root.querySelector("[data-token-diagnostic-hex-input]");
+  const surfaceSelect = root.querySelector("[data-token-diagnostic-surface-select]");
   const reset = root.querySelector("[data-token-diagnostic-reset]");
   const sourceValue = root.querySelector("[data-token-diagnostic-source-value]");
   const status = root.querySelector("[data-token-diagnostic-status]");
@@ -499,6 +612,11 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   const ring = root.querySelector("[data-token-diagnostic-role='ring']");
   const tint = root.querySelector("[data-token-diagnostic-role='primary-tinted-background']");
   const foreground = root.querySelector("[data-token-diagnostic-role='primary-tinted-foreground']");
+  const scrollbarThumb = root.querySelector("[data-token-diagnostic-role='scrollbar-thumb']");
+  const scrollbarTrack = root.querySelector("[data-token-diagnostic-role='scrollbar-track']");
+  const buttonBackground = root.querySelector("[data-token-diagnostic-role='button-background']");
+  const buttonForeground = root.querySelector("[data-token-diagnostic-role='button-foreground']");
+  const buttonBorder = root.querySelector("[data-token-diagnostic-role='button-border']");
 
   if (!(input instanceof HTMLInputElement)) {
     return;
@@ -509,8 +627,17 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   const foregroundMixTarget = diagnostic.foregroundMixTarget ?? "var(--ink)";
   const foregroundSourceRatio = diagnostic.foregroundSourceRatio ?? null;
 
+  function selectedSurfaceValue() {
+    if (surfaceSelect instanceof HTMLSelectElement && surfaceSelect.value) {
+      return surfaceSelect.value;
+    }
+
+    return diagnostic.surfaceOptions?.[0]?.value ?? "white";
+  }
+
   function render(hex) {
     const value = hex.trim();
+    const surfaceValue = selectedSurfaceValue();
     const valid = isValidHex(value);
     input.setAttribute("aria-invalid", valid ? "false" : "true");
 
@@ -551,6 +678,28 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
       ring.style.outline = `0.125rem solid color-mix(in srgb, ${value} 58%, white)`;
       ring.style.outlineOffset = "0.125rem";
     }
+    if (scrollbarThumb instanceof HTMLElement) {
+      scrollbarThumb.style.background = `color-mix(in srgb, ${value} 46%, white)`;
+      scrollbarThumb.style.color = value;
+    }
+    if (scrollbarTrack instanceof HTMLElement) {
+      scrollbarTrack.style.background = `color-mix(in srgb, ${value} 10%, white)`;
+      scrollbarTrack.style.color = value;
+    }
+    if (buttonBackground instanceof HTMLElement) {
+      buttonBackground.style.background = `color-mix(in srgb, ${value} 10%, ${surfaceValue})`;
+      buttonBackground.style.color = value;
+    }
+    if (buttonForeground instanceof HTMLElement) {
+      buttonForeground.style.background = `color-mix(in srgb, ${value} 10%, ${surfaceValue})`;
+      buttonForeground.style.color = value;
+    }
+    if (buttonBorder instanceof HTMLElement) {
+      buttonBorder.style.background = surfaceValue;
+      buttonBorder.style.color = value;
+      buttonBorder.style.outline = `0.125rem solid color-mix(in srgb, ${value} 30%, ${surfaceValue})`;
+      buttonBorder.style.outlineOffset = "0.125rem";
+    }
     if (sourceValue instanceof HTMLElement) {
       sourceValue.textContent = value.toLowerCase();
     }
@@ -558,9 +707,16 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
 
   input.addEventListener("input", () => render(input.value));
 
+  if (surfaceSelect instanceof HTMLSelectElement) {
+    surfaceSelect.addEventListener("change", () => render(input.value));
+  }
+
   if (reset instanceof HTMLButtonElement) {
     reset.addEventListener("click", () => {
       input.value = diagnostic.defaultHex;
+      if (surfaceSelect instanceof HTMLSelectElement) {
+        surfaceSelect.selectedIndex = 0;
+      }
       render(input.value);
       input.focus();
     });

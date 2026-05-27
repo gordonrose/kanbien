@@ -19,9 +19,10 @@
 ## Purpose
 
 `index-nav` composes a primary index-nav panel and an optional secondary panel.
-It governs whether the navigation is single or double width and delegates panel
-container, add action, scroll, empty state, and list behavior to
-`index-nav-panel`.
+It governs whether the navigation is single or double width and whether panels
+render with header chrome, as list-only panels, or with resize handles. It
+delegates panel container, add action, scroll, resize, empty state, and list
+behavior to `index-nav-panel`.
 
 It does not own the full entity page, routed selection state, backend data
 loading, component seam, canonical scenario, or app adoption.
@@ -40,7 +41,11 @@ The pattern renders one primary panel and may render one secondary panel. When
 secondary is present, double width is enabled by panel composition. When
 secondary is absent, the primary panel may be configured as standard or double
 width. Mobile stacking uses the signed breakpoint from `index-nav-panel-frame`,
-not a pattern-local media-query value.
+not a pattern-local media-query value. Panels may be rendered with header chrome
+or as list-only panels by passing `showHeader: false` and `showAddAction:
+false` through the governed panel options.
+Panels may be made resizable by passing `resizable: true`; min and max width
+still come from `index-nav-panel-frame`.
 
 ## Accessibility Contract
 
@@ -74,6 +79,8 @@ pattern remains controlled and does not mutate route or product data.
 | `secondary panel` | pattern contract | `yes` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves single-panel and two-panel composition. | `available` |
 | `single-panel width` | `index-nav-panel-frame` via `index-nav-panel` | `yes` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves standard versus double primary width when no secondary panel is present. | `available` |
 | `primary items` | pattern data contract | `no proof-only fixture` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves empty, short, and scrollable primary list states. | `available` |
+| `panel chrome` | pattern contract | `yes` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves header/add and list-only variants. | `available` |
+| `resize handle` | `index-nav-panel` pattern | `yes` | `tests/visual/designSystem/patterns/indexNavPanelPatternRoute.spec.ts` | Proves resizable panels consume the governed resize primitive and panel min/max width. | `available` |
 | `activation handling` | proof-only consumer simulation | `no proof-only` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves bubbled events can be consumed without pattern-local routing. | `available` |
 | `mobile behavior` | `index-nav-panel-frame` plus panel contract | `yes` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves mobile page-scroll posture from the signed breakpoint. | `available` |
 | `direction` | accessibility pressure | `no proof-only` | `tests/visual/designSystem/patterns/indexNavPatternRoute.spec.ts` | Proves RTL containment for the composed pattern. | `available` |

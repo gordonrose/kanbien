@@ -36,7 +36,8 @@ Within the scoped governed selectors, fail:
 
 - literal color values such as hex, `rgb()`, `rgba()`, `hsl()`, `hsla()`, or
   `color-mix()` in runtime declarations
-- custom `scrollbar-*` values other than browser-native `auto`
+- custom `scrollbar-*` values other than browser-native `auto` or a governed
+  CSS variable produced by a signed token/primitive seam
 
 ## Initial Allowed Values
 

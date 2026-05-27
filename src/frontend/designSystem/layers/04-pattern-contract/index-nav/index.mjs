@@ -52,6 +52,9 @@ function normalizePanel(panel, fieldName) {
     currentValue: panel.currentValue ?? null,
     items: Array.isArray(panel.items) ? panel.items : [],
     emptyMessage: panel.emptyMessage ?? "No index items available.",
+    showHeader: panel.showHeader !== false,
+    showAddAction: panel.showAddAction !== false,
+    resizable: panel.resizable === true,
     addLabel: panel.addLabel ?? "Add",
   };
 }
@@ -135,6 +138,9 @@ export function renderIndexNavPattern(options = {}) {
         mobileMode: spec.mobileMode,
         items: spec.primary.items,
         emptyMessage: spec.primary.emptyMessage,
+        showHeader: spec.primary.showHeader,
+        showAddAction: spec.primary.showAddAction,
+        resizable: spec.primary.resizable,
         addLabel: spec.primary.addLabel,
       })}
       ${
@@ -150,6 +156,9 @@ export function renderIndexNavPattern(options = {}) {
               mobileMode: spec.mobileMode,
               items: spec.secondary.items,
               emptyMessage: spec.secondary.emptyMessage,
+              showHeader: spec.secondary.showHeader,
+              showAddAction: spec.secondary.showAddAction,
+              resizable: spec.secondary.resizable,
               addLabel: spec.secondary.addLabel,
             })
           : ""

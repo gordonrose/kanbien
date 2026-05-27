@@ -23,6 +23,8 @@ describe("index-nav-panel-frame token seam", () => {
       mobileInlineSize: "100vw",
       mobileBreakpointValue: "44rem",
       maxBlockSize: "32rem",
+      radiusValue: "0",
+      sourceTokenName: "--panel-corner-radius-flush",
     });
     expect(indexNavPanelFrameTokenVariants.find((variant: { id: string }) => variant.id === "index-nav-panel-action-default")).toMatchObject({
       tokenName: "--index-nav-panel-action-frame",

@@ -48,7 +48,7 @@ describe("index-nav-item-control primitive seam", () => {
           tokenName: "--index-nav-item-content-gap",
         },
         supportingTextStyle: {
-          tokenName: "--index-nav-item-supporting-text-style-default",
+          tokenName: "--supporting-text-style-default",
         },
         focusRing: {
           tokenName: "--focus-ring-visible-original",

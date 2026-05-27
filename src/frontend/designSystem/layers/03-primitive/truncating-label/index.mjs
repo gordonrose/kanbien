@@ -283,6 +283,31 @@ export function attachTruncatingLabelPrimitiveController(root = document) {
     }
   }
 
+  function positionTooltip(label) {
+    const tooltip = label.querySelector("[data-truncating-label-tooltip]");
+    if (!(tooltip instanceof HTMLElement)) {
+      return;
+    }
+
+    const viewport = label.ownerDocument?.defaultView;
+    const labelBox = label.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    const gutter = 8;
+    const fallbackWidth = Math.min(320, Math.max(160, labelBox.width));
+    const tooltipWidth = tooltipBox.width || fallbackWidth;
+    const tooltipHeight = tooltipBox.height || 48;
+    const viewportWidth = viewport?.innerWidth ?? 0;
+    const viewportHeight = viewport?.innerHeight ?? 0;
+    const aboveTop = labelBox.top - tooltipHeight - gutter;
+    const belowTop = labelBox.bottom + gutter;
+    const fitsAbove = aboveTop >= gutter;
+    const top = fitsAbove ? aboveTop : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter));
+    const left = Math.min(Math.max(labelBox.left, gutter), Math.max(gutter, viewportWidth - tooltipWidth - gutter));
+
+    tooltip.style.setProperty("--primitive-truncating-label-tooltip-top", `${Math.round(top)}px`);
+    tooltip.style.setProperty("--primitive-truncating-label-tooltip-left", `${Math.round(left)}px`);
+  }
+
   function setOpen(label, open) {
     if (!(label instanceof HTMLElement)) {
       return;
@@ -291,6 +316,10 @@ export function attachTruncatingLabelPrimitiveController(root = document) {
     const canOpen = label.dataset.truncatingLabelOverflow === "true";
     label.dataset.truncatingLabelOpen = open && canOpen ? "true" : "false";
     label.setAttribute("aria-expanded", open && canOpen ? "true" : "false");
+    if (open && canOpen) {
+      positionTooltip(label);
+      requestAnimationFrame(() => positionTooltip(label));
+    }
   }
 
   function updateOverflowState(label) {

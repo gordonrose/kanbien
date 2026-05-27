@@ -204,7 +204,7 @@ describe("41 front-end executable audit categories", () => {
       .filter(({ selector }) => isGovernedRuntimeSelector(selector))
       .flatMap(({ selector, body }) => {
         return declarationsForBlock(body).flatMap(({ property, value }) => {
-          if (property.startsWith("scrollbar-") && value !== "auto") {
+          if (property.startsWith("scrollbar-") && value !== "auto" && !value.includes("var(")) {
             return [`${selector} sets ${property}: ${value}`];
           }
 
@@ -214,6 +214,21 @@ describe("41 front-end executable audit categories", () => {
 
           return [];
         });
+      });
+
+    expect(violations).toEqual([]);
+  });
+
+  it("keeps governed runtime CSS radius values on primitive or pattern provenance", () => {
+    const styles = readRepoFile(defaultSystemStyles);
+
+    const violations = cssBlocks(styles)
+      .filter(({ selector }) => selector.includes(".ds-"))
+      .flatMap(({ selector, body }) => {
+        return declarationsForBlock(body)
+          .filter(({ property }) => property === "border-radius")
+          .filter(({ value }) => !/\bvar\(--(?:primitive|pattern)-/.test(value))
+          .map(({ value }) => `${selector} sets border-radius without primitive or pattern provenance: ${value}`);
       });
 
     expect(violations).toEqual([]);

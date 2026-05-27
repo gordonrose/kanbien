@@ -117,6 +117,12 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.button-frame") {
+          const registeredTokenModule = await registration.tokens?.buttonFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.focus-ring") {
           const registeredTokenModule = await registration.tokens?.focusRing?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
@@ -153,8 +159,8 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
-        if (contractId === "tokens.index-nav-item-supporting-text-style") {
-          const registeredTokenModule = await registration.tokens?.indexNavItemSupportingTextStyle?.();
+        if (contractId === "tokens.supporting-text-style") {
+          const registeredTokenModule = await registration.tokens?.supportingTextStyle?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
@@ -171,6 +177,12 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.scrollbar-skin") {
+          const registeredTokenModule = await registration.tokens?.scrollbarSkin?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.label-text-style") {
           const registeredTokenModule = await registration.tokens?.labelTextStyle?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
@@ -179,6 +191,12 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.minimum-target-size") {
           const registeredTokenModule = await registration.tokens?.minimumTargetSize?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.panel-corner-radius") {
+          const registeredTokenModule = await registration.tokens?.panelCornerRadius?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
@@ -197,6 +215,12 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.primary-tinted-foreground") {
           const registeredTokenModule = await registration.tokens?.primaryTintedForeground?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.resize-handle") {
+          const registeredTokenModule = await registration.tokens?.resizeHandle?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }

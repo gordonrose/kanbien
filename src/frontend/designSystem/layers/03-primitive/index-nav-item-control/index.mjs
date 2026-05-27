@@ -4,7 +4,7 @@ import { indexNavItemGapTokenSpec } from "../../02-token/index-nav-item-gap/syst
 import { indexNavItemPaddingTokenSpec } from "../../02-token/index-nav-item-padding/systems/default.mjs";
 import { indexNavItemRadiusTokenSpec } from "../../02-token/index-nav-item-radius/systems/default.mjs";
 import { indexNavItemSurfaceTokenSpec } from "../../02-token/index-nav-item-surface/systems/default.mjs";
-import { indexNavItemSupportingTextStyleTokenSpec } from "../../02-token/index-nav-item-supporting-text-style/systems/default.mjs";
+import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { tooltipSurfaceTokenSpec } from "../../02-token/tooltip-surface/systems/default.mjs";
@@ -22,7 +22,7 @@ const supportedSystems = new Map([
       indexNavItemPaddingTokenSpec,
       indexNavItemRadiusTokenSpec,
       indexNavItemSurfaceTokenSpec,
-      indexNavItemSupportingTextStyleTokenSpec,
+      supportingTextStyleTokenSpec,
       labelTextStyleTokenSpec,
       minimumTargetSizeTokenSpec,
       tooltipSurfaceTokenSpec,
@@ -115,9 +115,9 @@ function tokenDependenciesFor({ systemKey, theme, state }) {
     "index-nav-item-control requires a signed label-text-style token.",
   );
   const supportingTextStyle = findVariant(
-    proof.indexNavItemSupportingTextStyleTokenSpec,
-    (variant) => variant.role === "index nav item supporting text",
-    "index-nav-item-control requires a signed index-nav-item-supporting-text-style token.",
+    proof.supportingTextStyleTokenSpec,
+    (variant) => variant.role === "supporting text",
+    "index-nav-item-control requires a signed supporting-text-style token.",
   );
   const tooltipTextStyle = findVariant(
     proof.tooltipTextStyleTokenSpec,
@@ -170,7 +170,7 @@ export const indexNavItemControlPrimitiveContract = {
     "index-nav-item-radius",
     "index-nav-item-padding",
     "index-nav-item-gap",
-    "index-nav-item-supporting-text-style",
+    "supporting-text-style",
     "label-text-style",
     "tooltip-surface",
     "tooltip-text-style",
@@ -249,7 +249,7 @@ export function indexNavItemControlPrimitive(options = {}) {
       tokenName: tokens.supportingTextStyle.tokenName,
       variantId: tokens.supportingTextStyle.id,
       runtimeSeam:
-        "src/frontend/designSystem/layers/02-token/index-nav-item-supporting-text-style/systems/default.mjs#indexNavItemSupportingTextStyleTokenSpec",
+        "src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec",
     },
     focusRing: {
       tokenName: tokens.focusRing.tokenName,
@@ -406,9 +406,38 @@ export function attachIndexNavItemControlPrimitiveController(root = document) {
     }
   }
 
+  function positionTooltip(control) {
+    const tooltip = control.querySelector("[data-index-nav-item-control-tooltip]");
+    if (!(tooltip instanceof HTMLElement)) {
+      return;
+    }
+
+    const viewport = control.ownerDocument?.defaultView;
+    const controlBox = control.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    const gutter = 8;
+    const fallbackWidth = Math.min(320, Math.max(160, controlBox.width));
+    const tooltipWidth = tooltipBox.width || fallbackWidth;
+    const tooltipHeight = tooltipBox.height || 48;
+    const viewportWidth = viewport?.innerWidth ?? 0;
+    const viewportHeight = viewport?.innerHeight ?? 0;
+    const aboveTop = controlBox.top - tooltipHeight - gutter;
+    const belowTop = controlBox.bottom + gutter;
+    const fitsAbove = aboveTop >= gutter;
+    const top = fitsAbove ? aboveTop : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter));
+    const left = Math.min(Math.max(controlBox.left, gutter), Math.max(gutter, viewportWidth - tooltipWidth - gutter));
+
+    tooltip.style.setProperty("--primitive-index-nav-item-tooltip-top", `${Math.round(top)}px`);
+    tooltip.style.setProperty("--primitive-index-nav-item-tooltip-left", `${Math.round(left)}px`);
+  }
+
   function setTooltipOpen(control, open) {
     const canOpen = control.dataset.indexNavItemControlOverflow === "true";
     control.dataset.indexNavItemControlOpen = open && canOpen ? "true" : "false";
+    if (open && canOpen) {
+      positionTooltip(control);
+      requestAnimationFrame(() => positionTooltip(control));
+    }
   }
 
   function hasOverflow(element) {

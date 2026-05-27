@@ -18,6 +18,10 @@ This token governs the reusable frame values needed before an index-nav panel
 can own container width, surface, padding, scroll height, mobile width, or add
 breakpoint, or add action frame styling.
 
+Panel frame corner radius must come from the signed `panel-corner-radius`
+token. This keeps flush panel corner decisions reusable instead of trapping
+them inside the index-navigation family.
+
 It does not define list semantics, item behavior, route selection, nested index
 relationships, or app adoption.
 
@@ -33,6 +37,7 @@ relationships, or app adoption.
 | `system implementation` | Mobile panel width | `100vw` |
 | `system implementation` | Mobile breakpoint | `44rem` |
 | `system implementation` | Desktop scroll max block size | `32rem` |
+| `system implementation` | Panel frame radius source | `panel-corner-radius-flush` |
 | `system implementation` | Runtime seam | `src/frontend/designSystem/layers/02-token/index-nav-panel-frame/systems/default.mjs#indexNavPanelFrameTokenSpec` |
 
 ## Rendered View

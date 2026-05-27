@@ -45,7 +45,8 @@ describe("index-nav-panel-header-control primitive seam", () => {
 
     expect(html).toContain('data-index-nav-panel-header-control=""');
     expect(html).toContain("Primary index");
-    expect(html).toContain('data-index-nav-icon-button-control=""');
+    expect(html).toContain('data-truncating-label=""');
+    expect(html).toContain('data-icon-button-control=""');
     expect(html).not.toContain("ds-index-nav-panel-header ");
   });
 
@@ -54,7 +55,7 @@ describe("index-nav-panel-header-control primitive seam", () => {
       schema: "kanbien.designSystem.primitiveContract.v1",
       primitiveName: "index-nav-panel-header-control",
       requiredTokens: ["index-nav-panel-frame", "label-text-style"],
-      requiredPrimitives: ["index-nav-icon-button-control"],
+      requiredPrimitives: ["icon-button-control", "truncating-label"],
     });
   });
 });

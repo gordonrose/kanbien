@@ -11,6 +11,12 @@
       "implementationExport": "backgroundColorTokenSpec",
       "pageRoute": "/design-system/default/tokens/background-color"
     },
+    "tokens.button-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/button-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/buttonFrame.tokens.mjs",
+      "implementationExport": "buttonFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/button-frame"
+    },
     "tokens.focus-ring": {
       "contractModule": "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs",
@@ -53,11 +59,11 @@
       "implementationExport": "indexNavItemSurfaceTokenSpec",
       "pageRoute": "/design-system/default/tokens/index-nav-item-surface"
     },
-    "tokens.index-nav-item-supporting-text-style": {
-      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-supporting-text-style/contract.mjs",
-      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemSupportingTextStyle.tokens.mjs",
-      "implementationExport": "indexNavItemSupportingTextStyleTokenSpec",
-      "pageRoute": "/design-system/default/tokens/index-nav-item-supporting-text-style"
+    "tokens.supporting-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/supporting-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/supportingTextStyle.tokens.mjs",
+      "implementationExport": "supportingTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/supporting-text-style"
     },
     "tokens.index-nav-list-gap": {
       "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-list-gap/contract.mjs",
@@ -71,6 +77,12 @@
       "implementationExport": "indexNavPanelFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/index-nav-panel-frame"
     },
+    "tokens.scrollbar-skin": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/scrollbar-skin/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/scrollbarSkin.tokens.mjs",
+      "implementationExport": "scrollbarSkinTokenSpec",
+      "pageRoute": "/design-system/default/tokens/scrollbar-skin"
+    },
     "tokens.label-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",
@@ -82,6 +94,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/minimumTargetSize.tokens.mjs",
       "implementationExport": "minimumTargetSizeTokenSpec",
       "pageRoute": "/design-system/default/tokens/minimum-target-size"
+    },
+    "tokens.panel-corner-radius": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/panel-corner-radius/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelCornerRadius.tokens.mjs",
+      "implementationExport": "panelCornerRadiusTokenSpec",
+      "pageRoute": "/design-system/default/tokens/panel-corner-radius"
     },
     "tokens.primary-color-source": {
       "contractModule": "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
@@ -100,6 +118,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs",
       "implementationExport": "primaryTintedForegroundTokenSpec",
       "pageRoute": "/design-system/default/tokens/primary-tinted-foreground"
+    },
+    "tokens.resize-handle": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/resize-handle/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/resizeHandle.tokens.mjs",
+      "implementationExport": "resizeHandleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/resize-handle"
     },
     "tokens.tooltip-surface": {
       "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs",

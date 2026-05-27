@@ -15,6 +15,10 @@ test.describe("index nav pattern route", () => {
     await expect(page.locator("[data-index-nav]")).toHaveAttribute("data-index-nav-double-width", "true");
     await expect(page.locator("[data-index-nav-panel]")).toHaveCount(2);
     await expect(page.getByRole("button", { name: "Add" })).toHaveCount(2);
+    await expect(page.locator("[data-index-nav-panel]").first()).toHaveCSS("border-radius", "0px");
+    await expect(page.locator("[data-index-nav-panel]").nth(1)).toHaveCSS("border-radius", "0px");
+    await expect(page.locator("[data-index-nav-item-control]").first()).not.toHaveCSS("border-radius", "0px");
+    await expect(page.locator("[data-icon-button-control]").first()).not.toHaveCSS("border-radius", "0px");
 
     const listTopState = await page.locator("[data-index-nav-panel]").evaluateAll((panels) =>
       panels.map((panel) => {
@@ -37,6 +41,78 @@ test.describe("index nav pattern route", () => {
     await page.getByRole("button", { name: "Add" }).first().click();
     await expect(page.getByText(/Activation log: add/)).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  });
+
+  test("shows unclipped tooltips for truncated current and resting items", async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(route);
+
+    const currentItem = page.getByRole("button", { name: "Identity and source authority ownership model" });
+    await currentItem.focus();
+    const currentTooltipId = await currentItem.getAttribute("aria-describedby");
+    expect(currentTooltipId).toBeTruthy();
+    const currentTooltip = page.locator(`#${currentTooltipId}`);
+    await expect(currentTooltip).toBeVisible();
+
+    const currentTooltipBox = await currentTooltip.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      return {
+        left: box.left,
+        right: box.right,
+        top: box.top,
+        bottom: box.bottom,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      };
+    });
+    expect(currentTooltipBox.left).toBeGreaterThanOrEqual(0);
+    expect(currentTooltipBox.right).toBeLessThanOrEqual(currentTooltipBox.viewportWidth);
+    expect(currentTooltipBox.top).toBeGreaterThanOrEqual(0);
+    expect(currentTooltipBox.bottom).toBeLessThanOrEqual(currentTooltipBox.viewportHeight);
+
+    const restingItem = page.getByRole("button", { name: "Workflow routing and operational handoff posture" });
+    await restingItem.focus();
+    const restingTooltipId = await restingItem.getAttribute("aria-describedby");
+    expect(restingTooltipId).toBeTruthy();
+    await expect(page.locator(`#${restingTooltipId}`)).toBeVisible();
+  });
+
+  test("shows unclipped tooltip for truncated panel header title after resize", async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(route);
+
+    await page.locator("[data-index-nav-resize-control]").selectOption("on");
+    const primaryPanel = page.locator("[data-index-nav-panel]").first();
+    const resizeHandle = page.getByRole("separator", { name: "Resize Primary index" });
+    await resizeHandle.focus();
+    await page.keyboard.press("Home");
+    await expect.poll(() => primaryPanel.evaluate((element) => Math.round(element.getBoundingClientRect().width))).toBe(160);
+
+    const headerTitle = primaryPanel.locator("[data-index-nav-panel-header-control] [data-truncating-label]");
+    await expect(headerTitle).toHaveAttribute("data-truncating-label-overflow", "true");
+    await headerTitle.focus();
+    await expect(headerTitle).toHaveAttribute("aria-expanded", "true");
+
+    const tooltip = headerTitle.locator("[role='tooltip']");
+    await expect(tooltip).toBeVisible();
+    const tooltipBox = await tooltip.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      return {
+        left: box.left,
+        right: box.right,
+        top: box.top,
+        bottom: box.bottom,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        position: getComputedStyle(element).position,
+      };
+    });
+
+    expect(tooltipBox.position).toBe("fixed");
+    expect(tooltipBox.left).toBeGreaterThanOrEqual(0);
+    expect(tooltipBox.right).toBeLessThanOrEqual(tooltipBox.viewportWidth);
+    expect(tooltipBox.top).toBeGreaterThanOrEqual(0);
+    expect(tooltipBox.bottom).toBeLessThanOrEqual(tooltipBox.viewportHeight);
   });
 
   test("keeps the single-panel double width control honest", async ({ page }) => {
@@ -69,6 +145,31 @@ test.describe("index nav pattern route", () => {
       "aria-current",
       "true",
     );
+  });
+
+  test("renders list-only chrome without panel headers or add buttons", async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(route);
+
+    await page.locator("[data-index-nav-chrome-control]").selectOption("list-only");
+
+    await expect(page.locator("[data-index-nav-panel-header-control]")).toHaveCount(0);
+    await expect(page.locator("[data-icon-button-control]")).toHaveCount(0);
+    await expect(page.locator("[data-index-nav-panel]").first()).toHaveAttribute("data-index-nav-panel-header-mode", "hidden");
+
+    const listOnlyState = await page.locator("[data-index-nav-panel]").first().evaluate((panel) => {
+      const panelBox = panel.getBoundingClientRect();
+      const firstItem = panel.querySelector("[data-index-nav-item-control]");
+      const firstItemBox = firstItem?.getBoundingClientRect();
+      return {
+        topGap: firstItemBox ? firstItemBox.top - panelBox.top : null,
+        panelHeight: panelBox.height,
+      };
+    });
+
+    expect(listOnlyState.topGap).not.toBeNull();
+    expect(listOnlyState.topGap ?? 0).toBeLessThan(20);
+    expect(listOnlyState.panelHeight).toBeGreaterThanOrEqual(500);
   });
 
   test("preserves mobile page-scroll and RTL containment", async ({ page }) => {

@@ -78,6 +78,24 @@ describe("index-nav pattern seam", () => {
     expect(html.match(/data-index-nav-panel-width-mode="standard"/g)).toHaveLength(2);
   });
 
+  it("can render list-only panels without headers or add actions", () => {
+    const html = renderIndexNavPattern({
+      id: "entity-index-nav",
+      primary: {
+        title: "Primary index",
+        currentValue: "identity",
+        showHeader: false,
+        showAddAction: false,
+        items: primaryItems,
+      },
+    });
+
+    expect(html).toContain('data-index-nav-panel-header-mode="hidden"');
+    expect(html).not.toContain("data-index-nav-panel-header-control");
+    expect(html).not.toContain("data-icon-button-control");
+    expect(html).toContain("data-index-nav-list");
+  });
+
   it("documents the pattern boundary", () => {
     expect(indexNavPatternContract).toMatchObject({
       schema: "kanbien.designSystem.patternContract.v1",

@@ -18,6 +18,8 @@ test.describe("index nav panel frame token route", () => {
     await expect(page.getByText("13rem", { exact: true })).toBeVisible();
     await expect(page.getByText("26rem", { exact: true })).toBeVisible();
     await expect(page.getByText("32rem", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("--panel-corner-radius-flush")).toBeVisible();
+    await expect(page.locator(".token-spec-surface-card-preview").first()).toHaveCSS("border-radius", "0px");
     const resizeInput = page.locator("[data-token-diagnostic-inline-size-input]");
     const resizePreview = page.locator("[data-token-diagnostic-inline-size-preview]");
     await expect(resizeInput).toHaveAttribute("min", "10");

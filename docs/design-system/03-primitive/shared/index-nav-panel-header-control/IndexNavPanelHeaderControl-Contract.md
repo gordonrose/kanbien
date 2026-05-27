@@ -18,7 +18,7 @@
 
 `index-nav-panel-header-control` owns the stable panel-header behavior for
 index navigation: fixed block size, matching min/max block size, sticky top
-placement, title truncation, and governed add-action alignment.
+placement, title truncation disclosure, and governed add-action alignment.
 
 It does not own the list, list scrolling, route selection, entity-page
 structure, backend data loading, or app adoption.
@@ -34,7 +34,8 @@ structure, backend data loading, or app adoption.
 
 | Primitive | Reason |
 | --- | --- |
-| `index-nav-icon-button-control` | Provides the optional icon-only add action without recreating button semantics. |
+| `icon-button-control` | Provides the optional icon-only add action without recreating button semantics. |
+| `truncating-label` | Provides governed title clipping, full-text tooltip disclosure, and keyboard access when the title does not fit. |
 
 ## Behavior And Accessibility Contract
 
@@ -45,13 +46,15 @@ The header remains fixed height regardless of list length or add-action
 presence. The header sticks to the top of its containing scroll context using
 the signed sticky inset from `index-nav-panel-frame`.
 
-Title text truncates within the available inline space. The add action keeps
-the accessible label and activation behavior of `index-nav-icon-button-control`.
+Title text truncates within the available inline space through
+`truncating-label`. The full-title tooltip appears only when rendered text is
+actually clipped. The add action keeps the accessible label and activation
+behavior of `icon-button-control`.
 
 ## Consumer Restrictions
 
 Consumers must not recreate header height, sticky placement, title truncation,
-or add-action alignment locally.
+tooltip disclosure, or add-action alignment locally.
 
 Consumers must not add custom scrollbar styling here. Scrollbar appearance is
 browser-native unless a future signed scrollbar token and primitive approve a

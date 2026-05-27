@@ -1,7 +1,11 @@
 import {
-  attachIndexNavIconButtonControlPrimitiveController,
-  renderIndexNavIconButtonControlPrimitive,
-} from "../index-nav-icon-button-control/index.mjs";
+  attachIconButtonControlPrimitiveController,
+  renderIconButtonControlPrimitive,
+} from "../icon-button-control/index.mjs";
+import {
+  attachTruncatingLabelPrimitiveController,
+  renderTruncatingLabelPrimitive,
+} from "../truncating-label/index.mjs";
 import { indexNavPanelFrameTokenSpec } from "../../02-token/index-nav-panel-frame/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 
@@ -65,10 +69,10 @@ export const indexNavPanelHeaderControlPrimitiveContract = {
   supportedSystems: ["default"],
   supportedThemes: ["original", "dark", "desert"],
   requiredTokens: ["index-nav-panel-frame", "label-text-style"],
-  requiredPrimitives: ["index-nav-icon-button-control"],
+  requiredPrimitives: ["icon-button-control", "truncating-label"],
   consumerRules: [
     "Consumers must use this primitive for governed index-navigation panel headers.",
-    "Consumers must not locally recreate header height, sticky position, title truncation, or action alignment.",
+    "Consumers must not locally recreate header height, sticky position, title truncation, tooltip disclosure, or action alignment.",
     "Consumers must not replace the signed header frame token values with local CSS literals.",
   ],
 };
@@ -145,16 +149,24 @@ export function renderIndexNavPanelHeaderControlPrimitive(options = {}) {
 
   return `
     <header ${toAttributeString(attributes)}>
-      <h3 class="ds-index-nav-panel-header-control-title">${escapeHtml(spec.title)}</h3>
+      <h3 class="ds-index-nav-panel-header-control-title">
+        ${renderTruncatingLabelPrimitive({
+          systemKey: spec.systemKey,
+          theme: spec.theme,
+          id: `${spec.id}-title`,
+          text: spec.title,
+        })}
+      </h3>
       ${
         spec.showAddAction
-          ? renderIndexNavIconButtonControlPrimitive({
+          ? renderIconButtonControlPrimitive({
               systemKey: spec.systemKey,
               theme: spec.theme,
               id: `${spec.id}-add`,
               label: spec.addLabel,
               value: `${spec.id}-add`,
               icon: "plus",
+              frameIntent: "quiet",
             })
           : ""
       }
@@ -185,5 +197,6 @@ export function attachIndexNavPanelHeaderControlPrimitiveController(root = docum
     }
   }
 
-  attachIndexNavIconButtonControlPrimitiveController(root);
+  attachIconButtonControlPrimitiveController(root);
+  attachTruncatingLabelPrimitiveController(root);
 }

@@ -6,7 +6,8 @@ The `default` design system renders `index-nav-panel-header-control` at:
 
 The proof shows a long-title header with an add action and a no-action header.
 It verifies that the header height, min height, max height, sticky top inset,
-title truncation, and add-action alignment come from signed Layer 2/3 seams.
+title truncation disclosure, and add-action alignment come from signed Layer
+2/3 seams.
 
 Scrollbar appearance is intentionally browser-native in this proof. No custom
 scrollbar token or primitive is approved by this artifact.

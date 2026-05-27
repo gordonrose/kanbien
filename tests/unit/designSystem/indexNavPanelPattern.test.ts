@@ -33,6 +33,8 @@ describe("index-nav-panel pattern seam", () => {
       },
       styleVars: {
         "--pattern-index-nav-panel-inline-size": "13rem",
+        "--pattern-index-nav-panel-min-inline-size": "10rem",
+        "--pattern-index-nav-panel-max-inline-size": "32rem",
       },
       attributes: {
         "data-index-nav-panel-mobile-breakpoint": "44rem",
@@ -50,7 +52,8 @@ describe("index-nav-panel pattern seam", () => {
 
     expect(html).toContain('data-index-nav-panel=""');
     expect(html).toContain('data-index-nav-panel-header-control=""');
-    expect(html).toContain('data-index-nav-icon-button-control=""');
+    expect(html).toContain('data-icon-button-control=""');
+    expect(html).toContain('data-scroll-region-control=""');
     expect(html).toContain('data-index-nav-list=""');
     expect(html).not.toContain("pattern-proof-row");
 
@@ -64,6 +67,22 @@ describe("index-nav-panel pattern seam", () => {
     expect(emptyHtml).toContain("No sections yet.");
   });
 
+  it("can compose the governed resize handle with panel-frame min and max width", () => {
+    const html = renderIndexNavPanelPattern({
+      id: "primary-index-panel",
+      title: "Primary index",
+      currentValue: "identity",
+      items,
+      resizable: true,
+    });
+
+    expect(html).toContain('data-index-nav-panel-resizable="true"');
+    expect(html).toContain('data-resize-handle-control=""');
+    expect(html).toContain('data-resize-handle-control-target-id="primary-index-panel"');
+    expect(html).toContain('data-resize-handle-control-min-inline-size="10rem"');
+    expect(html).toContain('data-resize-handle-control-max-inline-size="32rem"');
+  });
+
   it("guards unsupported width and mobile modes", () => {
     expect(() => indexNavPanelPattern({ items, widthMode: "triple" })).toThrow('index-nav-panel does not support widthMode "triple".');
     expect(() => indexNavPanelPattern({ items, mobileMode: "drawer" })).toThrow('index-nav-panel does not support mobileMode "drawer".');
@@ -74,7 +93,7 @@ describe("index-nav-panel pattern seam", () => {
       schema: "kanbien.designSystem.patternContract.v1",
       patternName: "index-nav-panel",
       requiredPatterns: ["index-nav-list"],
-      requiredPrimitives: ["index-nav-panel-header-control", "index-nav-icon-button-control"],
+      requiredPrimitives: ["index-nav-panel-header-control", "icon-button-control", "scroll-region-control", "resize-handle-control"],
       directTokenDependencies: ["index-nav-panel-frame", "label-text-style"],
     });
   });

@@ -39,7 +39,7 @@ if (!(root instanceof HTMLElement)) {
 
 let currentState = null;
 
-root.addEventListener("index-nav-icon-button-control:activate", (event) => {
+root.addEventListener("icon-button-control:activate", (event) => {
   const log = root.querySelector("[data-index-nav-log]");
   if (log instanceof HTMLElement) {
     log.textContent = `Activation log: add ${event.detail?.value ?? "unknown"}`;
@@ -102,6 +102,20 @@ function renderControls(state) {
         </select>
       </label>
       <label>
+        <span>Panel chrome</span>
+        <select data-index-nav-chrome-control>
+          ${renderOption("header", "Header and add", state.chromeMode)}
+          ${renderOption("list-only", "List only", state.chromeMode)}
+        </select>
+      </label>
+      <label>
+        <span>Resize handle</span>
+        <select data-index-nav-resize-control>
+          ${renderOption("off", "Hidden", state.resizeMode)}
+          ${renderOption("on", "Shown", state.resizeMode)}
+        </select>
+      </label>
+      <label>
         <span>Activation handling</span>
         <select data-index-nav-activation-control>
           ${renderOption("log-only", "Log only", state.activationMode)}
@@ -141,7 +155,16 @@ function renderPage(state) {
   const primary = primaryItems.slice(0, Number(state.itemCount));
   const primaryCurrentValue = primary.some((item) => item.value === state.primaryCurrentValue) ? state.primaryCurrentValue : primary[0]?.value ?? null;
   const secondary = state.secondaryMode === "shown"
-    ? { title: "Secondary index", ariaLabel: "Secondary index", items: secondaryItems, currentValue: state.secondaryCurrentValue, addLabel: "Add" }
+    ? {
+        title: "Secondary index",
+        ariaLabel: "Secondary index",
+        items: secondaryItems,
+        currentValue: state.secondaryCurrentValue,
+        showHeader: state.chromeMode !== "list-only",
+        showAddAction: state.chromeMode !== "list-only",
+        resizable: state.resizeMode === "on",
+        addLabel: "Add",
+      }
     : null;
   currentState = { ...state, primaryCurrentValue, secondaryCurrentValue: state.secondaryCurrentValue };
 
@@ -174,6 +197,9 @@ function renderPage(state) {
                   items: primary,
                   currentValue: primaryCurrentValue,
                   emptyMessage: "No primary sections yet.",
+                  showHeader: state.chromeMode !== "list-only",
+                  showAddAction: state.chromeMode !== "list-only",
+                  resizable: state.resizeMode === "on",
                   addLabel: "Add",
                 },
                 secondary,
@@ -207,6 +233,8 @@ function renderPage(state) {
     ["[data-index-nav-secondary-control]", "secondaryMode"],
     ["[data-index-nav-double-control]", "doubleMode"],
     ["[data-index-nav-count-control]", "itemCount"],
+    ["[data-index-nav-chrome-control]", "chromeMode"],
+    ["[data-index-nav-resize-control]", "resizeMode"],
     ["[data-index-nav-activation-control]", "activationMode"],
     ["[data-index-nav-mobile-control]", "mobileMode"],
     ["[data-index-nav-direction-control]", "direction"],
@@ -222,6 +250,8 @@ renderPage({
   secondaryMode: "shown",
   doubleMode: "on",
   itemCount: "6",
+  chromeMode: "header",
+  resizeMode: "off",
   activationMode: "log-only",
   mobileMode: "page-scroll",
   direction: "ltr",
