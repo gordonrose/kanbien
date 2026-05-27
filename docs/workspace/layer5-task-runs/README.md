@@ -2,6 +2,8 @@
 
 This directory stores script-created Layer 5 task run records.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Layer 5 begins from one validated Layer 4 task packet and one selected task ID.
 It must not treat a whole story as the delivery unit, and it must not implement
 feature work when the task handoff is blocked, draft, superseded, or missing

@@ -2,6 +2,8 @@
 
 Status: repo-artifact backed bootstrap
 
+Repo bucket classification: `shared-governance-kernel`.
+
 This directory is the transitional storage location for decision and evidence
 packet records until the Decision and Evidence Packet entities have persistent
 capabilities.

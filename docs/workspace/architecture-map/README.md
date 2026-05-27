@@ -4,6 +4,15 @@ This workspace doc is a working checklist of the major platform layers needed
 for an enterprise-grade SaaS platform and the repo's current status against
 them.
 
+Repo bucket classification: `shared-governance-kernel`, with future cloned
+bucket-specific architecture-map views preferred so each bucket can stand
+alone.
+
+2026-05-27 cleanup decision: future bucket split work should prefer cloned or
+projected architecture-map context in each bucket rather than a centralized
+only model. Do not clone yet; first define the synchronization and contribution
+contract so bucket-local maps do not fork silently.
+
 Use it to answer:
 
 - what layers already exist in usable form

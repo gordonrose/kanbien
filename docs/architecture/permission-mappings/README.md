@@ -64,20 +64,21 @@ ADR-0036 and the Platform Authorization Model Technical Steering packet:
 Only `runtime-enforced` capabilities may become usable UI/admin options. Rows
 that are documented, cataloged, seeded, or planned are not enough by themselves.
 
-The current CSV exports remain review snapshots of the implemented baseline.
-They are not yet expanded with the new platform authorization schema.
+The old CSV exports were archived as stale historical review snapshots during
+the 2026-05-27 workspace cleanup. They are not current permission truth and
+are not expanded with the new platform authorization schema.
 
-## Downloadable CSV Exports
+## Archived CSV Exports
 
-- [backend-to-authz-capability-mapping.csv](/home/gordon/kanbien/docs/workspace/permission-mappings/backend-to-authz-capability-mapping.csv)
-- [role-to-authz-capability-mapping.csv](/home/gordon/kanbien/docs/workspace/permission-mappings/role-to-authz-capability-mapping.csv)
+- [backend-to-authz-capability-mapping.csv](/home/gordon/kanbien/docs/workspace-buckets/archive-history/permission-mapping-exports/backend-to-authz-capability-mapping.csv)
+- [role-to-authz-capability-mapping.csv](/home/gordon/kanbien/docs/workspace-buckets/archive-history/permission-mapping-exports/role-to-authz-capability-mapping.csv)
 
-Use these mappings alongside:
+Use the canonical Markdown mappings alongside:
 
 - ADRs for enduring authorization rules
 - PRDs for behavioral scope
 - API contracts for route-level behavior
 - implementation blueprints for repo-shaped execution
 
-These files are not meant to replace the authorization seam.
+The archived CSV files are not meant to replace the authorization seam.
 They define the intended policy model that the seam should enforce.

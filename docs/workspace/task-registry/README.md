@@ -3,6 +3,8 @@
 This directory is the machine-readable anchor for the repo's Codex task
 lifecycle workflow.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Phase 1 does not yet automate task creation, promotion, or retirement. It
 introduces:
 

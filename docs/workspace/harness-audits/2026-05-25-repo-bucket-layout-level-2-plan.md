@@ -474,13 +474,13 @@ Current posture:
 - primary bucket: `platform`
 - governance rules: `shared-governance-kernel`
 - current canonical home: `docs/architecture/permission-mappings/`
-- current secondary/export/transitional home: `docs/workspace/permission-mappings/`
+- archived export snapshot home:
+  `docs/workspace-buckets/archive-history/permission-mapping-exports/`
 - producing machinery: `discovery-harness`, through `DOC:permission-mapping`
   task work and permission-mapping guardrails, when the work is artifact
   maintenance
-- move readiness: not ready for physical relocation while architecture docs,
-  skills, standards, Layer 5 artifact obligations, validators, API/data/test
-  guardrails, and CSV export references expect the current folders
+- move readiness: canonical Markdown remains in place; stale CSV exports were
+  archived after reference updates
 
 Authority:
 
@@ -892,6 +892,14 @@ task-breakdown guardrails, frontend architecture guidance, and existing
 workspace artifacts still reference the current path, so a future move would
 need compatibility updates before relocation.
 
+Follow-up decision on 2026-05-27: do not simply split or archive the
+architecture map. The likely target is a shared-context model where each bucket
+can carry or clone the architecture-map view it needs for its own workstream
+context. That requires updating the relevant skills and upstream/downstream
+docs so bucket-specific architecture-map contributions do not fork silently.
+Leave the current `docs/workspace/architecture-map/` in place until that
+contribution and synchronization contract is designed.
+
 `docs/workspace/harness-audits/` started as `unsure / needs decision`; after
 the cleanup sweep it is now an active audit workspace containing only the
 folder README and this Level 2 plan.
@@ -1022,6 +1030,11 @@ which completed QA artifacts are still required by the active harness, which
 are historical examples, and which need promotion into standards, skills,
 validators, or task guardrails.
 
+Current cleanup result: the folder README now records the
+`shared-governance-kernel` bucket classification and clarifies that completed
+QA records are point-in-time operating evidence unless a current standard,
+skill, release gate, or task guardrail still cites them as active behavior.
+
 `docs/workspace/qa-evidence/` is currently classified as
 `shared-governance-kernel`, with freshness and enforcement uncertain.
 
@@ -1053,6 +1066,11 @@ to an active release gate, current feature loop, or maintained status artifact.
 Move posture: do not physically move it yet. First confirm which summaries are
 active gate evidence versus retained historical proof.
 
+Current cleanup result: the folder README now records the
+`shared-governance-kernel` bucket classification and clarifies that test
+summaries are point-in-time evidence unless a current feature loop, release
+gate, standard, or review artifact names them as current.
+
 `docs/workspace/issue-reconciliations/` is currently classified as
 `shared-governance-kernel`, with freshness and follow-through uncertain.
 
@@ -1074,6 +1092,12 @@ found active hardcoded references from AGENTS, the
 This makes the folder an active `shared-governance-kernel` evidence surface,
 not just archive/history. A future relocation should first update the skill,
 script, test, and standards references or introduce a compatibility adapter.
+
+Current cleanup result: the folder README now records the
+`shared-governance-kernel` bucket classification and clarifies that
+issue-reconciliation notes become durable operating truth only when their
+lessons are promoted into maintained source, tests, standards, skills,
+templates, or guardrails.
 
 The following planning and handoff folders were already classified by artifact
 type earlier in this plan, and the folder inventory did not change that
@@ -1124,23 +1148,22 @@ the current path.
 `docs/workspace/frontend/` is currently classified as a retired split folder
 after the 2026-05-26 cleanup.
 
-Inspected evidence: the folder has no README and currently contains a
-page-shell planning feature spec, a visual-suite rebucketing plan, and an
-entity-management page seam recovery plan. These files have different purposes
-and lifecycles: future frontend/platform planning, likely historical visual-test
-layout migration, and active frontend-harness recovery/governance.
+Initial inspected evidence: before cleanup, the folder had no README and
+contained a page-shell planning feature spec, a visual-suite rebucketing plan,
+and an entity-management page seam recovery plan. These files had different
+purposes and lifecycles: future frontend/platform planning, likely historical
+visual-test layout migration, and active frontend-harness recovery/governance.
 
 Authority/currentness posture: mixed and unclear. The folder should not be
 treated as a stable frontend source-of-truth home until each file is classified
 as active frontend-harness guidance, platform planning, or archive/history.
 
-Cleanup pressure: high. Add a README or split decision before this folder
-continues to collect unrelated frontend-shaped plans.
+Cleanup pressure: resolved for this retired folder. The split decisions below
+removed the old active-looking workspace folder from the tracked repo.
 
-Move posture: do not physically move it yet. First decide whether each file
-belongs under `frontend-harness`, `platform`, or `archive/history`, and whether
-any active guidance must be promoted to architecture, standards,
-design-system, or implementation-planning artifacts.
+Move posture: completed as a file-level split. Do not recreate
+`docs/workspace/frontend/` unless a future frontend workspace inbox is
+explicitly approved.
 
 Follow-up inspection on 2026-05-26 classified and moved the three current files:
 
@@ -1219,8 +1242,8 @@ story/task artifacts reference the current path.
 `docs/workspace/artifact-alignment/` is currently classified as
 `archive/history`.
 
-Inspected evidence: the folder currently contains a Product Request artifact
-alignment inventory that records validator evidence, target hierarchy,
+Initial inspected evidence: the folder contained a Product Request artifact
+alignment inventory that recorded validator evidence, target hierarchy,
 alignment classifications, recommendations, and drift findings for planning
 artifact chains.
 
@@ -1268,25 +1291,30 @@ Move posture: do not physically move it yet. Asset decision templates,
 standards, task planning, and downstream feature artifacts reference the
 current folder.
 
-`docs/workspace/permission-mappings/` is currently classified as
-`shared-governance-kernel`, but as exported review material rather than
-canonical permission truth.
+`docs/workspace/permission-mappings/` is classified as retired.
 
-Inspected evidence: the README says this folder contains spreadsheet-friendly
-exports of source-of-truth permission mapping documents under
+Inspected evidence: the folder contained spreadsheet-friendly CSV exports of
+source-of-truth permission mapping documents under
 `docs/architecture/permission-mappings/`.
 
 Authority/currentness posture: these CSV files are not the canonical permission
 mapping authority. The README says they cover the live implemented mapping
 boundary and have not yet expanded to the newer source-posture schema, so they
-must be treated as baseline review exports until regenerated or replaced.
+must be treated as stale review exports until regenerated or replaced.
 
-Cleanup pressure: high. Any future harness step that consumes these files must
-check whether the architecture permission mappings have changed since export.
+Cleanup pressure: resolved for the stale CSV exports. The 2026-05-27 follow-up
+inspection found rows that are `current` in the architecture Markdown but still
+`target` in the CSV exports, plus newer feature-specific permission mapping
+documents that are not represented in the CSV pair.
 
-Move posture: do not physically move it yet. First decide whether workspace
-exports remain useful or should be regenerated through a controlled export
-command with a documented freshness check.
+Move posture: completed as an archive/history move after Gordon chose to
+archive the stale CSV exports. Future spreadsheet exports need a controlled
+regeneration/export command with a documented freshness check before becoming
+active review material again.
+
+Current cleanup result: after the archive move, the empty
+`docs/workspace/permission-mappings/` directory was removed from the local
+workspace. The tracked CSV exports now live only under archive/history.
 
 `docs/workspace/entity-definitions/` is currently classified as `platform`
 planning truth, with cross-bucket handoff behavior.
@@ -1303,10 +1331,26 @@ Once implemented, durable entity truth should move to or be reconciled with
 
 Cleanup pressure: high. Draft entity definitions need superseded/retained
 status when the implementation or data dictionary becomes authoritative.
+The 2026-05-27 follow-up inspection found current data-dictionary pages and
+implemented feature source for several families represented by first-draft
+entity-definition files. The folder README now warns that first drafts are not
+current authority without checking owning feature source and data dictionary
+truth.
 
-Move posture: do not physically move it yet. First decide which drafts are
-still planning authority, which are superseded by implementation, and which are
-historical source inputs.
+Move posture: do not physically move it yet. Gordon's 2026-05-27 follow-up
+decision: these may need a shared-context or clone-per-bucket model rather than
+a simple split, because entity definitions provide context needed by multiple
+buckets for different purposes. Still classify each first-draft file as active
+upstream planning input, archive/history, or reconcile-into-current-data-
+dictionary/feature docs before designing that shared-context model.
+
+Current cleanup result: file-level classification was recorded in
+`docs/workspace/entity-definitions/README.md`. The approved form-pattern catalog
+is retained as shared context for governed entity/form planning. The first-draft
+entity model files are classified as reconcile candidates because implemented
+feature source and data-dictionary pages now exist for their owning families.
+No files were moved because capability matrices, implementation blueprints, and
+Product Discovery notes still reference the current paths.
 
 `docs/workspace/runbooks/` is currently classified as
 `shared-governance-kernel`, with platform/operations subject ownership.
@@ -1330,8 +1374,8 @@ feature/platform subject and live-vs-historical status.
 `shared-governance-kernel` active import inbox, while completed imported
 provenance files belong in `archive/history`.
 
-Inspected evidence: the folder contains imported Excel workbooks plus a README.
-The current workbooks are cited by
+Initial inspected evidence: the folder contained imported Excel workbooks plus
+a README. The workbooks were cited by
 `docs/workspace/capability-matrices/2026-03-30-root-users-capability-matrix-from-rootuser-v2.3-notes.md`
 as the source inputs for a legacy Root Users capability-matrix conversion.
 
@@ -1342,7 +1386,8 @@ defaults before being treated as current authority.
 
 Cleanup pressure: reduced after the 2026-05-26 import cleanup. Keep the active
 `docs/workspace/imports/` folder as an inbox for current imported source files,
-but do not leave completed legacy provenance files there.
+but do not leave completed legacy provenance files there. As of the
+2026-05-27 cleanup sweep, the folder contains only `.gitkeep` and `README.md`.
 
 Move posture: the legacy Root Users workbook inputs were moved to
 `docs/workspace-buckets/archive-history/imports/root-users-legacy-capability-matrix/`,
@@ -1374,6 +1419,9 @@ workflow still point here.
 Move posture: do not physically move it yet. A future bucket move requires a
 handoff that updates the generator default path, API/feature documentation, and
 any tests or operator workflow relying on the current path.
+Gordon's 2026-05-27 cleanup decision: leave `docs/workspace/exports/` in place
+for now. Future movement should be handled as a dedicated compatibility task
+that updates the generator/API/docs/test/operator references together.
 
 `docs/workspace/branch-stack-reconciliations/` is currently classified as
 `shared-governance-kernel`, with closure and freshness pressure.
@@ -1641,6 +1689,79 @@ not as current Kanbien repo law.
 
 Cleanup pause point: after this cleanup pass, `docs/workspace/harness-audits/`
 is intentionally left with its README and this active plan only.
+
+## Morning Review Queue
+
+Recorded during the 2026-05-27 overnight continuation.
+
+No unresolved overnight review decision remains for the folders covered in this
+pass. Permission mapping CSV exports were archived, entity definitions were
+classified file-by-file, and workspace exports were left in place pending a
+future compatibility task.
+
+Additional safe cleanup completed while Gordon was away: every first-level
+`docs/workspace/*/README.md` now has an explicit repo bucket classification
+sentence. The top-level workspace README now states that those classifications
+are cleanup aids, not permission to move folders without reference, generator,
+skill, script, test, and downstream-artifact checks.
+
+## Breakfast Review Queue
+
+Recorded during the 2026-05-27 safe continuation while Gordon was away.
+
+1. Architecture-map shared-context model:
+   resolved. Gordon prefers cloned or projected architecture-map views so each
+   bucket can stand alone. This still needs skill and upstream/downstream doc
+   updates before any physical split, so bucket-local maps do not fork silently.
+2. Entity-definition shared-context model:
+   resolved directionally. Entity-definition context should follow the same
+   standalone-bucket principle as the architecture map, but stale first drafts
+   must be reconciled before cloning so buckets receive trustworthy context.
+3. QA and issue-reconciliation freshness:
+   approved. The safe next audit is to sample older QA records and
+   issue-reconciliation notes to see which lessons were promoted into tests,
+   standards, skills, templates, or runtime guardrails.
+4. Active harness folders:
+   resolved. Leave `deployment-harness` and `design-system` in place while
+   active work is ongoing. Any future move should be its own compatibility
+   task.
+
+## QA And Issue-Reconciliation Sample
+
+Recorded during the 2026-05-27 safe continuation.
+
+Inventory size:
+
+- `docs/workspace/qa/`: 17 non-README files.
+- `docs/workspace/issue-reconciliations/`: 146 non-README files.
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-18-frontend-human-review-guard-hook-gap.md`
+  shows a strong promotion pattern: the lesson was carried into a shared
+  Playwright helper, design-system visual tests, the frontend design-system
+  loop skill, and the issue-reconciliation skill. However, the record still
+  says `candidate fix awaiting user confirmation`, so status freshness should
+  be checked before treating it as closed.
+- `docs/workspace/qa/2026-04-25-asset-foundation-v1-qa-waiver-or-quarantine.md`
+  shows an unresolved production-readiness caveat: provider contract tests and
+  Postgres-backed persistence proof were required before production provider
+  rollout or customer-facing asset upload UI. This should remain visible until
+  an assets/provider readiness pass proves or supersedes it.
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-overflow-menu-drift.md`
+  names a direct test hardening response and follow-up watch items, which makes
+  it useful learning evidence but still worth checking against current
+  design-system navigation tests before closure.
+- `docs/workspace/issue-reconciliations/2026-05-23-count-card-route-alias-fallback.md`
+  is a newer runtime-process freshness example: it distinguishes source/test
+  changes from the live user-facing process, so it should remain available as a
+  runtime verification guardrail input.
+
+Finding: do not archive or bulk-move QA and issue-reconciliation folders yet.
+They contain a mixture of promoted lessons, unresolved caveats, and historical
+evidence. The next safe cleanup is to add or generate a lightweight freshness
+index that marks sampled records as `promoted`, `unresolved`, `historical`, or
+`needs-recheck` without changing the underlying records.
 
 ## Non-Goals
 

@@ -6,6 +6,8 @@ This folder keeps durable records of material Codex/user conversations that
 may affect future implementation, compliance review, artifact reconciliation,
 or missed-work recovery.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Chat records are not replacements for chat bootstraps.
 
 - `docs/workspace/chat-bootstraps/` records isolation facts before material
@@ -68,4 +70,3 @@ Use one of these statuses:
 
 Do not mark a record `closed` while it still names unresolved follow-up
 obligations.
-

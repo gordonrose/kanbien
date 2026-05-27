@@ -3,6 +3,8 @@
 This folder is the running log of bugs or runtime defects that slipped past the
 feature loop and what we changed to prevent repeats.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Use one dated file per incident.
 
 Each note should capture:
@@ -33,3 +35,14 @@ Repo workflow:
   recurrence
 - the skill should decide whether the fix belongs in shared architecture first
   before allowing a family-local patch to stand
+
+## Cleanup Posture
+
+Issue-reconciliation notes are evidence of escaped defects and prevention
+learning. They are not automatically current standards. A note becomes durable
+operating truth only when its lesson is promoted into source, tests, standards,
+skills, templates, or other maintained guardrails.
+
+Do not move this folder without updating the issue-reconciliation skill,
+frontend design-system loop skill, coverage-strength scripts, integration
+tests, and standards references that use this path.

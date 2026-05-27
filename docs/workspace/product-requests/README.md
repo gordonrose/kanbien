@@ -2,6 +2,8 @@
 
 This directory holds workspace Product Requests.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 A Product Request is a thin parent summary for a requested body of work. It
 links Product Discovery, Technical Steering, Story Breakdown, Task Breakdown,
 Loop Runs, evidence, and PRs without replacing those artifacts.

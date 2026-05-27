@@ -2,6 +2,8 @@
 
 This workspace holds Layer 2 Technical Steering packet instances.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Technical Steering decides architectural posture before Story Breakdown. It is
 the first authoritative layer for feature-local versus shared/platform,
 design-system, public-seam, shared-library, and architecture-foundation

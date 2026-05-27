@@ -77,8 +77,7 @@ Use for task type: `DOC:permission-mapping`
 `DOC:permission-mapping` owns source-independent permission truth. It may create
 or update:
 
-- permission mapping docs under `docs/architecture/permission-mappings/` or
-  `docs/workspace/permission-mappings/`
+- permission mapping docs under `docs/architecture/permission-mappings/`
 - role-to-capability, capability-to-route, and allow/deny mapping tables when
   maintained as planning or documentation artifacts
 - authority-world, actor-boundary, grant-source posture, UI eligibility,

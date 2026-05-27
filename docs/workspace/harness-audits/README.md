@@ -3,6 +3,9 @@
 This folder stores audit, reconciliation, and investigation notes about the
 repo harness itself.
 
+Repo bucket classification: `shared-governance-kernel`, with completed
+historical audits moving to `archive/history`.
+
 Use it for:
 
 - temporary or dated harness audits

@@ -3,6 +3,8 @@
 This folder stores capability matrices and related notes while the repo still
 uses the legacy workspace layout.
 
+Repo bucket classification: mixed by matrix subject.
+
 Capability matrices are cross-bucket handoff artifacts. Classify each matrix by
 the subject it governs, not by this folder name.
 

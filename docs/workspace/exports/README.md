@@ -21,3 +21,8 @@ Repo bucket classification: `shared-governance-kernel`.
 Move caution: do not move this folder or artifact without updating the
 generator default path, API and feature documentation, and any tests or
 operator workflow that rely on the current path.
+
+2026-05-27 cleanup decision: leave this folder in place for now. A future move
+to a bucket-owned path should be handled as a dedicated compatibility task that
+updates the generator, API docs, feature docs, tests, and operator workflow in
+one change.

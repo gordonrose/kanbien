@@ -3,6 +3,8 @@
 This workspace holds Product Discovery packet instances, draft packets,
 feedback notes, and trial outputs.
 
+Repo bucket classification: `discovery-harness`.
+
 Reusable Product Discovery guidance lives in:
 
 - `docs/product-discovery/`

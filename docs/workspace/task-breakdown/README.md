@@ -2,6 +2,8 @@
 
 This workspace holds Task Breakdown packet instances.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Task Breakdown is Layer 4 of the change harness. It consumes validated Story
 Breakdown packets and turns one approved story, or a small explicitly related
 story set, into isolated delivery tasks.

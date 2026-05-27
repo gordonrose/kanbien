@@ -3,6 +3,9 @@
 This folder is the active inbox for imported source files that are being used
 to create or reconcile repo artifacts.
 
+Repo bucket classification: `shared-governance-kernel` active inbox;
+completed provenance belongs in `archive/history`.
+
 Use this folder for:
 
 - original workbooks or external files used to create a repo artifact

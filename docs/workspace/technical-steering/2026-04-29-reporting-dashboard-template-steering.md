@@ -258,7 +258,7 @@ families:
   maintained API contracts, OpenAPI/Postman artifacts, data dictionaries, and
   reporting/read-model docs if future app/API binding enters scope
 - permission docs:
-  capability matrices and `docs/workspace/permission-mappings/*` if any
+  capability matrices and `docs/architecture/permission-mappings/` if any
   authz capability, grant, root/tenant boundary, or tenant-context rule enters
   scope
 - design-system docs:

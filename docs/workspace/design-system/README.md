@@ -2,6 +2,8 @@
 
 This folder holds the working artifacts for the design-system loop.
 
+Repo bucket classification: `frontend-harness`.
+
 Use it to keep principle, token, pattern, component, and adoption notes close
 to the implementation cadence without pushing draft thinking into permanent
 architecture docs too early.

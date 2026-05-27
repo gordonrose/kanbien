@@ -6,6 +6,22 @@ This folder is the source-independent planning layer for durable entity truth
 that does not yet belong in `docs/data-dictionary/` because the backing feature
 and persistence do not exist in the repo yet.
 
+Repo bucket classification: shared context under review. Future bucket split
+work should prefer cloned or projected entity context so each bucket can stand
+alone, but files must still be classified by current purpose before moving or
+cloning them.
+
+2026-05-27 cleanup decision: entity-definition context should follow the same
+standalone-bucket principle as the architecture map. Do not clone yet; first
+reconcile stale first drafts against current source and `docs/data-dictionary/`
+so each bucket receives trustworthy context rather than copied drift.
+
+Freshness warning: several files in this folder are first-draft planning inputs
+for features that now have implemented source, migrations, feature manifests,
+and data-dictionary pages. Do not treat a first-draft entity-definition file as
+current authority without checking the owning feature and
+`docs/data-dictionary/` first.
+
 Use this folder when a feature loop needs to define:
 
 - persisted entity truth that a future feature will own durably
@@ -83,3 +99,22 @@ Examples for the future `entityBuilder` feature:
 - [web-app-surface-discovery-structure-aware-entity-model-first-draft.md](./web-app-surface-discovery-structure-aware-entity-model-first-draft.md)
 - [web-app-hierarchy-structure-aware-reconcile-entity-model-first-draft.md](./web-app-hierarchy-structure-aware-reconcile-entity-model-first-draft.md)
 - [web-app-page-settings-entity-model-first-draft.md](./web-app-page-settings-entity-model-first-draft.md)
+
+## File Classification
+
+This folder is no longer treated as one uniform bucket. Each file has to be
+classified by current purpose before anything moves.
+
+| File | Current classification | Authority posture | Next cleanup action |
+| --- | --- | --- | --- |
+| `approved-form-pattern-catalog.md` | shared context for governed entity/form planning | Still useful as a bridge between entity planning and signed-off design-system seams. Not archive-only. | Keep in place until the shared-context or clone-per-bucket model is designed. |
+| `entity-builder-core-entity-model-first-draft.md` | reconcile candidate | Implemented `entityBuilder` source and data-dictionary pages now exist, so this first draft is not current authority by itself. | Reconcile against `src/features/entityBuilder/` and `docs/data-dictionary/entity-definition*.md`, then archive or replace references. |
+| `web-app-surface-discovery-core-entity-model-first-draft.md` | reconcile candidate | Implemented `webAppSurfaceDiscovery` source and data-dictionary pages now exist, so this first draft is not current authority by itself. | Reconcile against current source/data dictionary, then archive or replace references. |
+| `web-app-surface-discovery-structure-aware-entity-model-first-draft.md` | reconcile candidate | Structure-aware discovery planning is still referenced by matrices/blueprints, but current source and dictionary truth must be checked first. | Reconcile with current hierarchy/discovery implementation, then archive or replace references. |
+| `web-app-hierarchy-structure-aware-reconcile-entity-model-first-draft.md` | reconcile candidate | Current hierarchy-related source and dictionary truth now exist, so this file should be treated as planning evidence until reconciled. | Reconcile with current hierarchy builder/source docs, then archive or replace references. |
+| `web-app-page-settings-entity-model-first-draft.md` | reconcile candidate | Implemented `webAppPageSettings` source and data-dictionary pages now exist, so this first draft is not current authority by itself. | Reconcile against current source/data dictionary, then archive or replace references. |
+
+No entity-definition files were moved during this pass because capability
+matrices, implementation blueprints, and Product Discovery notes still point at
+the current paths. Moving these safely requires a reference update or an
+intentional shared-context model first.

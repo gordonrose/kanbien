@@ -2,6 +2,8 @@
 
 This workspace holds Story Breakdown packet instances.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 Story Breakdown is a planning control layer between Technical Steering and Task
 Breakdown. It turns approved steering into the smallest independently
 deliverable and verifiable stories.

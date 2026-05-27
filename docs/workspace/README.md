@@ -6,6 +6,11 @@ Codex can read and update during delivery work.
 Use this area when a document is important to the current repo but is not yet a
 finalized architecture, PRD, or standards artifact.
 
+During the repo-bucket cleanup, each first-level workspace folder README should
+name its current repo bucket classification. Treat that classification as a
+cleanup aid, not as permission to move the folder without checking references,
+generators, skills, scripts, tests, and downstream artifacts.
+
 ## Folder Layout
 
 - `capability-matrices/`

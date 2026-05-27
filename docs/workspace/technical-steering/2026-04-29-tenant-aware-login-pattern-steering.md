@@ -289,7 +289,7 @@ At minimum, review:
   auth/session docs, tenant-auth policy docs, and migration files for any
   auth, tenant, membership, session, token, or configuration table touched
 - permission docs:
-  capability matrices and `docs/workspace/permission-mappings/*` for root
+  capability matrices and `docs/architecture/permission-mappings/` for root
   configuration, tenant-auth session, password reset, and provider/fallback
   capabilities
 - design-system docs:

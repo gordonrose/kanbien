@@ -4,6 +4,9 @@ This workspace collects CI/CD, deployment, release, SRE, observability,
 rollback, runtime verification, and provider-adapter discovery notes before
 those artifacts are promoted into a future bucket-first repo layout.
 
+Repo bucket classification: `platform`, with active deployment-harness
+ownership still under review.
+
 Current posture:
 
 - This is a discovery and compatibility workspace.
@@ -31,4 +34,3 @@ Known provider folders:
 - `provider-aws/`: AWS is the first known deployed provider. Treat AWS details
   as observed provider-adapter behavior unless a durable architecture decision
   makes them provider-neutral.
-

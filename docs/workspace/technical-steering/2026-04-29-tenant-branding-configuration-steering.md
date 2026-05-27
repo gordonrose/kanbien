@@ -315,7 +315,7 @@ At minimum, review:
   docs, tenant docs, migration files, and live schema for tenant and asset
   tables
 - permission docs:
-  capability matrices and `docs/workspace/permission-mappings/*` for
+  capability matrices and `docs/architecture/permission-mappings/` for
   root-admin tenant branding manage/read, tenant dashboard branding read, and
   required assets capabilities
 - design-system docs:

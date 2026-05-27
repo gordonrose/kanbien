@@ -12,6 +12,8 @@ Use this folder for:
 
 These artifacts are part of the QA operating system, not informal side notes.
 
+Repo bucket classification: `shared-governance-kernel`.
+
 See also:
 
 - [QA Operating Cadence Guide](/home/gordon/kanbien/docs/architecture/guides/qa-operating-cadence-guide.md)
@@ -26,6 +28,16 @@ See also:
 
 Maintained reusable QA templates live in `docs/templates/`. The old template
 paths in this folder are temporary breadcrumbs only.
+
+## Cleanup Posture
+
+Do not treat every file in this folder as current QA authority forever. Completed
+feature-loop checklists, exploratory notes, waiver records, and illustrative
+examples are point-in-time operating evidence unless a current standard, skill,
+release gate, or task guardrail still cites them as active behavior.
+
+Do not move this folder without updating QA standards, templates, task-type
+guardrails, and any feature-loop artifacts that cite `docs/workspace/qa/`.
 
 ## Relationship To Other QA Artifacts
 

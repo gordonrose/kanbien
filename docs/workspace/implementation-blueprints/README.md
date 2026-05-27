@@ -3,6 +3,9 @@
 This folder contains working implementation blueprints derived from approved
 capability matrices and PRDs.
 
+Repo bucket classification: `shared-governance-kernel`, with subject-specific
+bucket ownership during future split work.
+
 A blueprint is not the same thing as a capability matrix.
 
 - capability matrix = what must exist
