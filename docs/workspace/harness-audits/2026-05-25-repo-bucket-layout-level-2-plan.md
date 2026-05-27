@@ -1929,6 +1929,18 @@ contract, component inventory, generated canonical visual coverage, and first
 app subset visual coverage. This does not promote display-settings to
 `system-ready`; second governed consumer proof remains active.
 
+Eighteenth follow-up cleanup on 2026-05-27: promoted form-template and
+drawer-form incident notes for mobile picker hidden-state preservation,
+display-settings focus handoff, form-template host route corruption,
+drawer-form generated render-page contract drift, missing canonical stepper,
+and inherited parent-seam drift were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/form-template-drawer-form/`
+with breadcrumbs at the old paths. Current authority is the active
+form-template behavior lock, form-template route smoke and visual tests,
+drawer-form reference pack, drawer-form verification checklist, generated
+canonical route checks, drawer-form visual coverage, and design-system loop
+guidance. This does not mark drawer-form app adoption complete.
+
 ## Non-Goals
 
 - Do not move runtime code.

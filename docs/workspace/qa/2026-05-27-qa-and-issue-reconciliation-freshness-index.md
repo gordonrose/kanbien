@@ -897,3 +897,44 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs. This archive does not mark
   display-settings `system-ready`; the component inventory still requires
   second governed consumer proof.
+
+## Twenty-Second Recheck: Form-Template And Drawer-Form Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-18-form-mobile-picker-hidden-state-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-form-template-drawer-focus-steal.md`
+- `docs/workspace/issue-reconciliations/2026-04-20-form-template-route-source-text-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-27-drawer-form-canonical-contract-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-27-drawer-form-canonical-stepper.md`
+- `docs/workspace/issue-reconciliations/2026-04-27-drawer-form-render-harness-seam-drift.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/behavior-locks/form-template-behavior-lock.md`
+  now names hidden mobile picker preservation and display-settings focus
+  handoff as active parent form-template contract.
+- `tests/integration/designSystem/route.test.ts` includes direct
+  form-template host-route corruption coverage.
+- `tests/integration/frontend/designSystemCanonicalOverlayContainmentAudit.test.ts`
+  covers the mobile picker `:not(.hidden)` overlay selector contract.
+- `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts` covers the
+  display-settings focus handoff regression.
+- `docs/workspace/design-system/reference-packs/drawer-form-reference-pack.md`,
+  `docs/workspace/design-system/verification/drawer-form-verification-checklist.md`,
+  and `tests/visual/designSystem/canonicals/data-display/drawerForm.spec.ts`
+  now own the drawer-form generated render-page metadata, stepper, local
+  direction/theme scope, parent shell seam consumption, and overlay
+  containment lessons.
+- The frontend design-system loop skill now carries the generated
+  canonical-render-page and child-parent seam adoption gates.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these incidents now duplicate maintained form-template,
+  drawer-form, generated-canonical, route-smoke, and visual-test authority.
+- cleanup implication: archived with breadcrumbs. This archive does not mark
+  drawer-form app adoption complete; the active drawer-form reference pack
+  still requires app consumers to use the shared drawer shell and form body
+  seams or record an explicit approved adapter.
