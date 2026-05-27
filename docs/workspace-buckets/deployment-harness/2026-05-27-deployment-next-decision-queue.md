@@ -53,6 +53,8 @@ Evidence:
   definition was found.
 - ECR image tags map to a real Git commit, so source lineage exists even though
   the image-build recipe is missing.
+- Current recommendation:
+  `docs/workspace-buckets/deployment-harness/2026-05-27-build-deploy-repeatability-recommendation.md`
 
 Do not do yet:
 
