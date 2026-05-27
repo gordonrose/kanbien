@@ -26,3 +26,4 @@ Current AWS discovery notes:
 
 - `2026-05-27-aws-deployment-inventory.md`
 - `2026-05-27-aws-manual-deploy-reconstruction.md`
+- `2026-05-27-aws-task-definition-baseline.md`

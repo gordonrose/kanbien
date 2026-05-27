@@ -355,3 +355,7 @@ unknown source revision
   revision `4`?
 - Should the next trial evidence record require the active source commit before
   any future production-like deployment is considered governed?
+
+Current task-definition baseline:
+
+- `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-aws-task-definition-baseline.md`
