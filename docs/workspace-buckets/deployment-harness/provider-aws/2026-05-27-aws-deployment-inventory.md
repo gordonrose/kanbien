@@ -123,6 +123,33 @@ Observed active image tags:
 - `root-login-autofill-20260522-1`
 - `staging-latest`
 
+Observed active image digest:
+
+- `sha256:65a23acdc4885464a2d29bca04bebb0f4369c48e39201bb1693099acabd55455`
+
+Observed active image metadata:
+
+- pushed at: `2026-05-22T15:52:58Z`
+- last recorded pull: `2026-05-22T15:54:43Z`
+- approximate size: `116 MB`
+
+Other observed ECR tags from the same inspection:
+
+- `adedfd781094`
+- `adedfd781094-2`
+- `adedfd781094-3`
+- `adedfd781094-4`
+
+The tag prefix `adedfd781094` maps to repo commit:
+
+- `adedfd781094fa6063dba2da62901f777ccd55b5`
+- commit message: `Complete entity management canonical seam slice`
+- commit time: `2026-05-22T12:38:51+01:00`
+
+This ties at least part of the observed ECR image lineage to this repository's
+Git history. It does not prove which Dockerfile, build context, local machine,
+CI job, or image-push command produced the artifacts.
+
 ECR repository settings observed:
 
 - image tag mutability: `MUTABLE`
@@ -134,6 +161,8 @@ Compatibility notes:
 - ECS currently consumes an ECR image artifact.
 - `staging-latest` is mutable and should not be treated as durable release
   identity by itself.
+- The immutable image digest is a stronger release-evidence anchor than
+  `staging-latest`.
 - The repo-side image build path is not yet identified.
 
 ## Startup And Migration Evidence
@@ -226,4 +255,3 @@ Observed ElastiCache replication group:
 - Whether any AWS infrastructure is intentionally managed outside this repo.
 - Expected rollback procedure for a bad image or migration.
 - Whether deployment evidence should be captured per release and where.
-
