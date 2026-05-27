@@ -53,6 +53,11 @@ You need expected consumers, or a recorded blocker if consumer scope is missing.
 You need representative data or fixture shape only when the pattern displays,
 normalizes, emits, or arranges externally meaningful data.
 
+When pattern work is triggered by a route, screenshot, template, canonical,
+app-like review surface, or visible defect, use `../layer-work-preflight.md`
+before implementation. The pattern may proceed only for decisions classified
+as Layer 4 pattern work in that ledger.
+
 ## Allowed Outputs
 
 Create or update one PatternContractArtifact.
@@ -93,6 +98,42 @@ src/frontend/designSystem/layers/04-pattern-contract/<pattern-name>/
 Layer 4 pattern proof routes may be planned, but not created by default, under:
 
 src/frontend/designSystem/systems/<system-key>/patterns/<pattern-name>/
+
+When a frontend-visible pattern proof route is created, it must expose controls
+for relevant signed upstream variants that can change the rendered review
+result. Examples include selected theme, background or surface token context,
+density, direction, slot width, or other approved token/primitive variants. Do
+not add arbitrary knobs; add only controls that prove a real dependency,
+responsive constraint, accessibility risk, or consumer boundary.
+
+Rendered proof controls must be honest by default. If a control appears in a
+pattern proof route, changing it must either change rendered geometry/visual
+evidence or prove preserved behavior in the browser. Add focused browser
+assertions for the changed geometry, visible output, state transition, overflow
+posture, keyboard behavior, or accessibility attribute the control is meant to
+exercise.
+
+Pattern proof routes may use proof-only diagnostic pressure such as constrained
+slot width, direction, magnification, or fixture count only when the contract
+records the control as review evidence rather than a downstream consumable
+value. Proof-only values must not be exposed as pattern runtime values unless a
+signed token or explicit pattern contract owns them.
+
+Rendered proof routes must also satisfy `../rendered-proof-requirements.md`.
+
+Every visual, sizing, spacing, scrolling, surface, shadow, radius, width,
+height, overflow, marker, icon, typography, focus, and motion decision in a
+pattern must be classified before implementation as one of:
+
+- consumed directly from a signed Layer 2 token seam
+- consumed through a governed primitive or child pattern
+- inherited from a containing later-layer contract
+- browser-native semantic behavior
+- proof-only diagnostic pressure that cannot be consumed downstream
+
+If a pattern needs a reusable runtime value and no lower-layer seam owns it,
+stop and route back to the earliest missing layer instead of inventing the
+value in Layer 4 CSS, route code, fixtures, or tests.
 
 This skill may update this layer's own examples, template, evals, and README
 when the user is building or refining the harness.

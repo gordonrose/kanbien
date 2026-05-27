@@ -11,7 +11,7 @@ type DesignSystemRegistration = {
   systemKey: string;
   label: string;
   assetsBase: string;
-  tokens?: Record<string, () => Promise<Record<string, unknown>>>;
+  tokens?: Record<string, (() => Promise<Record<string, unknown>>) | undefined>;
 };
 
 type SystemManifest = {
@@ -119,6 +119,54 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.focus-ring") {
           const registeredTokenModule = await registration.tokens?.focusRing?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-surface") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemSurface?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-current-indicator") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemCurrentIndicator?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-gap") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemGap?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-padding") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemPadding?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-radius") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemRadius?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-item-supporting-text-style") {
+          const registeredTokenModule = await registration.tokens?.indexNavItemSupportingTextStyle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-list-gap") {
+          const registeredTokenModule = await registration.tokens?.indexNavListGap?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.index-nav-panel-frame") {
+          const registeredTokenModule = await registration.tokens?.indexNavPanelFrame?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }

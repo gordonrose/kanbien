@@ -1,0 +1,27 @@
+export const indexNavItemSupportingTextStyleTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.index-nav-item-supporting-text-style",
+  tokenType: "text-style",
+  requiredVariantRoles: ["index nav item supporting text"],
+  requiredThemes: ["all"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "textStyleRole",
+    "fontFamilyValue",
+    "fontFallbackRule",
+    "fontSizeValue",
+    "fontWeightValue",
+    "lineHeightValue",
+    "letterSpacingValue",
+    "textTransform",
+    "overflowReadiness",
+    "zoomBehavior",
+  ],
+  metadataFields: ["textStyleRole", "theme", "state", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "overflowRule"],
+  consumerRules: [
+    "Consumers must use this token for index-nav-item supporting text instead of local typography literals.",
+    "Consumers must preserve the complete font fallback stack.",
+    "This token does not define count calculation, item state, foreground color, opacity, or tooltip behavior.",
+  ],
+};

@@ -43,6 +43,11 @@ You need any accessibility, responsive, or interaction constraints already state
 
 You need to know whether the request depends on any ungoverned token, primitive, pattern, component, or app behavior.
 
+When the request references source material such as a rendered route,
+screenshot, existing template, canonical, or app-like review surface, use
+`../layer-work-preflight.md` to decompose the source before downstream layer
+work is allowed.
+
 ## Allowed Outputs
 
 Create or update one behavior rule artifact.
@@ -192,6 +197,11 @@ It must reference the shared WCAG 2.2 AA default:
 Read the request and identify the single UI family being governed.
 
 Classify requested details by harness layer.
+
+For source-material-derived work, complete the preflight decision ledger before
+writing the rule. Record behavior decisions in the rule and record token,
+primitive, pattern, component, demo, canonical, or app decisions as deferred
+decisions or blockers.
 
 Use the Layer Bucket Template Map to identify the future bucket skeleton and output template for any non-behavior-rule ask.
 

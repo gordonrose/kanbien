@@ -14,6 +14,10 @@ Pass only if known non-goals are listed or the artifact says none were provided.
 
 Pass only if requested details were classified by harness layer when the request included more than behavior.
 
+Pass only if source-material-derived work includes a source decomposition using
+`../layer-work-preflight.md`, or explicitly states that source decomposition is
+not applicable.
+
 ## Required Output Checks
 
 Pass only if the artifact uses the fixed lean template sections.
@@ -23,6 +27,10 @@ Pass only if `Rule Metadata` names the design system, UI family, harness layer, 
 Pass only if the output governs one UI family.
 
 Pass only if the purpose is written in plain language.
+
+Pass only if `Source Decomposition` records observed source decisions,
+owning layers, existing seams, missing seams or blockers, and behavior-rule
+outcomes when source material exists.
 
 Pass only if `Behavior States` includes only states that apply to the UI family.
 
@@ -93,6 +101,10 @@ Fail if the artifact defines app import paths or app wrappers before the first-a
 Fail if a later-layer detail is written as a behavior-rule decision instead of a dependency or next step.
 
 Fail if a lower-layer dependency is used as if it were governed when no governing artifact exists.
+
+Fail if source material contains scroll ownership, text overflow, responsive
+posture, repeated structure, interactive affordances, or route behavior that
+is neither captured as behavior nor deferred to the owning later layer.
 
 Fail if a temporary override lacks scope, reason, owning future layer, and completion limit.
 

@@ -109,6 +109,13 @@ Layer routing is complete only when one of these is true:
 
 Naming the next layer is not enough.
 
+When a request references a rendered route, screenshot, existing template,
+canonical, token page, pattern page, design-system surface, app-like review
+surface, or visible defect, routing must first run
+`../layer-work-preflight.md`. The preflight must identify every observed
+decision and classify its owning layer before the orchestrator allows token,
+primitive, pattern, component, demo, canonical, or app implementation work.
+
 Before routing by layer name, classify by the decision being requested rather than by the UI noun. If a noun spans token, primitive, pattern, or component-seam decisions, route to `01-behavior-rule` to split and record the layer-specific decisions.
 
 If the request asks for a new governed UI family, route to `01-behavior-rule`.

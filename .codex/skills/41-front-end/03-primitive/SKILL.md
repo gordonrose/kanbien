@@ -71,6 +71,11 @@ size, status/error exposure, and motion.
 You need any frontend/backend contract only when the primitive itself accepts,
 normalizes, emits, or displays externally meaningful data.
 
+When primitive work is triggered by a pattern, route, screenshot, template,
+canonical, or visible defect, use `../layer-work-preflight.md` before
+implementation. The primitive may proceed only for decisions classified as
+Layer 3 primitive work in that ledger.
+
 ## Allowed Outputs
 
 Create or update one PrimitiveDefinitionArtifact.
@@ -135,6 +140,10 @@ when the user is building or refining the harness.
 
 This skill must not edit implementation files unless the user explicitly asks
 for primitive implementation after the PrimitiveDefinitionArtifact is accepted.
+
+When the user explicitly asks for primitive implementation, the implementation
+must still satisfy the preflight ledger, token-consumption rules, and
+`../rendered-proof-requirements.md` before readiness may be claimed.
 
 ## Forbidden Moves
 
@@ -219,6 +228,39 @@ Later layers should consume token seams through
 
 The primitive must not hard-code visual values that belong to the token layer.
 
+When a primitive needs a non-color visual affordance to expose state or meaning
+without relying on color alone, that affordance is a required Layer 2 token
+dependency before the primitive may render it. Examples include current markers,
+selected bars, active indicators, dots, icons, underlines, badges, checkmarks,
+disabled overlays, or other visible state indicators. The primitive may own the
+semantic state and behavior, but the visible affordance shape, size, placement,
+thickness, spacing, radius, color source, and allowed variants must come from a
+signed token seam or the primitive must remain blocked and route back to
+`02-token`.
+
+Every visible text role rendered by a primitive must be backed by a signed
+Layer 2 text-style token dependency before the primitive may render it. A
+primitive may not style secondary labels, supporting text, counts, metadata,
+helper text, status text, or captions with local font size, weight, line height,
+letter spacing, opacity, transform, or font-family values. If the text role has
+no signed token, either remove that rendered text from the primitive proof or
+route back to `02-token`.
+
+Every primitive geometry, spacing, surface, marker, icon, typography, focus,
+motion, scroll, width, height, target-size, radius, shadow, and overflow
+decision must be classified before implementation as either:
+
+- consumed from a signed Layer 2 token seam
+- inherited from a containing later-layer contract
+- browser-native semantic behavior
+- proof-only diagnostic pressure that cannot be consumed downstream
+
+If the decision affects runtime rendering and is not browser-native or
+explicitly inherited, it must come from a signed token seam. Proof-only
+diagnostic values must be named as proof-only in the route, excluded from
+runtime seams, and covered by browser evidence that the control actually
+changes rendered evidence or preserves the promised behavior.
+
 The primitive contract must not vary behavior, accessibility semantics, state
 meaning, emitted events, or consumer obligations by design system.
 
@@ -241,6 +283,8 @@ Layer 3 runtime seams must not expose:
 - shared CSS imports by themselves as proof of adoption
 - app-specific wrappers, page layout, product copy, or workflow behavior
 - local visual values that bypass signed Layer 2 tokens
+- non-color state indicators or affordances that have not been signed as Layer
+  2 token dependencies
 - behavior, accessibility semantics, states, or events that vary by design
   system
 

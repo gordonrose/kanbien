@@ -39,11 +39,21 @@ Identify whether the request is harness scaffolding, governed design-system work
 
 Identify existing upstream artifacts for the target UI family.
 
+When the request references a rendered route, screenshot, template, canonical,
+existing design-system surface, app-like review surface, or source material,
+run `../layer-work-preflight.md` before implementation planning. The result
+must classify observed decisions by owning layer and name the earliest missing
+seam before any active layer edits code, proof routes, tests, or readiness
+indexes.
+
 ## Routing Rules
 
 Use `ROUTING.md` to select the layer.
 
 Use `GATES.md` before allowing handoff to a later layer.
+
+Use `../layer-work-preflight.md` whenever source material or a visible defect
+could hide token, primitive, pattern, or later-layer decisions.
 
 When behavior-rule work is needed, use `../01-behavior-rule/SKILL.md`.
 
@@ -89,6 +99,17 @@ Do not accept tables, status values, layer splits, required fields, or artifact 
 
 Prefer the smallest structure that creates an enforceable boundary.
 
+## Rendered Proof Rule
+
+For any frontend-visible governed proof, apply:
+
+- `../rendered-proof-requirements.md`
+
+Do not treat a rendered page as evidence unless the proof route makes its
+source values, dependencies, proof-only controls, downstream consumption
+boundary, and browser evidence clear enough to review without source
+inspection.
+
 ## Construction API Rule
 
 Governance docs are review and readiness sources, not construction APIs.
@@ -103,6 +124,9 @@ markup, copied CSS, or chat history.
 ## Stop Conditions
 
 Stop if the target UI family is unclear.
+
+Stop if route-derived, screenshot-derived, template-derived, or source-derived
+work has no decision ledger from `../layer-work-preflight.md`.
 
 Stop if a later layer is requested before the behavior rule gate has passed.
 

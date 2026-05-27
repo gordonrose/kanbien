@@ -14,6 +14,13 @@ Pass only if upstream gates are checked before later-layer work is allowed.
 Pass only if an active selected layer is handed off to its own `SKILL.md`
 before layer-specific advice, artifacts, edits, or implementation planning.
 
+Pass only if route-derived, screenshot-derived, template-derived,
+canonical-derived, source-material-derived, or visible-defect work completes
+`../layer-work-preflight.md` before implementation planning.
+
+Pass only if frontend-visible proof work is checked against
+`../rendered-proof-requirements.md`.
+
 Pass only if scaffold-only layers stop before real governed work.
 
 Pass only if the response distinguishes routing advice from layer-specific
@@ -32,6 +39,14 @@ Fail if the assistant treats a scaffold-only layer as implementation-ready.
 
 Fail if routing names a next layer but does not produce a stop-or-handoff
 decision.
+
+Fail if visible source material is used as implementation input without a
+decision ledger that names owning layers, existing seams, missing seams, and
+allowed actions.
+
+Fail if a rendered proof is treated as evidence while its controls, source
+values, dependency chain, scroll owner, proof-only values, or browser evidence
+remain unclear.
 
 ## Pass Result
 

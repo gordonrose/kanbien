@@ -1,0 +1,26 @@
+export const indexNavPanelFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.index-nav-panel-frame",
+  tokenType: "index-nav-panel-frame",
+  requiredVariantRoles: ["panel frame", "panel header", "panel action"],
+  requiredValueFields: [
+    "frameRole",
+    "backgroundValue",
+    "foregroundValue",
+    "borderValue",
+    "radiusValue",
+    "paddingBlockValue",
+    "paddingInlineValue",
+    "gapValue",
+    "standardInlineSize",
+    "doubleInlineSize",
+    "mobileInlineSize",
+    "maxBlockSize",
+    "scrollBehavior",
+  ],
+  consumerRules: [
+    "Every design system must expose governed index-nav panel frame values before panel patterns own container width, surface, or scroll geometry.",
+    "Consumers must use the runtime seam instead of local panel width, padding, surface, border, radius, or scroll-height literals.",
+    "This token does not define list semantics, item behavior, route selection, or app adoption.",
+  ],
+};

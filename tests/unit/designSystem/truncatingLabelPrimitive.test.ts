@@ -45,7 +45,8 @@ describe("truncating-label primitive seam", () => {
       },
     });
     expect(label.attributes["aria-label"]).toBe("Organization label with long text");
-    expect(label.attributes["aria-describedby"]).toBe("entity-label-tooltip");
+    expect(label.attributes["aria-describedby"]).toBeNull();
+    expect(label.semantics.describedBy).toBe("set only when rendered text is truncated");
     expect(label.styleVars["--primitive-label-font-family"]).toContain("system-ui");
     expect(label.styleVars["--primitive-tooltip-background"]).toBe("#111827");
   });

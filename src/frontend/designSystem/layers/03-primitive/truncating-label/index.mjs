@@ -185,7 +185,7 @@ export function truncatingLabelPrimitive(options = {}) {
       focusable: true,
       interactiveRole: null,
       accessibleName: text,
-      describedBy: tooltipId,
+      describedBy: "set only when rendered text is truncated",
       keyboard: ["Tab focuses the label.", "Focus reveals the full-text disclosure.", "Escape dismisses the disclosure."],
       pointer: ["Hover reveals disclosure.", "Click or tap toggles disclosure without emitting an app action."],
     },
@@ -194,7 +194,7 @@ export function truncatingLabelPrimitive(options = {}) {
       class: "ds-truncating-label",
       tabindex: "0",
       "aria-label": text,
-      "aria-describedby": tooltipId,
+      "aria-describedby": null,
       "aria-expanded": "false",
       "data-truncating-label": "",
       "data-truncating-label-theme": theme,
@@ -288,8 +288,25 @@ export function attachTruncatingLabelPrimitiveController(root = document) {
       return;
     }
 
-    label.dataset.truncatingLabelOpen = open ? "true" : "false";
-    label.setAttribute("aria-expanded", open ? "true" : "false");
+    const canOpen = label.dataset.truncatingLabelOverflow === "true";
+    label.dataset.truncatingLabelOpen = open && canOpen ? "true" : "false";
+    label.setAttribute("aria-expanded", open && canOpen ? "true" : "false");
+  }
+
+  function updateOverflowState(label) {
+    const text = label.querySelector("[data-truncating-label-text]");
+    const tooltip = label.querySelector("[data-truncating-label-tooltip]");
+    const overflows = text instanceof HTMLElement && text.scrollWidth > text.clientWidth + 1;
+
+    label.dataset.truncatingLabelOverflow = overflows ? "true" : "false";
+    if (tooltip instanceof HTMLElement) {
+      if (overflows) {
+        label.setAttribute("aria-describedby", tooltip.id);
+      } else {
+        label.removeAttribute("aria-describedby");
+        setOpen(label, false);
+      }
+    }
   }
 
   for (const label of labels) {
@@ -299,6 +316,13 @@ export function attachTruncatingLabelPrimitiveController(root = document) {
 
     label.dataset.truncatingLabelController = "attached";
     applyDeclaredStyles(label);
+    updateOverflowState(label);
+    if ("ResizeObserver" in window) {
+      const observer = new ResizeObserver(() => updateOverflowState(label));
+      observer.observe(label);
+    } else {
+      window.addEventListener("resize", () => updateOverflowState(label));
+    }
 
     label.addEventListener("pointerenter", () => setOpen(label, true));
     label.addEventListener("pointerleave", () => {

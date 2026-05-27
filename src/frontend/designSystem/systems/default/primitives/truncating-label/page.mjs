@@ -44,6 +44,12 @@ const samples = [
     text: "Compliance model label with long retention and audit wording",
     host: "Desert shell preview",
   },
+  {
+    label: "Fit",
+    theme: "original",
+    text: "Identity",
+    host: "Untruncated fit check",
+  },
 ];
 
 const root = document.querySelector("[data-primitive-proof-page]");
@@ -72,7 +78,7 @@ root.innerHTML = `
       <section class="token-spec-section" aria-label="Primitive proof">
         <div class="token-spec-section-header">
           <h2>Rendered Proof</h2>
-          <p>Focus, hover, or tap each label to reveal the full text.</p>
+          <p>Focus, hover, or tap truncated labels to reveal the full text.</p>
         </div>
         <div class="primitive-proof-stage">
           ${samples
@@ -104,7 +110,7 @@ root.innerHTML = `
           <ul>
             <li>Visible text clips with ellipsis and must not overlap its host.</li>
             <li>The full text remains the accessible value through <code>aria-label</code>.</li>
-            <li>Focus, hover, and tap reveal the disclosure surface.</li>
+            <li>Focus, hover, and tap reveal the disclosure surface only when rendered text is truncated.</li>
             <li>This primitive is not a button, menu, popover, field row, nav item, or app action.</li>
           </ul>
         </article>

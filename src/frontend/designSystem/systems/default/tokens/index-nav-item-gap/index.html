@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Index Nav Item Gap Token</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/default/assets/styles.css" />
+  </head>
+  <body data-token-layer-surface="index-nav-item-gap">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/tokens" aria-current="page">Tokens</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">IG</span>
+            <span class="profile-meta"><strong>Item Gap</strong></span>
+          </button>
+        </div>
+      </header>
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/tokens">Token Layer</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Index Nav Item Gap</span></li>
+          </ol>
+        </nav>
+      </section>
+      <nav class="context-nav" aria-label="Index nav item gap token navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/default/tokens/index-nav-item-padding" data-tooltip="Padding">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 4h16v16H4zm3 3v10h10V7z" /></svg></span>
+            <span class="context-nav-label">Padding</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/default/tokens/index-nav-item-gap" data-tooltip="Gap" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 9h14v3H5z" /></svg></span>
+            <span class="context-nav-label">Gap</span>
+          </a>
+        </div>
+      </nav>
+      <main class="design-system-page-main" data-token-spec-page></main>
+    </div>
+    <script type="module" src="/design-system/systems/default/tokens/index-nav-item-gap/page.mjs"></script>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

@@ -39,6 +39,12 @@ Pass only if disabled, selected, expanded, pressed, checked, invalid, loading,
 or busy states expose meaning without relying on color alone when those states
 exist.
 
+Pass only if every visible non-color affordance used to expose state or meaning
+is backed by a signed Layer 2 token dependency, or the primitive is blocked and
+names the missing token. Accessibility evidence must not be satisfied by
+inventing local marker shape, size, placement, thickness, spacing, radius,
+color source, or variants inside the primitive.
+
 Pass only if target-size expectations are named for pointer-operated
 primitives, or a blocker names the missing token evidence.
 
@@ -63,6 +69,9 @@ Fail if a native semantic element is replaced by custom role behavior without
 explaining the need and required keyboard behavior.
 
 Fail if color is the only carrier of state or meaning.
+
+Fail if a primitive avoids color-only state by adding an unsigned visual
+indicator such as a bar, dot, underline, badge, icon, checkmark, or overlay.
 
 Fail if an interactive primitive omits keyboard activation or focus visibility
 requirements.

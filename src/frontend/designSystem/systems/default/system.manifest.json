@@ -17,6 +17,60 @@
       "implementationExport": "focusRingTokenSpec",
       "pageRoute": "/design-system/default/tokens/focus-ring"
     },
+    "tokens.icon-size": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/icon-size/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/iconSize.tokens.mjs",
+      "implementationExport": "iconSizeTokenSpec",
+      "pageRoute": "/design-system/default/tokens/icon-size"
+    },
+    "tokens.index-nav-item-current-indicator": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-current-indicator/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemCurrentIndicator.tokens.mjs",
+      "implementationExport": "indexNavItemCurrentIndicatorTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-current-indicator"
+    },
+    "tokens.index-nav-item-gap": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-gap/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemGap.tokens.mjs",
+      "implementationExport": "indexNavItemGapTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-gap"
+    },
+    "tokens.index-nav-item-padding": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-padding/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemPadding.tokens.mjs",
+      "implementationExport": "indexNavItemPaddingTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-padding"
+    },
+    "tokens.index-nav-item-radius": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-radius/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemRadius.tokens.mjs",
+      "implementationExport": "indexNavItemRadiusTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-radius"
+    },
+    "tokens.index-nav-item-surface": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-surface/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemSurface.tokens.mjs",
+      "implementationExport": "indexNavItemSurfaceTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-surface"
+    },
+    "tokens.index-nav-item-supporting-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-item-supporting-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavItemSupportingTextStyle.tokens.mjs",
+      "implementationExport": "indexNavItemSupportingTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-item-supporting-text-style"
+    },
+    "tokens.index-nav-list-gap": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-list-gap/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavListGap.tokens.mjs",
+      "implementationExport": "indexNavListGapTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-list-gap"
+    },
+    "tokens.index-nav-panel-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/index-nav-panel-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/indexNavPanelFrame.tokens.mjs",
+      "implementationExport": "indexNavPanelFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/index-nav-panel-frame"
+    },
     "tokens.label-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",

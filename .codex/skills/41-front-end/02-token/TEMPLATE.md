@@ -32,6 +32,16 @@ This TokenDefinitionArtifact may define token decisions only.
 It must not define primitives, pattern structure, component APIs, demo routes,
 canonical files, app imports, app wrappers, or product workflow behavior.
 
+## Preflight Decision Ledger
+
+Complete this section when token work is motivated by a later-layer request,
+rendered route, screenshot, template, canonical, app-like review surface, or
+visible defect. If not applicable, state `not applicable`.
+
+| Observed Decision | Owning Layer | Existing Governed Seam | Missing Seam Or Blocker | Token Action |
+| --- | --- | --- | --- | --- |
+| `<visual, sizing, typography, marker, separator, scroll-skin, spacing, focus, or motion decision>` | `<layer>` | `<path-or-none>` | `<missing seam, blocked, or none>` | `<reuse, create, revise, block, or proof-only>` |
+
 ## Deterministic Token Spec
 
 System implementation artifacts that define concrete token values, proof-route

@@ -22,6 +22,16 @@ The shared harness quality bar must be preserved:
 
 - `../harness-quality-bar.md`
 
+For source-material-derived work and visible runtime/design-system defects,
+the shared layer work preflight must be completed:
+
+- `../layer-work-preflight.md`
+
+For frontend-visible proof routes, the shared rendered proof requirements must
+be preserved:
+
+- `../rendered-proof-requirements.md`
+
 The layer output must state whether the next layer is allowed, blocked, or scaffold-only.
 
 Passing a gate permits handoff only.
@@ -74,6 +84,10 @@ The token artifact must name the next expected layer.
 The token artifact must name `03-primitive` as `allowed` or explain why
 primitive work is blocked.
 
+If the token was created or revised because a later layer needed a value, the
+preflight ledger must show which downstream runtime property the token unlocks
+and which later-layer decision remains blocked until the token proof passes.
+
 Required primitive harness files:
 
 - `../03-primitive/SKILL.md`
@@ -111,6 +125,10 @@ Required pattern-contract harness files:
 The pattern may compose only primitives listed as consumable in
 `docs/design-system/03-primitive/primitive-readiness-index.md`.
 
+If a primitive was created or revised because a pattern needed it, the
+preflight ledger must show the pattern affordance that would otherwise have
+been rendered locally.
+
 ## Gate 04: Pattern Contract To Component Seam
 
 Current status: active for pattern evaluation; component-seam layer is
@@ -128,6 +146,10 @@ The pattern accessibility eval must pass `accessibility-pass` or have an
 explicit approved exception.
 
 The pattern artifact must name the next expected layer.
+
+The pattern artifact must show that every rendered child is a governed
+primitive, governed child pattern, browser-native wrapper, inherited
+later-layer contract, or proof-only wrapper.
 
 Because `05-component-seam` is currently scaffold-only, the orchestrator must
 stop after this gate and say the component-seam layer needs its full harness

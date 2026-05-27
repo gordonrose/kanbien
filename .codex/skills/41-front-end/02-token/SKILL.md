@@ -65,6 +65,11 @@ You need any accessibility risks introduced by the token category, especially
 contrast, focus visibility, target size, text sizing, motion, and
 color-independent meaning.
 
+When token work is triggered by a primitive, pattern, route, screenshot,
+template, canonical, or visible defect, use `../layer-work-preflight.md`
+before implementation. The token may proceed only for decisions classified as
+Layer 2 token work in that ledger.
+
 ## Allowed Outputs
 
 Create or update one TokenDefinitionArtifact.
@@ -154,6 +159,22 @@ update the TokenDefinitionArtifact, governed runtime seam, proof route, renderer
 support, focused tests, and readiness-index status in one governed slice.
 
 Keep the token non-consumable until proof and verification pass.
+
+Rendered token proof routes must make dependency chains reviewable by default.
+If a token is derived from, paired with, or affected by another token or
+variant, the proof must show the upstream identity, upstream value, formula or
+mapping, final rendered value, and a diagnostic override for the upstream value
+when changing that value would alter the rendered result. The override must be
+clearly proof-only and must not mutate signed token data, readiness indexes, or
+system implementation truth.
+
+Rendered proof controls must be honest. A control is allowed only when changing
+it changes rendered evidence, verifies a responsive or accessibility risk, or
+proves a consumer boundary. If a proof control is present, focused browser
+evidence must assert the rendered output changes or the relevant behavior is
+preserved. Do not leave inert controls on proof routes.
+
+Rendered proof routes must also satisfy `../rendered-proof-requirements.md`.
 
 Stop before runtime or proof implementation only when the user asks for
 docs-only planning, when required input is missing, or when the token decision

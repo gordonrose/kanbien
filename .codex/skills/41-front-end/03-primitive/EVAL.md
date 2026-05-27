@@ -14,12 +14,32 @@ Pass only if a behavior rule path is named.
 Pass only if the behavior rule is accepted or review-ready and names the
 behavior need this primitive satisfies.
 
+Pass only if the named behavior rule is the narrowest governed behavior rule
+for the primitive's UI family. A broad parent behavior rule is not enough when
+the primitive exists to support a distinct family such as index navigation,
+filtering, headers, resizing, icon-only actions, or text disclosure.
+
 Pass only if every required token dependency is listed as consumable for each
 selected token dependency system in
 `docs/design-system/02-token/token-readiness-index.md`.
 
 Pass only if the primitive inventory was checked or the artifact is marked
 `blocked` or `draft`.
+
+Pass only if source-material inventory was checked when the primitive is being
+created to support an existing route, template, token page, canonical, or
+review surface. The inventory must list observed low-level affordances and
+state which are governed primitives, missing primitives, later-layer patterns,
+or out of scope.
+
+Pass only if source-material-derived or visible-defect primitive work includes
+a preflight decision ledger from `../layer-work-preflight.md` showing that
+every primitive decision is owned by Layer 3.
+
+Pass only if any downstream pattern that expects this primitive names it as a
+required primitive dependency instead of reconstructing the primitive's markup,
+ARIA, controller behavior, icon behavior, resize behavior, tooltip behavior,
+or event contract locally.
 
 Pass only if `docs/design-system/03-primitive/primitive-readiness-index.md`
 will be updated in the same change when the primitive becomes consumable.
@@ -46,6 +66,10 @@ Pass only if the purpose is written in plain language.
 
 Pass only if `Upstream Gates` records behavior-rule status, token readiness
 source, token consumability, and primitive inventory.
+
+Pass only if `Preflight Decision Ledger` is complete for route-derived,
+screenshot-derived, template-derived, canonical-derived, or visible-defect
+primitive work, or explicitly states `not applicable`.
 
 Pass only if `Token Dependencies` names token type, shared token contract path,
 system implementation path, token dependency system, runtime seam, primitive
@@ -121,8 +145,48 @@ accessibility, emitted events, or consumer obligations.
 Fail if the PrimitiveDefinitionArtifact creates or revises behavior-rule
 meaning instead of routing back to `01-behavior-rule`.
 
+Fail if the artifact relies on a broad behavior rule while the primitive is
+really for a narrower UI family that needs its own Layer 1 rule.
+
 Fail if the PrimitiveDefinitionArtifact defines token values, aliases, visual
 literals, or token category decisions instead of routing back to `02-token`.
+
+Fail if the PrimitiveDefinitionArtifact introduces a visible non-color state or
+meaning affordance without naming a signed Layer 2 token dependency for that
+affordance. This includes current markers, selected bars, active indicators,
+dots, icons, underlines, badges, checkmarks, disabled overlays, or similar
+state indicators.
+
+Fail if the primitive uses an accessibility requirement such as "do not rely on
+color alone" to justify inventing local marker shape, size, placement,
+thickness, spacing, radius, color source, or variants inside Layer 3.
+
+Fail if the PrimitiveDefinitionArtifact renders a visible text role without a
+signed Layer 2 text-style token dependency for that role. This includes
+secondary labels, supporting text, counts, metadata, helper text, status text,
+or captions.
+
+Fail if primitive CSS defines local font size, font weight, line height, letter
+spacing, font family, text transform, or text opacity for a visible text role
+that is not backed by a signed token seam.
+
+Fail if primitive runtime CSS, route code, fixtures, or tests introduce
+runtime geometry, spacing, surface, marker, icon, typography, focus, motion,
+scroll, width, height, target-size, radius, shadow, or overflow values that are
+not consumed from a signed token seam, inherited from a containing later-layer
+contract, browser-native, or explicitly proof-only.
+
+Fail if a proof-only primitive control does not visibly change rendered
+evidence or prove preserved behavior in focused browser verification.
+
+Fail if a proof-only value is exposed through the primitive runtime seam as a
+consumer value.
+
+Fail if a primitive proof uses tooltip behavior for fitting text when the
+primitive contract says tooltip disclosure depends on truncation or overflow.
+
+Fail if a primitive proof or runtime seam uses custom scrollbar styling without
+a signed scrollbar token and primitive contract.
 
 Fail if the PrimitiveDefinitionArtifact lets behavior, accessibility semantics,
 state meaning, emitted events, or consumer obligations vary by design system.
@@ -148,6 +212,10 @@ app-local CSS before the first-app-adoption layer.
 
 Fail if the primitive is really a product workflow, page section, composed
 pattern, app-specific helper, or demo-only rendering.
+
+Fail if the primitive is skipped because a pattern, token route, template, or
+proof page can render something similar locally. Similar rendered markup is not
+primitive readiness.
 
 Fail if copied app markup, route-local `/design-system` markup, screenshots, or
 chat history are treated as the primitive source of truth.

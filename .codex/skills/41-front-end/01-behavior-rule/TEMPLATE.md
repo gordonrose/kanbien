@@ -28,6 +28,16 @@ This artifact may define behavior only.
 
 It must not define primitives, token values, pattern structure, component APIs, demo routes, canonical files, app imports, or app wrappers.
 
+## Source Decomposition
+
+Complete this section when the rule is derived from a rendered route,
+screenshot, template, canonical, app-like review surface, or other source
+material. If no source material exists, state `not applicable`.
+
+| Observed Source Decision | Owning Layer | Existing Governed Seam | Missing Seam Or Blocker | Behavior Rule Outcome |
+| --- | --- | --- | --- | --- |
+| `<observed behavior, interaction, scroll, overflow, repeated structure, or responsive posture>` | `<01-behavior-rule | 02-token | 03-primitive | 04-pattern-contract | later>` | `<path-or-none>` | `<missing seam, blocked, or none>` | `<recorded here, deferred, or blocked>` |
+
 ## Behavior States
 
 Include only states that apply to this UI family.

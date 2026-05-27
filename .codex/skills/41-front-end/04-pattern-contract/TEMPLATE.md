@@ -32,6 +32,16 @@ It must not define token values, primitive behavior, component APIs, demo
 fixtures, canonical scenarios, app imports, app wrappers, product workflow, or
 app-local CSS.
 
+## Preflight Decision Ledger
+
+Complete this section when pattern work is motivated by a rendered route,
+screenshot, template, canonical, app-like review surface, or visible defect.
+If not applicable, state `not applicable`.
+
+| Observed Decision | Owning Layer | Existing Governed Seam | Missing Seam Or Blocker | Pattern Action |
+| --- | --- | --- | --- | --- |
+| `<composition, alignment, slot, scroll-owner, fixture, repeated-child, or responsive composition decision>` | `<layer>` | `<path-or-none>` | `<missing seam, blocked, or none>` | `<reuse, create, revise, block, or proof-only>` |
+
 ## Upstream Gates
 
 | Field | Value |
@@ -61,6 +71,14 @@ repeat tokens that are consumed only through a primitive.
 ## Composition Contract
 
 `<Observable pattern structure, slot ownership, primitive composition, and what consumers may vary.>`
+
+## Composition Ledger
+
+Every rendered child must be classified before implementation.
+
+| Rendered Child | Allowed Category | Governed Seam Or Reason | Consumer Boundary |
+| --- | --- | --- | --- |
+| `<child>` | `<governed primitive | governed child pattern | browser-native wrapper | inherited later-layer contract | proof-only wrapper>` | `<path-or-reason>` | `<what consumers may or must not copy>` |
 
 ## Accessibility Contract
 
@@ -123,6 +141,18 @@ consumer obligations.
 | How to view | `<exact /design-system/<system-key>/patterns/<pattern-name> route, or none>` |
 | Rendered view status | `<available | blocked | not-created-for-docs-only | not-applicable>` |
 | If unavailable | `<blocker or not-applicable reason>` |
+
+## Rendered Proof Controls
+
+Only include controls that vary signed upstream dependencies, responsive
+constraints, accessibility-sensitive states, or consumer-boundary risks.
+Each control must have browser evidence that it changes rendered evidence or
+preserves the stated behavior under pressure. Mark diagnostic controls as
+proof-only when later layers must not consume the value.
+
+| Control | Source Of Truth | Downstream Consumable? | Browser Evidence | Why It Matters | Status |
+| --- | --- | --- | --- | --- | --- |
+| `<control-name>` | `<signed token, primitive, viewport, direction, proof-only diagnostic, or none>` | `<yes | no proof-only | inherited>` | `<test or blocked>` | `<drift or review failure prevented>` | `<available | blocked | not-applicable>` |
 
 ## Consumer Restrictions
 

@@ -27,14 +27,15 @@ async function labelGeometry(page: Page) {
         textClientWidth: text?.clientWidth ?? 0,
         textOverflow: text ? getComputedStyle(text).textOverflow : "",
         whiteSpace: text ? getComputedStyle(text).whiteSpace : "",
-        tooltipId: tooltip?.id ?? "",
-        tooltipRole: tooltip?.getAttribute("role") ?? "",
-        tooltipVisibility: tooltipStyle?.visibility ?? "",
-      tooltipOpacity: tooltipStyle?.opacity ?? "",
-      display: getComputedStyle(label).display,
-      minHeight: getComputedStyle(label).minHeight,
-      heightStyle: getComputedStyle(label).height,
-      tokenStyleData: label.getAttribute("data-truncating-label-style") ?? "",
+      tooltipId: tooltip?.id ?? "",
+      tooltipRole: tooltip?.getAttribute("role") ?? "",
+      tooltipVisibility: tooltipStyle?.visibility ?? "",
+        tooltipOpacity: tooltipStyle?.opacity ?? "",
+        display: getComputedStyle(label).display,
+        minHeight: getComputedStyle(label).minHeight,
+        heightStyle: getComputedStyle(label).height,
+        tokenStyleData: label.getAttribute("data-truncating-label-style") ?? "",
+        overflowState: label.dataset.truncatingLabelOverflow ?? "",
       };
     });
   });
@@ -46,13 +47,13 @@ test.describe("truncating label primitive route", () => {
     await page.goto(route);
 
     await expect(page.getByRole("heading", { name: "Truncating Label Primitive", level: 1 })).toBeVisible();
-    await expect(page.locator("[data-truncating-label]")).toHaveCount(3);
+    await expect(page.locator("[data-truncating-label]")).toHaveCount(4);
     await expect(page.getByText("This primitive is not a button, menu, popover, field row, nav item, or app action.")).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
 
     const initial = await labelGeometry(page);
-    expect(initial).toHaveLength(3);
-    for (const label of initial) {
+    expect(initial).toHaveLength(4);
+    for (const label of initial.slice(0, 3)) {
       expect(label.width).toBeGreaterThanOrEqual(44);
       expect(label.height, JSON.stringify(label)).toBeGreaterThanOrEqual(44);
       expect(label.textScrollWidth).toBeGreaterThan(label.textClientWidth);
@@ -60,9 +61,14 @@ test.describe("truncating label primitive route", () => {
       expect(label.whiteSpace).toBe("nowrap");
       expect(label.tooltipRole).toBe("tooltip");
       expect(label.describedBy).toBe(label.tooltipId);
+      expect(label.overflowState).toBe("true");
       expect(label.expanded).toBe("false");
       expect(label.tooltipVisibility).toBe("hidden");
     }
+
+    expect(initial[3].textScrollWidth).toBeLessThanOrEqual(initial[3].textClientWidth + 1);
+    expect(initial[3].describedBy ?? "").toBe("");
+    expect(initial[3].overflowState).toBe("false");
 
     const firstLabel = page.locator("[data-truncating-label]").first();
     await firstLabel.focus();
@@ -75,6 +81,11 @@ test.describe("truncating label primitive route", () => {
 
     await page.keyboard.press("Escape");
     await expect(firstLabel).toHaveAttribute("aria-expanded", "false");
+
+    const fittingLabel = page.locator("[data-truncating-label]").nth(3);
+    await fittingLabel.focus();
+    await expect(fittingLabel).toHaveAttribute("aria-expanded", "false");
+    await expect(fittingLabel.locator("[role='tooltip']")).toBeHidden();
   });
 
   test("mobile rtl keeps targets contained and touch toggles disclosure", async ({ page }) => {
@@ -85,11 +96,11 @@ test.describe("truncating label primitive route", () => {
     });
 
     await expect(page.getByRole("heading", { name: "Truncating Label Primitive", level: 1 })).toBeVisible();
-    await expect(page.locator("[data-truncating-label]")).toHaveCount(3);
+    await expect(page.locator("[data-truncating-label]")).toHaveCount(4);
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
 
     const labels = await labelGeometry(page);
-    for (const label of labels) {
+    for (const label of labels.slice(0, 3)) {
       expect(label.width).toBeGreaterThanOrEqual(44);
       expect(label.height, JSON.stringify(label)).toBeGreaterThanOrEqual(44);
       expect(label.textScrollWidth).toBeGreaterThan(label.textClientWidth);

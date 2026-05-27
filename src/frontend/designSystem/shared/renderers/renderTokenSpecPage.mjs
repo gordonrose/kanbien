@@ -125,6 +125,52 @@ function renderDependencyOverrideDiagnostic(pageModel) {
   `;
 }
 
+function renderInlineSizeRangeDiagnostic(pageModel) {
+  const diagnostic = pageModel.diagnostic;
+  if (!diagnostic || diagnostic.kind !== "inline-size-range") {
+    return "";
+  }
+
+  const variant = findVariant(pageModel, diagnostic.sourceVariantId);
+  if (!variant) {
+    return "";
+  }
+
+  return `
+    <section class="token-spec-diagnostic" aria-label="${escapeHtml(diagnostic.label)}">
+      <div class="token-spec-diagnostic-control">
+        <div>
+          <p class="token-spec-kicker">${escapeHtml(diagnostic.kicker)}</p>
+          <h2>${escapeHtml(diagnostic.label)}</h2>
+          <p>${escapeHtml(diagnostic.description)}</p>
+        </div>
+        <label>
+          <span>${escapeHtml(diagnostic.inputLabel)}</span>
+          <input
+            type="range"
+            data-token-diagnostic-inline-size-input
+            data-token-diagnostic-min-value="${escapeHtml(variant[diagnostic.minField])}"
+            data-token-diagnostic-max-value="${escapeHtml(variant[diagnostic.maxField])}"
+            data-token-diagnostic-default-value="${escapeHtml(variant[diagnostic.defaultField])}"
+          />
+        </label>
+      </div>
+      <div class="token-spec-diagnostic-previews" aria-label="${escapeHtml(diagnostic.previewLabel)}">
+        <div
+          class="token-spec-inline-size-preview"
+          data-token-diagnostic-inline-size-preview
+          data-token-preview-background="${escapeHtml(variant.preview.background)}"
+          data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+          data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        >
+          <span>Panel frame</span>
+        </div>
+      </div>
+      <p class="token-spec-diagnostic-status" data-token-diagnostic-inline-size-status></p>
+    </section>
+  `;
+}
+
 function renderVariantFields(pageModel, variant) {
   return renderDefinitionList(pageModel.variantFields.map(([key, label]) => [label, variant[key]]));
 }
@@ -216,6 +262,106 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "surface-card") {
+    return `
+      <div
+        class="token-spec-surface-card-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-surface-card-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "radius-box") {
+    return `
+      <div
+        class="token-spec-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-radius-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "padding-box") {
+    return `
+      <div
+        class="token-spec-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-padding-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "gap-sample") {
+    return `
+      <div
+        class="token-spec-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-gap="${escapeHtml(variant.preview.gap)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-gap-sample">
+          <span>${escapeHtml(variant.preview.sample)}</span>
+          <small>Supporting row</small>
+        </span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "indicator-sample") {
+    return `
+      <div
+        class="token-spec-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-indicator-inline-size="${escapeHtml(variant.preview.indicatorInlineSize)}"
+        data-token-preview-indicator-min-block-size="${escapeHtml(variant.preview.indicatorMinBlockSize)}"
+        data-token-preview-indicator-block-size-behavior="${escapeHtml(variant.preview.indicatorBlockSizeBehavior)}"
+        data-token-preview-indicator-radius="${escapeHtml(variant.preview.indicatorRadius)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-indicator-sample">
+          <span class="token-spec-indicator-marker"></span>
+          <span>${escapeHtml(variant.preview.sample)}</span>
+        </span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "icon-size-sample") {
+    return `
+      <div class="token-spec-frame-preview" aria-hidden="true">
+        <svg
+          class="token-spec-icon-size-sample"
+          viewBox="0 0 24 24"
+          focusable="false"
+          data-token-preview-icon-inline-size="${escapeHtml(variant.preview.inlineSize)}"
+          data-token-preview-icon-block-size="${escapeHtml(variant.preview.blockSize)}"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </div>
+    `;
+  }
+
   return `<div class="token-spec-swatch" data-token-preview-background="${escapeHtml(variant.preview.background)}" aria-hidden="true"></div>`;
 }
 
@@ -299,6 +445,33 @@ function applyPreviewStyles(root) {
       element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
       element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
       element.style.setProperty("--token-preview-max-inline-size", element.dataset.tokenPreviewMaxInlineSize ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll(".token-spec-surface-card-preview[data-token-preview-border]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+    }
+  }
+
+  for (const element of root.querySelectorAll(".token-spec-frame-preview[data-token-preview-border]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-gap", element.dataset.tokenPreviewGap ?? "");
+      element.style.setProperty("--token-preview-indicator-inline-size", element.dataset.tokenPreviewIndicatorInlineSize ?? "");
+      element.style.setProperty("--token-preview-indicator-min-block-size", element.dataset.tokenPreviewIndicatorMinBlockSize ?? "");
+      element.style.setProperty("--token-preview-indicator-block-size-behavior", element.dataset.tokenPreviewIndicatorBlockSizeBehavior ?? "");
+      element.style.setProperty("--token-preview-indicator-radius", element.dataset.tokenPreviewIndicatorRadius ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-icon-inline-size]")) {
+    if (element instanceof SVGElement) {
+      element.style.inlineSize = element.dataset.tokenPreviewIconInlineSize ?? "";
+      element.style.blockSize = element.dataset.tokenPreviewIconBlockSize ?? "";
     }
   }
 }
@@ -396,6 +569,48 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   render(input.value);
 }
 
+function remToNumber(value) {
+  const text = String(value ?? "").trim();
+  return text.endsWith("rem") ? Number.parseFloat(text) : Number.NaN;
+}
+
+function applyInlineSizeRangeDiagnostic(root, pageModel) {
+  const diagnostic = pageModel.diagnostic;
+  if (!diagnostic || diagnostic.kind !== "inline-size-range") {
+    return;
+  }
+
+  const input = root.querySelector("[data-token-diagnostic-inline-size-input]");
+  const preview = root.querySelector("[data-token-diagnostic-inline-size-preview]");
+  const status = root.querySelector("[data-token-diagnostic-inline-size-status]");
+  if (!(input instanceof HTMLInputElement) || !(preview instanceof HTMLElement)) {
+    return;
+  }
+
+  const min = remToNumber(input.dataset.tokenDiagnosticMinValue);
+  const max = remToNumber(input.dataset.tokenDiagnosticMaxValue);
+  const initial = remToNumber(input.dataset.tokenDiagnosticDefaultValue);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(initial)) {
+    return;
+  }
+
+  input.min = String(min);
+  input.max = String(max);
+  input.step = "0.25";
+  input.value = String(initial);
+
+  function render() {
+    const width = `${Number(input.value).toFixed(2).replace(/\.00$/, "")}rem`;
+    preview.style.inlineSize = width;
+    if (status instanceof HTMLElement) {
+      status.textContent = `${diagnostic.statusPrefix}: ${width}`;
+    }
+  }
+
+  input.addEventListener("input", render);
+  render();
+}
+
 export function renderTokenSpecPage({ pageModel, target = document }) {
   const root = target.querySelector("[data-token-spec-page]");
   if (!(root instanceof HTMLElement)) {
@@ -414,6 +629,7 @@ export function renderTokenSpecPage({ pageModel, target = document }) {
         ${renderSummaryPanels(pageModel)}
 
         ${renderDependencyOverrideDiagnostic(pageModel)}
+        ${renderInlineSizeRangeDiagnostic(pageModel)}
 
         <section class="token-spec-section" aria-label="Token variants">
           <div class="token-spec-section-header">
@@ -442,4 +658,5 @@ export function renderTokenSpecPage({ pageModel, target = document }) {
 
   applyPreviewStyles(root);
   applyDependencyOverrideDiagnostic(root, pageModel);
+  applyInlineSizeRangeDiagnostic(root, pageModel);
 }

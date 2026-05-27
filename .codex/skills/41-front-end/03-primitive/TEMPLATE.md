@@ -33,6 +33,16 @@ It must not define token values, pattern composition, component APIs, demo
 routes, canonical files, app imports, app wrappers, product workflow, or
 app-local CSS.
 
+## Preflight Decision Ledger
+
+Complete this section when primitive work is motivated by a pattern request,
+rendered route, screenshot, template, canonical, app-like review surface, or
+visible defect. If not applicable, state `not applicable`.
+
+| Observed Decision | Owning Layer | Existing Governed Seam | Missing Seam Or Blocker | Primitive Action |
+| --- | --- | --- | --- | --- |
+| `<semantic, interactive, overflow, tooltip, native-control, event, state, or text-disclosure decision>` | `<layer>` | `<path-or-none>` | `<missing seam, blocked, or none>` | `<reuse, create, revise, block, or proof-only>` |
+
 ## Upstream Gates
 
 | Field | Value |
@@ -47,6 +57,12 @@ app-local CSS.
 | Token Dependency | Shared Contract | System | System Implementation | Runtime Seam | Primitive Decision Supported | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `<token type>` | `<shared token contract path>` | `<system-key>` | `<system token implementation path>` | `src/frontend/designSystem/layers/02-token/<token-type-or-family>/systems/<system-key>.mjs#<tokenExport>` | `<decision>` | `<consumable | missing | blocked>` |
+
+If the primitive uses a visible non-color affordance to expose state or
+meaning, include the signed token dependency for that affordance here. Examples
+include current markers, selected bars, active indicators, dots, icons,
+underlines, badges, checkmarks, disabled overlays, or similar visual state
+indicators.
 
 ## Behavior Contract
 
@@ -71,7 +87,7 @@ consumer obligations.
 
 ## Visual-Skin Boundary
 
-`<What design-system implementations may vary, which proof system is being used, and what they must not change.>`
+`<What design-system implementations may vary, which proof system is being used, and what they must not change. State or meaning affordances may vary only through signed token seams; do not describe an unsigned local marker, bar, icon, underline, badge, dot, or overlay here.>`
 
 ## Public Consumption Boundary
 

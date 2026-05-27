@@ -12,6 +12,15 @@ Pass only if a behavior rule path is named.
 Pass only if the behavior rule is accepted or review-ready and names a token
 need.
 
+Pass only if the named behavior rule is the narrowest governed behavior rule
+for the UI family being tokenized. A broad parent behavior rule is not enough
+when a narrower family rule exists or the source material shows a distinct
+family such as navigation, filtering, header, resizing, or add actions.
+
+Pass only if the token need is traceable to a sentence in that behavior rule,
+not inferred only from route-local markup, screenshots, chat history, or a
+later-layer pattern goal.
+
 Pass only if the token category is explicit.
 
 Pass only if the token category maps to a predefined structure under
@@ -29,6 +38,16 @@ what over-structure was avoided.
 
 Pass only if the existing token inventory was checked or the TokenDefinitionArtifact is marked
 blocked.
+
+Pass only if source-material inventory for the target family was checked when
+the work is derived from existing design-system routes, templates, token pages,
+canonicals, or app-like review surfaces. The inventory must name which source
+routes were inspected and which observed decisions are token-layer versus
+primitive, pattern, component, template, or app-layer decisions.
+
+Pass only if later-layer-triggered token work includes a preflight decision
+ledger from `../layer-work-preflight.md` showing that each token decision is
+owned by Layer 2.
 
 Pass only if expected consumers are named or the missing consumer decision is
 recorded as blocking approval.
@@ -54,6 +73,10 @@ revision, new token definition, or blocking is the result.
 
 Pass only if `Token Type Template Rationale` justifies the selected token-type
 template without claiming a universal industry-best-practice shape.
+
+Pass only if `Preflight Decision Ledger` is complete for route-derived,
+screenshot-derived, template-derived, canonical-derived, or visible-defect
+token work, or explicitly states `not applicable`.
 
 Pass only if new token decisions are the smallest set needed to satisfy the
 behavior rule.
@@ -147,8 +170,14 @@ implementation artifact with status `review-ready` or `accepted`.
 Fail if the TokenDefinitionArtifact creates or revises behavior-rule meaning instead of
 routing back to `01-behavior-rule`.
 
+Fail if the artifact relies on a broad behavior rule while the token is really
+for a narrower UI family that needs its own Layer 1 rule.
+
 Fail if the TokenDefinitionArtifact chooses primitive names, roles, keyboard behavior, or
 disabled behavior before the primitive layer.
+
+Fail if the TokenDefinitionArtifact approves a value needed only because a
+later layer invented a behavior that is not named by the behavior rule.
 
 Fail if the TokenDefinitionArtifact defines pattern structure, slots, responsive anatomy, or
 data contracts before the pattern-contract layer.
@@ -178,6 +207,14 @@ implementation approval.
 Fail if later layers are told to import directly from
 `src/frontend/designSystem/systems/<system-key>/` when a governed Layer 2
 runtime seam exists under `src/frontend/designSystem/layers/02-token/`.
+
+Fail if the token artifact omits the downstream runtime property the token
+unlocks when the token was created to unblock primitive, pattern, component,
+demo, canonical, or app work.
+
+Fail if a later-layer CSS value, marker, separator, scrollbar skin, width,
+height, spacing, typography, focus, icon, motion, or surface value remains
+locally invented after the token artifact claims to govern that decision.
 
 Fail if the TokenDefinitionArtifact encodes product-specific workflow meaning as a token.
 
