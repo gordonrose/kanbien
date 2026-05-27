@@ -42,3 +42,4 @@ Current steering notes:
 - `2026-05-27-environment-identity-recommendation.md`
 - `2026-05-27-deployment-next-decision-queue.md`
 - `2026-05-27-runtime-process-model-recommendation.md`
+- `2026-05-27-release-evidence-rollback-recommendation.md`

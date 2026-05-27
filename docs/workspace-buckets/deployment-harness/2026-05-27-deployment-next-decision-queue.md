@@ -135,6 +135,8 @@ Evidence:
 - SLO, incident, and reliability architecture are still marked `missing`.
 - NIST CSF gate expects monitoring, incident handling, and rollback/recovery
   notes for production-risky changes.
+- Current recommendation:
+  `docs/workspace-buckets/deployment-harness/2026-05-27-release-evidence-rollback-recommendation.md`
 
 Do not do yet:
 
