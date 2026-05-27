@@ -31,6 +31,7 @@
     "decision-evidence": "node --import tsx src/scripts/decisionEvidence.ts",
     "git:preflight": "node --import tsx src/scripts/gitPreflight.ts",
     "git:promote": "node --import tsx src/scripts/gitPromote.ts",
+    "git:safe-promote-push": "node --import tsx src/scripts/gitSafePromotePush.ts",
     "git:worktree-audit": "node --import tsx src/scripts/gitWorktreeAudit.ts",
     "git:branch-stack-audit": "node --import tsx src/scripts/gitBranchStackAudit.ts",
     "product-discovery:draft": "node --import tsx src/scripts/productDiscoveryDraft.ts",

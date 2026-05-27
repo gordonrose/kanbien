@@ -302,6 +302,35 @@ After `npm run git:promote -- --source <branch-or-commit>` reports
 "ship", or equivalent mean fast-forward/promote the scoped task to `main` and
 push the promoted `main` to `origin/main`.
 
+For the normal single-task branch case, prefer the guarded wrapper:
+
+```bash
+npm run git:safe-promote-push -- --source <branch> --apply
+```
+
+The wrapper may only use non-destructive operations:
+
+- `git fetch origin`
+- `git rebase origin/main` on the current clean task branch
+- `git switch main`
+- `git merge --ff-only origin/main`
+- `npm run git:promote` equivalent checks
+- `git merge --ff-only <branch>`
+- normal `git push origin main`
+
+It must block rather than overwrite when:
+
+- the worktree is dirty
+- the source branch is not the current branch
+- local `main` has commits not present on `origin/main`
+- the rebase stops for conflicts
+- `main` cannot fast-forward to `origin/main`
+- promotion is not `SAFE_FAST_FORWARD`
+- the final push is rejected because the remote moved
+
+The wrapper must never run `git reset --hard`, normal non-fast-forward merges,
+`git push --force`, or `git push --force-with-lease`.
+
 For task-registry workflows, prefer
 `npm run codex:promote-task -- --task <task-id> --apply` over hand-running the
 fast-forward merge. A successful apply promotes the task onto local `main` and
