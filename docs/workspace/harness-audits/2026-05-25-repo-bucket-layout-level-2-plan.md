@@ -1795,6 +1795,14 @@ and replaced at their old paths with breadcrumbs. Current breadcrumb/sub-nav
 authority should stay in the design-system artifact chain rather than these
 historical incident records.
 
+Third follow-up cleanup on 2026-05-27: the April 15 breadcrumb compact-cascade
+record was added to the breadcrumb/sub-nav archive after confirming the mixed
+compact/full breadcrumb state is now covered by active breadcrumb/sub-nav
+artifacts. The adjacent April 15 top-nav and primary-nav records were left in
+place and marked `needs-recheck` in the freshness index because current
+top-nav artifacts still carry adoption parity and shared-seam extraction
+obligations.
+
 ## Non-Goals
 
 - Do not move runtime code.

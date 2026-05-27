@@ -375,6 +375,7 @@ record `needs-recheck` rather than inventing certainty.
 
 Sampled records:
 
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-breadcrumb-compact-cascade-regression.md`
 - `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-reduction-order-drift.md`
 - `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-collapsed-middle-ordering-drift.md`
 - `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-menu-anchoring-drift.md`
@@ -413,3 +414,36 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs after adding supersession
   notes. Keep future breadcrumb/sub-nav decisions in the active design-system
   artifact chain rather than in old incident records.
+
+## Eighth Recheck: April 15 Top-Nav And Primary-Nav Drift
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-header-brand-geometry-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-overflow-menu-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-slot-measurement-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-top-nav-layering-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-design-system-top-nav-preview-magnification-threshold-regression.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/verification/top-nav-verification-checklist.md`
+  now names brand geometry, overflow/menu behavior, layering over sub-nav,
+  magnification, and long-label stress as top-nav verification obligations.
+- `docs/workspace/design-system/component-inventory.md` still classifies
+  `top-nav` as `adopted` rather than archived or fully extracted. It also keeps
+  app-vs-reference parity review and shared-seam extraction as follow-up work.
+- The April 15 records themselves include follow-up watch items for constrained
+  desktop visual coverage, overflow behavior, geometry-sensitive preview
+  controls, and fixed-shape identity elements.
+
+Freshness posture:
+
+- lane: `needs-recheck`
+- reason: the lessons appear to have been promoted into current top-nav
+  verification artifacts, but the family still carries active adoption/parity
+  and extraction obligations. Archiving the full family now could hide useful
+  open work.
+- cleanup implication: leave these records in place until a top-nav-specific
+  verification and adoption review confirms which notes are pure provenance and
+  which still describe current follow-up obligations.
