@@ -10,6 +10,7 @@ const primitiveLayerRoot = join(governedLayerRoot, "03-primitive");
 const patternLayerRoot = join(governedLayerRoot, "04-pattern-contract");
 const systemRoot = resolve(repoRoot, "src/frontend/designSystem/systems");
 const defaultSystemRoot = join(systemRoot, "default");
+const defaultSystemStyles = join(defaultSystemRoot, "assets", "styles.css");
 const visualDesignSystemRoot = resolve(repoRoot, "tests/visual/designSystem");
 
 function collectFiles(dir: string, predicate: (path: string) => boolean): string[] {
@@ -65,6 +66,37 @@ function routeFamilyForProofPage(file: string) {
     proofKind: segments[0],
     family: segments[1],
   };
+}
+
+function cssBlocks(source: string) {
+  return Array.from(source.matchAll(/([^{}]+)\{([^{}]*)\}/g), (match) => ({
+    selector: match[1].trim(),
+    body: match[2].trim(),
+  }));
+}
+
+function declarationsForBlock(body: string) {
+  return body
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((declaration) => {
+      const separator = declaration.indexOf(":");
+      return separator === -1
+        ? null
+        : {
+            property: declaration.slice(0, separator).trim(),
+            value: declaration.slice(separator + 1).trim(),
+          };
+    })
+    .filter((declaration): declaration is { property: string; value: string } => declaration !== null);
+}
+
+function isGovernedRuntimeSelector(selector: string) {
+  return selector
+    .split(",")
+    .map((part) => part.trim())
+    .some((part) => /^\.ds-(?:index-nav|truncating-label)(?:\b|[-_:.[#])/.test(part));
 }
 
 describe("41 front-end executable audit categories", () => {
@@ -160,6 +192,29 @@ describe("41 front-end executable audit categories", () => {
       const source = readRepoFile(file);
       return interactiveMarkup.test(source) ? [`${relative(repoRoot, file)} renders local interactive markup`] : [];
     });
+
+    expect(violations).toEqual([]);
+  });
+
+  it("keeps governed runtime CSS color and scrollbar values on token or browser-native provenance", () => {
+    const styles = readRepoFile(defaultSystemStyles);
+    const literalColorValue = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|\bcolor-mix\(/;
+
+    const violations = cssBlocks(styles)
+      .filter(({ selector }) => isGovernedRuntimeSelector(selector))
+      .flatMap(({ selector, body }) => {
+        return declarationsForBlock(body).flatMap(({ property, value }) => {
+          if (property.startsWith("scrollbar-") && value !== "auto") {
+            return [`${selector} sets ${property}: ${value}`];
+          }
+
+          if (literalColorValue.test(value)) {
+            return [`${selector} sets ${property}: ${value}`];
+          }
+
+          return [];
+        });
+      });
 
     expect(violations).toEqual([]);
   });

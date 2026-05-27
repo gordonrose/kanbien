@@ -31,6 +31,10 @@ Audit governed layer CSS so runtime declarations are classified as one of:
 The audit should fail unclassified runtime CSS values in governed layers, not
 only known bad properties such as `scrollbar-*`.
 
+The first conservative policy is defined in:
+
+- `.codex/skills/41-front-end/runtime-css-value-provenance-policy.md`
+
 ### Interactive Affordance Provenance
 
 Audit rendered Layer 4+ pattern output so focusable controls, triggers,
