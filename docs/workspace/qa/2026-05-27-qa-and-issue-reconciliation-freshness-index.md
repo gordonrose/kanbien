@@ -658,3 +658,31 @@ Freshness posture:
 - cleanup implication: keep the asset QA records active in `docs/workspace/qa/`
   until an assets/provider readiness pass proves, supersedes, or reopens the
   caveats.
+
+## Fifteenth Recheck: Tenant-Auth Audit FK Lesson
+
+Sampled record:
+
+- `docs/workspace/issue-reconciliations/2026-04-14-tenant-auth-bootstrap-audit-fk-mismatch.md`
+
+Current evidence found:
+
+- `src/features/tenantAuth/domain/service.ts` still documents that tenant-auth
+  events must not populate the root-auth `auth_principal_id` foreign key in
+  platform audit storage.
+- `tests/integration/tenantAuth/persistence.test.ts` includes
+  `TC-TENANT-AUTH-AUD-001`, which persists the bootstrap audit event in
+  Postgres and expects `auth_principal_id: null`.
+- `tests/audit/tenantAuth/audit.test.ts` keeps tenant-auth bootstrap and
+  follow-on auth lifecycle events audit-visible.
+- `docs/data-dictionary/auth-audit-event.md` documents the audit entity and
+  its root-auth foreign-key ownership.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: the escaped persistence/audit-seam lesson has active homes in code,
+  tests, and maintained data-dictionary documentation.
+- cleanup implication: archived with breadcrumb. Keep future tenant-auth audit
+  authority in the maintained tenant-auth tests, service seam, and auth-audit
+  data dictionary.

@@ -1861,6 +1861,13 @@ Postgres-backed persistence, SVG/security-review, tenant-route, and first
 consumer-readiness caveats. Do not archive these as stale history until an
 assets/provider readiness pass proves or supersedes those gates.
 
+Eleventh follow-up cleanup on 2026-05-27: the tenant-auth bootstrap audit FK
+mismatch issue note was moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/tenant-auth-audit/`
+with a breadcrumb at the old path. The lesson is promoted into the tenant-auth
+service audit seam, Postgres-backed tenant-auth persistence regression,
+tenant-auth audit visibility tests, and the auth-audit-event data dictionary.
+
 ## Non-Goals
 
 - Do not move runtime code.
