@@ -28,6 +28,8 @@ found during the index-navigation Layer 2, Layer 3, and Layer 4 work.
 
 - `.codex/skills/41-front-end/layer-work-preflight.md`
 - `.codex/skills/41-front-end/rendered-proof-requirements.md`
+- `.codex/skills/41-front-end/executable-audit-categories.md`
+- `.codex/skills/41-front-end/runtime-css-value-provenance-policy.md`
 - `.codex/skills/41-front-end/notes/2026-05-27-harness-anti-drift-remediation-plan.md`
 - `.codex/skills/41-front-end/notes/2026-05-27-design-system-harness-layer-drift-blog-draft.md`
 - `.codex/skills/41-front-end/notes/2026-05-27-harness-anti-drift-closeout-audit.md`
@@ -58,6 +60,8 @@ found during the index-navigation Layer 2, Layer 3, and Layer 4 work.
 
 `git diff --check -- .codex/skills/41-front-end` passed with no output.
 
+`npx vitest run tests/audit/designSystem/frontEndHarnessExecutableAudits.test.ts tests/audit/designSystem/governedLayerImportGuard.test.ts tests/integration/frontend/designSystemSystemRegistryGuard.test.ts tests/integration/designSystem/route.test.ts` passed with 71 tests.
+
 `rg` checks confirmed coverage for:
 
 - `layer-work-preflight`
@@ -71,19 +75,20 @@ found during the index-navigation Layer 2, Layer 3, and Layer 4 work.
 - `browser evidence`
 - `diagnostic override`
 
-## Residual Risk
+## Executable Audit Coverage
 
-This pass makes the harness materially harder to misuse, but it is still
-documentation and skill governance. To make these mistakes closer to
-mechanically impossible, a later executable-audit pass should enforce broad
-ownership categories rather than only scanning for the examples observed in
-this session.
+This pass makes the harness materially harder to misuse by combining
+documentation, skill governance, and a first executable audit pass.
 
-The required executable audit categories are now recorded in:
+The executable audit categories are recorded in:
 
 - `.codex/skills/41-front-end/executable-audit-categories.md`
 
-Those audits should cover:
+The first executable implementation is:
+
+- `tests/audit/designSystem/frontEndHarnessExecutableAudits.test.ts`
+
+It currently covers:
 
 - runtime CSS value provenance
 - interactive affordance provenance
@@ -94,3 +99,12 @@ Those audits should cover:
 
 The failures from this session should become seed fixtures for those audits,
 not the full audit scope.
+
+## Residual Risk
+
+The runtime CSS provenance audit is intentionally conservative. It currently
+checks governed runtime selectors for literal color values and custom
+`scrollbar-*` values. Future passes should expand classification to spacing,
+width, height, radius, shadow, motion, z-index, and border thickness with a
+careful allowlist so browser-native layout mechanics do not create noisy false
+positives.
