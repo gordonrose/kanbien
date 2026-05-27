@@ -1775,6 +1775,16 @@ using `candidate fix awaiting user confirmation`, and additional samples across
 root-admin runtime/adoption, generated canonical routing, tenant-auth audit
 persistence, and root-admin security matrix evidence.
 
+Follow-up cleanup on 2026-05-27: the 15-record candidate-confirmation queue was
+worked by family: shell/canonical host, context navigation, form child
+canonicals, human-review guard practice, root-admin profile-picture upload
+degraded states, and time-picker scope/overlay follow-ups. Each source record
+received a supersession note, the full records were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/`, and
+breadcrumbs were left at the old `docs/workspace/issue-reconciliations/` paths.
+This was a targeted archive of promoted/superseded candidate notes, not a
+bulk-archive decision for the whole issue-reconciliation folder.
+
 ## Non-Goals
 
 - Do not move runtime code.

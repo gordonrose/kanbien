@@ -54,3 +54,15 @@ Current freshness index:
 The freshness index is sampled, not exhaustive. Use it to choose the next
 cleanup family before moving, archiving, or closing issue-reconciliation
 records.
+
+## Archived Breadcrumbs
+
+Some older notes in this folder may be short breadcrumbs rather than full
+incident records. That means the original record was moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/` after its
+lesson was promoted into active tests, skills, standards, or verification
+artifacts.
+
+Do not treat a breadcrumb as active operating authority. Follow its archive
+link for provenance, and use the current promoted guardrail as the source of
+truth.
