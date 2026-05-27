@@ -1868,6 +1868,15 @@ with a breadcrumb at the old path. The lesson is promoted into the tenant-auth
 service audit seam, Postgres-backed tenant-auth persistence regression,
 tenant-auth audit visibility tests, and the auth-audit-event data dictionary.
 
+Twelfth follow-up cleanup on 2026-05-27: the list-page and list-detail issue
+family was moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/list-page-list-detail/`
+with breadcrumbs at the old paths. The escaped-defect lessons are promoted
+into the active design-system behavior locks, reference packs, verification
+checklists, component inventory, render routes, and visual/audit tests. The
+archive does not mean these seams are `system-ready`; second-consumer and
+app-adoption obligations remain in the active design-system artifact chain.
+
 ## Non-Goals
 
 - Do not move runtime code.

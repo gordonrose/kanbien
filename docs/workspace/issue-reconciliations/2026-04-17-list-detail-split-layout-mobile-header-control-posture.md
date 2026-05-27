@@ -1,19 +1,13 @@
-# List Detail Split Layout Mobile Header Control Posture
+# Archived Issue Reconciliation Breadcrumb
 
-## Symptom
+This issue-reconciliation record was archived on 2026-05-27.
 
-In the mobile overlay canonical, the close affordance no longer stayed in the top-right corner. It dropped into the same lower action row as `Edit` and `Share`, even though the dismissal control should remain visually anchored while the secondary actions are free to move below the header copy.
+Current location:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/list-page-list-detail/2026-04-17-list-detail-split-layout-mobile-header-control-posture.md`
 
-The mobile overlay header treated all three controls as one undifferentiated stacked action cluster. That removed the spatial distinction between the close affordance and the secondary actions.
+Reason:
 
-## Why The Loop Missed It
+- The list-detail split-layout lesson has been promoted into active
+  design-system artifacts and visual tests.
 
-The mobile overlay checks covered shell layering and overlay positioning, but they did not verify the internal control posture of the mobile header.
-
-## Prevention Added
-
-- changed the mobile overlay header controls to a small grid that pins the close affordance to the top-right position
-- allowed `Edit` and `Share` to occupy the lower row beneath the header copy block
-- added a regression that checks the close control stays top-right while the secondary actions sit below the copy block

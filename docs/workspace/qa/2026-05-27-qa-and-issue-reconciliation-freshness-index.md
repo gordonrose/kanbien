@@ -686,3 +686,42 @@ Freshness posture:
 - cleanup implication: archived with breadcrumb. Keep future tenant-auth audit
   authority in the maintained tenant-auth tests, service seam, and auth-audit
   data dictionary.
+
+## Sixteenth Recheck: List-Page And List-Detail Incident Family
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-17-list-detail-panel-half-page-scroll-flicker.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-list-detail-panel-magnified-header-compaction-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-list-detail-panel-mobile-header-growth-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-list-detail-split-layout-*.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-list-detail-split-layout-canonical-ready-before-fit.md`
+- `docs/workspace/issue-reconciliations/2026-04-17-list-page-*.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/component-inventory.md` classifies
+  `list-page-structure`, `list-record-card`, `list-detail-panel`, and
+  `list-detail-split-layout` as signed-off governed seams with explicit
+  second-consumer follow-up before any `system-ready` promotion.
+- `docs/workspace/design-system/verification/list-detail-panel-verification-checklist.md`
+  records signed-off rendered proof for half-page, mobile, RTL, theme,
+  magnification, long-content, local-error, focus-entry, and scroll-stability
+  states.
+- `docs/workspace/design-system/verification/list-detail-split-layout-verification-checklist.md`
+  records dedicated generated render surfaces, ready-after-fit behavior,
+  closed/open/mobile/RTL/magnified/squashed states, and overlay containment.
+- Current visual and audit coverage exists for list-page and list-detail
+  surfaces, including the root-admin first-consumer list-page adoption proof.
+
+Freshness posture:
+
+- lane: `promoted-lesson` plus `active-adoption-caveat`
+- reason: the old incident lessons now have active homes in design-system
+  behavior locks, reference packs, verification checklists, component
+  inventory, render routes, and tests. The remaining obligation is second
+  governed-consumer or app-adoption proof, which belongs in those active
+  design-system artifacts rather than in old incident notes.
+- cleanup implication: archived the list-page/list-detail issue records with
+  breadcrumbs. Do not interpret the archive as `system-ready`; use the current
+  design-system artifact chain for that decision.
