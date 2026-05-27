@@ -439,11 +439,13 @@ Current evidence found:
 
 Freshness posture:
 
-- lane: `needs-recheck`
-- reason: the lessons appear to have been promoted into current top-nav
-  verification artifacts, but the family still carries active adoption/parity
-  and extraction obligations. Archiving the full family now could hide useful
-  open work.
-- cleanup implication: leave these records in place until a top-nav-specific
-  verification and adoption review confirms which notes are pure provenance and
-  which still describe current follow-up obligations.
+- lane: `promoted-lesson` plus `active-adoption-caveat`
+- reason: the escaped-defect lessons have been promoted into the current
+  top-nav verification checklist, `TRP-*` canonical visual suite, source
+  audits, and root-admin shell parity evidence. The remaining open obligation
+  is top-nav adoption/parity and shared-seam extraction, which is tracked in
+  current top-nav design-system artifacts rather than these old issue notes.
+- cleanup implication: archived with breadcrumbs after adding supersession
+  notes. Do not treat the archive as saying top-nav is fully done; use the
+  component inventory, verification checklist, adoption note, and component
+  artifact for current top-nav obligations.

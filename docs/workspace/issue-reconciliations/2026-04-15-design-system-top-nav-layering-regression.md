@@ -1,43 +1,11 @@
 # Design System Top Nav Layering Regression
 
-## Summary
+This issue-reconciliation record has moved to archive/history.
 
-- Date found: `2026-04-15`
-- User-visible symptom:
-  the desktop profile dropdown opened underneath the breadcrumb/search row
-  instead of above the page content below the top nav
-- Affected surface:
-  public `/design-system` top navigation layering
+Archived record:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/top-nav-shell/2026-04-15-design-system-top-nav-layering-regression.md`
 
-The dropdown itself had a high `z-index`, but its parent `.top-nav` stacking
-context sat below `.sub-nav`.
-
-Because stacking contexts are bounded by their parents, the profile menu could
-not rise above the secondary row even with a larger local `z-index`.
-
-## Why The Feature Loop Missed It
-
-- the previous layering audit only asserted that both sections had a `z-index`
-  and that the menu selectors existed
-- it did not assert the actual ordering contract between `.top-nav` and
-  `.sub-nav`
-
-This escaped because of:
-
-- **missing coverage**
-- **wrong-layer coverage**
-
-## Reconciliation Changes Added
-
-- raised `.top-nav` above `.sub-nav` so top-nav overlays can appear above the
-  row beneath them:
-  [src/frontend/designSystem/assets/styles.css](/home/gordon/kanbien/src/frontend/designSystem/assets/styles.css:1)
-- tightened the layering audit to assert the intended stacking order:
-  [tests/audit/designSystem/layering.test.ts](/home/gordon/kanbien/tests/audit/designSystem/layering.test.ts:1)
-
-## Coverage Lesson
-
-For overlay regressions, assert the parent stacking-context order, not only the
-dropdown’s own `z-index`.
+Current authority now lives in the active top-nav design-system artifacts,
+verification checklist, canonical visual suite, layering audit, and
+component-inventory adoption caveats.

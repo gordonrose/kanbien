@@ -1803,6 +1803,16 @@ place and marked `needs-recheck` in the freshness index because current
 top-nav artifacts still carry adoption parity and shared-seam extraction
 obligations.
 
+Fourth follow-up cleanup on 2026-05-27: the April 15 top-nav and primary-nav
+records were rechecked against the current top-nav verification checklist,
+`TRP-*` canonical visual suite, source audits, root-admin shell parity evidence,
+and component inventory. The escaped-defect lessons were classified as promoted
+and moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/top-nav-shell/`
+with breadcrumbs at the old paths. The active adoption/parity and shared-seam
+extraction caveats remain current in the top-nav design-system artifact chain,
+not in the archived issue notes.
+
 ## Non-Goals
 
 - Do not move runtime code.
