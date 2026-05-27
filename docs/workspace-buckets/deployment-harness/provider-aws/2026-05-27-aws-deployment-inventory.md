@@ -168,6 +168,22 @@ secret names, container port, log group, and health-check shape. The observed
 revision changes were image-tag changes. Each revision was registered by the
 same AWS SSO administrator role used for discovery.
 
+Observed current ECS service deployment state:
+
+- service: `service-platform`
+- cluster: `kanbien-staging`
+- current task definition: `kanbien-staging-service-platform:5`
+- desired count: `1`
+- running count: `1`
+- pending count: `0`
+- deployment created at: `2026-05-22T15:54:11Z`
+- deployment completed at: `2026-05-22T15:56:48Z`
+- rollout state: `COMPLETED`
+
+Recent ECS service events showed repeated `has reached a steady state`
+messages from `2026-05-22` through the 2026-05-27 inspection. The latest 20
+events inspected did not show a failure or rollback event.
+
 ECR repository settings observed:
 
 - image tag mutability: `MUTABLE`
