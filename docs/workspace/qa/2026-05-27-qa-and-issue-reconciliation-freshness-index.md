@@ -370,3 +370,46 @@ carry unresolved production-readiness caveats, asset/security posture, or
 current operating obligations. If closure cannot be proven without human
 confirmation or explicit supersession, leave the source record unchanged and
 record `needs-recheck` rather than inventing certainty.
+
+## Seventh Recheck: Breadcrumb And Sub-Nav Canonical Drift
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-reduction-order-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-collapsed-middle-ordering-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-menu-anchoring-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-compact-lane-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-lane-collapse.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-breadcrumb-rtl-compact-row-split.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-sub-nav-canonical-rendering-approach-retrospective.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-sub-nav-canonical-initial-render-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-sub-nav-canonical-tooltip-and-browser-escalation-learning.md`
+
+Current evidence found:
+
+- `tests/audit/designSystem/breadcrumbOverflow.test.ts` now checks breadcrumb
+  overflow, RTL ordering, compact-row behavior, and reduction-order drift.
+- `tests/audit/designSystem/subNavCanonicalCoverage.test.ts` now checks
+  deterministic sub-nav canonical coverage, canonical launcher coverage,
+  render-status readiness, and named `SNR-*` and `BCR-*` states.
+- `tests/visual/designSystem/canonicals/navigation/subNav.spec.ts` provides
+  browser-backed visual coverage for the canonical navigation surface.
+- `docs/workspace/design-system/reference-packs/breadcrumb-reference-pack.md`
+  and `docs/workspace/design-system/reference-packs/sub-nav-row-reference-pack.md`
+  now hold the current review states.
+- `docs/workspace/design-system/behavior-locks/breadcrumb-behavior-lock.md`
+  and `docs/workspace/design-system/behavior-locks/sub-nav-row-behavior-lock.md`
+  now hold the active behavior contracts.
+- `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`
+  and `docs/architecture/guides/design-system-loop-harness.md` now carry the
+  browser-escalation lesson for repeated UI misses.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: the issue notes are now historical evidence. The active design-system
+  behavior, reference, verification, and test artifacts are the maintained
+  authority for breadcrumb and sub-nav canonical work.
+- cleanup implication: archived with breadcrumbs after adding supersession
+  notes. Keep future breadcrumb/sub-nav decisions in the active design-system
+  artifact chain rather than in old incident records.

@@ -1785,6 +1785,16 @@ breadcrumbs were left at the old `docs/workspace/issue-reconciliations/` paths.
 This was a targeted archive of promoted/superseded candidate notes, not a
 bulk-archive decision for the whole issue-reconciliation folder.
 
+Second follow-up cleanup on 2026-05-27: the April 16 breadcrumb/sub-nav
+canonical drift family was rechecked against current breadcrumb/sub-nav
+behavior locks, reference packs, verification artifacts, audit tests, visual
+canonical tests, and frontend design-system loop guidance. The records were
+classified as promoted lessons, moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/breadcrumb-sub-nav-canonicals/`,
+and replaced at their old paths with breadcrumbs. Current breadcrumb/sub-nav
+authority should stay in the design-system artifact chain rather than these
+historical incident records.
+
 ## Non-Goals
 
 - Do not move runtime code.

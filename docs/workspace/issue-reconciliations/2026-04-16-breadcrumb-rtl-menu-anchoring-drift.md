@@ -1,31 +1,10 @@
 # Breadcrumb RTL Menu Anchoring Drift
 
-## Symptom
+This issue-reconciliation record has moved to archive/history.
 
-In RTL sub-nav canonicals, the breadcrumb expandable menu opened with LTR
-anchoring and left-aligned content instead of mirroring to the RTL side of the
-trigger.
+Archived record:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/breadcrumb-sub-nav-canonicals/2026-04-16-breadcrumb-rtl-menu-anchoring-drift.md`
 
-The shared breadcrumb menu styling only defined the base LTR anchor rule:
-
-- `left: 0` on `.breadcrumb-collapse-menu`
-
-There was no corresponding RTL override for the breadcrumb menu itself, even
-though the surrounding breadcrumb list and row already mirrored correctly.
-
-## Why The Loop Missed It
-
-- Existing audits checked that breadcrumb menus and RTL row styles existed, but
-  they did not verify RTL-specific anchoring for the breadcrumb popover.
-- Manual review focused first on row fit and reduction behavior, which delayed
-  noticing that the menu itself was still using LTR positioning semantics.
-
-## Prevention Added
-
-- Added explicit RTL anchoring for `.breadcrumb-collapse-menu` so it uses
-  `right: 0` instead of `left: 0`.
-- Added explicit RTL text alignment for breadcrumb menu items.
-- Extended the breadcrumb audit so the RTL anchoring rule is now governed.
-
+Current authority now lives in the active breadcrumb design-system artifacts
+and audit tests.
