@@ -104,6 +104,10 @@ for any provider:
 AWS provider notes should then explain how ECS, ECR, CloudWatch, ALB health
 checks, and Route 53 satisfy that contract.
 
+Current trial record shape:
+
+- `docs/workspace-buckets/deployment-harness/2026-05-27-release-evidence-record-shape.md`
+
 ## Do Not Do Yet
 
 - Do not add a CI/CD deploy workflow before the manual AWS path is recoverable.
