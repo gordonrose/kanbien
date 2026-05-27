@@ -213,6 +213,14 @@ Server listening on port 3000
 
 The same log stream showed many migration files skipped as unchanged.
 
+Public runtime verification observed on 2026-05-27:
+
+- `https://www.kanbien.com/v1/health` returned HTTP `200`.
+- Response body was `{"ok":true}`.
+- Response content type was `application/json`.
+- Security headers were present, including HSTS and CSP.
+- `http://www.kanbien.com/v1/health` returned HTTP `301` to the HTTPS URL.
+
 Compatibility rule:
 
 - AWS currently runs the repo's migration-before-server startup behavior.
@@ -220,6 +228,8 @@ Compatibility rule:
   being available before the HTTP server starts.
 - Migrations must remain safe to execute on every ECS task start unless the
   deployment model is changed through an approved compatibility plan.
+- Public deployment verification currently depends on `/v1/health` remaining
+  reachable through the public HTTPS domain.
 
 ## Backing Services
 
