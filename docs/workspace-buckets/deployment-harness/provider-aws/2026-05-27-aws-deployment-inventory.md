@@ -40,6 +40,21 @@ Observed resources:
 
 The ECS service was active and had reached steady state at inspection time.
 
+Environment identity signals observed:
+
+- ECS cluster and service tags included `Environment=Staging`,
+  `ManagedBy=manual-now`, `project=kanbien`, and an owner tag.
+- ALB and target group tags included `Environment=Staging`,
+  `ManagedBy=manual-now`, `project=kanbien`, and an owner tag.
+- ElastiCache tags included `Environment=Staging`, `ManagedBy=manual-now`,
+  `Project=kanbien`, `Domain=kanbien.com`, and `Name=kanbien-staging-redis`.
+- RDS instance tag list was empty during inspection.
+- Route 53 hosted zone tags were empty, but the hosted-zone comment was
+  `Kanbien production DNS zone`.
+
+These signals are mixed. AWS infrastructure is staging-named and staging-tagged,
+while public DNS and runtime origin settings are production-like.
+
 ## Public Traffic Path
 
 Observed request path:
@@ -359,6 +374,8 @@ background-work completion must not be assumed in AWS until this is decided.
   deployment-harness process-orchestration implications
 - Observed missing AWS job-process deployment: `unsure / needs decision`
 - Staging-versus-production naming: `unsure / needs decision`
+- Current environment identity recommendation:
+  `public production-like staging` until Gordon explicitly decides otherwise
 
 ## Unknowns
 

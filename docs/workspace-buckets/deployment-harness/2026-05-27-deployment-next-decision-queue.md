@@ -27,6 +27,8 @@ Evidence:
 - Route 53 serves `kanbien.com` and `www.kanbien.com` from staging-named AWS
   resources.
 - The deployment/release architecture layer is still marked `missing`.
+- Current recommendation:
+  `docs/workspace-buckets/deployment-harness/2026-05-27-environment-identity-recommendation.md`
 
 Do not do yet:
 
@@ -154,4 +156,3 @@ Evidence:
 Do not do yet:
 
 - Do not add provider credentials or print secret values during discovery.
-
