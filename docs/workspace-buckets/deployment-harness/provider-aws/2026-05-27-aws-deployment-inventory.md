@@ -110,6 +110,32 @@ Observed task definition secret references:
 
 Secret values were not inspected or recorded.
 
+Repo-side startup config contract observed in `src/config/env.ts`:
+
+- required for app startup: `NODE_ENV`, `PORT`, `DATABASE_HOST`,
+  `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`,
+  `DATABASE_SSL`
+- optional/defaulted runtime settings include root-auth TTLs, root-admin
+  session settings, rate-limit settings, `REDIS_URL`, notification email
+  sender, and asset local storage root
+
+Repo-side migration config contract observed in `src/scripts/migrate.ts`:
+
+- `ROOT_AUTH_BOOTSTRAP_PASSWORD` and `ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY` are
+  required before bootstrap or repair migrations can run.
+- Because AWS currently starts the container with migration-before-server
+  ordering, these bootstrap values are deployment-critical even though they are
+  read as optional values in `src/config/env.ts`.
+
+Observed mapping status:
+
+- AWS ECS provides the app startup database and server config names.
+- AWS ECS provides the root-auth bootstrap secret names needed by the migration
+  runner.
+- AWS ECS does not currently show `OPENAI_*` configuration names. Source files
+  read some `OPENAI_*` values directly from `process.env`, so AWS posture for
+  OpenAI-backed features remains `unsure / needs decision`.
+
 ## Build And Release Artifact Shape
 
 Observed ECR repository:
