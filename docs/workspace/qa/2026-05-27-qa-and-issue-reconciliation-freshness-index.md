@@ -800,3 +800,36 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs. Drawer-select records were
   left for a separate pass because that family has more adoption-specific
   evidence and references.
+
+## Nineteenth Recheck: Drawer-Select Canonical Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-18-drawer-select-canonical-frame-overlay-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-drawer-select-canonical-render-surface-repeat-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-drawer-select-dark-contrast-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-drawer-select-dark-mobile-descriptive-contrast-gap.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/behavior-locks/drawer-select-behavior-lock.md`,
+  `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`,
+  and `docs/workspace/design-system/verification/drawer-select-verification-checklist.md`
+  now own the active drawer-select child-seam contract.
+- The `DSR-001` through `DSR-027` generated canonical matrix covers desktop,
+  RTL, mobile, dark, magnified, long-label, localized, disabled, empty, and
+  synchronization states.
+- `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
+  now covers generated launcher routes, direct render surfaces, overlay
+  containment, approved host screenshot parity, and the dark contrast cases.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these drawer-select incidents now duplicate active behavior-lock,
+  reference-pack, verification-checklist, generated-route, and visual-test
+  authority.
+- cleanup implication: archived with breadcrumbs. The earlier approved-form
+  baseline parity note was already archived in the form-child canonical pass.
+  Do not treat this archive as `system-ready`; the reference pack still says
+  second governed consumer proof is required before that promotion.

@@ -1,8 +1,12 @@
-# 2026-04-18 Drawer Select Dark Contrast Gap
+# Archived Issue Reconciliation Breadcrumb
 
-This issue-reconciliation record was archived on 2026-05-27 after its lesson
-was promoted into active drawer-select verification and visual-test guardrails.
+This issue-reconciliation record was archived on 2026-05-27.
 
-Archived record:
+Current location:
 
-- [2026-04-18-drawer-select-dark-contrast-gap.md](../../workspace-buckets/archive-history/issue-reconciliations/form-child-canonicals/2026-04-18-drawer-select-dark-contrast-gap.md)
+- `docs/workspace-buckets/archive-history/issue-reconciliations/drawer-select-canonicals/2026-04-18-drawer-select-dark-contrast-gap.md`
+
+Reason:
+
+- The drawer-select dark contrast lesson has been promoted into active
+  drawer-select design-system artifacts and tests.

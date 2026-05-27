@@ -1,27 +1,12 @@
-# Drawer Select Dark Mobile Descriptive Contrast Gap
+# Archived Issue Reconciliation Breadcrumb
 
-## Symptom
+This issue-reconciliation record was archived on 2026-05-27.
 
-`DSR-026` showed descriptive selected-card helper text that looked washed out on
-the bright accent-tinted card background in dark mobile review.
+Current location:
 
-## Root Cause
+- `docs/workspace-buckets/archive-history/issue-reconciliations/drawer-select-canonicals/2026-04-18-drawer-select-dark-mobile-descriptive-contrast-gap.md`
 
-The shared dark-theme overrides only promoted foreground contrast for the
-attribute-card variant. The descriptive selected-card helper copy and active
-available-option helper copy kept using the softer `var(--ink-soft)` token even
-when their surfaces switched to bright accent backgrounds in dark theme.
+Reason:
 
-## Why The Loop Missed It
-
-The existing dark contrast regression only covered `DSR-016`, which is the
-compact attribute-card variant. That left the descriptive dark mobile state
-without a human-visible foreground-color guard on its helper copy.
-
-## Prevention Added
-
-- shared dark-theme foreground override for descriptive selected and active
-  helper copy on bright accent surfaces
-- new executable regression in
-  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts` for `DSR-026`
-
+- The drawer-select dark mobile contrast lesson has been promoted into active
+  drawer-select design-system artifacts and tests.

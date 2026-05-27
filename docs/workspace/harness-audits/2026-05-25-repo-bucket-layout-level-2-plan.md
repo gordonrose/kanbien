@@ -1898,6 +1898,18 @@ overlay/owner-reserve readiness checks, and visual/integration tests.
 Drawer-select was intentionally left for a separate pass because its remaining
 records carry more adoption-specific context.
 
+Fifteenth follow-up cleanup on 2026-05-27: remaining promoted drawer-select
+canonical incident notes for frame overlay, render-surface repetition, dark
+contrast, and dark mobile descriptive contrast were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/drawer-select-canonicals/`
+with breadcrumbs at the old paths. Current authority is the active
+drawer-select behavior lock, reference pack, verification checklist, generated
+`DSR-*` route behavior, overlay containment tests, dark contrast assertions,
+and approved host screenshot parity evidence. The approved-form baseline
+parity note was already archived in the form-control canonical family. Do not
+treat drawer-select as `system-ready` until the active design-system artifact
+chain records the required second governed consumer proof.
+
 ## Non-Goals
 
 - Do not move runtime code.
