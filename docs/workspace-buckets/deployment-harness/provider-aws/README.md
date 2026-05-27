@@ -22,3 +22,7 @@ AWS adapter work may document:
 - rollback and recovery notes for AWS deployments
 - compatibility rules that must be preserved before changes
 
+Current AWS discovery notes:
+
+- `2026-05-27-aws-deployment-inventory.md`
+- `2026-05-27-aws-manual-deploy-reconstruction.md`

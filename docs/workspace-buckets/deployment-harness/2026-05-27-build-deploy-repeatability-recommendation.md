@@ -54,6 +54,10 @@ Current file/history inspection did not find a committed Dockerfile,
 `.dockerignore`, docker compose file, ECR push script, ECS deploy script,
 infrastructure-as-code definition, or GitHub Actions deploy workflow.
 
+Current AWS manual deploy reconstruction:
+
+- `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-aws-manual-deploy-reconstruction.md`
+
 ## Why Reconstruct Before Replacing
 
 The current AWS deployment is live and publicly reachable. Replacing the path
@@ -95,4 +99,3 @@ Secret values and access keys must stay outside the repo.
 - Do not deploy or mutate AWS during discovery.
 - Do not retag or push images during documentation work.
 - Do not treat `staging-latest` as durable release evidence by itself.
-
