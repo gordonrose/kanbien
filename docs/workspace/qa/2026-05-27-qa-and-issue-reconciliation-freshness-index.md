@@ -602,3 +602,30 @@ Freshness posture:
   docs, source, and executable tests are the maintained authorities.
 - cleanup implication: archived with breadcrumbs. Unresolved waivers and active
   QA operating records remain in `docs/workspace/qa/`.
+
+## Thirteenth Recheck: Completed Backend QA Checklists
+
+Sampled records:
+
+- `docs/workspace/qa/2026-04-14-tenant-admin-onboarding-restart-qa-checklist.md`
+- `docs/workspace/qa/2026-04-22-capability-contract-catalog-foundation-qa-checklist.md`
+- `docs/workspace/qa/2026-04-25-job-processing-foundation-qa-checklist.md`
+
+Current evidence found:
+
+- Tenant-admin onboarding restart and capability-contract catalog records are
+  completed point-in-time QA checklists with current authority in source,
+  PRD/test artifacts, test summaries, and executable tests.
+- `docs/workspace/qa/2026-04-25-job-processing-foundation-qa-checklist.md`
+  explicitly says the QA decision is `partial` and names Redis/Postgres/full
+  release-gate evidence that was not complete in that session.
+
+Freshness posture:
+
+- lane: `historical-evidence` for tenant-admin onboarding restart and
+  capability-contract catalog.
+- lane: `unresolved-caveat` for job-processing foundation.
+- cleanup implication: archived the completed tenant-admin and
+  capability-contract catalog records with breadcrumbs. Kept job-processing QA
+  active until the provider/persistence/release-gate caveats are resolved or
+  superseded.

@@ -1848,6 +1848,12 @@ test-case and journey artifacts, implementation blueprints, test summaries,
 source, and executable tests. Unresolved waivers and active QA operating
 records remain in `docs/workspace/qa/`.
 
+Ninth follow-up cleanup on 2026-05-27: completed tenant-admin onboarding restart
+and capability-contract catalog QA checklists were moved to
+`docs/workspace-buckets/archive-history/qa/` with breadcrumbs at the old paths.
+The job-processing foundation QA checklist stayed active because it still
+records partial release-gate status and missing Redis/Postgres evidence.
+
 ## Non-Goals
 
 - Do not move runtime code.
