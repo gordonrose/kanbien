@@ -40,3 +40,4 @@ Current steering notes:
 - `2026-05-27-deployment-compatibility-steering-note.md`
 - `2026-05-27-environment-identity-recommendation.md`
 - `2026-05-27-deployment-next-decision-queue.md`
+- `2026-05-27-runtime-process-model-recommendation.md`

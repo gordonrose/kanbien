@@ -81,6 +81,8 @@ Evidence:
   desired cadence.
 - No AWS ECS service or log group was observed for job dispatcher, scheduler,
   or worker processes.
+- Current recommendation:
+  `docs/workspace-buckets/deployment-harness/2026-05-27-runtime-process-model-recommendation.md`
 
 Do not do yet:
 

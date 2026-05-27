@@ -331,6 +331,8 @@ AWS-side job runtime posture observed on 2026-05-27:
   `/ecs/kanbien-staging-service-platform`.
 - No ECS service or matching log group was observed for the dispatcher,
   scheduler, or worker process.
+- A repeat read-only check later on 2026-05-27 showed the same web-only ECS
+  service and log-group shape.
 
 This is genuinely ambiguous. The job runtime may be intentionally deferred,
 manual-only, deployed through another mechanism, or missing from the current AWS
