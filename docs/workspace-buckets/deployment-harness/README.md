@@ -36,6 +36,7 @@ Known provider folders:
 
 Current steering notes:
 
+- `2026-05-27-asset-export-durability-recommendation.md`
 - `2026-05-27-build-deploy-repeatability-recommendation.md`
 - `2026-05-27-deployment-compatibility-steering-note.md`
 - `2026-05-27-environment-identity-recommendation.md`

@@ -352,6 +352,9 @@ background-work completion must not be assumed in AWS until this is decided.
   container storage.
 - Production object-storage provider selection remains deferred in architecture
   docs, while AWS currently uses container-local asset storage.
+- Current asset/export durability recommendation: treat the AWS posture as
+  ephemeral container-local storage until a durable object-storage provider,
+  delivery, cleanup, and verification contract is approved.
 - Repo job entrypoints exist, but no AWS job-process service or log group was
   observed in the inspected ECS cluster.
 - The repo does not yet expose an obvious Dockerfile, infrastructure-as-code

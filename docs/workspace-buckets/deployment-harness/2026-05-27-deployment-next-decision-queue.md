@@ -107,6 +107,8 @@ Evidence:
 - Local/dev/test asset storage is explicitly filesystem-backed.
 - Organization export integration stores generated export bytes under the asset
   local storage root.
+- Current recommendation:
+  `docs/workspace-buckets/deployment-harness/2026-05-27-asset-export-durability-recommendation.md`
 
 Do not do yet:
 
