@@ -33,3 +33,8 @@ Known provider folders:
 - `provider-aws/`: AWS is the first known deployed provider. Treat AWS details
   as observed provider-adapter behavior unless a durable architecture decision
   makes them provider-neutral.
+
+Current steering notes:
+
+- `2026-05-27-deployment-compatibility-steering-note.md`
+- `2026-05-27-deployment-next-decision-queue.md`
