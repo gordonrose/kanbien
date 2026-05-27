@@ -764,3 +764,39 @@ Freshness posture:
 - cleanup implication: archived with breadcrumbs. The visible-worktree
   verification record stayed active because it is a workflow/runtime
   confirmation lesson, not merely a canonical-render-page contract lesson.
+
+## Eighteenth Recheck: Form-Control Canonical Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-18-simple-select-*.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-simple-select-canonical-ready-before-reserve.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-time-picker-canonical-render-surface-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-time-picker-*.md`
+- `docs/workspace/issue-reconciliations/2026-04-18-date-picker-canonical-render-surface-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-date-picker-canonical-anchored-panel-reserve-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-choice-list-panel-canonical-ready-before-settle.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-icon-picker-canonical-modal-ink-and-grid.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/component-inventory.md` records current
+  signed-off or system-ready posture for dropdowns/simple-select, date-picker,
+  and time-picker, with second-consumer obligations kept in active design-system
+  artifacts.
+- The active simple-select, date-picker, time-picker, and related verification
+  checklists/reference packs now own the canonical render-surface, route,
+  theme, RTL, reserve, overlay, and ready-after-settle contracts.
+- `tests/integration/frontend/designSystemCanonicalLauncherLinkAudit.test.ts`,
+  `tests/integration/frontend/designSystemCanonicalRouting.test.ts`,
+  `tests/integration/frontend/designSystemCanonicalOverlayContainmentAudit.test.ts`,
+  and the form-control visual canonical specs cover the promoted lessons.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these form-control incident records now duplicate active
+  design-system artifact and test authority.
+- cleanup implication: archived with breadcrumbs. Drawer-select records were
+  left for a separate pass because that family has more adoption-specific
+  evidence and references.

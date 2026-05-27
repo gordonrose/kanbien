@@ -1,9 +1,12 @@
-# 2026-04-18 Time Picker Canonical Render-Surface Gap
+# Archived Issue Reconciliation Breadcrumb
 
-This issue-reconciliation record was archived on 2026-05-27 after its lesson
-was promoted into active child-canonical launcher, render-surface,
-verification, and visual-test guardrails.
+This issue-reconciliation record was archived on 2026-05-27.
 
-Archived record:
+Current location:
 
-- [2026-04-18-time-picker-canonical-render-surface-gap.md](../../workspace-buckets/archive-history/issue-reconciliations/form-child-canonicals/2026-04-18-time-picker-canonical-render-surface-gap.md)
+- `docs/workspace-buckets/archive-history/issue-reconciliations/form-control-canonicals/2026-04-18-time-picker-canonical-render-surface-gap.md`
+
+Reason:
+
+- The time-picker canonical lesson has been promoted into active
+  design-system artifacts and tests.

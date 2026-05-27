@@ -1888,6 +1888,16 @@ inventory, generated route behavior, and theme-scope/overlay-containment test
 coverage. The visible-worktree verification record stayed active because it is
 a workflow/runtime confirmation lesson.
 
+Fourteenth follow-up cleanup on 2026-05-27: promoted simple-select,
+time-picker, date-picker, choice-list/choice-group readiness, and icon-picker
+canonical incident notes were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/form-control-canonicals/`
+with breadcrumbs at the old paths. Current authority is the active
+form-control design-system artifact chain, generated canonical route behavior,
+overlay/owner-reserve readiness checks, and visual/integration tests.
+Drawer-select was intentionally left for a separate pass because its remaining
+records carry more adoption-specific context.
+
 ## Non-Goals
 
 - Do not move runtime code.

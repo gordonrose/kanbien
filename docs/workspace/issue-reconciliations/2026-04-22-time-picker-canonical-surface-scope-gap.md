@@ -1,8 +1,12 @@
-# 2026-04-22 Time Picker Canonical Surface Scope Gap
+# Archived Issue Reconciliation Breadcrumb
 
-This issue-reconciliation record was archived on 2026-05-27 after its lesson
-was promoted into active time-picker verification and visual-test guardrails.
+This issue-reconciliation record was archived on 2026-05-27.
 
-Archived record:
+Current location:
 
-- [2026-04-22-time-picker-canonical-surface-scope-gap.md](../../workspace-buckets/archive-history/issue-reconciliations/time-picker-canonical-followups/2026-04-22-time-picker-canonical-surface-scope-gap.md)
+- `docs/workspace-buckets/archive-history/issue-reconciliations/form-control-canonicals/2026-04-22-time-picker-canonical-surface-scope-gap.md`
+
+Reason:
+
+- The time-picker canonical surface-scope lesson has been promoted into active
+  design-system artifacts and tests.
