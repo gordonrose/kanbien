@@ -1877,6 +1877,17 @@ checklists, component inventory, render routes, and visual/audit tests. The
 archive does not mean these seams are `system-ready`; second-consumer and
 app-adoption obligations remain in the active design-system artifact chain.
 
+Thirteenth follow-up cleanup on 2026-05-27: canonical render-page contract
+incident notes covering pattern/proxy routing, pattern selector behavior,
+theme scope, owner reserve, mobile overlay containment, and drawer containment
+were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/canonical-render-page-contracts/`
+with breadcrumbs at the old paths. Current authority is the canonical
+render-page template, reference pack, verification checklist, component
+inventory, generated route behavior, and theme-scope/overlay-containment test
+coverage. The visible-worktree verification record stayed active because it is
+a workflow/runtime confirmation lesson.
+
 ## Non-Goals
 
 - Do not move runtime code.

@@ -725,3 +725,42 @@ Freshness posture:
 - cleanup implication: archived the list-page/list-detail issue records with
   breadcrumbs. Do not interpret the archive as `system-ready`; use the current
   design-system artifact chain for that decision.
+
+## Seventeenth Recheck: Canonical Render-Page Contract Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-21-canonical-render-page-pattern-proxy-mismatch.md`
+- `docs/workspace/issue-reconciliations/2026-04-21-canonical-render-page-pattern-selector-change-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-canonical-theme-scope-contract-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-canonical-mobile-overlay-containment-contract-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-canonical-renderings-owner-reserve-and-mobile-overlay-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-24-canonical-renderings-shell-and-theme-scope-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-25-canonical-render-page-theme-scope.md`
+- `docs/workspace/issue-reconciliations/2026-04-25-canonical-drawer-containment-gap.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/component-inventory.md` classifies
+  `canonical-render-page` as `system-ready` and names generated route coupling,
+  specimen markers, fallback absence, theme scope, responsive width, and
+  overlay containment as current obligations.
+- `docs/workspace/design-system/templates/canonical-render-page-template.md`,
+  `docs/workspace/design-system/reference-packs/canonical-render-page-reference-pack.md`,
+  and `docs/workspace/design-system/verification/canonical-render-page-verification-checklist.md`
+  now carry the active render-page contract.
+- `tests/integration/frontend/designSystemCanonicalThemeScopeAudit.test.ts`,
+  `tests/integration/frontend/designSystemCanonicalOverlayContainmentAudit.test.ts`,
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`, and
+  `tests/visual/designSystem/support/helpers/generatedCanonicalGuards.ts`
+  now protect the repeated theme-scope and containment lessons.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these incidents describe canonical render-page contract gaps that
+  now have maintained template/reference/verification artifacts and executable
+  coverage.
+- cleanup implication: archived with breadcrumbs. The visible-worktree
+  verification record stayed active because it is a workflow/runtime
+  confirmation lesson, not merely a canonical-render-page contract lesson.
