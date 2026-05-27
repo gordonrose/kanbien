@@ -287,6 +287,25 @@ Observed ElastiCache replication group:
 - automatic failover: disabled
 - snapshot retention: `0`
 
+Repo-side job runtime entrypoints observed in `package.json`:
+
+- `start:jobs:dispatcher`: `node dist/jobDispatcher.js`
+- `start:jobs:scheduler`: `node dist/jobScheduler.js`
+- `start:jobs:worker`: `node dist/jobWorker.js`
+
+AWS-side job runtime posture observed on 2026-05-27:
+
+- ECS cluster `kanbien-staging` listed only the `service-platform` service.
+- CloudWatch log groups with `/ecs/kanbien-staging` prefix listed only
+  `/ecs/kanbien-staging-service-platform`.
+- No ECS service or matching log group was observed for the dispatcher,
+  scheduler, or worker process.
+
+This is genuinely ambiguous. The job runtime may be intentionally deferred,
+manual-only, deployed through another mechanism, or missing from the current AWS
+runtime. Because Redis/Valkey is configured and repo job entrypoints exist,
+background-work completion must not be assumed in AWS until this is decided.
+
 ## Current Risk And Compatibility Notes
 
 - The AWS resource names use `staging`, while Route 53 serves
@@ -298,6 +317,8 @@ Observed ElastiCache replication group:
 - RDS deletion protection is disabled.
 - Asset bytes are configured under `/tmp/kanbien-assets`, which is ephemeral
   container storage.
+- Repo job entrypoints exist, but no AWS job-process service or log group was
+  observed in the inspected ECS cluster.
 - The repo does not yet expose an obvious Dockerfile, infrastructure-as-code
   definition, or CI/CD deploy workflow for the observed AWS path.
 - The image build and task-definition registration process is observed, usage
@@ -314,6 +335,9 @@ Observed ElastiCache replication group:
 - Migration-before-server ordering: provider-neutral deployment-harness core
   behavior currently implemented through AWS ECS startup
 - `/v1/health`: platform route with AWS deployment compatibility dependency
+- Job dispatcher, scheduler, and worker entrypoints: platform runtime seams with
+  deployment-harness process-orchestration implications
+- Observed missing AWS job-process deployment: `unsure / needs decision`
 - Staging-versus-production naming: `unsure / needs decision`
 
 ## Unknowns
@@ -326,5 +350,7 @@ Observed ElastiCache replication group:
 - Whether `kanbien-staging` is intentionally the public production-like
   environment.
 - Whether any AWS infrastructure is intentionally managed outside this repo.
+- Whether job dispatcher, scheduler, and worker processes should run in AWS,
+  and if so where.
 - Expected rollback procedure for a bad image or migration.
 - Whether deployment evidence should be captured per release and where.
