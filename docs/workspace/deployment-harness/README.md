@@ -1,36 +1,11 @@
-# Deployment Harness Workspace
+# Deployment Harness Workspace Moved
 
-This workspace collects CI/CD, deployment, release, SRE, observability,
-rollback, runtime verification, and provider-adapter discovery notes before
-those artifacts are promoted into a future bucket-first repo layout.
+Status: moved.
 
-Repo bucket classification: `platform`, with active deployment-harness
-ownership still under review.
+The deployment-harness workspace now lives at:
 
-Current posture:
+- `docs/workspace-buckets/deployment-harness/`
 
-- This is a discovery and compatibility workspace.
-- Do not treat files here as proof that deployment architecture is complete.
-- Do not move or replace existing deployment behavior from this workspace
-  without a compatibility plan.
-- Keep provider-neutral deployment responsibilities separate from provider
-  adapter behavior.
-
-Provider-neutral deployment-harness work may document:
-
-- build artifact expectations
-- runtime configuration and secret-channel contracts
-- environment promotion and release approval expectations
-- migration and deployment ordering
-- liveness, readiness, and smoke verification expectations
-- rollback, recovery, and operational evidence requirements
-- observability, incident, and SLO gaps that affect release safety
-
-Provider-specific work belongs in a provider subfolder when it records how one
-hosting provider satisfies the provider-neutral contract.
-
-Known provider folders:
-
-- `provider-aws/`: AWS is the first known deployed provider. Treat AWS details
-  as observed provider-adapter behavior unless a durable architecture decision
-  makes them provider-neutral.
+This breadcrumb preserves the old path while active notes, chats, and human
+memory may still point here. It can be removed after maintained references have
+been updated and old-path compatibility is no longer useful.

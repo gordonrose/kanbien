@@ -11,6 +11,7 @@ Current buckets:
 
 - `platform/`
 - `discovery-harness/`
+- `deployment-harness/`
 - `frontend-harness/`
 - `shared-governance-kernel/`
 - `archive-history/`

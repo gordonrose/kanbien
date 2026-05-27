@@ -1722,9 +1722,11 @@ Recorded during the 2026-05-27 safe continuation while Gordon was away.
    issue-reconciliation notes to see which lessons were promoted into tests,
    standards, skills, templates, or runtime guardrails.
 4. Active harness folders:
-   resolved. Leave `deployment-harness` and `design-system` in place while
-   active work is ongoing. Any future move should be its own compatibility
-   task.
+   updated. `deployment-harness` moved to
+   `docs/workspace-buckets/deployment-harness/` on 2026-05-27 as its own
+   compatibility task with an old-path breadcrumb. Leave `design-system` in
+   place while active work is ongoing unless a separate compatibility task
+   approves that move.
 
 ## QA And Issue-Reconciliation Sample
 
