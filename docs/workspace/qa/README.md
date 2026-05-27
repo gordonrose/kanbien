@@ -24,7 +24,7 @@ See also:
 - completed exploratory QA notes
 - completed defect feedback reviews
 - completed waiver or quarantine records
-- illustrative example records for operating-control training and reuse
+- current operating-control training records when they are still active
 
 Maintained reusable QA templates live in `docs/templates/`. The old template
 paths in this folder are temporary breadcrumbs only.
@@ -45,6 +45,14 @@ Current freshness index:
 
 The freshness index is sampled, not exhaustive. Use it to choose the next
 cleanup family before moving or archiving QA records.
+
+Archived QA provenance now lives under:
+
+- `docs/workspace-buckets/archive-history/qa/`
+
+Illustrative examples and point-in-time feature-loop evidence should move there
+once they are no longer active operating authority. Keep unresolved waivers,
+security matrices, active test backlogs, and current freshness indexes here.
 
 ## Relationship To Other QA Artifacts
 

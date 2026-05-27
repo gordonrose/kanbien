@@ -1,10 +1,18 @@
 # Workspace Docs
 
-This folder is the repo-local home for working specification artifacts that
-Codex can read and update during delivery work.
+This folder is the repo-local home for active or transitional working
+specification artifacts that Codex can read and update during delivery work.
 
 Use this area when a document is important to the current repo but is not yet a
-finalized architecture, PRD, or standards artifact.
+finalized architecture, PRD, standards artifact, bucket-owned artifact, or
+archive/history record.
+
+This folder is no longer a permanent catch-all. During the repo-bucket cleanup,
+completed historical records should move toward
+`docs/workspace-buckets/archive-history/`, and active reusable authority should
+move toward the owning bucket, standards, architecture, product-discovery,
+design-system, or platform docs only after references and generators are
+checked.
 
 During the repo-bucket cleanup, each first-level workspace folder README should
 name its current repo bucket classification. Treat that classification as a
@@ -90,6 +98,20 @@ Examples:
 4. Move obsolete working files into the appropriate
    `docs/workspace-buckets/archive-history/` subfolder rather than deleting
    them immediately.
+
+## Cleanup Direction
+
+Prefer decisive cleanup when a record is clearly historical and its lesson has
+been promoted into maintained tests, skills, standards, source docs, or
+runtime guardrails.
+
+Do not move active records just to make the tree look cleaner. Keep records in
+`docs/workspace/` when they still carry unresolved waivers, production-readiness
+caveats, active generator paths, current tool defaults, or live adoption risks.
+
+When moving historical records, leave a short breadcrumb at the old path until
+the final compatibility sweep removes temporary breadcrumbs and updates any
+remaining upstream references.
 
 ## WSL And Windows Paths
 

@@ -30,7 +30,7 @@ classifies the sampled records below.
 | `docs/workspace/qa/2026-04-25-asset-foundation-v1-qa-waiver-or-quarantine.md` | `unresolved-caveat` | Names provider contract tests and Postgres-backed persistence proof as required before production provider rollout or customer-facing asset upload UI. Approval is `no`. | Keep visible until an assets/provider readiness pass proves, supersedes, or reopens the caveat. |
 | `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-overflow-menu-drift.md` | `promoted-lesson` plus `needs-recheck` | Names direct test hardening in `tests/audit/designSystem/contextNavResponsive.test.ts` and follow-up watch items. | Keep as design-system prevention evidence; recheck against current navigation tests before closure or archive. |
 | `docs/workspace/issue-reconciliations/2026-05-23-count-card-route-alias-fallback.md` | `promoted-lesson` | Distinguishes source/test changes from the active user-facing process and records the runtime-process freshness lesson. | Keep available as runtime verification guardrail input. |
-| `docs/workspace/qa/2026-04-09-illustrative-defect-feedback-review.md` | `historical-evidence` | Marked as illustrative and describes example follow-up testing behavior. | Retain as training/example material unless replaced by a maintained template example. |
+| `docs/workspace/qa/2026-04-09-illustrative-defect-feedback-review.md` | `historical-evidence` | Marked as illustrative and describes example follow-up testing behavior. | Archived with breadcrumb on 2026-05-27 because it is training/example provenance, not active QA authority. |
 | `docs/workspace/issue-reconciliations/2026-04-27-root-admin-profile-picture-upload-failed-message.md` | `promoted-lesson` plus `unresolved-caveat` | Names app-level degraded-state visual regressions for stale upload routes, oversized profile pictures, preview rendering, and decorative save behavior. Resolution status still says candidate fix awaiting user confirmation. | Keep active near asset/root-admin upload evidence until a targeted asset-upload audit decides whether it is superseded. |
 | `docs/workspace/issue-reconciliations/2026-04-21-root-admin-breadcrumb-pressure-drift.md` | `promoted-lesson` | Names shared page-shell breadcrumb controller adoption and a desktop-width browser regression for breadcrumb/search collision. | Keep as governed app-adoption prevention evidence; future archive depends on confirming the shared page-shell seam remains current. |
 | `docs/workspace/issue-reconciliations/2026-04-24-generated-canonical-render-route-fallback.md` | `promoted-lesson` | Names generated canonical render route registry, loud `404` behavior for unregistered routes, integration coverage, and launcher-chain proof. | Keep as frontend-harness routing guardrail evidence. |
@@ -449,3 +449,88 @@ Freshness posture:
   notes. Do not treat the archive as saying top-nav is fully done; use the
   component inventory, verification checklist, adoption note, and component
   artifact for current top-nav obligations.
+
+## Ninth Recheck: Context-Nav Canonical And Adoption Drift
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-16-context-nav-canonical-frame-geometry-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-context-nav-canonical-sub-nav-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-context-nav-overlap-lane-reservation.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-context-nav-ref-state-precedence-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-design-system-context-nav-item-invention.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-root-admin-context-nav-signoff-order-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-root-admin-context-nav-tooltip-drift.md`
+- `docs/workspace/issue-reconciliations/2026-04-16-unapproved-top-level-context-nav-ia.md`
+- `docs/workspace/issue-reconciliations/2026-04-21-root-admin-web-hierarchy-context-nav-shell-key-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-root-admin-context-nav-host-seam-correction.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-root-admin-context-nav-mobile-more-seam-correction.md`
+- `docs/workspace/issue-reconciliations/2026-04-25-context-nav-canonical-theme-rtl-cleanup.md`
+- `docs/workspace/issue-reconciliations/2026-04-28-context-nav-parent-owner-feature-loop-gap.md`
+- `docs/workspace/issue-reconciliations/2026-04-28-form-template-context-nav-shell-scope.md`
+- `docs/workspace/issue-reconciliations/2026-04-28-root-admin-context-nav-icons-links.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/component-inventory.md` marks `context-nav` as
+  `system-ready` with signed-off `CNR-001` through `CNR-010`, while keeping
+  first-consumer parity as the next honest adoption gate.
+- `docs/workspace/design-system/behavior-locks/context-nav-behavior-lock.md`,
+  `docs/workspace/design-system/reference-packs/context-nav-reference-pack.md`,
+  `docs/workspace/design-system/patterns/context-nav-pattern.md`, and
+  `docs/workspace/design-system/verification/context-nav-verification-checklist.md`
+  now carry the active design-system contract.
+- `docs/workspace/design-system/adoption/root-admin-shell-context-nav-adoption-contract.md`
+  records the current root-admin first-consumer boundary and states that
+  `rootAdminShell` consumes the DS-owned context-nav host and item-render seams.
+- `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts`,
+  `contextNavHostRoutes.spec.ts`, and
+  `tests/visual/designSystem/support/helpers/contextNavShellAttachment.ts`
+  cover canonical frame, host route, attachment, theme, direction, and
+  state-precedence behavior.
+- `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts` and
+  `rootAdminShellParity.spec.ts` cover the real root-admin consumer, including
+  mobile `More`, tooltip behavior, display-settings launch, and parity checks.
+- `tests/audit/designSystem/contextNavDrawerArtifacts.test.ts` and
+  `tests/audit/designSystem/contextNavResponsive.test.ts` protect related
+  artifact and responsive seams.
+
+Freshness posture:
+
+- lane: `promoted-lesson` plus `active-adoption-caveat`
+- reason: the older context-nav design-system, host-seam, mobile-more,
+  tooltip, IA, shell-key, and parent-owner lessons have current homes in the
+  design-system artifact chain, root-admin adoption contract, and executable
+  tests. The one record left active is
+  `2026-04-28-root-admin-context-nav-icons-links.md` because it still says the
+  user's original live browser/data state requires confirmation.
+- cleanup implication: archived the promoted records with breadcrumbs. Do not
+  treat the archive as saying context-nav has no active obligations; use the
+  component inventory, context-nav verification checklist, root-admin adoption
+  contract, and the remaining active icons/links issue note for current risk.
+
+## Tenth Recheck: QA Example And Context-Nav QA Evidence
+
+Sampled records:
+
+- `docs/workspace/qa/2026-04-09-illustrative-defect-feedback-review.md`
+- `docs/workspace/qa/2026-04-09-illustrative-qa-waiver-or-quarantine.md`
+- `docs/workspace/qa/2026-04-28-context-nav-parent-owner-settings-qa-checklist.md`
+
+Current evidence found:
+
+- The two April 9 QA files explicitly identify themselves as illustrative
+  examples, not real production escapes or current waivers.
+- The context-nav parent-owner QA checklist is point-in-time evidence for the
+  same feature-loop lesson archived in the ninth recheck. Current authority
+  lives in the related tests, traceability evidence, feature-loop artifact
+  requirements, and the archived full note.
+
+Freshness posture:
+
+- lane: `historical-evidence`
+- reason: these records remain useful provenance or training material, but
+  they are not active QA operating authority.
+- cleanup implication: archived with breadcrumbs. Leave unresolved waivers,
+  security matrices, root-admin test backlogs, and current freshness indexes in
+  `docs/workspace/qa/`.

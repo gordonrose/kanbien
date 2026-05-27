@@ -1813,6 +1813,22 @@ with breadcrumbs at the old paths. The active adoption/parity and shared-seam
 extraction caveats remain current in the top-nav design-system artifact chain,
 not in the archived issue notes.
 
+Fifth follow-up cleanup on 2026-05-27: the context-nav design-system and
+root-admin adoption issue family was rechecked against the current
+context-nav behavior lock, pattern artifact, reference pack, verification
+checklist, root-admin adoption contract, visual tests, and audit tests. Promoted
+records were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/context-navigation/`
+with breadcrumbs at the old paths. The active `2026-04-28-root-admin-context-nav-icons-links.md`
+record stayed in `docs/workspace/issue-reconciliations/` because it still names
+user confirmation against the original live browser/data state.
+
+Sixth follow-up cleanup on 2026-05-27: clearly illustrative QA examples and the
+point-in-time context-nav parent-owner QA checklist were moved to
+`docs/workspace-buckets/archive-history/qa/` with breadcrumbs at the old paths.
+Unresolved waivers, security matrices, active test backlogs, and the current
+freshness index remain active in `docs/workspace/qa/`.
+
 ## Non-Goals
 
 - Do not move runtime code.
@@ -1832,3 +1848,24 @@ not in the archived issue notes.
 - Which artifact types require skill/tool lookup updates before any move?
 - Which existing documents are active source of truth versus archive/history?
 - What minimal bucket index prevents drift without adding fake determinism?
+
+## Deferred Decisions From 2026-05-27 Cleanup Run
+
+- `docs/workspace/issue-reconciliations/2026-04-28-root-admin-context-nav-icons-links.md`
+  stayed active. Decision needed: either confirm the original browser/data
+  surface is no longer an open concern, or keep it as the current active
+  context-nav live-state caveat.
+- QA completed feature checklists remain mixed. Decision needed: choose whether
+  completed non-waiver QA checklists should move to archive/history by feature
+  family after each related test summary and standards hook is confirmed.
+- Architecture-map cloned bucket context remains directionally approved but
+  not implemented. Decision needed: define the synchronization and contribution
+  contract before cloning map slices into platform, discovery-harness,
+  frontend-harness, and shared-governance-kernel buckets.
+- Entity-definition cloned bucket context remains directionally approved but
+  not implemented. Decision needed: reconcile stale first drafts against
+  current source and `docs/data-dictionary/` before cloning them into buckets.
+- `docs/workspace/exports/capability-contract-catalog-v1.generated.json`
+  stayed in place. Decision needed only if we want a dedicated compatibility
+  task to move the generator default path into capability-matrix or bucket-owned
+  generated-artifact storage.
