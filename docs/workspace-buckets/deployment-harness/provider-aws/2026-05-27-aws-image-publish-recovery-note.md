@@ -76,6 +76,10 @@ Additional searches did not find:
 Local Docker image inspection is currently blocked because Docker Desktop's
 Linux engine is not running or not exposed to WSL.
 
+Recorded local inspection attempt:
+
+- `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-local-docker-inspection-attempt.md`
+
 ## Current Status
 
 - build context: `observed`

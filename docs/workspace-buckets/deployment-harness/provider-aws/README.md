@@ -29,3 +29,4 @@ Current AWS discovery notes:
 - `2026-05-27-aws-image-publish-recovery-note.md`
 - `2026-05-27-aws-manual-deploy-reconstruction.md`
 - `2026-05-27-aws-task-definition-baseline.md`
+- `2026-05-27-local-docker-inspection-attempt.md`
