@@ -1910,6 +1910,15 @@ parity note was already archived in the form-control canonical family. Do not
 treat drawer-select as `system-ready` until the active design-system artifact
 chain records the required second governed consumer proof.
 
+Sixteenth follow-up cleanup on 2026-05-27: promoted page-shell governance
+incident notes for the design-system shell trio rule and root-admin post-login
+page-host drift were moved to
+`docs/workspace-buckets/archive-history/issue-reconciliations/page-shell-governance/`
+with breadcrumbs at the old paths. Current authority is active design-system
+shell guidance, canonical/parity conventions, root-admin shell parity tests,
+and route-wide governed page-host posture tests. This does not close the
+broader governed shell migration or second-consumer banner proof obligations.
+
 ## Non-Goals
 
 - Do not move runtime code.

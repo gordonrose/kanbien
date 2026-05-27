@@ -833,3 +833,33 @@ Freshness posture:
   baseline parity note was already archived in the form-child canonical pass.
   Do not treat this archive as `system-ready`; the reference pack still says
   second governed consumer proof is required before that promotion.
+
+## Twentieth Recheck: Page-Shell Governance Incidents
+
+Sampled records:
+
+- `docs/workspace/issue-reconciliations/2026-04-16-design-system-page-shell-trio-rule.md`
+- `docs/workspace/issue-reconciliations/2026-04-22-root-admin-post-login-page-shell-host-drift.md`
+
+Current evidence found:
+
+- `docs/workspace/design-system/README.md`,
+  `docs/architecture/guides/design-system-loop-harness.md`, and
+  `docs/workspace/design-system/canonical-and-parity-conventions.md` now carry
+  the active design-system page-shell trio rule for public preview, launcher,
+  and canonical-render routes.
+- `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts` now checks
+  every post-login routed surface for the governed page-shell section posture.
+- `tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts` now compares
+  the root-admin shell and Users page host posture against the signed-off
+  design-system source surfaces.
+
+Freshness posture:
+
+- lane: `promoted-lesson`
+- reason: these page-shell governance incidents now duplicate maintained
+  design-system guidance, root-admin shell parity tests, and governed
+  page-host posture tests.
+- cleanup implication: archived with breadcrumbs. This archive does not mark
+  the broader governed shell migration, page-shell banner wider reuse, or
+  second-consumer proof complete.
