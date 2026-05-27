@@ -34,7 +34,9 @@ source code
 
 Current confidence:
 
-- source-to-image build recipe: `unknown`
+- source-to-image build context: `observed`
+- source-to-image Dockerfile contents: `unknown`
+- image publish recipe: `mostly recovered`
 - ECR image identity: `observed`
 - ECS task-definition revision trail: `observed`
 - ECS service rollout: `observed`
@@ -61,14 +63,36 @@ Current conclusion:
 
 ## Step 2: Build Local Image
 
-Status: `unknown`, with shell-history evidence outside committed repo
+Status: `publish recipe mostly recovered`, `Dockerfile contents unknown`
 
-Shell-history evidence reported during discovery:
+Recovered build command:
 
 ```sh
 docker context use desktop-linux
 docker build -t kanbien-staging:local .
 ```
+
+Recovered publish commands:
+
+```sh
+docker tag kanbien-staging:local \
+  337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:root-login-autofill-20260522-1
+
+docker tag kanbien-staging:local \
+  337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:staging-latest
+
+docker push 337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:root-login-autofill-20260522-1
+docker push 337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:staging-latest
+```
+
+Recovered evidence:
+
+- shell history confirms Docker context selection and local build command
+- Docker Desktop logs confirm tag/push events around `2026-05-22T15:52:47Z` to
+  `2026-05-22T15:52:57Z`
+- Buildx references show build context `/home/gordon/kanbien`
+- Buildx `DockerfilePath` was empty, meaning Docker used the default Dockerfile
+  path in the build context
 
 Repo evidence:
 
@@ -80,9 +104,10 @@ Repo evidence:
 
 Current conclusion:
 
-- A local Docker build probably happened, but the committed repo does not prove
-  how the image was built.
-- This is the weakest part of the current deployment chain.
+- The local image build command and ECR publish sequence are mostly recovered.
+- The original Dockerfile contents remain unrecovered.
+- The active image default command remains unproven until local image
+  inspection or another evidence source recovers it.
 
 Do not run during discovery:
 
@@ -317,10 +342,10 @@ The current likely manual deploy path is:
 
 ```text
 unknown source revision
-  -> unknown Docker build recipe
-  -> inferred ECR login
-  -> inferred local image tag
-  -> observed ECR image push result
+  -> observed build context /home/gordon/kanbien
+  -> unrecovered root Dockerfile contents
+  -> recovered local image tag kanbien-staging:local
+  -> mostly recovered ECR tag/push sequence
   -> observed ECS task-definition registration result
   -> observed ECS service update result
   -> observed migration-before-server startup
@@ -347,8 +372,8 @@ unknown source revision
 
 ## Next Discovery Questions
 
-- Can we find or recover the Dockerfile/build recipe that produced the running
-  image?
+- Can local Docker image inspection recover the image default command and layer
+  history?
 - Can we export the current ECS task-definition JSON as an observed AWS adapter
   baseline without storing secret values?
 - Can we identify the prior known-good immutable digest for task-definition
@@ -359,3 +384,7 @@ unknown source revision
 Current task-definition baseline:
 
 - `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-aws-task-definition-baseline.md`
+
+Current image publish recovery note:
+
+- `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-aws-image-publish-recovery-note.md`

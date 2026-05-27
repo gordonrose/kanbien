@@ -31,7 +31,7 @@ Not inspected or recorded:
 
 ## Gap 1: Dockerfile / Image Build Recipe
 
-Current status: `still unknown`
+Current status: `publish recipe mostly recovered`, `Dockerfile contents still unknown`
 
 What is known:
 
@@ -40,12 +40,17 @@ What is known:
   dist/server.js`.
 - The active ECS task definition has no command override, so the image itself
   must supply the production startup command.
-- Shell-history evidence previously reported:
+- Shell-history evidence confirms:
 
 ```sh
 docker context use desktop-linux
 docker build -t kanbien-staging:local .
 ```
+- Docker Desktop logs confirm the tag/push flow for
+  `root-login-autofill-20260522-1` and `staging-latest`.
+- Buildx references show the build context was `/home/gordon/kanbien` and
+  `DockerfilePath` was empty, meaning Docker used the default Dockerfile path in
+  the repo root.
 
 What was re-checked:
 
@@ -56,13 +61,18 @@ What was re-checked:
 
 Current interpretation:
 
-- A local Docker build likely happened outside the committed repo contract.
-- The exact build recipe remains the largest deployment-chain gap.
+- The local Docker build and ECR publish sequence are now mostly recovered.
+- The original root Dockerfile contents remain unrecovered.
+- The exact image default command and Dockerfile layer recipe remain the largest
+  deployment-chain gap.
 
 Next discovery action:
 
-- Recover the Dockerfile/build recipe from the original machine/context, Docker
-  Desktop build history, external notes, or AWS image provenance if available.
+- Start Docker Desktop / WSL integration and run `docker inspect` plus
+  `docker history` on the local image if it still exists.
+- If local inspection cannot recover the Dockerfile behavior, treat the later
+  Dockerfile as a new compatibility reconstruction rather than the original
+  known recipe.
 
 ## Gap 2: Active Image Source Commit
 
@@ -284,18 +294,18 @@ chain is now well observed:
 The beginning and recovery ends remain weak:
 
 - source commit for active image
-- Dockerfile/build recipe
+- Dockerfile contents and image default command
 - original registration/update commands
 - approved rollback target and procedure
 
 ## Recommended Next Discovery Slice
 
-Stay in `what is` mode and focus on the image-build gap.
+Stay in `what is` mode and focus on local image inspection.
 
 Best next question:
 
-- Can Gordon recover the Dockerfile/build recipe or original image-build notes
-  from the environment that built `root-login-autofill-20260522-1`?
+- Can Docker Desktop / WSL expose the local image so `docker inspect` and
+  `docker history` can recover the image default command and layer history?
 
-If not, the later work should treat the build recipe as a new compatibility
-contract to reconstruct carefully, not as something already known.
+If not, the later work should treat the Dockerfile as a new compatibility
+reconstruction, not as something already known.
