@@ -132,6 +132,7 @@ Observed mapping status:
 - AWS ECS provides the app startup database and server config names.
 - AWS ECS provides the root-auth bootstrap secret names needed by the migration
   runner.
+- AWS ECS sets `ASSETS_LOCAL_STORAGE_ROOT=/tmp/kanbien-assets`.
 - AWS ECS does not currently show `OPENAI_*` configuration names. Source files
   read some `OPENAI_*` values directly from `process.env`, so AWS posture for
   OpenAI-backed features remains `unsure / needs decision`.
@@ -287,6 +288,21 @@ Observed ElastiCache replication group:
 - automatic failover: disabled
 - snapshot retention: `0`
 
+Asset storage posture observed in repo and AWS:
+
+- `src/features/assets/integration.ts` uses a local filesystem storage adapter.
+- `src/features/organizationExports/integration.ts` stores export bytes under
+  the configured asset local storage root plus an `exports` subfolder.
+- Architecture guidance says the asset foundation uses local filesystem
+  storage for local/dev/test until a production S3-compatible provider is
+  selected.
+- AWS currently sets `ASSETS_LOCAL_STORAGE_ROOT=/tmp/kanbien-assets`.
+
+This is a deployment risk. In a Fargate task, `/tmp` is container-local storage,
+so asset bytes and generated export bytes should be treated as ephemeral unless
+AWS storage outside the inspected task is proven. Do not assume asset bytes
+survive task replacement, service redeploy, scale-in, or container restart.
+
 Repo-side job runtime entrypoints observed in `package.json`:
 
 - `start:jobs:dispatcher`: `node dist/jobDispatcher.js`
@@ -317,6 +333,8 @@ background-work completion must not be assumed in AWS until this is decided.
 - RDS deletion protection is disabled.
 - Asset bytes are configured under `/tmp/kanbien-assets`, which is ephemeral
   container storage.
+- Production object-storage provider selection remains deferred in architecture
+  docs, while AWS currently uses container-local asset storage.
 - Repo job entrypoints exist, but no AWS job-process service or log group was
   observed in the inspected ECS cluster.
 - The repo does not yet expose an obvious Dockerfile, infrastructure-as-code
@@ -330,6 +348,8 @@ background-work completion must not be assumed in AWS until this is decided.
 - ALB, target group, listeners, and Route 53 records:
   `deployment-harness/provider-aws`
 - RDS and ElastiCache backing services: `deployment-harness/provider-aws`
+- AWS asset storage setting: `deployment-harness/provider-aws`, with
+  provider-neutral asset durability and recovery implications
 - Runtime env var contract: provider-specific implementation of
   provider-neutral deployment-harness runtime configuration
 - Migration-before-server ordering: provider-neutral deployment-harness core
@@ -352,5 +372,7 @@ background-work completion must not be assumed in AWS until this is decided.
 - Whether any AWS infrastructure is intentionally managed outside this repo.
 - Whether job dispatcher, scheduler, and worker processes should run in AWS,
   and if so where.
+- Whether AWS should use durable object storage for assets and exports before
+  production-like use.
 - Expected rollback procedure for a bad image or migration.
 - Whether deployment evidence should be captured per release and where.
