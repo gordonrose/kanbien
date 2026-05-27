@@ -150,6 +150,24 @@ This ties at least part of the observed ECR image lineage to this repository's
 Git history. It does not prove which Dockerfile, build context, local machine,
 CI job, or image-push command produced the artifacts.
 
+Observed ECS task-definition revision trail:
+
+- revision `1`: image tag `adedfd781094`, registered
+  `2026-05-22T11:57:47Z`
+- revision `2`: image tag `adedfd781094-2`, registered
+  `2026-05-22T12:02:39Z`
+- revision `3`: image tag `adedfd781094-3`, registered
+  `2026-05-22T12:12:42Z`
+- revision `4`: image tag `adedfd781094-4`, registered
+  `2026-05-22T12:18:11Z`
+- revision `5`: image tag `root-login-autofill-20260522-1`, registered
+  `2026-05-22T15:53:45Z`
+
+All observed revisions used the same CPU, memory, environment-variable names,
+secret names, container port, log group, and health-check shape. The observed
+revision changes were image-tag changes. Each revision was registered by the
+same AWS SSO administrator role used for discovery.
+
 ECR repository settings observed:
 
 - image tag mutability: `MUTABLE`
@@ -163,6 +181,9 @@ Compatibility notes:
   identity by itself.
 - The immutable image digest is a stronger release-evidence anchor than
   `staging-latest`.
+- The observed AWS release path likely included image push, ECS task-definition
+  registration, and ECS service update steps, but the repo-side command or
+  workflow that performed those steps is not yet identified.
 - The repo-side image build path is not yet identified.
 
 ## Startup And Migration Evidence
