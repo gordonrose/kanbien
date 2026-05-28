@@ -77,6 +77,8 @@ Current delivery is intentionally lightweight:
 - production build copies frontend folders into `dist/frontend/*`
 - the repo does not currently use React, Next.js, Vite, or another SPA build
   framework for the active browser surfaces
+- production runtime scripts execute compiled Node entrypoints from `dist/src`,
+  while copied frontend assets remain served from `dist/frontend`
 
 This means the runtime model is:
 

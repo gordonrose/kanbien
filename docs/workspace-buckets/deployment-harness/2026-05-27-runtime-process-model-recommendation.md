@@ -29,16 +29,16 @@ That means:
 Current production-oriented process scripts:
 
 - web: `npm start`
-  - runs `node dist/scripts/migrate.js && node dist/server.js`
+  - runs `node dist/src/scripts/migrate.js && node dist/src/server.js`
   - owns migration-before-server startup and HTTP traffic
 - dispatcher: `npm run start:jobs:dispatcher`
-  - runs `node dist/jobDispatcher.js`
+  - runs `node dist/src/jobDispatcher.js`
   - moves durable outbox rows from Postgres into the queue provider
 - worker: `npm run start:jobs:worker`
-  - runs `node dist/jobWorker.js`
+  - runs `node dist/src/jobWorker.js`
   - consumes queued jobs and executes registered handlers
 - scheduler: `npm run start:jobs:scheduler`
-  - runs `node dist/jobScheduler.js`
+  - runs `node dist/src/jobScheduler.js`
   - performs one recurring-scheduler tick
 
 Local/dev equivalents also exist:
@@ -100,4 +100,3 @@ Gordon should decide whether the next AWS runtime shape is:
   work owns background execution
 
 Do not implement any of those outcomes during discovery.
-

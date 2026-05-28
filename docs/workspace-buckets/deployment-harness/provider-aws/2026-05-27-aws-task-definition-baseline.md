@@ -219,7 +219,7 @@ re-decide:
 
 ## Unknowns
 
-- Which Dockerfile or image default command produced the active image.
+- Which original Dockerfile produced the active image.
 - Whether the task definition was registered manually, by script, by CI, or by
   another infrastructure tool.
 - Whether the current task role and execution role are least-privilege.

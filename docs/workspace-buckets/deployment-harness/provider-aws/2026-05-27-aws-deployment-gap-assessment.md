@@ -31,13 +31,13 @@ Not inspected or recorded:
 
 ## Gap 1: Dockerfile / Image Build Recipe
 
-Current status: `publish recipe mostly recovered`, `Dockerfile contents still unknown`
+Current status: `repeatable Dockerfile locally validated`, `original Dockerfile contents still unknown`
 
 What is known:
 
 - `npm run build` exists and compiles TypeScript plus frontend assets.
-- `npm start` exists and runs `node dist/scripts/migrate.js && node
-  dist/server.js`.
+- `npm start` exists and runs `node dist/src/scripts/migrate.js && node
+  dist/src/server.js`.
 - The active ECS task definition has no command override, so the image itself
   must supply the production startup command.
 - Shell-history evidence confirms:
@@ -52,27 +52,42 @@ docker build -t kanbien-staging:local .
   `DockerfilePath` was empty, meaning Docker used the default Dockerfile path in
   the repo root.
 
-What was re-checked:
+What was re-checked before the 2026-05-28 reconstruction:
 
 - repo file search did not find a committed Dockerfile, `.dockerignore`, Docker
   compose file, deploy script, ECR script, ECS script, IaC definition, or deploy
   workflow.
-- Docker is not available as a command in the current WSL environment.
+- Windows PowerShell could run Docker, but `docker images | findstr kanbien`
+  returned no local Kanbien images.
+- ECR config inspection recovered the active image command, working directory,
+  exposed port, base Node version, and selected layer-history facts.
 
 Current interpretation:
 
 - The local Docker build and ECR publish sequence are now mostly recovered.
 - The original root Dockerfile contents remain unrecovered.
-- The exact image default command and Dockerfile layer recipe remain the largest
-  deployment-chain gap.
+- The active image default command is recovered from ECR.
+- The committed root `Dockerfile` is a new compatibility reconstruction, not
+  proof of the original Dockerfile contents.
+- On 2026-05-28, `docker --context default build -t
+  kanbien-service-platform:reconstructed .` succeeded locally, and a
+  non-starting container check confirmed `dist/src/server.js`,
+  `dist/src/scripts/migrate.js`, `src/features`, and production
+  `node_modules` are present.
+- A fresh Codex process could access `docker --context default version`
+  directly, but unqualified `docker build` still followed the incompatible
+  `desktop-linux`/`npipe` context from WSL and failed with
+  `protocol not available`; repeatable WSL validation should pin
+  `--context default`.
+- The rebuilt image preserves the recovered runtime config shape except that
+  its image command is `npm start`; the repo script now expands to the
+  recovered `node dist/src/scripts/migrate.js && node dist/src/server.js`
+  startup sequence.
 
 Next discovery action:
 
-- Start Docker Desktop / WSL integration and run `docker inspect` plus
-  `docker history` on the local image if it still exists.
-- If local inspection cannot recover the Dockerfile behavior, treat the later
-  Dockerfile as a new compatibility reconstruction rather than the original
-  known recipe.
+- Decide whether to keep preserving the observed `node:24.16.0-bookworm`
+  runtime for compatibility or start a separate base-image hardening decision.
 
 ## Gap 2: Active Image Source Commit
 
@@ -87,11 +102,15 @@ What is known:
 - Active image was pushed at `2026-05-22T15:52:58Z`.
 - Earlier ECR tags with prefix `adedfd781094` map to repo commit
   `adedfd781094fa6063dba2da62901f777ccd55b5`.
+- ECR config inspection found no image labels tying the active image to a Git
+  revision.
 
 What was re-checked:
 
 - Git history search did not prove which source commit produced the active
   `root-login-autofill-20260522-1` image.
+- ECR image config and manifest inspection did not prove the active source
+  commit.
 
 Current interpretation:
 

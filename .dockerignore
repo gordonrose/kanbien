@@ -1,0 +1,14 @@
+.git
+.agents
+.codex
+.env
+.env.*
+!.env.example
+!.env.test.example
+node_modules
+dist
+coverage
+.test-artifacts
+test-results
+.local-assets
+docs/workspace-buckets

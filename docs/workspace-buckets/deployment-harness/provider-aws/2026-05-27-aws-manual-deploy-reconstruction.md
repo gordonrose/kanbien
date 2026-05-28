@@ -98,16 +98,16 @@ Repo evidence:
 
 - `npm run build` exists and compiles TypeScript plus frontend assets.
 - `npm start` exists and runs migrations before starting the server.
-- No committed Dockerfile was found.
-- No committed `.dockerignore`, compose file, Docker build script, or deploy
-  workflow was found.
+- A committed root `Dockerfile` and `.dockerignore` now exist as a new
+  compatibility reconstruction.
+- No committed compose file, Docker build script, or deploy workflow was found.
 
 Current conclusion:
 
 - The local image build command and ECR publish sequence are mostly recovered.
 - The original Dockerfile contents remain unrecovered.
-- The active image default command remains unproven until local image
-  inspection or another evidence source recovers it.
+- The active image default command was recovered from ECR config inspection:
+  `node dist/src/scripts/migrate.js && node dist/src/server.js`.
 
 Do not run during discovery:
 
@@ -275,7 +275,10 @@ Server listening on port 3000
 
 Observed runtime command behavior:
 
-- `npm start` runs `node dist/scripts/migrate.js && node dist/server.js`.
+- The active ECR image runs
+  `node dist/src/scripts/migrate.js && node dist/src/server.js`.
+- The repo `npm start` script now runs the same migration-before-server path
+  through `dist/src`.
 - AWS currently depends on root-auth bootstrap secret references being present
   before startup migrations run.
 

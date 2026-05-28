@@ -80,6 +80,17 @@ Recorded local inspection attempt:
 
 - `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-27-local-docker-inspection-attempt.md`
 
+Follow-up on 2026-05-28:
+
+- Docker Desktop became visible from Windows PowerShell.
+- `docker images | findstr kanbien` returned no matching local images.
+- Local Docker cache recovery is exhausted unless another machine or Docker
+  Desktop data source is found.
+- ECR config inspection recovered the active image runtime command and selected
+  non-secret image config fields.
+- Recorded ECR inspection:
+  `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-28-ecr-image-config-inspection.md`
+
 ## Current Status
 
 - build context: `observed`
@@ -87,28 +98,14 @@ Recorded local inspection attempt:
 - publish recipe: `mostly recovered`
 - original Dockerfile contents: `unrecovered`
 - active image source commit: `unknown`
+- active image runtime command:
+  `node dist/src/scripts/migrate.js && node dist/src/server.js`
 
 ## Next Evidence Step
 
-Start Docker Desktop / WSL integration and inspect the local image if it still
-exists:
+Treat the committed Dockerfile as a new compatibility reconstruction, not as
+the original known recipe.
 
-```sh
-docker images | grep kanbien
-docker inspect kanbien-staging:local
-docker history kanbien-staging:local
-```
-
-If the ECR-tagged local image still exists:
-
-```sh
-docker inspect 337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:root-login-autofill-20260522-1
-docker history 337159794548.dkr.ecr.eu-west-1.amazonaws.com/kanbien/service-platform:root-login-autofill-20260522-1
-```
-
-If local image inspection cannot recover the Dockerfile behavior, the later
-Dockerfile should be treated as a new compatibility reconstruction, not as the
-original known recipe.
-
-ECR pull/inspect would require explicit approval because it authenticates to
-AWS ECR and downloads the image artifact.
+The remaining source-identity evidence gap is a Git commit label, release note,
+or other external record tying `root-login-autofill-20260522-1` to a source
+revision.

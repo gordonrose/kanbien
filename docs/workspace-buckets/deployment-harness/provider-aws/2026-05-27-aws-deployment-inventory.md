@@ -320,9 +320,9 @@ survive task replacement, service redeploy, scale-in, or container restart.
 
 Repo-side job runtime entrypoints observed in `package.json`:
 
-- `start:jobs:dispatcher`: `node dist/jobDispatcher.js`
-- `start:jobs:scheduler`: `node dist/jobScheduler.js`
-- `start:jobs:worker`: `node dist/jobWorker.js`
+- `start:jobs:dispatcher`: `node dist/src/jobDispatcher.js`
+- `start:jobs:scheduler`: `node dist/src/jobScheduler.js`
+- `start:jobs:worker`: `node dist/src/jobWorker.js`
 
 AWS-side job runtime posture observed on 2026-05-27:
 

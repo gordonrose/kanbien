@@ -151,7 +151,8 @@ Do not treat `staging-latest` as rollback identity.
 
 ## Known Gaps
 
-- The repo does not yet contain the Dockerfile or build recipe for this image.
+- The repo now contains a Dockerfile as a new compatibility reconstruction, but
+  the original Dockerfile for this image remains unrecovered.
 - The repo does not yet contain the ECR push command path.
 - The repo does not yet contain the ECS task-definition registration command
   path.

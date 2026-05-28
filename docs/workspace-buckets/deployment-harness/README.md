@@ -44,3 +44,4 @@ Current steering notes:
 - `2026-05-27-release-evidence-record-shape.md`
 - `2026-05-27-runtime-process-model-recommendation.md`
 - `2026-05-27-release-evidence-rollback-recommendation.md`
+- `2026-05-28-repeatable-docker-build-path.md`

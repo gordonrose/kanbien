@@ -40,9 +40,20 @@ Results:
 
 - local Docker image inspection remains blocked
 - local image existence is not proven
-- image default command remains unrecovered
+- image default command remained unrecovered by this local inspection attempt
 - Dockerfile layer history remains unrecovered
 - no ECR pull was attempted
+
+Follow-up on 2026-05-28:
+
+- Windows PowerShell Docker image listing returned no local Kanbien images.
+- ECR config inspection later recovered the active image default command.
+- A later WSL shell could run Docker through `docker --context default` with
+  approved Docker socket access, but the active ECR image was still not found
+  in the local cache.
+- The new reconstructed image build succeeded locally as
+  `kanbien-service-platform:reconstructed`; this validates the new committed
+  Dockerfile, not the original image contents.
 
 ## Next Evidence Step
 

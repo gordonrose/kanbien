@@ -43,16 +43,28 @@ The repo currently proves these facts:
 
 The repo does not currently prove:
 
-- which Dockerfile or build context produced the ECR images
+- which original Dockerfile produced the ECR images
 - which command tagged and pushed the images
 - which command registered task-definition revisions
 - which command updated the ECS service
 - which verification command was required before considering the deploy good
 - which rollback command should be used for a bad image or migration
 
-Current file/history inspection did not find a committed Dockerfile,
-`.dockerignore`, docker compose file, ECR push script, ECS deploy script,
-infrastructure-as-code definition, or GitHub Actions deploy workflow.
+2026-05-28 update:
+
+- ECR config inspection recovered the active image runtime command and selected
+  layer-history facts.
+- The repo now contains a root `Dockerfile` and `.dockerignore` as a new
+  compatibility reconstruction.
+- The reconstructed image was locally built as
+  `kanbien-service-platform:reconstructed` with `docker --context default
+  build`, and its non-starting runtime file check confirmed `dist`,
+  `src/features`, and production dependencies are present.
+- The original Dockerfile contents used to produce the active image remain
+  unrecovered.
+- The repo still does not contain a docker compose file, ECR push script, ECS
+  deploy script, infrastructure-as-code definition, or GitHub Actions deploy
+  workflow.
 
 Current AWS manual deploy reconstruction:
 
@@ -93,7 +105,6 @@ Secret values and access keys must stay outside the repo.
 
 ## Do Not Do Yet
 
-- Do not add a Dockerfile without deciding the runtime image contract.
 - Do not add a GitHub Actions deploy workflow before the manual path is
   recoverable.
 - Do not deploy or mutate AWS during discovery.

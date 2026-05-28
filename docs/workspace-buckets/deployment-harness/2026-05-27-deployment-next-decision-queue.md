@@ -44,13 +44,15 @@ Question:
 Why this comes next:
 
 - The repo can identify the running AWS image, digest, task definition, and
-  service rollout, but it still cannot repeat the build and push from committed
-  instructions.
+  service rollout, and now has a committed Dockerfile as a compatibility
+  reconstruction. It still cannot push and deploy from committed instructions.
 
 Evidence:
 
-- No committed Dockerfile, deploy workflow, ECR push script, or infrastructure
-  definition was found.
+- ECR image inspection recovered the active runtime command, and a committed
+  Dockerfile now exists as a new compatibility reconstruction.
+- No committed deploy workflow, ECR push script, ECS task-definition source, or
+  infrastructure definition exists yet.
 - ECR image tags map to a real Git commit, so source lineage exists even though
   the image-build recipe is missing.
 - Current recommendation:
