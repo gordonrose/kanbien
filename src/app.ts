@@ -3,6 +3,7 @@ import helmet from "helmet";
 import { v1Router } from "./routes/v1";
 import { env } from "./config/env";
 import { createDesignSystemRouter } from "./frontend/designSystem/router";
+import { createPublicSiteRouter } from "./frontend/publicSite/router";
 import { createRootAdminShellRouter } from "./frontend/rootAdminShell/router";
 
 export function createApp() {
@@ -32,6 +33,7 @@ export function createApp() {
   app.use("/design-system", createDesignSystemRouter());
   app.use("/root-admin", createRootAdminShellRouter());
   app.use("/v1", v1Router);
+  app.use("/", createPublicSiteRouter());
   app.use(
     (
       error: unknown,
