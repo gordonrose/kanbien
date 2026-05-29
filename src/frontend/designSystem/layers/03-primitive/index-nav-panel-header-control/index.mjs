@@ -61,6 +61,26 @@ function tokenDependenciesFor() {
   return { headerFrame, labelTextStyle };
 }
 
+function normalizeActions(actions, fieldName) {
+  if (!Array.isArray(actions)) {
+    throw new TypeError(`${fieldName} must be an array.`);
+  }
+  return actions.map((action, index) => {
+    const label = action?.label ?? "";
+    const value = action?.value ?? label;
+    const icon = action?.icon ?? "plus";
+    const visibility = action?.visibility ?? "always";
+    assertString(label, `${fieldName}[${index}].label`);
+    assertString(value, `${fieldName}[${index}].value`);
+    assertString(icon, `${fieldName}[${index}].icon`);
+    assertString(visibility, `${fieldName}[${index}].visibility`);
+    if (!["always", "mobile"].includes(visibility)) {
+      throw new RangeError(`${fieldName}[${index}].visibility does not support "${visibility}".`);
+    }
+    return { label, value, icon, visibility };
+  });
+}
+
 export const indexNavPanelHeaderControlPrimitiveContract = {
   schema: "kanbien.designSystem.primitiveContract.v1",
   primitiveName,
@@ -70,6 +90,7 @@ export const indexNavPanelHeaderControlPrimitiveContract = {
   supportedThemes: ["original", "dark", "desert"],
   requiredTokens: ["index-nav-panel-frame", "label-text-style"],
   requiredPrimitives: ["icon-button-control", "truncating-label"],
+  supportedActionVisibility: ["always", "mobile"],
   consumerRules: [
     "Consumers must use this primitive for governed index-navigation panel headers.",
     "Consumers must not locally recreate header height, sticky position, title truncation, tooltip disclosure, or action alignment.",
@@ -84,12 +105,28 @@ export function indexNavPanelHeaderControlPrimitive(options = {}) {
   const title = options.title ?? "";
   const showAddAction = options.showAddAction !== false;
   const addLabel = options.addLabel ?? "Add";
+  const actionIcon = options.actionIcon ?? "plus";
+  const actions = normalizeActions(
+    options.actions ??
+      (showAddAction
+        ? [
+            {
+              label: addLabel,
+              value: `${id}-add`,
+              icon: actionIcon,
+              visibility: "always",
+            },
+          ]
+        : []),
+    "actions",
+  );
 
   assertString(systemKey, "systemKey");
   assertString(theme, "theme");
   assertString(id, "id");
   assertString(title, "title");
   assertString(addLabel, "addLabel");
+  assertString(actionIcon, "actionIcon");
 
   const tokens = tokenDependenciesFor();
 
@@ -102,6 +139,8 @@ export function indexNavPanelHeaderControlPrimitive(options = {}) {
     title,
     showAddAction,
     addLabel,
+    actionIcon,
+    actions,
     tokenDependencies: {
       headerFrame: {
         tokenName: tokens.headerFrame.tokenName,
@@ -157,19 +196,28 @@ export function renderIndexNavPanelHeaderControlPrimitive(options = {}) {
           text: spec.title,
         })}
       </h3>
-      ${
-        spec.showAddAction
-          ? renderIconButtonControlPrimitive({
-              systemKey: spec.systemKey,
-              theme: spec.theme,
-              id: `${spec.id}-add`,
-              label: spec.addLabel,
-              value: `${spec.id}-add`,
-              icon: "plus",
-              frameIntent: "quiet",
-            })
-          : ""
-      }
+      <div class="ds-index-nav-panel-header-control-actions" data-index-nav-panel-header-actions>
+        ${spec.actions
+          .map(
+            (action, index) => `
+              <span
+                class="ds-index-nav-panel-header-control-action"
+                data-index-nav-panel-header-action-visibility="${escapeHtml(action.visibility)}"
+              >
+                ${renderIconButtonControlPrimitive({
+                  systemKey: spec.systemKey,
+                  theme: spec.theme,
+                  id: `${spec.id}-action-${index}`,
+                  label: action.label,
+                  value: action.value,
+                  icon: action.icon,
+                  frameIntent: "quiet",
+                })}
+              </span>
+            `,
+          )
+          .join("")}
+      </div>
     </header>
   `;
 }

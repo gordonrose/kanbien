@@ -2,11 +2,10 @@ import { buttonFrameTokenSpec } from "../../02-token/button-frame/systems/defaul
 import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
 import { iconSizeTokenSpec } from "../../02-token/icon-size/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
+import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
 
 const primitiveName = "icon-button-control";
-const iconPaths = {
-  plus: "M12 5v14M5 12h14",
-};
+const supportedIconNames = ["plus", "close", "list"];
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -68,6 +67,13 @@ function tokenDependenciesFor({ frameIntent, theme }) {
   return { buttonFrame, focusRing, iconSize, minimumTargetSize };
 }
 
+function glyphPathFor({ systemKey, icon }) {
+  if (systemKey !== "default") {
+    throw new RangeError(`icon-button-control has no glyph registry for "${systemKey}".`);
+  }
+  return resolveDefaultGlyphPath(icon);
+}
+
 export const iconButtonControlPrimitiveContract = {
   schema: "kanbien.designSystem.primitiveContract.v1",
   primitiveName,
@@ -75,9 +81,10 @@ export const iconButtonControlPrimitiveContract = {
   contractPath: "docs/design-system/03-primitive/shared/icon-button-control/IconButtonControl-Contract.md",
   supportedSystems: ["default"],
   supportedThemes: ["original", "dark", "desert"],
-  supportedIcons: ["plus"],
+  supportedIcons: supportedIconNames,
   supportedFrameIntents: ["quiet", "subtle"],
   requiredTokens: ["button-frame", "icon-size", "focus-ring", "minimum-target-size"],
+  requiredSystemRegistries: ["glyph-registry"],
   eventName: "icon-button-control:activate",
   consumerRules: [
     "Consumers must use this primitive for governed icon-only native button actions.",
@@ -104,11 +111,12 @@ export function iconButtonControlPrimitive(options = {}) {
   if (!["quiet", "subtle"].includes(frameIntent)) {
     throw new RangeError(`icon-button-control does not support frameIntent "${frameIntent}".`);
   }
-  if (!iconPaths[icon]) {
+  if (!supportedIconNames.includes(icon)) {
     throw new RangeError(`icon-button-control does not support icon "${icon}".`);
   }
 
   const tokens = tokenDependenciesFor({ frameIntent, theme });
+  const iconPath = glyphPathFor({ systemKey, icon });
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",
@@ -120,8 +128,15 @@ export function iconButtonControlPrimitive(options = {}) {
     value,
     icon,
     frameIntent,
-    iconPath: iconPaths[icon],
+    iconPath,
     eventName: iconButtonControlPrimitiveContract.eventName,
+    systemDependencies: {
+      glyphRegistry: {
+        systemKey,
+        semanticGlyphName: icon,
+        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+      },
+    },
     tokenDependencies: {
       buttonFrame: {
         tokenName: tokens.buttonFrame.tokenName,

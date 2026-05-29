@@ -21,7 +21,7 @@ The interactive target remains governed by `minimum-target-size`; the visible
 button frame may be inset when the signed `button-frame` token says so.
 
 It does not create records, navigate routes, choose panel placement, define
-icon artwork beyond the supported glyph registry, or own app adoption.
+icon artwork, or own app adoption.
 
 ## Token Dependencies
 
@@ -41,6 +41,15 @@ Patterns may select the intent that fits their composition, such as a quiet
 icon button in a dense panel header. Patterns must not invent their own colour
 calculation or local frame values.
 
+Supported decorative glyph names are `plus`, `close`, and `list`. These names
+are semantic primitive choices, not shared artwork. The selected design-system
+implementation supplies the actual glyph drawing through its glyph registry.
+For the default system, that registry is
+`src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry`.
+
+The glyph never provides the accessible name; consumers must still provide the
+action label.
+
 ## Behavior And Accessibility Contract
 
 The primitive renders a native `button` with `type="button"`.
@@ -57,3 +66,7 @@ does with that activation.
 Consumers must not recreate icon-button markup, ARIA behavior, focus behavior,
 target sizing, visible frame inset, glyph sizing, button-frame values, or
 activation events locally.
+
+Consumers must not embed SVG path data or other glyph artwork in pattern,
+component, demo, canonical, or app code. Later layers choose semantic glyph
+names; the selected design system resolves the artwork.

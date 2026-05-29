@@ -11,17 +11,41 @@
       "implementationExport": "backgroundColorTokenSpec",
       "pageRoute": "/design-system/default/tokens/background-color"
     },
+    "tokens.body-region-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/body-region-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs",
+      "implementationExport": "bodyRegionFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/body-region-frame"
+    },
     "tokens.button-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/button-frame/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/buttonFrame.tokens.mjs",
       "implementationExport": "buttonFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/button-frame"
     },
+    "tokens.error-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/error-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/errorTextStyle.tokens.mjs",
+      "implementationExport": "errorTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/error-text-style"
+    },
     "tokens.focus-ring": {
       "contractModule": "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/focusRing.tokens.mjs",
       "implementationExport": "focusRingTokenSpec",
       "pageRoute": "/design-system/default/tokens/focus-ring"
+    },
+    "tokens.field-row-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/field-row-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/fieldRowFrame.tokens.mjs",
+      "implementationExport": "fieldRowFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/field-row-frame"
+    },
+    "tokens.field-value-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/field-value-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/fieldValueTextStyle.tokens.mjs",
+      "implementationExport": "fieldValueTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/field-value-text-style"
     },
     "tokens.icon-size": {
       "contractModule": "src/frontend/designSystem/layers/02-token/icon-size/contract.mjs",
@@ -101,6 +125,18 @@
       "implementationExport": "panelCornerRadiusTokenSpec",
       "pageRoute": "/design-system/default/tokens/panel-corner-radius"
     },
+    "tokens.panel-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/panel-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelFrame.tokens.mjs",
+      "implementationExport": "panelFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/panel-frame"
+    },
+    "tokens.panel-header-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/panel-header-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelHeaderFrame.tokens.mjs",
+      "implementationExport": "panelHeaderFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/panel-header-frame"
+    },
     "tokens.primary-color-source": {
       "contractModule": "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs",
@@ -130,6 +166,18 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/tooltipSurface.tokens.mjs",
       "implementationExport": "tooltipSurfaceTokenSpec",
       "pageRoute": "/design-system/default/tokens/tooltip-surface"
+    },
+    "tokens.text-control-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/text-control-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/textControlFrame.tokens.mjs",
+      "implementationExport": "textControlFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/text-control-frame"
+    },
+    "tokens.textarea-growth": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/textarea-growth/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/textareaGrowth.tokens.mjs",
+      "implementationExport": "textareaGrowthTokenSpec",
+      "pageRoute": "/design-system/default/tokens/textarea-growth"
     },
     "tokens.tooltip-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs",

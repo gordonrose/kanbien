@@ -1,0 +1,26 @@
+export const panelFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.panel-frame",
+  tokenType: "panel-frame",
+  requiredVariantRoles: ["panel frame"],
+  requiredValueFields: [
+    "frameRole",
+    "backgroundValue",
+    "foregroundValue",
+    "borderValue",
+    "radiusValue",
+    "paddingBlockValue",
+    "paddingInlineValue",
+    "gapValue",
+    "standardInlineSize",
+    "doubleInlineSize",
+    "mobileInlineSize",
+    "maxBlockSize",
+    "scrollBehavior",
+  ],
+  consumerRules: [
+    "Every design system must expose governed generic panel frame values before reusable panel primitives or patterns own container width, surface, header geometry, or scroll sizing.",
+    "Consumers must use the runtime seam instead of local panel width, padding, surface, border, radius, or scroll-height literals.",
+    "This token does not define panel header geometry, panel actions, navigation semantics, form controls, body slot anatomy, route selection, workflow behavior, or app adoption.",
+  ],
+};

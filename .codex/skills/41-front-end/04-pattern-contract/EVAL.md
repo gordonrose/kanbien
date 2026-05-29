@@ -34,6 +34,11 @@ from a governed primitive. This includes icon-only buttons, text buttons,
 resize handles, menu triggers, tooltip triggers, list items, tabs, switches,
 checkboxes, radios, and field controls.
 
+Pass only if every visible text child that can be constrained, clipped, or
+truncated is rendered through `truncating-label` or another approved
+text-disclosure primitive, or the pattern provides browser evidence that the
+text cannot truncate in every reviewed state.
+
 Pass only if every direct token dependency is listed as consumable for the
 selected system in `docs/design-system/02-token/token-readiness-index.md`, or
 the artifact states that no direct token dependency exists.
@@ -81,6 +86,10 @@ Pass only if `Composition Ledger` classifies every rendered child as a
 governed primitive, governed child pattern, browser-native wrapper, inherited
 later-layer contract, or proof-only wrapper.
 
+Pass only if `Text Overflow Disclosure` lists every composed visible text area
+that can be constrained and names the child primitive that owns full-text
+disclosure.
+
 Pass only if `Accessibility Contract` names concrete composition
 responsibilities rather than saying only "accessible" or "WCAG compliant."
 
@@ -103,6 +112,11 @@ Pass only if every rendered proof control is backed by browser evidence that
 changing the control changes rendered geometry or visual evidence, or preserves
 the promised behavior, accessibility attribute, keyboard flow, overflow
 posture, or event contract under that pressure.
+
+Pass only if frontend-visible pattern work runs
+`npm run check:design-system-text-disclosure` or records the audit as blocked
+by existing findings. New or changed pattern truncation must not be hidden
+behind existing audit debt.
 
 Pass only if proof-only controls such as constrained slot width, direction,
 magnification, fixture count, or diagnostic data are named as review evidence
@@ -143,6 +157,10 @@ marker, icon, typography, focus, or motion values that are not consumed from a
 signed token seam, consumed through a governed primitive or child pattern,
 inherited from a containing later-layer contract, browser-native, or explicitly
 proof-only.
+
+Fail if a pattern uses local `text-overflow: ellipsis`, `white-space: nowrap`,
+visible clipping, `overflow: hidden`, title-only disclosure, or copied tooltip
+logic for text instead of consuming an approved text-disclosure primitive.
 
 Fail if the artifact redefines primitive behavior, semantics, state meaning,
 controller behavior, or token consumption instead of routing back to

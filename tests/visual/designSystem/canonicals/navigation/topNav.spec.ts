@@ -309,12 +309,28 @@ test.describe("design-system top-nav canonical states", () => {
     const inactiveLink = topNav.getByRole("link", { name: "Foundations" });
     const activeLink = topNav.getByRole("link", { name: "Overview" });
     const profileName = topNav.locator(".profile-meta strong");
+    const scopedInk = await topNav.evaluate((element) => {
+      const probe = document.createElement("span");
+      element.append(probe);
+      const resolveColor = (value: string) => {
+        probe.style.color = value;
+        return getComputedStyle(probe).color;
+      };
+      const styles = getComputedStyle(element);
+      const colors = {
+        ink: resolveColor(styles.getPropertyValue("--ink").trim()),
+        inkSoft: resolveColor(styles.getPropertyValue("--ink-soft").trim()),
+        accentText: resolveColor(styles.getPropertyValue("--accent-text").trim()),
+      };
+      probe.remove();
+      return colors;
+    });
 
-    await expect(topNav).toHaveCSS("color", "rgb(236, 240, 255)");
-    await expect(brandName).toHaveCSS("color", "rgb(236, 240, 255)");
-    await expect(inactiveLink).toHaveCSS("color", "rgb(180, 190, 216)");
-    await expect(activeLink).toHaveCSS("color", "rgb(22, 27, 38)");
-    await expect(profileName).toHaveCSS("color", "rgb(236, 240, 255)");
+    await expect(topNav).toHaveCSS("color", scopedInk.ink);
+    await expect(brandName).toHaveCSS("color", scopedInk.ink);
+    await expect(inactiveLink).toHaveCSS("color", scopedInk.inkSoft);
+    await expect(activeLink).toHaveCSS("color", scopedInk.accentText);
+    await expect(profileName).toHaveCSS("color", scopedInk.ink);
   });
 
   test("top-nav canonical RTL direction is owned by the local render surface", async ({ page }) => {

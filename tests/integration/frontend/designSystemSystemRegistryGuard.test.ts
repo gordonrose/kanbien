@@ -11,7 +11,9 @@ type DesignSystemRegistration = {
   systemKey: string;
   label: string;
   assetsBase: string;
-  tokens?: Record<string, (() => Promise<Record<string, unknown>>) | undefined>;
+  tokens?: Record<string, (() => Promise<Record<string, unknown>>) | undefined> & {
+    fieldRowFrame?: () => Promise<Record<string, unknown>>;
+  };
 };
 
 type SystemManifest = {
@@ -117,6 +119,12 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.body-region-frame") {
+          const registeredTokenModule = await registration.tokens?.bodyRegionFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.button-frame") {
           const registeredTokenModule = await registration.tokens?.buttonFrame?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
@@ -125,6 +133,24 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.focus-ring") {
           const registeredTokenModule = await registration.tokens?.focusRing?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.field-row-frame") {
+          const registeredTokenModule = await registration.tokens?.fieldRowFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.field-value-text-style") {
+          const registeredTokenModule = await registration.tokens?.fieldValueTextStyle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.error-text-style") {
+          const registeredTokenModule = await registration.tokens?.errorTextStyle?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
@@ -201,6 +227,18 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.panel-frame") {
+          const registeredTokenModule = await registration.tokens?.panelFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.panel-header-frame") {
+          const registeredTokenModule = await registration.tokens?.panelHeaderFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.primary-color-source") {
           const registeredTokenModule = await registration.tokens?.primaryColorSource?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
@@ -227,6 +265,18 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.tooltip-surface") {
           const registeredTokenModule = await registration.tokens?.tooltipSurface?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.text-control-frame") {
+          const registeredTokenModule = await registration.tokens?.textControlFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.textarea-growth") {
+          const registeredTokenModule = await registration.tokens?.textareaGrowth?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }

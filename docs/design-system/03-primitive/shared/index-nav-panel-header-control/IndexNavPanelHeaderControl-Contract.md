@@ -18,7 +18,7 @@
 
 `index-nav-panel-header-control` owns the stable panel-header behavior for
 index navigation: fixed block size, matching min/max block size, sticky top
-placement, title truncation disclosure, and governed add-action alignment.
+placement, title truncation disclosure, and governed icon-action alignment.
 
 It does not own the list, list scrolling, route selection, entity-page
 structure, backend data loading, or app adoption.
@@ -40,7 +40,8 @@ structure, backend data loading, or app adoption.
 ## Behavior And Accessibility Contract
 
 The primitive renders a semantic `header` containing one title and, when
-enabled, one governed icon button.
+enabled, one or more governed icon buttons. Actions may be always visible or
+mobile-only when a parent `index-nav-panel` needs a mobile close affordance.
 
 The header remains fixed height regardless of list length or add-action
 presence. The header sticks to the top of its containing scroll context using

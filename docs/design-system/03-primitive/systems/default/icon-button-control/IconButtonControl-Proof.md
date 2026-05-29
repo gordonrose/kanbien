@@ -7,3 +7,7 @@ The `default` design system renders `icon-button-control` at:
 The proof must show native button semantics, decorative icon behavior,
 accessible label behavior, signed token dependencies, focus visibility, and
 activation event logging.
+
+Glyph artwork is resolved through the default system registry at
+`src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry`;
+the shared primitive owns only the semantic glyph names and button behavior.

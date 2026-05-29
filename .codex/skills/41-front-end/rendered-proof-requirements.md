@@ -44,7 +44,17 @@ semantics, emitted events, focus, disabled behavior, text overflow, tooltip
 disclosure, target size, or accessibility.
 
 If visible text can overflow, the proof must include both fitting and
-truncating cases when the primitive owns truncation or tooltip behavior.
+truncating cases. Truncated text must disclose the full text through the
+governed `truncating-label` primitive or through a named approved replacement
+text-disclosure primitive. Raw ellipsis, clipping, `white-space: nowrap`, or
+overflow hiding without disclosure fails the proof.
+
+If a primitive or pattern claims text cannot truncate, the proof must include a
+browser assertion showing the constrained text fits without visual clipping.
+
+Tooltip disclosure for truncated text must be overflow-gated: the tooltip must
+appear on hover/focus when rendered text is actually truncated and must not
+appear when the same text fits.
 
 If a primitive uses another primitive, token, or browser-native behavior, the
 proof must say so.
@@ -61,6 +71,11 @@ browser-native document behavior.
 
 For repeated or unequal composed children, the proof must include browser
 evidence for alignment and overflow behavior that could otherwise drift.
+
+If a pattern renders any visible text that can truncate, the pattern proof must
+prove the child consumes `truncating-label` or another approved text-disclosure
+primitive. Patterns must not satisfy truncation by local CSS, copied tooltip
+logic, title attributes, or proof-only hover text.
 
 ## Proof Control Honesty
 

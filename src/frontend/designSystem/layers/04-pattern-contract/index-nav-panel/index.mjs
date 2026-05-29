@@ -90,6 +90,26 @@ function normalizeItems(items) {
   });
 }
 
+function normalizeHeaderActions(actions) {
+  if (!Array.isArray(actions)) {
+    throw new TypeError("headerActions must be an array.");
+  }
+  return actions.map((action, index) => {
+    const label = action?.label ?? "";
+    const value = action?.value ?? label;
+    const icon = action?.icon ?? "plus";
+    const visibility = action?.visibility ?? "always";
+    assertString(label, `headerActions[${index}].label`);
+    assertString(value, `headerActions[${index}].value`);
+    assertString(icon, `headerActions[${index}].icon`);
+    assertString(visibility, `headerActions[${index}].visibility`);
+    if (!["always", "mobile"].includes(visibility)) {
+      throw new RangeError(`headerActions[${index}].visibility does not support "${visibility}".`);
+    }
+    return { label, value, icon, visibility };
+  });
+}
+
 function tokenDependenciesFor({ systemKey }) {
   const proof = getSystemProof(systemKey);
   const panelFrame = findVariant(
@@ -137,6 +157,8 @@ export function indexNavPanelPattern(options = {}) {
   const showAddAction = options.showAddAction !== false;
   const resizable = options.resizable === true;
   const addLabel = options.addLabel ?? "Add";
+  const actionIcon = options.actionIcon ?? "plus";
+  const headerActions = normalizeHeaderActions(options.headerActions ?? []);
 
   assertString(systemKey, "systemKey");
   assertString(theme, "theme");
@@ -147,6 +169,7 @@ export function indexNavPanelPattern(options = {}) {
   assertString(mobileMode, "mobileMode");
   assertString(emptyMessage, "emptyMessage");
   assertString(addLabel, "addLabel");
+  assertString(actionIcon, "actionIcon");
 
   if (!["standard", "double"].includes(widthMode)) {
     throw new RangeError(`index-nav-panel does not support widthMode "${widthMode}".`);
@@ -175,6 +198,8 @@ export function indexNavPanelPattern(options = {}) {
     showHeader,
     resizable,
     addLabel,
+    actionIcon,
+    headerActions,
     tokenDependencies: {
       panelFrame: {
         tokenName: tokens.panelFrame.tokenName,
@@ -241,6 +266,20 @@ export function renderIndexNavPanelPattern(options = {}) {
               title: spec.title,
               showAddAction: spec.showAddAction,
               addLabel: spec.addLabel,
+              actionIcon: spec.actionIcon,
+              actions: [
+                ...(spec.showAddAction
+                  ? [
+                      {
+                        label: spec.addLabel,
+                        value: `${spec.id}-add`,
+                        icon: spec.actionIcon,
+                        visibility: "always",
+                      },
+                    ]
+                  : []),
+                ...spec.headerActions,
+              ],
             })
           : ""
       }

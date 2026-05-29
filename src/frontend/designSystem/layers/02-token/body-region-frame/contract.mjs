@@ -1,0 +1,26 @@
+export const bodyRegionFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.body-region-frame",
+  tokenType: "body-region-frame",
+  requiredVariantRoles: ["body region frame"],
+  requiredValueFields: [
+    "frameRole",
+    "backgroundValue",
+    "foregroundValue",
+    "borderValue",
+    "radiusValue",
+    "paddingBlockValue",
+    "paddingInlineValue",
+    "gapValue",
+    "sectionGapValue",
+    "minBlockSize",
+    "desktopMaxBlockSize",
+    "mobileBlockSizeBehavior",
+    "stateSpacingValue",
+  ],
+  consumerRules: [
+    "Every design system must expose governed body-region frame values before reusable body primitives or patterns own content surface, padding, gap, scroll sizing, or state spacing.",
+    "Consumers must use the runtime seam instead of local body-region surface, padding, gap, radius, height, or state-spacing literals.",
+    "This token does not approve hosted field controls, validation semantics, workflow-builder behavior, product data, component seams, or app adoption.",
+  ],
+};

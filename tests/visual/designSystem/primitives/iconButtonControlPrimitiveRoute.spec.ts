@@ -38,6 +38,14 @@ test.describe("icon button control primitive route", () => {
 
     await button.click();
     await expect(page.getByText("Activation log: add-item")).toBeVisible();
+    const closeButton = page.getByRole("button", { name: "Close panel" });
+    await expect(closeButton).toBeVisible();
+    await closeButton.click();
+    await expect(page.getByText("Activation log: close-panel")).toBeVisible();
+    const listButton = page.getByRole("button", { name: "Show secondary index" });
+    await expect(listButton).toBeVisible();
+    await listButton.click();
+    await expect(page.getByText("Activation log: show-secondary-index")).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 });

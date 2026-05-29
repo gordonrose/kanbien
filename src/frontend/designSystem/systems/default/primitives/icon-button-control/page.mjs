@@ -74,6 +74,30 @@ root.innerHTML = `
               })}
             </div>
           </article>
+          <article class="primitive-proof-row">
+            <p class="primitive-proof-label">Quiet close action</p>
+            <div class="primitive-proof-host">
+              ${renderIconButtonControlPrimitive({
+                id: "icon-button-proof-close",
+                label: "Close panel",
+                value: "close-panel",
+                icon: "close",
+                frameIntent: "quiet",
+              })}
+            </div>
+          </article>
+          <article class="primitive-proof-row">
+            <p class="primitive-proof-label">Quiet list action</p>
+            <div class="primitive-proof-host">
+              ${renderIconButtonControlPrimitive({
+                id: "icon-button-proof-list",
+                label: "Show secondary index",
+                value: "show-secondary-index",
+                icon: "list",
+                frameIntent: "quiet",
+              })}
+            </div>
+          </article>
         </div>
         <p class="primitive-event-log" data-icon-button-control-log>Activation log: none</p>
       </section>
