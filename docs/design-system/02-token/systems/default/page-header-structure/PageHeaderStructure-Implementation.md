@@ -87,13 +87,16 @@
         "renderedValue": "1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24"
       },
       "preview": {
-        "kind": "surface-card",
-        "sample": "24 columns",
+        "kind": "page-header-structure-map",
+        "sample": "region map",
         "background": "#ffffff",
         "foreground": "#111827",
         "border": "#dbe4f0",
         "radius": "0",
-        "label": "Page header structure"
+        "label": "Page header structure",
+        "gap": "0.5rem",
+        "visibleColumnCount": 24,
+        "regions": "same as value.regions"
       },
       "metadata": {
         "role": "page header structure",
@@ -115,6 +118,15 @@
 
 The default implementation preserves the existing page-header route's region
 map while moving the reusable fact into a governed runtime seam.
+
+The default proof renders those governed regions through the existing
+`token-page-header-map` and `data-page-header-span` route classes. The token
+does not create a second track template; the existing page-header map remains
+the rendered proof source for column placement and collapse behavior.
+
+The proof grid sits inside a named `token-foundation-header` container host so
+the existing responsive container queries can collapse visible columns and make
+the single mobile column fill the available width.
 
 The token does not approve populated copy, badges, actions, keyboard behavior,
 or status semantics. Those remain blocked until primitive and pattern layers

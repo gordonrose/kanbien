@@ -295,6 +295,38 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "page-header-structure-map") {
+    const columnLabels = Array.from({ length: Number(variant.preview.visibleColumnCount ?? 24) }, (_, index) =>
+      String(index + 1).padStart(2, "0"),
+    );
+
+    return `
+      <div
+        class="token-spec-page-header-map-host"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        aria-hidden="true"
+      >
+        <div class="token-list-page-structure-header-grid token-page-header-grid token-spec-page-header-map-preview">
+          ${columnLabels.map((label) => `<span>${escapeHtml(label)}</span>`).join("")}
+          <div class="token-page-header-map">
+          ${variant.preview.regions
+            .map(
+              (region) => `
+                <div
+                  class="token-page-header-group"
+                  data-page-header-span="${escapeHtml(region.label)}"
+                ></div>
+              `,
+            )
+            .join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "button-frame-sample") {
     return `
       <div
@@ -456,7 +488,10 @@ function renderVariantPreview(variant) {
 
 function renderVariantCard(pageModel, variant) {
   return `
-    <article class="token-spec-card" data-token-variant-id="${escapeHtml(variant.id)}">
+    <article
+      class="token-spec-card ${variant.preview.kind === "page-header-structure-map" ? "token-spec-card-stacked-preview" : ""}"
+      data-token-variant-id="${escapeHtml(variant.id)}"
+    >
       <div class="token-spec-card-preview">
         ${renderVariantPreview(variant)}
         <p class="token-spec-preview-label">${escapeHtml(variant.preview.label)}</p>
@@ -586,6 +621,7 @@ function applyPreviewStyles(root) {
       element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
     }
   }
+
 }
 
 function isValidHex(value) {

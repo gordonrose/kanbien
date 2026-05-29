@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -39,5 +42,24 @@ describe("page-header-structure token seam", () => {
         expect.stringContaining("Rendered proof must show dependency identity"),
       ]),
     );
+  });
+
+  it("keeps page-header markers on the same responsive gap as the underlying grid", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/assets/styles.css"),
+      "utf8",
+    );
+    const defaultStyles = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/systems/default/assets/styles.css"),
+      "utf8",
+    );
+    const mapRule = styles.match(/\.token-page-header-map\s*\{[^}]+\}/)?.[0] ?? "";
+    const hostRule = defaultStyles.match(/\.token-spec-page-header-map-host\s*\{[^}]+\}/)?.[0] ?? "";
+
+    expect(mapRule).toContain("grid-template-columns: repeat(var(--token-header-visible-columns, 24), minmax(0, 1fr));");
+    expect(mapRule).toContain("gap: var(--token-header-one-stream-gap, 0.5rem);");
+    expect(mapRule).not.toContain("gap: 0.5rem;");
+    expect(hostRule).toContain("container-name: token-foundation-header;");
+    expect(hostRule).toContain("container-type: inline-size;");
   });
 });

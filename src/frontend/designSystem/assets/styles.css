@@ -6049,7 +6049,7 @@ html[dir="rtl"] .canonical-render-template-panel-list,
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(var(--token-header-visible-columns, 24), minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: var(--token-header-one-stream-gap, 0.5rem);
   pointer-events: none;
 }
 

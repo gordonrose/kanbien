@@ -41,6 +41,20 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | Grouped regions exist for narrow controls, filter groups, title context, and trailing action cells. | 02-token | Legacy route and list-page pattern evidence | Existing evidence is route-local. | Encode stable region ids and start/end columns. |
 | Populated entity family, record name, status, and page actions appear in those regions. | 04-pattern-contract | none | Pattern contract not created yet. | Defer. |
 
+## Visible Defect Preflight Ledger
+
+This revision was triggered by the rendered
+`/design-system/default/patterns/entity-page-header` proof showing composed
+controls bunching together even though the semantic region ids and spans were
+present.
+
+| Observed decision | Owning layer | Existing governed seam | Missing seam | Allowed action |
+| --- | --- | --- | --- | --- |
+| Governed proof must show the same region map as the existing signed page-header route. | 02-token | `/design-system/tokens/page-header` uses `token-page-header-map` and `data-page-header-span`. | The governed proof renderer invented a separate flex preview. | Render token regions through the existing page-header span map. |
+| Governed proof must preserve the signed route's container-query parent/child structure. | 02-token | Existing collapse behavior depends on a named `token-foundation-header` container above the header grid. | The governed proof put the container name on the grid itself, so mobile collapse rules did not apply to the grid. | Wrap the proof grid in a token-foundation-header container host. |
+| Filter regions must remain three-column regions when composed later. | 02-token | `regions` already define `3-5` and `6-8`; legacy CSS maps those spans over the 24-column header grid. | No missing token field; the proof was not using the existing map. | Preserve region spans and reuse the established proof classes. |
+| Pattern composition must not invent a replacement grid. | 04-pattern-contract | `entity-page-header` pattern exists but was visually exposed downstream of the incorrect token proof. | Pattern must consume the corrected token proof behavior in a later Layer 4 revision. | Block further pattern polish until token proof is coherent. |
+
 ## Upstream Behavior Rule
 
 | Field | Value |

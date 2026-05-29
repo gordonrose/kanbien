@@ -89,13 +89,16 @@ export const tokenDefinitionV1 = {
         renderedValue: "1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24",
       },
       preview: {
-        kind: "surface-card",
-        sample: "24 columns",
+        kind: "page-header-structure-map",
+        sample: "region map",
         background: "#ffffff",
         foreground: "#111827",
         border: "#dbe4f0",
         radius: "0",
         label: "Page header structure",
+        gap: "0.5rem",
+        visibleColumnCount: 24,
+        regions,
       },
       metadata: {
         role: "page header structure",

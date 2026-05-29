@@ -257,6 +257,23 @@
   border-inline-start: 0.0625rem solid var(--line);
 }
 
+.token-spec-card-stacked-preview {
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.55fr) minmax(14rem, 0.65fr);
+}
+
+.token-spec-card-stacked-preview > .token-spec-card-preview {
+  grid-column: 1 / -1;
+}
+
+.token-spec-card-stacked-preview > .token-spec-card-main {
+  border-inline-start: 0;
+  border-block-start: 0.0625rem solid var(--line);
+}
+
+.token-spec-card-stacked-preview > .token-spec-card-side {
+  border-block-start: 0.0625rem solid var(--line);
+}
+
 .token-spec-card-preview,
 .token-spec-card-main,
 .token-spec-card-side {
@@ -362,6 +379,22 @@
   background: inherit;
   font-size: 0.78rem;
   font-weight: 800;
+}
+
+.token-spec-page-header-map-host {
+  --token-header-one-cell-height: clamp(1.25rem, calc((85vh / 12) - 1rem), 3.5rem);
+  container-name: token-foundation-header;
+  container-type: inline-size;
+  min-width: 0;
+  min-height: 4.75rem;
+  border: 0.0625rem solid var(--token-preview-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.token-spec-page-header-map-preview {
+  min-width: 0;
+  min-height: 100%;
 }
 
 .token-spec-button-frame-preview {

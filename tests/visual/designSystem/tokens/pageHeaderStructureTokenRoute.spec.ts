@@ -17,6 +17,9 @@ test.describe("page header structure token route", () => {
     await expect(page.getByText("1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24")).toBeVisible();
     await expect(page.getByText("context-title (9-19)")).toBeVisible();
     await expect(page.getByText("action-5 (24-24)")).toBeVisible();
+    await expect(page.locator(".token-page-header-group[data-page-header-span='1']")).toBeVisible();
+    await expect(page.locator(".token-page-header-group[data-page-header-span='9-19']")).toBeVisible();
+    await expect(page.locator(".token-page-header-group[data-page-header-span='24']")).toBeVisible();
     await expect(page.getByText("Do not copy the legacy /design-system/tokens/page-header route CSS into consumers.")).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
 
