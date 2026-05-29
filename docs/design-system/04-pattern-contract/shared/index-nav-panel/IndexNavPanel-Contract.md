@@ -38,8 +38,8 @@ app adoption.
 ## Composition Contract
 
 The pattern renders one labelled panel with an optional governed header,
-optional add action, governed scroll region, and either an `index-nav-list` or
-an empty state. List-only panels set `showHeader: false` and
+optional header actions, governed scroll region, and either an `index-nav-list`
+or an empty state. List-only panels set `showHeader: false` and
 `showAddAction: false`; consumers must not hide the header with local CSS.
 Resizable panels set `resizable: true`; the resize primitive receives min and
 max inline sizes from `index-nav-panel-frame`.
@@ -48,6 +48,11 @@ The pattern may choose standard or double width using the signed panel-frame
 token. The signed panel-frame token also supplies the mobile breakpoint. On
 mobile, page-scroll mode makes the panel full inline size and lets it scroll
 with the document instead of trapping scroll inside the panel.
+
+Compositions may provide additional governed header actions, such as a
+mobile-only close action. Those actions still render through
+`index-nav-panel-header-control` and `icon-button-control`; they must not be
+painted as parent-pattern overlays.
 
 ## Accessibility Contract
 

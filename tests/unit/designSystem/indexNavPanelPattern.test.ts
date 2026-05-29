@@ -5,6 +5,7 @@ import {
   indexNavPanelPatternContract,
   renderIndexNavPanelPattern,
 } from "../../../src/frontend/designSystem/layers/04-pattern-contract/index-nav-panel/index.mjs";
+import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
 
 const items = [
   { value: "identity", label: "Identity", supportingText: "3 items" },
@@ -81,6 +82,20 @@ describe("index-nav-panel pattern seam", () => {
     expect(html).toContain('data-resize-handle-control-target-id="primary-index-panel"');
     expect(html).toContain('data-resize-handle-control-min-inline-size="10rem"');
     expect(html).toContain('data-resize-handle-control-max-inline-size="32rem"');
+  });
+
+  it("can choose a governed close glyph for the header action", () => {
+    const html = renderIndexNavPanelPattern({
+      id: "secondary-index-panel",
+      title: "Secondary index",
+      currentValue: "identity",
+      items,
+      addLabel: "Close secondary index",
+      actionIcon: "close",
+    });
+
+    expect(html).toContain('aria-label="Close secondary index"');
+    expect(html).toContain(resolveDefaultGlyphPath("close"));
   });
 
   it("guards unsupported width and mobile modes", () => {

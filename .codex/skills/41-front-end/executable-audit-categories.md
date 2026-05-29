@@ -59,6 +59,26 @@ is classified as one of:
 The audit should fail unclassified children, because an unclassified child can
 hide a skipped primitive or wrong-layer composition decision.
 
+### Text Overflow Disclosure Provenance
+
+Audit governed primitive and pattern CSS, runtime seams, and proof routes so
+any visible text that can be clipped or truncated has a governed disclosure
+owner.
+
+The audit should fail:
+
+- `text-overflow: ellipsis`, `white-space: nowrap`, visible text clipping, or
+  text `overflow: hidden` outside the `truncating-label` primitive or another
+  explicitly approved text-disclosure primitive
+- route-local tooltip behavior for truncated text
+- title-only disclosure
+- missing browser evidence for fitting text and truncated text
+- tooltip disclosure that appears when the text is not actually truncated
+
+This category is intentionally broad. It should catch new text truncation
+families even when they do not resemble the original index-nav or field-row
+examples.
+
 ### Proof Control Evidence
 
 Audit rendered proof routes so every proof control has focused browser

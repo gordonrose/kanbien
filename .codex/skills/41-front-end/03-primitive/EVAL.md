@@ -41,6 +41,16 @@ required primitive dependency instead of reconstructing the primitive's markup,
 ARIA, controller behavior, icon behavior, resize behavior, tooltip behavior,
 or event contract locally.
 
+Pass only if every visible text node that can be constrained, clipped, or
+truncated is classified in the preflight ledger as either:
+
+- composed through the governed `truncating-label` primitive
+- composed through another named approved text-disclosure primitive
+- proven impossible to truncate by browser evidence
+
+Raw ellipsis, clipping, `white-space: nowrap`, `overflow: hidden`, `title`
+attributes, or local tooltip logic are not sufficient classification.
+
 Pass only if `docs/design-system/03-primitive/primitive-readiness-index.md`
 will be updated in the same change when the primitive becomes consumable.
 
@@ -75,6 +85,11 @@ Pass only if `Token Dependencies` names token type, shared token contract path,
 system implementation path, token dependency system, runtime seam, primitive
 decision supported, and status for every required token.
 
+Pass only if `Text Overflow Disclosure` states whether any visible text can be
+constrained. If yes, it must name the text-disclosure primitive dependency,
+runtime seam, overflow-gated tooltip behavior, and browser evidence. If no, it
+must name the browser evidence that proves truncation cannot occur.
+
 Pass only if `Behavior Contract` describes observable primitive behavior
 without product workflow or page composition.
 
@@ -105,6 +120,11 @@ layers can rely on the primitive.
 Pass only if `Rendered View` names the exact route to open when a rendered
 primitive proof exists, or explicitly states that no rendered view is available
 and why.
+
+Pass only if frontend-visible primitive work runs
+`npm run check:design-system-text-disclosure` or records the audit as blocked
+by existing findings. New or changed primitive truncation must not be hidden
+behind existing audit debt.
 
 Pass only if `Consumer Restrictions` prevent local hard-coding, copied markup,
 duplicated controller behavior, and route-local source-of-truth drift.
@@ -176,6 +196,15 @@ scroll, width, height, target-size, radius, shadow, or overflow values that are
 not consumed from a signed token seam, inherited from a containing later-layer
 contract, browser-native, or explicitly proof-only.
 
+Fail if primitive runtime CSS or proof CSS uses `text-overflow: ellipsis`,
+`white-space: nowrap`, visible clipping, or `overflow: hidden` for text unless
+the rendered text is owned by `truncating-label` or another approved
+text-disclosure primitive and browser evidence proves hover/focus disclosure
+only when the text is actually truncated.
+
+Fail if a primitive renders a truncated visible label, helper, supporting text,
+metadata value, card title, or field label without full-text disclosure.
+
 Fail if a proof-only primitive control does not visibly change rendered
 evidence or prove preserved behavior in focused browser verification.
 
@@ -190,6 +219,12 @@ a signed scrollbar token and primitive contract.
 
 Fail if the PrimitiveDefinitionArtifact lets behavior, accessibility semantics,
 state meaning, emitted events, or consumer obligations vary by design system.
+
+Fail if shared primitive runtime code embeds design-system-specific glyph
+artwork, SVG paths, image assets, font files, or other replaceable visual
+assets. Shared primitives may declare semantic asset names and behavior, but
+the selected system implementation must provide the actual artwork through an
+explicit system registry or signed downstream seam.
 
 Fail if the PrimitiveDefinitionArtifact consumes a token-type template or
 route-local token page as if it were a signed token seam.

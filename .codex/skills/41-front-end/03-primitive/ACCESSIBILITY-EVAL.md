@@ -51,6 +51,10 @@ primitives, or a blocker names the missing token evidence.
 Pass only if status, error, or validation messaging responsibilities are named
 when the primitive owns those states.
 
+Pass only if any visible text that can truncate has a full-text disclosure
+mechanism that works with pointer hover and keyboard focus, is gated by actual
+overflow, and does not rely on `title` attributes alone.
+
 Pass only if motion or animation responsibilities are named when the primitive
 introduces motion.
 
@@ -82,6 +86,11 @@ without an explicit reason.
 Fail if target-size, text sizing, reflow, focus visibility, or motion risk is
 introduced without evidence, a blocking token dependency, or an explicit
 approved exception.
+
+Fail if constrained text can be visually truncated without keyboard-reachable
+and pointer-reachable full-text disclosure.
+
+Fail if tooltip disclosure appears when the text is not actually truncated.
 
 Fail if an accessibility concern is deferred without naming the later layer
 that must preserve or prove it.

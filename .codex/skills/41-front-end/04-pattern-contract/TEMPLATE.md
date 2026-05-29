@@ -97,6 +97,12 @@ consumer obligations.
 
 `<Use "Not applicable" when the pattern does not accept, normalize, emit, or display externally meaningful data.>`
 
+## Text Overflow Disclosure
+
+| Text Area | Can Truncate? | Governing Primitive Or Proof | Browser Evidence | Consumer Boundary |
+| --- | --- | --- | --- | --- |
+| `<label/title/helper/supporting text/metadata/etc>` | `<yes | no>` | `<truncating-label seam, other approved seam, or cannot-truncate proof>` | `<test or blocked>` | `<what consumers must not copy or recreate>` |
+
 ## Visual-Skin Boundary
 
 `<What design-system implementations may vary and what they must not change.>`
@@ -132,6 +138,7 @@ consumer obligations.
 | primitive consumption | `<proof that accepted primitives are consumed rather than recreated>` |
 | token consumption | `<proof that any direct tokens are signed and not locally invented>` |
 | rendered verification | `<desktop/mobile/zoom/focus/state proof, or why no proof route exists yet>` |
+| text-disclosure audit | `<npm run check:design-system-text-disclosure result, or blocked by existing findings>` |
 | consumer boundary | `<proof consumers cannot reasonably copy local markup or CSS instead>` |
 
 ## Rendered View

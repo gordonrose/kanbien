@@ -173,7 +173,7 @@ function renderInlineSizeRangeDiagnostic(pageModel) {
           />
         </label>
       </div>
-      <div class="token-spec-diagnostic-previews" aria-label="${escapeHtml(diagnostic.previewLabel)}">
+      <div class="token-spec-diagnostic-previews token-spec-diagnostic-previews-inline-size" aria-label="${escapeHtml(diagnostic.previewLabel)}">
         <div
           class="token-spec-inline-size-preview"
           data-token-diagnostic-inline-size-preview
@@ -730,6 +730,21 @@ function remToNumber(value) {
   return text.endsWith("rem") ? Number.parseFloat(text) : Number.NaN;
 }
 
+function percentToNumber(value) {
+  const text = String(value ?? "").trim();
+  return text.endsWith("%") ? Number.parseFloat(text) : Number.NaN;
+}
+
+function remToPixels(value, ownerDocument = document) {
+  const remValue = remToNumber(value);
+  if (!Number.isFinite(remValue)) {
+    return Number.NaN;
+  }
+  const root = ownerDocument?.documentElement;
+  const fontSize = root ? Number.parseFloat(ownerDocument.defaultView?.getComputedStyle(root).fontSize) : 16;
+  return remValue * (Number.isFinite(fontSize) ? fontSize : 16);
+}
+
 function applyInlineSizeRangeDiagnostic(root, pageModel) {
   const diagnostic = pageModel.diagnostic;
   if (!diagnostic || diagnostic.kind !== "inline-size-range") {
@@ -743,23 +758,40 @@ function applyInlineSizeRangeDiagnostic(root, pageModel) {
     return;
   }
 
-  const min = remToNumber(input.dataset.tokenDiagnosticMinValue);
-  const max = remToNumber(input.dataset.tokenDiagnosticMaxValue);
-  const initial = remToNumber(input.dataset.tokenDiagnosticDefaultValue);
-  if (!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(initial)) {
+  const minRem = remToNumber(input.dataset.tokenDiagnosticMinValue);
+  const maxRem = remToNumber(input.dataset.tokenDiagnosticMaxValue);
+  const maxPercent = percentToNumber(input.dataset.tokenDiagnosticMaxValue);
+  const initialRem = remToNumber(input.dataset.tokenDiagnosticDefaultValue);
+  if (!Number.isFinite(minRem) || !Number.isFinite(initialRem)) {
     return;
   }
 
-  input.min = String(min);
-  input.max = String(max);
-  input.step = "0.25";
-  input.value = String(initial);
+  const usesAvailableWidthMax = Number.isFinite(maxPercent);
+  const ownerDocument = preview.ownerDocument;
+  const minPx = remToPixels(input.dataset.tokenDiagnosticMinValue, ownerDocument);
+  const initialPx = remToPixels(input.dataset.tokenDiagnosticDefaultValue, ownerDocument);
+  const maxPx = usesAvailableWidthMax
+    ? Math.max(minPx, preview.parentElement?.clientWidth ?? minPx)
+    : remToPixels(input.dataset.tokenDiagnosticMaxValue, ownerDocument);
+  if (!Number.isFinite(minPx) || !Number.isFinite(maxPx) || !Number.isFinite(initialPx)) {
+    return;
+  }
+
+  input.min = String(Math.round(minPx));
+  input.max = String(Math.round(maxPx));
+  input.step = "4";
+  input.value = String(Math.min(Math.max(Math.round(initialPx), Math.round(minPx)), Math.round(maxPx)));
 
   function render() {
-    const width = `${Number(input.value).toFixed(2).replace(/\.00$/, "")}rem`;
+    const widthPx = Number(input.value);
+    const width = `${Math.round(widthPx)}px`;
     preview.style.inlineSize = width;
     if (status instanceof HTMLElement) {
-      status.textContent = `${diagnostic.statusPrefix}: ${width}`;
+      const remWidth = widthPx / 16;
+      const widthText = usesAvailableWidthMax && Math.abs(widthPx - maxPx) < 4
+        ? `${input.dataset.tokenDiagnosticMaxValue} available width`
+        : `${remWidth.toFixed(2).replace(/\.00$/, "")}rem`;
+      status.textContent = `${diagnostic.statusPrefix}: ${widthText}`;
     }
   }
 

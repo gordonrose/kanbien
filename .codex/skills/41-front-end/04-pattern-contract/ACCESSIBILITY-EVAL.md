@@ -37,6 +37,10 @@ Pass only if selected, expanded, current, pressed, checked, invalid, loading,
 busy, empty, or disabled states expose meaning without relying on color alone
 when those states exist.
 
+Pass only if constrained or truncated text in the pattern remains recoverable
+through keyboard-reachable and pointer-reachable full-text disclosure owned by
+a governed primitive.
+
 Pass only if rendered accessibility evidence is required before claiming a
 frontend-visible implementation or proof route works.
 
@@ -54,6 +58,9 @@ Fail if a pattern changes primitive semantics without routing back to
 Fail if a composed interaction omits keyboard or focus behavior.
 
 Fail if color is the only carrier of state or meaning.
+
+Fail if text can be visually truncated without full-text disclosure, or if
+tooltip disclosure appears when the text is not actually truncated.
 
 Fail if an exception is implied instead of explicit.
 

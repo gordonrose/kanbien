@@ -85,9 +85,20 @@ consumer obligations.
 
 `<Use "Not applicable" when the primitive does not accept, normalize, emit, or display externally meaningful data.>`
 
+## Text Overflow Disclosure
+
+| Field | Value |
+| --- | --- |
+| Can visible text be constrained? | `<yes | no>` |
+| Text-disclosure primitive dependency | `<truncating-label runtime seam, other approved seam, or not-applicable>` |
+| Full-text disclosure behavior | `<hover/focus disclosure only when actually truncated, or proof that truncation cannot occur>` |
+| Fitting-text evidence | `<browser test or blocked>` |
+| Truncated-text evidence | `<browser test or blocked>` |
+| Forbidden fallback | `raw ellipsis, clipping, title-only disclosure, route-local tooltip logic, or copied controller behavior` |
+
 ## Visual-Skin Boundary
 
-`<What design-system implementations may vary, which proof system is being used, and what they must not change. State or meaning affordances may vary only through signed token seams; do not describe an unsigned local marker, bar, icon, underline, badge, dot, or overlay here.>`
+`<What design-system implementations may vary, which proof system is being used, and what they must not change. State or meaning affordances may vary only through signed token seams; do not describe an unsigned local marker, bar, icon, underline, badge, dot, or overlay here. If the primitive exposes semantic glyph or asset names, state which selected-system registry supplies the actual artwork and confirm the shared primitive does not embed system-specific asset data.>`
 
 ## Public Consumption Boundary
 
@@ -119,6 +130,7 @@ consumer obligations.
 | accessibility | `<required role/name/keyboard/focus proof>` |
 | token consumption | `<proof that only signed tokens are consumed>` |
 | rendered verification | `<desktop/mobile/zoom/focus/state proof, or not in scope because no implementation/proof route exists yet>` |
+| text-disclosure audit | `<npm run check:design-system-text-disclosure result, or blocked by existing findings>` |
 | consumer boundary | `<proof consumers cannot reasonably copy local markup or CSS instead>` |
 
 ## Rendered View
