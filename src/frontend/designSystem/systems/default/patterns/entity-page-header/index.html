@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Entity Page Header Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/default/assets/styles.css" />
+  </head>
+  <body data-pattern-layer-surface="entity-page-header">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/default/tokens/page-header-structure">Tokens</a>
+            <a class="nav-link" href="/design-system/default/primitives/readiness-status-control">Primitives</a>
+            <a class="nav-link active" href="/design-system/default/patterns/entity-page-header" aria-current="page">Patterns</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">PH</span>
+            <span class="profile-meta"><strong>Page Header</strong></span>
+          </button>
+        </div>
+      </header>
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Entity Page Header Pattern</span></li>
+          </ol>
+        </nav>
+      </section>
+      <main class="design-system-page-main-no-context-nav" data-pattern-proof-root></main>
+    </div>
+    <script type="module" src="/design-system/systems/default/patterns/entity-page-header/page.mjs"></script>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>
