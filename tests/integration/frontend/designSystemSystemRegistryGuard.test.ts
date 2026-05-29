@@ -239,6 +239,12 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.page-header-structure") {
+          const registeredTokenModule = await registration.tokens?.pageHeaderStructure?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.primary-color-source") {
           const registeredTokenModule = await registration.tokens?.primaryColorSource?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();

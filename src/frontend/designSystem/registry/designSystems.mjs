@@ -28,6 +28,7 @@ export const designSystems = {
       panelCornerRadius: () => import("../systems/default/tokens/proofs/panelCornerRadius.tokens.mjs"),
       panelFrame: () => import("../systems/default/tokens/proofs/panelFrame.tokens.mjs"),
       panelHeaderFrame: () => import("../systems/default/tokens/proofs/panelHeaderFrame.tokens.mjs"),
+      pageHeaderStructure: () => import("../systems/default/tokens/proofs/pageHeaderStructure.tokens.mjs"),
       primaryColorSource: () => import("../systems/default/tokens/proofs/primaryColorSource.tokens.mjs"),
       primaryTintedBackground: () => import("../systems/default/tokens/proofs/primaryTintedBackground.tokens.mjs"),
       primaryTintedForeground: () => import("../systems/default/tokens/proofs/primaryTintedForeground.tokens.mjs"),

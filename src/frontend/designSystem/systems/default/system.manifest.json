@@ -137,6 +137,12 @@
       "implementationExport": "panelHeaderFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/panel-header-frame"
     },
+    "tokens.page-header-structure": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/page-header-structure/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/pageHeaderStructure.tokens.mjs",
+      "implementationExport": "pageHeaderStructureTokenSpec",
+      "pageRoute": "/design-system/default/tokens/page-header-structure"
+    },
     "tokens.primary-color-source": {
       "contractModule": "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/primaryColorSource.tokens.mjs",
