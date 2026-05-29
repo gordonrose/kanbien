@@ -30,6 +30,15 @@ they are proof-only unless the runtime seam exposes matching values.
 | `icon-button-control` | Runtime seam renders optional controls and actions. |
 | `truncating-label` | Runtime seam renders entity family, selected entity, and category labels. |
 
+## Strip Composition Evidence
+
+The rendered proof consumes `page-header-structure` with a zero structural gap,
+then presents the populated header as one continuous strip. The outer frame
+belongs to the pattern proof, while the region dividers separate icon-button,
+filter, context, and trailing action regions without adding card-like gutters.
+Single-column regions compose `icon-button-control`; grouped filter regions are
+non-interactive proof placeholders until a governed filter primitive exists.
+
 ## Accessibility Evidence
 
 The proof route must keep logical reading order independent of visual

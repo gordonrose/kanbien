@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -110,8 +113,25 @@ describe("entity-page-header pattern seam", () => {
     expect(html).toContain('data-readiness-status-state="needs-review"');
     expect(html).toContain("data-truncating-label");
     expect(html).toContain("data-icon-button-control");
+    expect(html.match(/data-icon-button-control=""/g)).toHaveLength(4);
     expect(html).toContain('aria-label="Add record"');
     expect(html).toContain('aria-label="Open actions"');
     expect(html).toContain('data-entity-page-header-columns="9-22"');
+  });
+
+  it("uses the continuous-strip structure instead of separated region cards", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/systems/default/assets/styles.css"),
+      "utf8",
+    );
+    const headerRule = styles.match(/\.ds-entity-page-header\s*\{[^}]+\}/)?.[0] ?? "";
+    const childRule = styles.match(/\.ds-entity-page-header-slot,\n\.ds-entity-page-header-context,\n\.ds-entity-page-header-filter-slot\s*\{[^}]+\}/)?.[0] ?? "";
+    const filterRule = styles.match(/\.ds-entity-page-header-filter-slot\s*\{[^}]+\}/)?.[0] ?? "";
+
+    expect(headerRule).toContain("gap: var(--pattern-entity-page-header-gap);");
+    expect(headerRule).toContain("border: 0.0625rem solid var(--line);");
+    expect(childRule).toContain("border-inline-start: 0.0625rem solid var(--line);");
+    expect(filterRule).not.toContain("border:");
+    expect(filterRule).not.toContain("border-radius:");
   });
 });

@@ -62,6 +62,7 @@ then trailing actions.
 | --- | --- | --- | --- |
 | Header grid | governed pattern wrapper | `page-header-structure` token supplies foundation; pattern resolves optional slots | Consume the pattern seam, not route markup. |
 | Leading controls | governed primitive | `icon-button-control` | Consumers provide action intent; primitive owns button behavior. |
+| Primary and secondary filter regions | governed pattern placeholder | `page-header-structure` token supplies three-column spans; filter primitive remains downstream | Consumers must not treat proof placeholder copy as a control API. |
 | Entity family, selected entity, category | governed primitive | `truncating-label` | Consumers provide text; primitive owns clipping/disclosure. |
 | Readiness/status | governed primitive | `readiness-status-control` | Consumers provide state; primitive owns text-backed status semantics. |
 | Trailing actions | governed primitive | `icon-button-control` | Consumers provide action intent; primitive owns button behavior. |
@@ -110,10 +111,12 @@ authorize product data.
 
 ## Visual-Skin Boundary
 
-Region placement comes from `page-header-structure` plus this pattern's
-compaction algorithm. Text and status semantics come through governed
-primitives. The pattern does not approve badge surfaces, dropdown styling,
-app-local spacing, or page-shell adoption.
+Region placement and the continuous strip gap come from
+`page-header-structure` plus this pattern's compaction algorithm. The pattern
+owns the single outer frame and dividers between composed regions; it does not
+turn each region into a separate card. Text, icon action, and status semantics
+come through governed primitives. The pattern does not approve badge surfaces,
+dropdown styling, app-local spacing, or page-shell adoption.
 
 ## Public Consumption Boundary
 
