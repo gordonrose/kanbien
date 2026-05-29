@@ -50,6 +50,145 @@ type PublicSitePageOptions = {
   breadcrumbs?: PublicSiteBreadcrumb[];
 };
 
+type PublicSiteShowcaseStep = {
+  label: string;
+  title: string;
+  summary: string;
+  examples: string[];
+  visual?: {
+    kind: "request" | "capabilities" | "blueprint" | "tasks" | "implementation" | "proof";
+    caption: string;
+  };
+};
+
+function renderShowcaseVisual(visual: PublicSiteShowcaseStep["visual"]): string {
+  if (!visual) {
+    return "";
+  }
+
+  const visualContentByKind: Record<NonNullable<PublicSiteShowcaseStep["visual"]>["kind"], string> = {
+    request: `<div class="public-site-artifact public-site-artifact-request">
+      <section>
+        <p class="public-site-artifact-label">Stakeholder says</p>
+        <p class="public-site-artifact-quote">"Let customers invite team members."</p>
+      </section>
+      <section>
+        <p class="public-site-artifact-label">Kanbien captures</p>
+        <ul>
+          <li>Who is inviting whom?</li>
+          <li>What happens if the email is already used?</li>
+          <li>Who can invite admins?</li>
+          <li>What must be approved before sending?</li>
+        </ul>
+      </section>
+    </div>`,
+    capabilities: `<div class="public-site-artifact public-site-artifact-matrix">
+      <div class="public-site-artifact-row public-site-artifact-row-head">
+        <span>Capability</span>
+        <span>Rules captured</span>
+      </div>
+      <div class="public-site-artifact-row">
+        <span>Create invitation</span>
+        <span>Auth, validation, email state</span>
+      </div>
+      <div class="public-site-artifact-row">
+        <span>Accept invitation</span>
+        <span>Expiry, conflicts, audit</span>
+      </div>
+      <div class="public-site-artifact-row">
+        <span>List invitations</span>
+        <span>Permissions, filters, UI contract</span>
+      </div>
+    </div>`,
+    blueprint: `<div class="public-site-artifact public-site-artifact-checks">
+      <p class="public-site-artifact-label">Blueprint must answer</p>
+      <ul>
+        <li>API shape and route behavior</li>
+        <li>Persistence and lifecycle states</li>
+        <li>Authorization and tenant boundaries</li>
+        <li>Required tests, docs, and proof</li>
+      </ul>
+    </div>`,
+    tasks: `<div class="public-site-artifact public-site-artifact-lanes">
+      <section><span>Domain</span><strong>Business rules</strong></section>
+      <section><span>API</span><strong>Request and response</strong></section>
+      <section><span>Data</span><strong>Storage and indexes</strong></section>
+      <section><span>Proof</span><strong>Tests and docs</strong></section>
+    </div>`,
+    implementation: `<div class="public-site-artifact public-site-artifact-repo">
+      <p class="public-site-artifact-label">Mounted slice</p>
+      <ul>
+        <li>feature/invitations/domain</li>
+        <li>feature/invitations/transport</li>
+        <li>tests/invitations</li>
+        <li>docs/api-contracts</li>
+      </ul>
+    </div>`,
+    proof: `<div class="public-site-artifact public-site-artifact-proof">
+      <p class="public-site-artifact-label">Ready only when</p>
+      <ul>
+        <li><span>Pass</span> API behavior exercised</li>
+        <li><span>Pass</span> Validation errors proven</li>
+        <li><span>Pass</span> Docs and Postman ready</li>
+        <li><span>Pass</span> Artifact sweep clean</li>
+      </ul>
+    </div>`,
+  };
+
+  return `<figure class="public-site-showcase-visual public-site-showcase-visual-${escapeHtml(visual.kind)}" aria-label="${escapeHtml(visual.caption)}">
+    <div class="public-site-visual-stage">
+      ${visualContentByKind[visual.kind]}
+    </div>
+    <figcaption>${escapeHtml(visual.caption)}</figcaption>
+  </figure>`;
+}
+
+function renderPipelineShowcase(
+  idPrefix: string,
+  label: string,
+  steps: PublicSiteShowcaseStep[],
+): string {
+  return `<div class="public-site-showcase" data-public-site-showcase>
+    <div class="public-site-showcase-tabs" role="tablist" aria-label="${escapeHtml(label)}">
+      ${steps
+        .map((step, index) => {
+          const stepNumber = String(index + 1).padStart(2, "0");
+          const selected = index === 0;
+
+          return `<button class="public-site-showcase-tab${selected ? " is-active" : ""}" type="button" role="tab" id="${escapeHtml(idPrefix)}-tab-${stepNumber}" aria-selected="${selected ? "true" : "false"}" aria-controls="${escapeHtml(idPrefix)}-panel-${stepNumber}" data-showcase-tab>
+            <span class="public-site-showcase-tab-number">${stepNumber}</span>
+            <span class="public-site-showcase-tab-label">${escapeHtml(step.label)}</span>
+          </button>`;
+        })
+        .join("")}
+    </div>
+    <div class="public-site-showcase-panels">
+      ${steps
+        .map((step, index) => {
+          const stepNumber = String(index + 1).padStart(2, "0");
+          const selected = index === 0;
+
+          return `<section class="public-site-showcase-panel" role="tabpanel" id="${escapeHtml(idPrefix)}-panel-${stepNumber}" aria-labelledby="${escapeHtml(idPrefix)}-tab-${stepNumber}"${selected ? "" : " hidden"}>
+            <div class="public-site-showcase-copy">
+              <p class="public-site-eyebrow">Step ${stepNumber}</p>
+              <h3>${escapeHtml(step.title)}</h3>
+              <p>${escapeHtml(step.summary)}</p>
+            </div>
+            ${renderShowcaseVisual(step.visual)}
+            ${
+              step.visual
+                ? ""
+                : `<ul class="public-site-showcase-example-list" aria-label="Example outputs">
+                    ${step.examples.map((example) => `<li>${escapeHtml(example)}</li>`).join("")}
+                  </ul>`
+            }
+          </section>`;
+        })
+        .join("")}
+    </div>
+  </div>`;
+}
+
 function renderNavItems(items: PublicSiteNavItem[]): string {
   if (items.length === 0) {
     return `<div class="primary-nav-links" aria-label="No public navigation items yet"></div>`;
@@ -102,6 +241,7 @@ function renderPage(title: string, body: string, options: PublicSitePageOptions 
     <meta name="description" content="Kanbien build journal and public timeline for product discovery, design-system, feature compiler, and deployment work." />
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
     <link rel="stylesheet" href="/assets/public-site.css" />
+    <script src="/assets/public-site.js" defer></script>
   </head>
   <body class="public-site-body">
     <div class="design-system-shell public-site-shell">
@@ -132,7 +272,7 @@ function renderHomePage(): string {
           <div class="public-site-lede">
             <p>Software projects take entire teams months to scope and deliver properly. Most of the time, customers wait weeks for a first glimpse at a potential solution. And much longer still for an implementation that is good to go.</p>
             <p>The experiment I&rsquo;m working on:</p>
-            <p><strong>If properly structured, LLMs can make enterprise grade product development happen at the speed of understanding.</strong></p>
+            <p><strong>If properly structured, LLMs can make enterprise grade product development happen at the speed of requirement gathering.</strong></p>
             <p>If someone can skillfully capture requirements - and is given the right toolkit - they will be able to build prototypes in real time under stakeholder guidance and turn it into production ready software overnight.</p>
             <p>A working slice of software -that would have taken months to deliver- can be ready for production, signed off, and in use in less than a week of onsite work.</p>
           </div>
@@ -234,14 +374,68 @@ function renderFeatureCompilerPage(): string {
         <section class="public-site-detail-section" aria-labelledby="feature-compiler-flow">
           <p class="public-site-eyebrow">Flow</p>
           <h2 id="feature-compiler-flow">A public version of the pipeline</h2>
-          <ol class="public-site-process-flow" aria-label="Feature Compiler pipeline">
-            <li>Feature request</li>
-            <li>Capabilities</li>
-            <li>Blueprint</li>
-            <li>Tasks</li>
-            <li>Implementation</li>
-            <li>Proof</li>
-          </ol>
+          ${renderPipelineShowcase("feature-compiler-flow", "Feature Compiler pipeline", [
+            {
+              label: "Feature request",
+              title: "The request becomes a decision-ready brief",
+              summary: "A stakeholder should not need to describe tables, routes, or architecture. They should be able to explain what they want, who it is for, what must never happen, who should have access, and what a safe outcome looks like. Kanbien turns that into a brief the build harness can use without pretending the missing details are already settled.",
+              examples: ["What the user wants to accomplish", "Who the feature is for", "Unhappy paths and edge cases", "Access, security, and approval questions"],
+              visual: {
+                kind: "request",
+                caption: "Stakeholder intent translated into build-ready questions",
+              },
+            },
+            {
+              label: "Capabilities",
+              title: "The feature is broken into single-objective capabilities",
+              summary: "A feature is too large and ambiguous to build reliably in one pass. The Kanbien capability matrix breaks it into smaller actions that each do one thing well, then defines the myriad rules around that action that engineers would ordinarily need to build it properly: who may use it, what valid input looks like, how it should be built, what errors should say, how your website or app can consume it, documentation, testing requirements, logging and monitoring rules, and many more.",
+              examples: ["Single objective per capability", "Authorisation and permission rules", "Validation and error messages", "Frontend compatibility expectations"],
+              visual: {
+                kind: "capabilities",
+                caption: "One feature decomposed into controlled capability rows",
+              },
+            },
+            {
+              label: "Blueprint",
+              title: "The hidden architecture questions are forced into view",
+              summary: "This is where the system stops letting the model hand-wave. The blueprint makes backend decisions reviewable before code exists: route shape, persistence, lifecycle, authorization, compatibility, tests, and documentation.",
+              examples: ["API contract shape", "Persistence and lifecycle decisions", "Authorization posture", "Verification evidence required"],
+              visual: {
+                kind: "blueprint",
+                caption: "Architecture decisions arranged before implementation begins",
+              },
+            },
+            {
+              label: "Tasks",
+              title: "The build work gets rails",
+              summary: "The capability is turned into task packets with allowed write areas, expected proof, and stop conditions. That means the model is not free to sprawl across the repo just because it can.",
+              examples: ["Domain task with a narrow boundary", "Transport task with route obligations", "Persistence task with schema expectations", "Docs and proof task captured separately"],
+              visual: {
+                kind: "tasks",
+                caption: "Build tasks routed into separate controlled lanes",
+              },
+            },
+            {
+              label: "Implementation",
+              title: "The slice can be mounted or removed cleanly",
+              summary: "The point is not just speed. The point is reversibility. A capability lands as a bounded slice with feature-local code, tests, contracts, and docs so it can be reviewed without contaminating unrelated work.",
+              examples: ["Feature-local source files", "Contract and manifest changes", "Targeted tests", "Docs tied to the slice"],
+              visual: {
+                kind: "implementation",
+                caption: "A bounded repo slice mounted into the wider platform",
+              },
+            },
+            {
+              label: "Proof",
+              title: "Done means evidenced, not generated",
+              summary: "A generated backend feature is not trusted because it exists. It is trusted only after behavior, API shape, tests, documentation, and artifact alignment can be inspected against the original slice.",
+              examples: ["API behavior can be exercised", "Tests prove the edge of the slice", "Postman-ready evidence exists", "Artifact sweep catches drift"],
+              visual: {
+                kind: "proof",
+                caption: "Evidence lights up only after behavior and artifacts line up",
+              },
+            },
+          ])}
         </section>
 
         <section class="public-site-detail-section" aria-labelledby="feature-compiler-evidence">
@@ -334,14 +528,44 @@ function renderFrontEndBuilderPage(): string {
         <section class="public-site-detail-section" aria-labelledby="front-end-builder-flow">
           <p class="public-site-eyebrow">Flow</p>
           <h2 id="front-end-builder-flow">A public version of the pipeline</h2>
-          <ol class="public-site-process-flow" aria-label="Front-End Builder pipeline">
-            <li>UI need</li>
-            <li>Design-system proof</li>
-            <li>Seam</li>
-            <li>Canonical</li>
-            <li>App adoption</li>
-            <li>Browser proof</li>
-          </ol>
+          ${renderPipelineShowcase("front-end-builder-flow", "Front-End Builder pipeline", [
+            {
+              label: "UI need",
+              title: "A product surface exposes a reusable interface need",
+              summary: "The work starts with a real screen or workflow need, but the first question is whether the UI decision should become reusable.",
+              examples: ["Screen goal", "User action", "State requirements", "Reuse candidate"],
+            },
+            {
+              label: "Design-system proof",
+              title: "The decision is reviewed before app adoption",
+              summary: "Layout, behavior, accessibility, theme, and responsive expectations are proven in the design-system surface first.",
+              examples: ["Behavior rule", "Token proof", "Primitive proof", "Responsive states"],
+            },
+            {
+              label: "Seam",
+              title: "The reusable source of truth is named",
+              summary: "The approved UI decision becomes a seam that app pages can consume instead of rebuilding style or interaction logic locally.",
+              examples: ["Render seam", "Controller seam", "CSS variable seam", "Consumption boundary"],
+            },
+            {
+              label: "Canonical",
+              title: "The approved browser shape becomes visible",
+              summary: "Canonical states show reviewers what the UI is supposed to look like before it becomes part of a real app page.",
+              examples: ["Default state", "Empty state", "Error state", "Mobile state"],
+            },
+            {
+              label: "App adoption",
+              title: "The app consumes the governed seam",
+              summary: "The real product page uses the approved source of truth instead of copying demo markup or inventing page-local CSS.",
+              examples: ["Shared renderer", "Shared behavior", "No local fork", "Adoption note"],
+            },
+            {
+              label: "Browser proof",
+              title: "The app page is checked where users experience it",
+              summary: "The final proof is browser-visible: layout, overflow, interaction, theme, and accessibility behavior are checked on the real surface.",
+              examples: ["Desktop proof", "Mobile proof", "Keyboard behavior", "Overflow check"],
+            },
+          ])}
         </section>
 
         <section class="public-site-detail-section" aria-labelledby="front-end-builder-evidence">
@@ -434,14 +658,44 @@ function renderProductDiscoveryAssistancePage(): string {
         <section class="public-site-detail-section" aria-labelledby="product-discovery-assistance-flow">
           <p class="public-site-eyebrow">Flow</p>
           <h2 id="product-discovery-assistance-flow">A public version of the pipeline</h2>
-          <ol class="public-site-process-flow" aria-label="Product Discovery Assistance pipeline">
-            <li>Stakeholder interview</li>
-            <li>Understanding</li>
-            <li>Questions</li>
-            <li>Stories</li>
-            <li>Tasks</li>
-            <li>Approval</li>
-          </ol>
+          ${renderPipelineShowcase("product-discovery-assistance-flow", "Product Discovery Assistance pipeline", [
+            {
+              label: "Stakeholder interview",
+              title: "The conversation is captured as working material",
+              summary: "The initial interview is treated as structured product input, not just a transcript or a loose chat history.",
+              examples: ["Business context", "Stakeholder goals", "Constraints", "Success signals"],
+            },
+            {
+              label: "Understanding",
+              title: "The harness shows what it thinks it heard",
+              summary: "The system makes its interpretation visible so a human can correct scope, terminology, risk, and implied requirements early.",
+              examples: ["Problem summary", "Audience", "Assumptions", "Known unknowns"],
+            },
+            {
+              label: "Questions",
+              title: "Follow-up questions are routed by subject matter",
+              summary: "Unclear areas are turned into specific questions so the right person can answer before the build path hardens.",
+              examples: ["Policy question", "Workflow question", "Data question", "Approval question"],
+            },
+            {
+              label: "Stories",
+              title: "The work becomes value-shaped slices",
+              summary: "Discovery output is converted into stories that describe what needs to change for a real user or operator.",
+              examples: ["Actor", "Outcome", "Acceptance notes", "Open decisions"],
+            },
+            {
+              label: "Tasks",
+              title: "Approved stories become build-ready work",
+              summary: "Stories are broken down into smaller tasks with boundaries clear enough for implementation planning.",
+              examples: ["Frontend task", "Backend task", "Docs task", "Proof task"],
+            },
+            {
+              label: "Approval",
+              title: "Humans keep control of the handoff",
+              summary: "The output is not treated as final until the right person can approve, redirect, or reject the next build step.",
+              examples: ["Approved scope", "Deferred items", "Rejected assumptions", "Next workstream"],
+            },
+          ])}
         </section>
 
         <section class="public-site-detail-section" aria-labelledby="product-discovery-assistance-evidence">

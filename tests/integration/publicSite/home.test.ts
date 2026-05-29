@@ -10,6 +10,7 @@ describe("public site home", () => {
     expect(response.text).toContain('data-public-site-header');
     expect(response.text).toContain('class="top-nav top-nav-no-utilities public-site-top-nav"');
     expect(response.text).toContain('class="brand-lockup" href="/" aria-label="Kanbien home"');
+    expect(response.text).toContain('<script src="/assets/public-site.js" defer></script>');
     expect(response.text).toContain('class="primary-nav-links" aria-label="No public navigation items yet"></div>');
     expect(response.text).not.toContain('class="search-shell"');
     expect(response.text).not.toContain('class="context-nav"');
@@ -25,7 +26,7 @@ describe("public site home", () => {
     expect(response.text).not.toContain("And several months for an implementation that is good to go.");
     expect(response.text).toContain("<p>The experiment I&rsquo;m working on:</p>");
     expect(response.text).toContain(
-      "<p><strong>If properly structured, LLMs can make enterprise grade product development happen at the speed of understanding.</strong></p>",
+      "<p><strong>If properly structured, LLMs can make enterprise grade product development happen at the speed of requirement gathering.</strong></p>",
     );
     expect(response.text).toContain(
       "they will be able to build prototypes in real time under stakeholder guidance and turn it into production ready software overnight.",
@@ -47,6 +48,7 @@ describe("public site home", () => {
     const app = createApp();
 
     const stylesheet = await request(app).get("/assets/public-site.css").set("host", "kanbien.example.test");
+    const script = await request(app).get("/assets/public-site.js").set("host", "kanbien.example.test");
     const journal = await request(app).get("/blog").set("host", "kanbien.example.test");
 
     expect(stylesheet.status).toBe(200);
@@ -56,6 +58,18 @@ describe("public site home", () => {
     expect(stylesheet.text).toContain("font-weight: 650;");
     expect(stylesheet.text).toContain("font-weight: 600;");
     expect(stylesheet.text).toContain("background: transparent;");
+    expect(stylesheet.text).toContain(".public-site-showcase-tabs");
+    expect(stylesheet.text).toContain("grid-template-columns: repeat(6, minmax(0, 1fr));");
+    expect(stylesheet.text).toContain(".public-site-showcase-visual");
+    expect(stylesheet.text).toContain(".public-site-showcase-visual-request");
+    expect(stylesheet.text).toContain(".public-site-showcase-visual-proof");
+    expect(stylesheet.text).toContain(".public-site-artifact-request");
+    expect(stylesheet.text).toContain(".public-site-artifact-matrix");
+    expect(stylesheet.text).toContain(".public-site-artifact-request::before");
+    expect(stylesheet.text).toContain("repeating-linear-gradient");
+    expect(script.status).toBe(200);
+    expect(script.text).toContain("function activateTab");
+    expect(script.text).toContain("data-showcase-tab");
     expect(journal.status).toBe(200);
     expect(journal.text).toContain("Journal placeholder");
   });
@@ -122,8 +136,36 @@ describe("public site home", () => {
     expect(response.text).toContain("What Feature Compiler does");
     expect(response.text).toContain("What this makes possible");
     expect(response.text).toContain("A public version of the pipeline");
+    expect(response.text).toContain('class="public-site-showcase" data-public-site-showcase');
+    expect(response.text).toContain('role="tablist" aria-label="Feature Compiler pipeline"');
+    expect(response.text).toContain('id="feature-compiler-flow-tab-01"');
+    expect(response.text).toContain('aria-selected="true" aria-controls="feature-compiler-flow-panel-01"');
+    expect(response.text).toContain('id="feature-compiler-flow-panel-01"');
+    expect(response.text).toContain("The request becomes a decision-ready brief");
+    expect(response.text).toContain("A stakeholder should not need to describe tables, routes, or architecture.");
+    expect(response.text).toContain('class="public-site-showcase-visual public-site-showcase-visual-request"');
+    expect(response.text).toContain("Stakeholder intent translated into build-ready questions");
+    expect(response.text).toContain("Stakeholder says");
+    expect(response.text).toContain('"Let customers invite team members."');
+    expect(response.text).toContain("Who can invite admins?");
     expect(response.text).toContain("Feature request");
     expect(response.text).toContain("Capabilities");
+    expect(response.text).toContain("The feature is broken into single-objective capabilities");
+    expect(response.text).toContain("The Kanbien capability matrix breaks it into smaller actions that each do one thing well");
+    expect(response.text).toContain("defines the myriad rules around that action that engineers would ordinarily need to build it properly");
+    expect(response.text).toContain("how it should be built, what errors should say, how your website or app can consume it");
+    expect(response.text).toContain("documentation, testing requirements, logging and monitoring rules");
+    expect(response.text).toContain('class="public-site-showcase-visual public-site-showcase-visual-capabilities"');
+    expect(response.text).toContain("Capability");
+    expect(response.text).toContain("Rules captured");
+    expect(response.text).toContain("Create invitation");
+    expect(response.text).toContain("Auth, validation, email state");
+    expect(response.text).toContain("Expiry, conflicts, audit");
+    expect(response.text).toContain("Architecture decisions arranged before implementation begins");
+    expect(response.text).toContain("The build work gets rails");
+    expect(response.text).toContain("A bounded repo slice mounted into the wider platform");
+    expect(response.text).toContain('class="public-site-showcase-visual public-site-showcase-visual-proof"');
+    expect(response.text).toContain("Done means evidenced, not generated");
     expect(response.text).toContain("Evidence in the repo");
     expect(response.text).toContain("What I am not publishing");
     expect(response.text).toContain("The detailed prompts, internal routing logic, scoring rules, schemas, and execution workflow are intentionally private.");
@@ -151,9 +193,16 @@ describe("public site home", () => {
     expect(response.text).toContain("What Front-End Builder does");
     expect(response.text).toContain("What this makes possible");
     expect(response.text).toContain("A public version of the pipeline");
+    expect(response.text).toContain('class="public-site-showcase" data-public-site-showcase');
+    expect(response.text).toContain('role="tablist" aria-label="Front-End Builder pipeline"');
+    expect(response.text).toContain('id="front-end-builder-flow-tab-01"');
+    expect(response.text).toContain('aria-selected="true" aria-controls="front-end-builder-flow-panel-01"');
+    expect(response.text).toContain('id="front-end-builder-flow-panel-01"');
+    expect(response.text).toContain("The approved browser shape becomes visible");
     expect(response.text).toContain("UI need");
     expect(response.text).toContain("Design-system proof");
     expect(response.text).toContain("Browser proof");
+    expect(response.text).toContain("Shared renderer");
     expect(response.text).toContain("Evidence in the repo");
     expect(response.text).toContain("What I am not publishing");
     expect(response.text).toContain("The detailed internal prompts, routing logic, review scoring, generation rules, and private implementation workflow are intentionally private.");
@@ -180,8 +229,15 @@ describe("public site home", () => {
     expect(response.text).toContain("What Product Discovery Assistance does");
     expect(response.text).toContain("What this makes possible");
     expect(response.text).toContain("A public version of the pipeline");
+    expect(response.text).toContain('class="public-site-showcase" data-public-site-showcase');
+    expect(response.text).toContain('role="tablist" aria-label="Product Discovery Assistance pipeline"');
+    expect(response.text).toContain('id="product-discovery-assistance-flow-tab-01"');
+    expect(response.text).toContain('aria-selected="true" aria-controls="product-discovery-assistance-flow-panel-01"');
+    expect(response.text).toContain('id="product-discovery-assistance-flow-panel-01"');
     expect(response.text).toContain("Stakeholder interview");
     expect(response.text).toContain("Approval");
+    expect(response.text).toContain("The harness shows what it thinks it heard");
+    expect(response.text).toContain("Business context");
     expect(response.text).toContain("Evidence in the repo");
     expect(response.text).toContain("What I am not publishing");
     expect(response.text).toContain("The detailed interview prompts, routing rules, scoring logic, private customer examples, and internal orchestration workflow are intentionally private.");
