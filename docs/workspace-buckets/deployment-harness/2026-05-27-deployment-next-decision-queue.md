@@ -51,12 +51,17 @@ Evidence:
 
 - ECR image inspection recovered the active runtime command, and a committed
   Dockerfile now exists as a new compatibility reconstruction.
+- A first non-secret AWS manual deploy runbook now records the command shape
+  for build, immutable tag, ECR login, push, task-definition registration, ECS
+  service update, smoke verification, and release evidence capture.
 - No committed deploy workflow, ECR push script, ECS task-definition source, or
   infrastructure definition exists yet.
 - ECR image tags map to a real Git commit, so source lineage exists even though
   the image-build recipe is missing.
 - Current recommendation:
   `docs/workspace-buckets/deployment-harness/2026-05-27-build-deploy-repeatability-recommendation.md`
+- Current AWS manual runbook:
+  `docs/workspace-buckets/deployment-harness/provider-aws/2026-05-28-aws-manual-deploy-runbook.md`
 
 Do not do yet:
 

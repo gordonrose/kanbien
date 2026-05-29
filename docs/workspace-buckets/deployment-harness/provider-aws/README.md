@@ -30,3 +30,5 @@ Current AWS discovery notes:
 - `2026-05-27-aws-manual-deploy-reconstruction.md`
 - `2026-05-27-aws-task-definition-baseline.md`
 - `2026-05-27-local-docker-inspection-attempt.md`
+- `2026-05-28-aws-manual-deploy-runbook.md`
+- `2026-05-28-ecr-image-config-inspection.md`
