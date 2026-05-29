@@ -117,6 +117,22 @@ describe("entity-page-header pattern seam", () => {
     expect(html).toContain('aria-label="Add record"');
     expect(html).toContain('aria-label="Open actions"');
     expect(html).toContain('data-entity-page-header-columns="9-22"');
+    expect(html).toContain('data-entity-page-header-column-start="9"');
+    expect(html).toContain('data-entity-page-header-column-end="23"');
+    expect(html).not.toContain("grid-column:");
+  });
+
+  it("applies slot placement through the controller instead of inline styles", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/layers/04-pattern-contract/entity-page-header/index.mjs"),
+      "utf8",
+    );
+
+    expect(source).toContain("data-entity-page-header-column-start");
+    expect(source).toContain("data-entity-page-header-column-end");
+    expect(source).toContain("slot.style.gridColumn = `${startColumn} / ${endColumn}`;");
+    expect(source).not.toContain('style="${gridStyle(slot)}"');
+    expect(source).not.toContain("function gridStyle");
   });
 
   it("uses the continuous-strip structure instead of separated region cards", () => {

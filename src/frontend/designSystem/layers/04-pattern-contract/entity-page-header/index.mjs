@@ -220,14 +220,14 @@ export function entityPageHeaderPattern(options = {}) {
   };
 }
 
-function gridStyle(slot) {
-  return `grid-column: ${slot.startColumn} / ${slot.endColumn};`;
+function slotPlacementAttributes(slot) {
+  return `data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" data-entity-page-header-column-start="${slot.startColumn}" data-entity-page-header-column-end="${slot.endColumn}"`;
 }
 
 function renderLeadingSlot(spec, slot) {
   if (slot.id === "leading-control") {
     return `
-      <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" style="${gridStyle(slot)}">
+      <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
         ${renderIconButtonControlPrimitive({
           systemKey: spec.systemKey,
           theme: spec.theme,
@@ -243,7 +243,7 @@ function renderLeadingSlot(spec, slot) {
 
   if (slot.id === "secondary-control") {
     return `
-      <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" style="${gridStyle(slot)}">
+      <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
         ${renderIconButtonControlPrimitive({
           systemKey: spec.systemKey,
           theme: spec.theme,
@@ -258,7 +258,7 @@ function renderLeadingSlot(spec, slot) {
   }
 
   return `
-    <div class="ds-entity-page-header-filter-slot" data-entity-page-header-slot="${slot.id}" data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" style="${gridStyle(slot)}" aria-hidden="true">
+    <div class="ds-entity-page-header-filter-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)} aria-hidden="true">
       <span>${slot.id === "primary-filter" ? "Filter group" : "Layer group"}</span>
     </div>
   `;
@@ -266,7 +266,7 @@ function renderLeadingSlot(spec, slot) {
 
 function renderContextSlot(spec, slot) {
   return `
-    <div class="ds-entity-page-header-context" data-entity-page-header-slot="context-title" data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" style="${gridStyle(slot)}">
+    <div class="ds-entity-page-header-context" data-entity-page-header-slot="context-title" ${slotPlacementAttributes(slot)}>
       <span class="ds-entity-page-header-family">
         ${renderTruncatingLabelPrimitive({
           systemKey: spec.systemKey,
@@ -303,7 +303,7 @@ function renderContextSlot(spec, slot) {
 
 function renderActionSlot(spec, slot) {
   return `
-    <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" style="${gridStyle(slot)}">
+    <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
       ${renderIconButtonControlPrimitive({
         systemKey: spec.systemKey,
         theme: spec.theme,
@@ -360,6 +360,17 @@ export function attachEntityPageHeaderPatternController(root = document) {
         if (property && value) {
           header.style.setProperty(property, value);
         }
+      }
+    }
+
+    for (const slot of header.querySelectorAll("[data-entity-page-header-column-start][data-entity-page-header-column-end]")) {
+      if (!(slot instanceof HTMLElement)) {
+        continue;
+      }
+      const startColumn = Number.parseInt(slot.dataset.entityPageHeaderColumnStart ?? "", 10);
+      const endColumn = Number.parseInt(slot.dataset.entityPageHeaderColumnEnd ?? "", 10);
+      if (Number.isFinite(startColumn) && Number.isFinite(endColumn) && endColumn > startColumn) {
+        slot.style.gridColumn = `${startColumn} / ${endColumn}`;
       }
     }
   }

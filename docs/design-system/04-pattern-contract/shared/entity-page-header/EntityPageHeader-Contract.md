@@ -118,6 +118,11 @@ turn each region into a separate card. Text, icon action, and status semantics
 come through governed primitives. The pattern does not approve badge surfaces,
 dropdown styling, app-local spacing, or page-shell adoption.
 
+Slot placement must be applied by the pattern controller from signed slot
+metadata. The renderer must not rely on inline `style` attributes for
+grid-column placement because the served design-system CSP does not make inline
+styles a reliable construction path.
+
 ## Public Consumption Boundary
 
 | Field | Value |

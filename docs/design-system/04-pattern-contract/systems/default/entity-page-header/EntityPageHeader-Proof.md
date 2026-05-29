@@ -39,6 +39,12 @@ filter, context, and trailing action regions without adding card-like gutters.
 Single-column regions compose `icon-button-control`; grouped filter regions are
 non-interactive proof placeholders until a governed filter primitive exists.
 
+Slot placement is applied by the controller from
+`data-entity-page-header-column-start` and
+`data-entity-page-header-column-end`. The rendered HTML intentionally avoids
+inline grid-column styles so the proof behaves under the same CSP constraints
+as the served design-system route.
+
 ## Accessibility Evidence
 
 The proof route must keep logical reading order independent of visual
