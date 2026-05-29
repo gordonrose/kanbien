@@ -25,7 +25,7 @@ describe("page-header-structure token seam", () => {
       tokenName: "--page-header-structure",
       layoutRole: "page header structure",
       visibleColumnCount: "24",
-      gapValue: "0.5rem",
+      gapValue: "0",
       tokenValue: "1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24",
       sourceTokenName: "shared foundation header",
     });
@@ -61,5 +61,6 @@ describe("page-header-structure token seam", () => {
     expect(mapRule).not.toContain("gap: 0.5rem;");
     expect(hostRule).toContain("container-name: token-foundation-header;");
     expect(hostRule).toContain("container-type: inline-size;");
+    expect(hostRule).toContain("--token-header-one-stream-gap: 0;");
   });
 });

@@ -76,7 +76,7 @@ export const tokenDefinitionV1 = {
       value: {
         layoutRole: "page header structure",
         visibleColumnCount: 24,
-        gapValue: "0.5rem",
+        gapValue: "0",
         collapseBehavior:
           "collapse from rendered header width by removing unavailable trailing columns while remaining visible tracks fill the inline width",
         regions,
@@ -96,7 +96,7 @@ export const tokenDefinitionV1 = {
         border: "#dbe4f0",
         radius: "0",
         label: "Page header structure",
-        gap: "0.5rem",
+        gap: "0",
         visibleColumnCount: 24,
         regions,
       },

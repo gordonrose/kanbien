@@ -52,6 +52,7 @@ present.
 | --- | --- | --- | --- | --- |
 | Governed proof must show the same region map as the existing signed page-header route. | 02-token | `/design-system/tokens/page-header` uses `token-page-header-map` and `data-page-header-span`. | The governed proof renderer invented a separate flex preview. | Render token regions through the existing page-header span map. |
 | Governed proof must preserve the signed route's container-query parent/child structure. | 02-token | Existing collapse behavior depends on a named `token-foundation-header` container above the header grid. | The governed proof put the container name on the grid itself, so mobile collapse rules did not apply to the grid. | Wrap the proof grid in a token-foundation-header container host. |
+| Header regions must read as one continuous strip rather than separate cards. | 02-token | `page-header-structure` owns the inter-region gap value. | The token still used a `0.5rem` region gap, which made downstream populated headers look separated. | Set the governed region gap to `0` and use single dividers between regions. |
 | Filter regions must remain three-column regions when composed later. | 02-token | `regions` already define `3-5` and `6-8`; legacy CSS maps those spans over the 24-column header grid. | No missing token field; the proof was not using the existing map. | Preserve region spans and reuse the established proof classes. |
 | Pattern composition must not invent a replacement grid. | 04-pattern-contract | `entity-page-header` pattern exists but was visually exposed downstream of the incorrect token proof. | Pattern must consume the corrected token proof behavior in a later Layer 4 revision. | Block further pattern polish until token proof is coherent. |
 
@@ -92,7 +93,7 @@ present.
 | shared contract | Region ids must remain semantic to layout role, not product copy. | `leading-control`, `secondary-control`, `primary-filter`, `secondary-filter`, `context-title`, `action-1` through `action-5` |
 | shared contract | Collapse behavior is based on rendered header width. | Remove unavailable columns from the end while remaining visible tracks fill the inline width. |
 | system implementation | Default visible column count. | `24` |
-| system implementation | Default inter-region gap. | `0.5rem` |
+| system implementation | Default inter-region gap. | `0` |
 
 ## Dependency Chain
 

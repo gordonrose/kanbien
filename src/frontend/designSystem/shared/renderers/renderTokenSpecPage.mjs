@@ -306,6 +306,7 @@ function renderVariantPreview(variant) {
         data-token-preview-background="${escapeHtml(variant.preview.background)}"
         data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
         data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-page-header-gap="${escapeHtml(variant.preview.gap)}"
         aria-hidden="true"
       >
         <div class="token-list-page-structure-header-grid token-page-header-grid token-spec-page-header-map-preview">
@@ -659,6 +660,12 @@ function applyPreviewStyles(root) {
       element.style.setProperty("--token-preview-indicator-min-block-size", element.dataset.tokenPreviewIndicatorMinBlockSize ?? "");
       element.style.setProperty("--token-preview-indicator-block-size-behavior", element.dataset.tokenPreviewIndicatorBlockSizeBehavior ?? "");
       element.style.setProperty("--token-preview-indicator-radius", element.dataset.tokenPreviewIndicatorRadius ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-page-header-gap]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-header-one-stream-gap", element.dataset.tokenPreviewPageHeaderGap ?? "");
     }
   }
 

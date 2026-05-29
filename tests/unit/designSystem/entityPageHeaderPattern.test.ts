@@ -35,6 +35,7 @@ describe("entity-page-header pattern seam", () => {
       patternName: "entity-page-header",
       styleVars: {
         "--pattern-entity-page-header-columns": "24",
+        "--pattern-entity-page-header-gap": "0",
       },
       tokenDependencies: {
         pageHeaderStructure: {

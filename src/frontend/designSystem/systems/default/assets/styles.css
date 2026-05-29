@@ -383,6 +383,7 @@
 
 .token-spec-page-header-map-host {
   --token-header-one-cell-height: clamp(1.25rem, calc((85vh / 12) - 1rem), 3.5rem);
+  --token-header-one-stream-gap: 0;
   container-name: token-foundation-header;
   container-type: inline-size;
   min-width: 0;
@@ -395,6 +396,30 @@
 .token-spec-page-header-map-preview {
   min-width: 0;
   min-height: 100%;
+}
+
+.token-spec-page-header-map-host .token-list-page-structure-header-grid span {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.token-spec-page-header-map-host .token-page-header-map {
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 58%, var(--line));
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.token-spec-page-header-map-host .token-page-header-group {
+  border: 0;
+  border-inline-start: 0.0625rem solid color-mix(in srgb, var(--accent) 58%, var(--line));
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.token-spec-page-header-map-host .token-page-header-group[data-page-header-span="1"] {
+  border-inline-start: 0;
 }
 
 .token-spec-button-frame-preview {
@@ -1007,12 +1032,22 @@
   box-sizing: border-box;
   min-width: 0;
   inline-size: 100%;
+  overflow: hidden;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
 }
 
 .ds-entity-page-header-slot,
 .ds-entity-page-header-context,
 .ds-entity-page-header-filter-slot {
   min-width: 0;
+  min-block-size: var(--primitive-target-min-height, 2.75rem);
+  border-inline-start: 0.0625rem solid var(--line);
+}
+
+.ds-entity-page-header > :first-child {
+  border-inline-start: 0;
 }
 
 .ds-entity-page-header-slot {
@@ -1023,10 +1058,7 @@
 .ds-entity-page-header-filter-slot {
   display: grid;
   align-items: center;
-  min-block-size: var(--primitive-target-min-height, 2.75rem);
   padding-inline: 0.5rem;
-  border: 0.0625rem dashed var(--line);
-  border-radius: var(--radius-sm);
   color: var(--ink-soft);
   font-size: 0.75rem;
   font-weight: 800;
@@ -1035,8 +1067,9 @@
 .ds-entity-page-header-context {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.125rem var(--pattern-entity-page-header-gap);
+  gap: 0.125rem 0.5rem;
   align-items: center;
+  padding-inline: 0.75rem;
 }
 
 .ds-entity-page-header-family,

@@ -65,7 +65,7 @@
       "value": {
         "layoutRole": "page header structure",
         "visibleColumnCount": 24,
-        "gapValue": "0.5rem",
+        "gapValue": "0",
         "collapseBehavior": "collapse from rendered header width by removing unavailable trailing columns while remaining visible tracks fill the inline width",
         "regions": [
           { "id": "leading-control", "label": "1", "startColumn": 1, "endColumn": 2, "purpose": "single leading control region" },
@@ -94,7 +94,7 @@
         "border": "#dbe4f0",
         "radius": "0",
         "label": "Page header structure",
-        "gap": "0.5rem",
+        "gap": "0",
         "visibleColumnCount": 24,
         "regions": "same as value.regions"
       },
