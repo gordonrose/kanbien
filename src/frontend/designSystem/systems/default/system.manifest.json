@@ -137,6 +137,12 @@
       "implementationExport": "minimumTargetSizeTokenSpec",
       "pageRoute": "/design-system/default/tokens/minimum-target-size"
     },
+    "tokens.menu-simple-select-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/menu-simple-select-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/menuSimpleSelectFrame.tokens.mjs",
+      "implementationExport": "menuSimpleSelectFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/menu-simple-select-frame"
+    },
     "tokens.panel-corner-radius": {
       "contractModule": "src/frontend/designSystem/layers/02-token/panel-corner-radius/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelCornerRadius.tokens.mjs",
