@@ -41,6 +41,12 @@
       "implementationExport": "dropdownTriggerFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/dropdown-trigger-frame"
     },
+    "tokens.drag-drop-affordance-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/drag-drop-affordance-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/dragDropAffordanceFrame.tokens.mjs",
+      "implementationExport": "dragDropAffordanceFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/drag-drop-affordance-frame"
+    },
     "tokens.error-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/error-text-style/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/errorTextStyle.tokens.mjs",
@@ -190,6 +196,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/resizeHandle.tokens.mjs",
       "implementationExport": "resizeHandleTokenSpec",
       "pageRoute": "/design-system/default/tokens/resize-handle"
+    },
+    "tokens.record-list-item-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/record-list-item-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/recordListItemFrame.tokens.mjs",
+      "implementationExport": "recordListItemFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/record-list-item-frame"
     },
     "tokens.tooltip-surface": {
       "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs",

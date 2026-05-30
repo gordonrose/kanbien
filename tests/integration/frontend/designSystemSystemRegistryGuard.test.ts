@@ -13,6 +13,8 @@ type DesignSystemRegistration = {
   assetsBase: string;
   tokens?: Record<string, (() => Promise<Record<string, unknown>>) | undefined> & {
     fieldRowFrame?: () => Promise<Record<string, unknown>>;
+    dragDropAffordanceFrame?: () => Promise<Record<string, unknown>>;
+    recordListItemFrame?: () => Promise<Record<string, unknown>>;
   };
 };
 
@@ -145,6 +147,12 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.dropdown-trigger-frame") {
           const registeredTokenModule = await registration.tokens?.dropdownTriggerFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.drag-drop-affordance-frame") {
+          const registeredTokenModule = await registration.tokens?.dragDropAffordanceFrame?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
@@ -283,6 +291,12 @@ describe("design-system system registry guard", () => {
 
         if (contractId === "tokens.resize-handle") {
           const registeredTokenModule = await registration.tokens?.resizeHandle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.record-list-item-frame") {
+          const registeredTokenModule = await registration.tokens?.recordListItemFrame?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }

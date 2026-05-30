@@ -295,6 +295,72 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "menu-simple-select-trigger-sample") {
+    const textTrigger = variant.preview.frameRole !== "icon trigger frame";
+    return `
+      <div
+        class="token-spec-menu-select-trigger-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-supporting-foreground="${escapeHtml(variant.preview.supportingForeground)}"
+        data-token-preview-icon-foreground="${escapeHtml(variant.preview.iconForeground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-gap="${escapeHtml(variant.preview.gap)}"
+        data-token-preview-min-block-size="${escapeHtml(variant.preview.minBlockSize)}"
+        data-token-preview-min-inline-size="${escapeHtml(variant.preview.minInlineSize)}"
+        data-token-preview-max-inline-size="${escapeHtml(variant.preview.maxInlineSize)}"
+        data-token-preview-frame-role="${escapeHtml(variant.preview.frameRole)}"
+        aria-hidden="true"
+      >
+        ${
+          textTrigger
+            ? `
+              <span class="token-spec-menu-select-trigger-copy">
+                <span class="token-spec-menu-select-trigger-label">${escapeHtml(variant.preview.labelText)}</span>
+                <strong>${escapeHtml(variant.preview.valueText)}</strong>
+              </span>
+            `
+            : ""
+        }
+        <span class="token-spec-menu-select-trigger-icon">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "drag-drop-affordance-sample") {
+    return `
+      <div
+        class="token-spec-drag-drop-affordance-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-accent="${escapeHtml(variant.preview.accent)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-min-block-size="${escapeHtml(variant.preview.minBlockSize)}"
+        data-token-preview-marker-min-block-size="${escapeHtml(variant.preview.markerMinBlockSize)}"
+        data-token-preview-shadow="${escapeHtml(variant.preview.shadow)}"
+        data-token-preview-state="${escapeHtml(variant.preview.state)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-drag-drop-grip"></span>
+        <span class="token-spec-drag-drop-content">
+          <strong>${escapeHtml(variant.preview.sample)}</strong>
+          <small>${escapeHtml(variant.preview.supportingText)}</small>
+        </span>
+        <span class="token-spec-drag-drop-marker-label">${escapeHtml(variant.preview.markerLabel)}</span>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "page-header-structure-map") {
     const columnLabels = Array.from({ length: Number(variant.preview.visibleColumnCount ?? 24) }, (_, index) =>
       String(index + 1).padStart(2, "0"),
@@ -695,6 +761,34 @@ function applyPreviewStyles(root) {
       element.style.setProperty("--token-preview-resize-cursor", element.dataset.tokenPreviewResizeCursor ?? "");
       element.style.setProperty("--token-preview-resize-visual-color", element.dataset.tokenPreviewResizeVisualColor ?? "");
       element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-state]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.boxShadow = element.dataset.tokenPreviewShadow ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-min-block-size", element.dataset.tokenPreviewMinBlockSize ?? "");
+      element.style.setProperty("--token-preview-marker-min-block-size", element.dataset.tokenPreviewMarkerMinBlockSize ?? "");
+      element.style.setProperty("--token-preview-accent", element.dataset.tokenPreviewAccent ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-frame-role]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-supporting-foreground", element.dataset.tokenPreviewSupportingForeground ?? "");
+      element.style.setProperty("--token-preview-icon-foreground", element.dataset.tokenPreviewIconForeground ?? "");
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-gap", element.dataset.tokenPreviewGap ?? "");
+      element.style.setProperty("--token-preview-min-block-size", element.dataset.tokenPreviewMinBlockSize ?? "");
+      element.style.setProperty("--token-preview-min-inline-size", element.dataset.tokenPreviewMinInlineSize ?? "");
+      element.style.setProperty("--token-preview-max-inline-size", element.dataset.tokenPreviewMaxInlineSize ?? "");
     }
   }
 

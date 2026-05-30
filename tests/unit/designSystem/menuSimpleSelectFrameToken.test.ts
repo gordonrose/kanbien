@@ -77,6 +77,18 @@ describe("menu-simple-select-frame token", () => {
       iconForegroundValue: "#008575",
       supportingForegroundValue: "#64748b",
     });
+    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "menu-simple-select-trigger-frame-icon")?.preview).toMatchObject({
+      kind: "menu-simple-select-trigger-sample",
+      frameRole: "icon trigger frame",
+      iconForeground: "#008575",
+    });
+    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "menu-simple-select-trigger-frame-default")?.preview).toMatchObject({
+      kind: "menu-simple-select-trigger-sample",
+      frameRole: "trigger frame",
+      labelText: "Layer",
+      valueText: "Current",
+      iconForeground: "#008575",
+    });
     expect(tokenDefinitionV1.variants.find((variant) => variant.id.endsWith("panel-frame-default"))?.value).toMatchObject({
       maxBlockSize: "32rem",
       zIndexValue: "20",

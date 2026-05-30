@@ -1,0 +1,31 @@
+export const dragDropAffordanceFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.drag-drop-affordance-frame",
+  tokenType: "drag-drop-affordance-frame",
+  requiredVariantRoles: [
+    "drag source",
+    "drag preview",
+    "drop marker",
+  ],
+  requiredValueFields: [
+    "frameRole",
+    "backgroundValue",
+    "foregroundValue",
+    "supportingForegroundValue",
+    "borderValue",
+    "accentValue",
+    "radiusValue",
+    "paddingBlockValue",
+    "paddingInlineValue",
+    "minBlockSize",
+    "previewElevationValue",
+    "markerMinBlockSize",
+    "markerLabelValue",
+    "motionValue",
+  ],
+  consumerRules: [
+    "Every design system must expose governed drag source, drag preview, and drop-marker values before later primitives or patterns own drag/drop affordance visuals.",
+    "Consumers must use the runtime seam instead of local drag opacity, preview elevation, marker surface, marker typography, or marker geometry literals.",
+    "This token does not define drag event handling, keyboard fallback behavior, persistence, board columns, or drawer composition.",
+  ],
+};
