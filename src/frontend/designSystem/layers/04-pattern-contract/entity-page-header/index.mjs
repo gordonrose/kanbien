@@ -161,6 +161,7 @@ export function entityPageHeaderPattern(options = {}) {
   const readinessState = options.readinessState ?? "ready";
   const leadingControlLabel = options.leadingControlLabel ?? "Open filters";
   const secondaryControlLabel = options.secondaryControlLabel ?? "Sort records";
+  const showRegionBoundaries = options.showRegionBoundaries === true;
   const actions = normalizeActions(options.actions ?? []);
 
   assertString(systemKey, "systemKey");
@@ -196,6 +197,7 @@ export function entityPageHeaderPattern(options = {}) {
     readinessState,
     leadingControlLabel,
     secondaryControlLabel,
+    showRegionBoundaries,
     actions,
     resolvedSlots,
     tokenDependencies: {
@@ -210,6 +212,7 @@ export function entityPageHeaderPattern(options = {}) {
       class: "ds-entity-page-header",
       "data-entity-page-header": "",
       "data-entity-page-header-theme": theme,
+      "data-entity-page-header-region-boundaries": showRegionBoundaries ? "true" : "false",
       "aria-labelledby": `${id}-selected-entity`,
     },
     styleVars: {
@@ -222,6 +225,16 @@ export function entityPageHeaderPattern(options = {}) {
 
 function slotPlacementAttributes(slot) {
   return `data-entity-page-header-columns="${slot.startColumn}-${slot.endColumn - 1}" data-entity-page-header-column-start="${slot.startColumn}" data-entity-page-header-column-end="${slot.endColumn}"`;
+}
+
+function gridColumnBoundary(column) {
+  if (column >= 20 && column <= 24) {
+    return `var(--token-page-header-tail-${column})`;
+  }
+  if (column === 25) {
+    return "var(--token-page-header-tail-end)";
+  }
+  return String(column);
 }
 
 function renderLeadingSlot(spec, slot) {
@@ -325,19 +338,21 @@ export function renderEntityPageHeaderPattern(options = {}) {
   };
 
   return `
-    <header ${toAttributeString(attributes)}>
-      ${spec.resolvedSlots
-        .map((slot) => {
-          if (slot.id === "context-title") {
-            return renderContextSlot(spec, slot);
-          }
-          if (slot.id.startsWith("action-")) {
-            return renderActionSlot(spec, slot);
-          }
-          return renderLeadingSlot(spec, slot);
-        })
-        .join("")}
-    </header>
+    <div class="ds-entity-page-header-container" data-entity-page-header-container>
+      <header ${toAttributeString(attributes)}>
+        ${spec.resolvedSlots
+          .map((slot) => {
+            if (slot.id === "context-title") {
+              return renderContextSlot(spec, slot);
+            }
+            if (slot.id.startsWith("action-")) {
+              return renderActionSlot(spec, slot);
+            }
+            return renderLeadingSlot(spec, slot);
+          })
+          .join("")}
+      </header>
+    </div>
   `;
 }
 
@@ -370,7 +385,7 @@ export function attachEntityPageHeaderPatternController(root = document) {
       const startColumn = Number.parseInt(slot.dataset.entityPageHeaderColumnStart ?? "", 10);
       const endColumn = Number.parseInt(slot.dataset.entityPageHeaderColumnEnd ?? "", 10);
       if (Number.isFinite(startColumn) && Number.isFinite(endColumn) && endColumn > startColumn) {
-        slot.style.gridColumn = `${startColumn} / ${endColumn}`;
+        slot.style.gridColumn = `${gridColumnBoundary(startColumn)} / ${gridColumnBoundary(endColumn)}`;
       }
     }
   }

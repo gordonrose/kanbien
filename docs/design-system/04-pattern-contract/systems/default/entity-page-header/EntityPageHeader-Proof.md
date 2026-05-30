@@ -13,9 +13,9 @@
 
 ## Proof Scope
 
-The default proof renders the populated entity page header with optional
-leading controls, optional filter-group placeholders, a context-title region,
-text-backed readiness status, and trailing icon actions.
+The default proof renders the populated entity page header container with an
+inner strip, optional leading controls, optional filter-group placeholders, a
+context-title region, text-backed readiness status, and trailing icon actions.
 
 Controls vary secondary-control visibility, grouped region visibility, action
 count, and readiness state. These controls prove the Layer 4 compaction rule;
@@ -33,17 +33,34 @@ they are proof-only unless the runtime seam exposes matching values.
 ## Strip Composition Evidence
 
 The rendered proof consumes `page-header-structure` with a zero structural gap,
-then presents the populated header as one continuous strip. The outer frame
-belongs to the pattern proof, while the region dividers separate icon-button,
-filter, context, and trailing action regions without adding card-like gutters.
-Single-column regions compose `icon-button-control`; grouped filter regions are
-non-interactive proof placeholders until a governed filter primitive exists.
+then presents the populated header as one continuous strip inside a governed
+container inset. The container owns page-level padding around the strip. The
+strip frame and internal region borders are disabled in the default/production
+posture; the proof route exposes optional `Region guides` only for
+column-placement inspection. Single-column regions compose
+`icon-button-control`; grouped filter regions are non-interactive proof
+placeholders until a governed filter primitive exists.
+
+The proof uses one standardized background from the pattern container. The
+inner strip and individual regions remain transparent in the base state so
+background colour does not imply separate sections or unsupported state.
 
 Slot placement is applied by the controller from
 `data-entity-page-header-column-start` and
 `data-entity-page-header-column-end`. The rendered HTML intentionally avoids
 inline grid-column styles so the proof behaves under the same CSP constraints
 as the served design-system route.
+
+The proof host is also a `token-foundation-header` container. The populated
+pattern consumes the same visible-column breakpoints as the structure token,
+uses token tail variables for action placement, hides the context region at
+the signed narrow breakpoint, and leaves only the leading-control region at
+the mobile single-column breakpoint.
+
+The context-title region renders as one horizontal line. Entity family,
+selected entity, category, and readiness status stay inline; constrained width
+is handled by the governed truncating-label primitive and responsive region
+collapse rather than stacked header text.
 
 ## Accessibility Evidence
 

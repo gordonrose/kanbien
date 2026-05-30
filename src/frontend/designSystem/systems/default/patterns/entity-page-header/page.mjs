@@ -88,6 +88,7 @@ function renderControls(state) {
         </select>
       </label>
       <div class="entity-page-header-proof-toggle-group" aria-label="Optional leading slots">
+        ${renderCheckbox("data-entity-page-header-region-boundaries-control", "Region guides", state.showRegionBoundaries)}
         ${renderCheckbox("data-entity-page-header-secondary-control", "Secondary action", state.showSecondaryControl)}
         ${renderCheckbox("data-entity-page-header-primary-filter-control", "Primary filter", state.showPrimaryFilter)}
         ${renderCheckbox("data-entity-page-header-secondary-filter-control", "Secondary filter", state.showSecondaryFilter)}
@@ -151,6 +152,7 @@ function renderPage(state) {
               showSecondaryControl: state.showSecondaryControl,
               showPrimaryFilter: state.showPrimaryFilter,
               showSecondaryFilter: state.showSecondaryFilter,
+              showRegionBoundaries: state.showRegionBoundaries,
               actions,
             })}
           </div>
@@ -165,6 +167,7 @@ function renderPage(state) {
   const actionCountControl = root.querySelector("[data-entity-page-header-action-count-control]");
   const readinessControl = root.querySelector("[data-entity-page-header-readiness-control]");
   const widthControl = root.querySelector("[data-entity-page-header-width-control]");
+  const regionBoundariesControl = root.querySelector("[data-entity-page-header-region-boundaries-control]");
   const secondaryControl = root.querySelector("[data-entity-page-header-secondary-control]");
   const primaryFilterControl = root.querySelector("[data-entity-page-header-primary-filter-control]");
   const secondaryFilterControl = root.querySelector("[data-entity-page-header-secondary-filter-control]");
@@ -177,6 +180,11 @@ function renderPage(state) {
   }
   if (widthControl instanceof HTMLSelectElement) {
     widthControl.addEventListener("change", () => renderPage({ ...state, reviewWidth: widthControl.value }));
+  }
+  if (regionBoundariesControl instanceof HTMLInputElement) {
+    regionBoundariesControl.addEventListener("change", () =>
+      renderPage({ ...state, showRegionBoundaries: regionBoundariesControl.checked }),
+    );
   }
   if (secondaryControl instanceof HTMLInputElement) {
     secondaryControl.addEventListener("change", () =>
@@ -202,4 +210,5 @@ renderPage({
   showSecondaryControl: true,
   showPrimaryFilter: true,
   showSecondaryFilter: true,
+  showRegionBoundaries: false,
 });

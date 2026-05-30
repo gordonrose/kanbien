@@ -36,6 +36,7 @@ describe("entity-page-header pattern seam", () => {
     expect(header).toMatchObject({
       schema: "kanbien.designSystem.patternSpec.v1",
       patternName: "entity-page-header",
+      showRegionBoundaries: false,
       styleVars: {
         "--pattern-entity-page-header-columns": "24",
         "--pattern-entity-page-header-gap": "0",
@@ -108,6 +109,8 @@ describe("entity-page-header pattern seam", () => {
     });
 
     expect(html).toContain("data-entity-page-header");
+    expect(html).toContain("data-entity-page-header-container");
+    expect(html).toContain('data-entity-page-header-region-boundaries="false"');
     expect(html).toContain('data-entity-page-header-slot="context-title"');
     expect(html).toContain("data-readiness-status-control");
     expect(html).toContain('data-readiness-status-state="needs-review"');
@@ -120,6 +123,12 @@ describe("entity-page-header pattern seam", () => {
     expect(html).toContain('data-entity-page-header-column-start="9"');
     expect(html).toContain('data-entity-page-header-column-end="23"');
     expect(html).not.toContain("grid-column:");
+
+    const diagnosticHtml = renderEntityPageHeaderPattern({
+      id: "entity-page-header-boundary-test",
+      showRegionBoundaries: true,
+    });
+    expect(diagnosticHtml).toContain('data-entity-page-header-region-boundaries="true"');
   });
 
   it("applies slot placement through the controller instead of inline styles", () => {
@@ -130,7 +139,9 @@ describe("entity-page-header pattern seam", () => {
 
     expect(source).toContain("data-entity-page-header-column-start");
     expect(source).toContain("data-entity-page-header-column-end");
-    expect(source).toContain("slot.style.gridColumn = `${startColumn} / ${endColumn}`;");
+    expect(source).toContain("function gridColumnBoundary");
+    expect(source).toContain("var(--token-page-header-tail-${column})");
+    expect(source).toContain("slot.style.gridColumn = `${gridColumnBoundary(startColumn)} / ${gridColumnBoundary(endColumn)}`;");
     expect(source).not.toContain('style="${gridStyle(slot)}"');
     expect(source).not.toContain("function gridStyle");
   });
@@ -141,13 +152,47 @@ describe("entity-page-header pattern seam", () => {
       "utf8",
     );
     const headerRule = styles.match(/\.ds-entity-page-header\s*\{[^}]+\}/)?.[0] ?? "";
+    const boundaryFrameRule = styles.match(
+      /\.ds-entity-page-header\[data-entity-page-header-region-boundaries="true"\]\s*\{[^}]+\}/,
+    )?.[0] ?? "";
+    const containerRule = styles.match(/\.ds-entity-page-header-container\s*\{[^}]+\}/)?.[0] ?? "";
     const childRule = styles.match(/\.ds-entity-page-header-slot,\n\.ds-entity-page-header-context,\n\.ds-entity-page-header-filter-slot\s*\{[^}]+\}/)?.[0] ?? "";
+    const boundaryRule = styles.match(
+      /\.ds-entity-page-header\[data-entity-page-header-region-boundaries="true"\] > \.ds-entity-page-header-slot,\n\.ds-entity-page-header\[data-entity-page-header-region-boundaries="true"\] > \.ds-entity-page-header-context,\n\.ds-entity-page-header\[data-entity-page-header-region-boundaries="true"\] > \.ds-entity-page-header-filter-slot\s*\{[^}]+\}/,
+    )?.[0] ?? "";
     const filterRule = styles.match(/\.ds-entity-page-header-filter-slot\s*\{[^}]+\}/)?.[0] ?? "";
+    const proofHostRule = styles.match(/\.entity-page-header-proof-host\s*\{[^}]+\}/)?.[0] ?? "";
 
-    expect(headerRule).toContain("gap: var(--pattern-entity-page-header-gap);");
-    expect(headerRule).toContain("border: 0.0625rem solid var(--line);");
-    expect(childRule).toContain("border-inline-start: 0.0625rem solid var(--line);");
+    expect(containerRule).toContain("container-name: token-foundation-header;");
+    expect(containerRule).toContain("padding: 0.75rem;");
+    expect(containerRule).toContain("background: var(--paper);");
+    expect(headerRule).toContain("grid-template-columns: repeat(var(--token-header-visible-columns, var(--pattern-entity-page-header-columns, 24)), minmax(0, 1fr));");
+    expect(headerRule).toContain("background: transparent;");
+    expect(headerRule).not.toContain("border:");
+    expect(headerRule).not.toContain("border-radius:");
+    expect(boundaryFrameRule).toContain("border: 0.0625rem solid var(--line);");
+    expect(boundaryFrameRule).toContain("border-radius: var(--radius-sm);");
+    expect(childRule).not.toContain("border-inline-start:");
+    expect(boundaryRule).toContain("border-inline-start: 0.0625rem solid var(--line);");
     expect(filterRule).not.toContain("border:");
     expect(filterRule).not.toContain("border-radius:");
+    expect(proofHostRule).toContain("container-name: token-foundation-header;");
+    expect(styles).toContain("@container token-foundation-header (max-width: 42rem)");
+    expect(styles).toContain(".ds-entity-page-header-context {\n    display: none;");
+  });
+
+  it("keeps the context title region to one rendered line", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/systems/default/assets/styles.css"),
+      "utf8",
+    );
+    const contextRule = styles.match(/\.ds-entity-page-header-context\s*\{[^}]+\}/)?.[0] ?? "";
+    const statusRule = styles.match(/\.ds-entity-page-header-context \.ds-readiness-status-control\s*\{[^}]+\}/)?.[0] ?? "";
+
+    expect(contextRule).toContain("display: flex;");
+    expect(contextRule).toContain("align-items: center;");
+    expect(contextRule).not.toContain("background:");
+    expect(statusRule).toContain("flex: 0 0 auto;");
+    expect(statusRule).not.toContain("grid-row:");
   });
 });

@@ -36,8 +36,10 @@ app adoption.
 
 ## Composition Contract
 
-The pattern renders one `header` with optional leading control slots, one
-context-title region, and optional trailing action slots.
+The pattern renders one container with one inner `header`, optional leading
+control slots, one context-title region, and optional trailing action slots.
+The container owns the page-level inset around the strip. The inner `header`
+owns the 24-column strip and region placement.
 
 The page-header structure token supplies the possible 24-column foundation and
 stable region identities. The pattern owns how populated optional regions are
@@ -56,11 +58,18 @@ Visual compaction must not scramble semantics. DOM and keyboard order follow
 the logical reading order: leading controls, context title, readiness status,
 then trailing actions.
 
+The context-title region is a single-line composition. Entity family, selected
+entity, category, and readiness status must never stack into multiple rows
+inside the header strip. When width is constrained, the composed
+`truncating-label` primitive owns text disclosure and the pattern's responsive
+rules hide lower-priority regions rather than allowing vertical text stacking.
+
 ## Composition Ledger
 
 | Rendered Child | Allowed Category | Governed Seam Or Reason | Consumer Boundary |
 | --- | --- | --- | --- |
-| Header grid | governed pattern wrapper | `page-header-structure` token supplies foundation; pattern resolves optional slots | Consume the pattern seam, not route markup. |
+| Header container | governed pattern wrapper | Pattern owns page-level inset and container-query boundary | Consume the pattern seam, not route markup. |
+| Header grid | governed pattern strip | `page-header-structure` token supplies foundation; pattern resolves optional slots | Consume the pattern seam, not route markup. |
 | Leading controls | governed primitive | `icon-button-control` | Consumers provide action intent; primitive owns button behavior. |
 | Primary and secondary filter regions | governed pattern placeholder | `page-header-structure` token supplies three-column spans; filter primitive remains downstream | Consumers must not treat proof placeholder copy as a control API. |
 | Entity family, selected entity, category | governed primitive | `truncating-label` | Consumers provide text; primitive owns clipping/disclosure. |
@@ -109,19 +118,45 @@ authorize product data.
 | category | yes | `truncating-label` | visual route pending local browser dependencies | Consumers must not add route-local tooltip logic. |
 | readiness status | no | `readiness-status-control` | unit proof | Use short approved state text only. |
 
+The pattern may place truncating labels side by side, but it must not add
+route-local clipping, title-only fallback, or multi-row label layout around
+them. Text disclosure remains primitive-owned.
+
 ## Visual-Skin Boundary
 
 Region placement and the continuous strip gap come from
 `page-header-structure` plus this pattern's compaction algorithm. The pattern
-owns the single outer frame and dividers between composed regions; it does not
-turn each region into a separate card. Text, icon action, and status semantics
-come through governed primitives. The pattern does not approve badge surfaces,
-dropdown styling, app-local spacing, or page-shell adoption.
+owns the container surface; it does not turn the strip or each region into a
+separate card. Text, icon action, and status semantics come through governed
+primitives. The pattern does not approve badge surfaces, dropdown styling,
+app-local spacing, or page-shell adoption.
+
+The strip outline and internal region borders are optional diagnostics only.
+The production/default pattern state must render with region boundaries off.
+Proof routes may expose a `Region guides` control to inspect column placement,
+but consumers must not rely on those guides as production dividers.
+
+The container owns the page-header inset around the strip. Consumers must not
+wrap the pattern in app-local padding to approximate the entity page header
+placement; later layers should consume this container seam.
+
+The populated header background is owned by the pattern container. The inner
+strip and individual regions must not introduce their own section backgrounds
+unless a later signed token explicitly defines a state or selection surface for
+that region. In the base state, the strip and regions remain transparent and
+do not render internal borders.
 
 Slot placement must be applied by the pattern controller from signed slot
 metadata. The renderer must not rely on inline `style` attributes for
 grid-column placement because the served design-system CSP does not make inline
 styles a reliable construction path.
+
+Responsive collapse must follow `page-header-structure`: the proof host uses
+the same `token-foundation-header` container, the pattern grid consumes the
+same visible-column count, and trailing action placement uses the token tail
+column variables so actions shift left as columns are removed. At the narrow
+mobile breakpoint, only the leading-control region remains visible and fills
+the available strip width.
 
 ## Public Consumption Boundary
 
