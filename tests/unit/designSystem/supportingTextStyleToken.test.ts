@@ -13,7 +13,7 @@ describe("supporting-text-style token seam", () => {
       tokenType: "supporting-text-style",
     });
 
-    expect(supportingTextStyleTokenVariants).toHaveLength(1);
+    expect(supportingTextStyleTokenVariants).toHaveLength(2);
     expect(supportingTextStyleTokenVariants[0]).toMatchObject({
       tokenName: "--supporting-text-style-default",
       role: "supporting text",
@@ -21,6 +21,16 @@ describe("supporting-text-style token seam", () => {
       fontWeightValue: "800",
       lineHeightValue: "1.2",
       letterSpacingValue: "0",
+      textTransform: "none",
+    });
+    expect(supportingTextStyleTokenVariants[1]).toMatchObject({
+      tokenName: "--supporting-text-style-control-eyebrow",
+      role: "control eyebrow text",
+      fontSizeValue: "0.75rem",
+      fontWeightValue: "800",
+      lineHeightValue: "1.2",
+      letterSpacingValue: "0",
+      textTransform: "uppercase",
     });
     expect(supportingTextStyleTokenVariants[0]?.preview).toMatchObject({
       background: "inherit",

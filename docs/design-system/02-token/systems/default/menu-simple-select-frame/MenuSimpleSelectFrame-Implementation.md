@@ -20,7 +20,7 @@
 
 | Field | Value |
 | --- | --- |
-| Source behavior need | Compact anchored menu select needs governed text trigger, icon trigger, panel, option, current, disabled, sizing, spacing, stacking, and scroll-frame values before primitive behavior can consume them. |
+| Source behavior need | Compact anchored menu select needs governed text trigger, chevron affordance, icon trigger, panel, option, current, disabled, sizing, spacing, stacking, and scroll-frame values before primitive behavior can consume them. |
 | Token category | `surface`, `spacing`, `sizing`, `stacking`, `state frame` |
 | Token job | Provide default-system concrete values for text-trigger, icon-trigger, panel, and option-state frame contracts across original, dark, and desert themes. |
 | Non-goals | ARIA behavior, keyboard handling, option row anatomy, header placement, component APIs, demo routes, canonical scenarios, app adoption. |
@@ -40,6 +40,7 @@ object for this system implementation.
 | Scope | Token Decision | Value |
 | --- | --- | --- |
 | system implementation | `--menu-simple-select-trigger-frame-*` | Theme-specific compact text trigger frame with `2.75rem` minimum block size. |
+| system implementation | trigger supporting and icon foreground | Original theme uses muted supporting foreground `#64748b` and green chevron foreground `#008575`; dark and desert map those roles to their theme palettes. |
 | system implementation | `--menu-simple-select-trigger-frame-icon-*` | Theme-specific square icon-only trigger frame with `2.75rem` inline and block target. |
 | system implementation | `--menu-simple-select-panel-frame` | Anchored neutral panel with `32rem` max block size, `20` z-index, and internal scrolling posture. |
 | system implementation | `--menu-simple-select-option-frame-rest` | Neutral option row/card frame. |
@@ -75,7 +76,7 @@ object for this system implementation.
 | --- | --- |
 | token unit proof | `tests/unit/designSystem/menuSimpleSelectFrameToken.test.ts` verifies roles, values, route metadata, and consumer restrictions. |
 | registry proof | `tests/integration/frontend/designSystemSystemRegistryGuard.test.ts` verifies manifest shape. |
-| rendered proof | Token route is available; local Playwright remains blocked until Chromium dependencies are installed. |
+| rendered proof | Token route is available; local Playwright dependencies are installed for browser verification. |
 
 ## Consumer Restrictions
 

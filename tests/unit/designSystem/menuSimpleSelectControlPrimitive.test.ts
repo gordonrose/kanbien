@@ -8,6 +8,7 @@ import {
   menuSimpleSelectControlPrimitiveContract,
   renderMenuSimpleSelectControlPrimitive,
 } from "../../../src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs";
+import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
 
 const options = [
   { value: "chats", label: "Chats", eyebrow: "Parent", trailingLabel: "Chats" },
@@ -28,6 +29,8 @@ describe("menu-simple-select-control primitive", () => {
       ],
       allowedStates: ["closed", "open", "disabled", "empty"],
       allowedTriggerVariants: ["text", "icon"],
+      allowedTriggerIcons: ["chevron", "filter", "sort"],
+      requiredSystemRegistries: ["glyph-registry"],
     });
   });
 
@@ -48,6 +51,9 @@ describe("menu-simple-select-control primitive", () => {
       tokenDependencies: {
         menuSimpleSelectFrame: {
           variantId: "menu-simple-select-trigger-frame-default",
+        },
+        supportingTextStyle: {
+          variantId: "supporting-text-style-control-eyebrow",
         },
         focusRing: {
           variantId: "focus-ring-visible-original",
@@ -71,8 +77,12 @@ describe("menu-simple-select-control primitive", () => {
     expect(html).toContain("data-menu-simple-select-control");
     expect(html).toContain('name="layer" value="organizations"');
     expect(html).toContain("data-menu-simple-select-trigger");
+    expect(html).toContain("ds-menu-simple-select-trigger-glyph");
+    expect(html).toContain('d="M6 9l6 6 6-6"');
     expect(html).toContain('aria-haspopup="listbox"');
     expect(html).toContain('role="listbox"');
+    expect(html).toContain("data-menu-simple-select-sheet-header");
+    expect(html).toContain("data-menu-simple-select-close");
     expect(html).toContain('role="option"');
     expect(html).toContain('aria-selected="true"');
     expect(html).toContain('aria-disabled="true" disabled');
@@ -84,6 +94,7 @@ describe("menu-simple-select-control primitive", () => {
       id: "menu-select-icon-test",
       label: "Layer",
       triggerVariant: "icon",
+      triggerIcon: "filter",
       value: "organizations",
       options,
     });
@@ -91,14 +102,18 @@ describe("menu-simple-select-control primitive", () => {
       id: "menu-select-icon-render-test",
       label: "Layer",
       triggerVariant: "icon",
+      triggerIcon: "filter",
       value: "organizations",
       options,
     });
 
     expect(spec.triggerVariant).toBe("icon");
+    expect(spec.triggerIcon).toBe("filter");
     expect(spec.tokenDependencies.menuSimpleSelectFrame.variantId).toBe("menu-simple-select-trigger-frame-icon");
     expect(html).toContain('data-menu-simple-select-trigger-variant="icon"');
+    expect(html).toContain('data-menu-simple-select-trigger-icon="filter"');
     expect(html).toContain('aria-label="Layer: Organizations"');
+    expect(html).toContain(resolveDefaultGlyphPath("filter"));
     expect(html).not.toContain("ds-menu-simple-select-trigger-value");
   });
 
@@ -128,6 +143,7 @@ describe("menu-simple-select-control primitive", () => {
 
     expect(source).toContain("function setOpen");
     expect(source).toContain("function selectOption");
+    expect(source).toContain("function renderTriggerIcon");
     expect(source).toContain('event.key === "ArrowDown"');
     expect(source).toContain('event.key === "Escape"');
     expect(source).toContain('event.key === "Enter"');

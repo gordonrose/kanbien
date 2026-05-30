@@ -20,9 +20,9 @@ export const tokenTypeTemplate = {
 const regions = [
   { id: "leading-control", label: "1", startColumn: 1, endColumn: 2, purpose: "single leading control region" },
   { id: "secondary-control", label: "2", startColumn: 2, endColumn: 3, purpose: "single secondary control region" },
-  { id: "primary-filter", label: "3-5", startColumn: 3, endColumn: 6, purpose: "three-column grouped control region" },
-  { id: "secondary-filter", label: "6-8", startColumn: 6, endColumn: 9, purpose: "three-column grouped control region" },
-  { id: "context-title", label: "9-19", startColumn: 9, endColumn: 20, purpose: "primary page context region" },
+  { id: "primary-filter", label: "3-6", startColumn: 3, endColumn: 7, purpose: "four-column grouped control region" },
+  { id: "secondary-filter", label: "7-10", startColumn: 7, endColumn: 11, purpose: "four-column grouped control region" },
+  { id: "context-title", label: "11-19", startColumn: 11, endColumn: 20, purpose: "primary page context region" },
   { id: "action-1", label: "20", startColumn: 20, endColumn: 21, purpose: "single action region" },
   { id: "action-2", label: "21", startColumn: 21, endColumn: 22, purpose: "single action region" },
   { id: "action-3", label: "22", startColumn: 22, endColumn: 23, purpose: "single action region" },
@@ -85,8 +85,8 @@ export const tokenDefinitionV1 = {
         sourceTokenName: "shared foundation header",
         sourceValue: "24 columns",
         formulaOrMapping:
-          "Region start and end columns map to the existing page-header proof route over the 24-column foundation header.",
-        renderedValue: "1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24",
+          "Region start and end columns map to the governed page-header proof route over the 24-column foundation header.",
+        renderedValue: "1, 2, 3-6, 7-10, 11-19, 20, 21, 22, 23, 24",
       },
       preview: {
         kind: "page-header-structure-map",
@@ -162,7 +162,7 @@ export const pageHeaderStructureTokenSpec = {
       label: "Page header",
       title: "24-column region map",
       variantId: "page-header-structure-default",
-      supportingText: "Regions: 1, 2, 3-5, 6-8, 9-19, and 20-24.",
+      supportingText: "Regions: 1, 2, 3-6, 7-10, 11-19, and 20-24.",
     },
   ],
   dependencySummary: [

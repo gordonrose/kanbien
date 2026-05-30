@@ -53,7 +53,7 @@ present.
 | Governed proof must show the same region map as the existing signed page-header route. | 02-token | `/design-system/tokens/page-header` uses `token-page-header-map` and `data-page-header-span`. | The governed proof renderer invented a separate flex preview. | Render token regions through the existing page-header span map. |
 | Governed proof must preserve the signed route's container-query parent/child structure. | 02-token | Existing collapse behavior depends on a named `token-foundation-header` container above the header grid. | The governed proof put the container name on the grid itself, so mobile collapse rules did not apply to the grid. | Wrap the proof grid in a token-foundation-header container host. |
 | Header regions must read as one continuous strip rather than separate cards. | 02-token | `page-header-structure` owns the inter-region gap value. | The token still used a `0.5rem` region gap, which made downstream populated headers look separated. | Set the governed region gap to `0` and use single dividers between regions. |
-| Filter regions must remain three-column regions when composed later. | 02-token | `regions` already define `3-5` and `6-8`; legacy CSS maps those spans over the 24-column header grid. | No missing token field; the proof was not using the existing map. | Preserve region spans and reuse the established proof classes. |
+| Filter regions must remain wide enough for composed select controls. | 02-token | `regions` now define `3-6` and `7-10`; the context title begins at `11-19` when every left region is present. | Earlier three-column filter regions made populated menu selects feel compressed. | Preserve the revised region spans and reuse the established proof classes. |
 | Pattern composition must not invent a replacement grid. | 04-pattern-contract | `entity-page-header` pattern exists but was visually exposed downstream of the incorrect token proof. | Pattern must consume the corrected token proof behavior in a later Layer 4 revision. | Block further pattern polish until token proof is coherent. |
 
 ## Upstream Behavior Rule
@@ -89,7 +89,7 @@ present.
 
 | Scope | Token Decision | Value |
 | --- | --- | --- |
-| shared contract | The header map has one 24-column foundation and named regions. | `1`, `2`, `3-5`, `6-8`, `9-19`, `20`, `21`, `22`, `23`, `24` |
+| shared contract | The header map has one 24-column foundation and named regions. | `1`, `2`, `3-6`, `7-10`, `11-19`, `20`, `21`, `22`, `23`, `24` |
 | shared contract | Region ids must remain semantic to layout role, not product copy. | `leading-control`, `secondary-control`, `primary-filter`, `secondary-filter`, `context-title`, `action-1` through `action-5` |
 | shared contract | Collapse behavior is based on rendered header width. | Remove unavailable columns from the end while remaining visible tracks fill the inline width. |
 | system implementation | Default visible column count. | `24` |
@@ -103,7 +103,7 @@ present.
 | Upstream variant or token | 24-column foundation header |
 | Upstream value | 24 columns |
 | Formula or mapping | Region start/end values map to the foundation header column numbers. |
-| Final rendered value | Ten named regions covering columns 1, 2, 3-5, 6-8, 9-19, and 20-24. |
+| Final rendered value | Ten named regions covering columns 1, 2, 3-6, 7-10, 11-19, and 20-24. |
 | What changes when upstream changes | If the foundation header column count changes, this token must be revised before patterns consume it. |
 | What must not change | The behavior rule's selected entity context and accessibility promise. |
 

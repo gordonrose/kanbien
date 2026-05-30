@@ -20,7 +20,7 @@
 
 | Field | Value |
 | --- | --- |
-| Source behavior need | Compact anchored menu select needs governed text trigger, icon trigger, panel, option, current, disabled, sizing, spacing, stacking, and scroll-frame values before primitive behavior can consume them. |
+| Source behavior need | Compact anchored menu select needs governed text trigger, chevron affordance, icon trigger, panel, option, current, disabled, sizing, spacing, stacking, and scroll-frame values before primitive behavior can consume them. |
 | Token category | `surface`, `spacing`, `sizing`, `stacking`, `state frame` |
 | Token job | Govern the reusable frame values for menu-simple-select text triggers, square icon-only triggers, anchored panels, and option states. |
 | Non-goals | ARIA behavior, keyboard handling, option row anatomy, header placement, component APIs, demo routes, canonical scenarios, app adoption. |
@@ -68,7 +68,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | Selected token-type template | `state frame` using existing surface-card renderer shape |
 | Drift or product failure prevented | Prevents trigger, panel, option, current, and disabled frames from drifting between header use, proof route, and future app adoption. |
 | Reference basis | WCAG color-independent state guidance, repo token precedent for frame tokens, and screenshot source material. |
-| Behavior-changing fields | `backgroundValue`, `foregroundValue`, `borderValue`, `radiusValue`, `padding*`, `gapValue`, `minBlockSize`, `minInlineSize`, `maxInlineSize`, `maxBlockSize`, `zIndexValue`, `scrollBehavior`. |
+| Behavior-changing fields | `backgroundValue`, `foregroundValue`, `supportingForegroundValue`, `iconForegroundValue`, `borderValue`, `radiusValue`, `padding*`, `gapValue`, `minBlockSize`, `minInlineSize`, `maxInlineSize`, `maxBlockSize`, `zIndexValue`, `scrollBehavior`. |
 | Evidence-only fields | Preview labels and samples. |
 | Over-structure avoided | Hover and error variants are not signed until primitive or pattern work proves they are needed. |
 
@@ -80,6 +80,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | shared contract | Current state rule | Current frame values must be paired with programmatic selected/current semantics in the primitive. |
 | shared contract | Disabled state rule | Disabled frame values must be paired with programmatic disabled semantics and blocked activation. |
 | system implementation | Default text trigger frame | Theme-specific surface, compact padding, `2.75rem` minimum target height, `10rem` to `18rem` inline range. |
+| system implementation | Trigger supporting label and chevron | Muted supporting foreground for the control eyebrow and green chevron affordance foreground, theme-mapped per system. |
 | system implementation | Default icon trigger frame | Theme-specific square `2.75rem` icon-only target with no visible text. |
 | system implementation | Default panel frame | Neutral anchored panel, `18rem` to `20rem` inline range, `32rem` max block size, and governed overlay stacking above adjacent header/proof content. |
 | system implementation | Default option frames | Rest, current, and disabled option cards share geometry and vary surface/foreground/border. |
@@ -101,7 +102,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | Field | Value |
 | --- | --- |
 | Contract module | `src/frontend/designSystem/layers/02-token/menu-simple-select-frame/contract.mjs` |
-| Required roles or fields | Roles and fields exported by `menuSimpleSelectFrameTokenContract`, including panel stacking. |
+| Required roles or fields | Roles and fields exported by `menuSimpleSelectFrameTokenContract`, including panel stacking, supporting foreground, and icon foreground. |
 | Cross-system consumer rule | Every implementation must expose the same roles and required fields; consumers must use the runtime seam rather than local literals. |
 
 ## System Token Implementation

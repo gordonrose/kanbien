@@ -19,8 +19,8 @@
 ## Purpose
 
 `header-menu-simple-select` composes the governed
-`menu-simple-select-control` primitive with representative parent/current/child
-layer options for use in governed header and toolbar surfaces.
+`menu-simple-select-control` primitive with representative layer, filter, and
+search option fixtures for use in governed header and toolbar surfaces.
 
 It does not own entity page header adoption, component props, backend data,
 route changes, persistence, demo pages, canonical scenarios, or app adoption.
@@ -36,8 +36,9 @@ route changes, persistence, demo pages, canonical scenarios, or app adoption.
 ## Composition Contract
 
 The pattern renders exactly one `menu-simple-select-control` primitive. It owns
-the representative layer-option fixture shape used by header surfaces:
-parent items, one current item, and child-count items.
+representative header option fixture shapes for layer, filter, and search
+selectors. It can render either the text-backed trigger variant or an
+icon-trigger variant with a semantic filter or sort glyph.
 
 The pattern must not recreate trigger, listbox, option, keyboard, selected
 state, disabled state, or dismissal behavior. Those remain primitive-owned.
@@ -50,9 +51,9 @@ in markup that changes its name, focus order, or popup relationship.
 
 ## Data Or Event Contract
 
-The pattern accepts a selected layer value and an optional option list matching
-the primitive option model. Product routing and persistence remain outside the
-pattern.
+The pattern accepts a selected value, optional trigger variant, optional
+trigger icon, and an optional option list matching the primitive option model.
+Product routing and persistence remain outside the pattern.
 
 ## Visual-Skin Boundary
 
@@ -75,11 +76,11 @@ values for the select itself.
 
 | Evidence Area | Requirement |
 | --- | --- |
-| behavior | Unit test covers primitive composition and representative layer options. |
+| behavior | Unit test covers primitive composition, representative layer/filter/sort options, and icon-trigger composition. |
 | accessibility | Unit test verifies rendered primitive attributes are present through the pattern. |
 | primitive consumption | Unit test covers `menu-simple-select-control` dependency. |
 | token consumption | Token consumption remains indirect through the primitive. |
-| rendered verification | Proof route created; browser execution depends on local Chromium dependencies. |
+| rendered verification | Proof route created; browser execution available through local Playwright dependencies. |
 
 ## Rendered View
 

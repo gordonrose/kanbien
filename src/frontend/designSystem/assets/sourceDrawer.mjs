@@ -362,7 +362,7 @@ function getJsSource() {
 - Page headers name grouped regions inside an inherited page structure.
 - Page Header maps to the ListPageStructure first header.
 - Columns 1 and 2 remain separate containers.
-- Columns 3-5, 6-8, and 9-19 become grouped containers.
+- Columns 3-6, 7-10, and 11-19 become grouped containers.
 - Columns 20, 21, 22, 23, and 24 remain separate page-header regions.
 - The rendered page preview keeps the list page header behavior shape while using the container token for grouped regions.`;
   }

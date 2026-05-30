@@ -58,5 +58,8 @@ describe("readiness-status-control primitive seam", () => {
       requiredPrimitives: [],
       allowedStates: ["ready", "needs-review", "blocked", "unknown"],
     });
+    expect(readinessStatusControlPrimitiveContract.consumerRules).toContain(
+      "Consumers may allow this primitive to compress as a single-line text disclosure inside constrained governed headers.",
+    );
   });
 });

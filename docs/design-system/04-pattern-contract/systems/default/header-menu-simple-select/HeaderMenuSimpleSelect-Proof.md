@@ -13,16 +13,17 @@
 
 ## Proof Scope
 
-The default proof renders a header-friendly layer selector using the governed
-`menu-simple-select-control` primitive. The option fixture mirrors the
-screenshot source: parent layer options, one current layer option, and child
-record-count options.
+The default proof renders header-friendly selectors using the governed
+`menu-simple-select-control` primitive. The text-backed layer fixture mirrors
+the screenshot source: parent layer options, one current layer option, and
+child record-count options. The pattern seam also exposes filter and search
+fixtures for icon-trigger usage in one-column header control regions.
 
 ## Primitive Evidence
 
 | Dependency | Evidence |
 | --- | --- |
-| `menu-simple-select-control` | Runtime seam renders the select trigger, listbox, options, selected state, disabled handling, and controller behavior. |
+| `menu-simple-select-control` | Runtime seam renders text and icon select triggers, listbox, options, selected state, disabled handling, semantic filter/sort glyphs, and controller behavior. |
 
 ## Accessibility Evidence
 

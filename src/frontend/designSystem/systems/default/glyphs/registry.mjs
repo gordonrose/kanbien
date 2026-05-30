@@ -6,6 +6,10 @@ export const defaultGlyphRegistry = {
       semanticName: "close",
       svgPath: "M6 6l12 12M18 6L6 18",
     },
+    filter: {
+      semanticName: "filter",
+      svgPath: "M7 7h10l-4 5v4l-2 1v-5z",
+    },
     list: {
       semanticName: "list",
       svgPath: "M5 7h14M5 12h14M5 17h14",
@@ -13,6 +17,10 @@ export const defaultGlyphRegistry = {
     plus: {
       semanticName: "plus",
       svgPath: "M12 5v14M5 12h14",
+    },
+    sort: {
+      semanticName: "sort",
+      svgPath: "M7 8h10M9 12h6M11 16h2",
     },
   },
 };

@@ -79,6 +79,7 @@ export const readinessStatusControlPrimitiveContract = {
   consumerRules: [
     "Consumers must use this primitive for text-backed readiness/status indicators in governed page headers.",
     "Consumers must not locally recreate status labels, role=status semantics, or unknown-state normalization.",
+    "Consumers may allow this primitive to compress as a single-line text disclosure inside constrained governed headers.",
     "Consumers must not add badge surfaces, icons, dots, borders, fills, or colour-only status meaning without a signed token and primitive revision.",
   ],
 };

@@ -3,8 +3,10 @@ import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems
 import { menuSimpleSelectFrameTokenSpec } from "../../02-token/menu-simple-select-frame/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
+import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
 
 const primitiveName = "menu-simple-select-control";
+const supportedTriggerIconNames = ["chevron", "filter", "sort"];
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -84,8 +86,8 @@ function tokenDependenciesFor({ theme, triggerVariant }) {
   );
   const supportingTextStyle = findVariant(
     supportingTextStyleTokenSpec,
-    (variant) => variant.role === "supporting text",
-    "menu-simple-select-control requires a signed supporting text token.",
+    (variant) => variant.role === "control eyebrow text",
+    "menu-simple-select-control requires a signed control eyebrow supporting text token.",
   );
   const focusRing = findVariant(
     focusRingTokenSpec,
@@ -138,6 +140,16 @@ function selectedOptionFor(options, selectedValue) {
   return options.find((option) => option.value === selectedValue && !option.disabled) ?? options.find((option) => !option.disabled) ?? null;
 }
 
+function triggerIconPathFor({ systemKey, triggerIcon }) {
+  if (triggerIcon === "chevron") {
+    return "M6 9l6 6 6-6";
+  }
+  if (systemKey !== "default") {
+    throw new RangeError(`menu-simple-select-control has no glyph registry for "${systemKey}".`);
+  }
+  return resolveDefaultGlyphPath(triggerIcon);
+}
+
 export const menuSimpleSelectControlPrimitiveContract = {
   schema: "kanbien.designSystem.primitiveContract.v1",
   primitiveName,
@@ -153,8 +165,10 @@ export const menuSimpleSelectControlPrimitiveContract = {
     "minimum-target-size",
   ],
   requiredPrimitives: [],
+  requiredSystemRegistries: ["glyph-registry"],
   allowedStates: ["closed", "open", "disabled", "empty"],
   allowedTriggerVariants: ["text", "icon"],
+  allowedTriggerIcons: supportedTriggerIconNames,
   consumerRules: [
     "Consumers must use this primitive for compact anchored single-select controls.",
     "Consumers must not locally recreate trigger/listbox/option markup, keyboard behavior, selected state handling, or disabled behavior.",
@@ -169,6 +183,7 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
   const label = options.label ?? "Select";
   const name = options.name ?? id;
   const triggerVariant = options.triggerVariant === "icon" ? "icon" : "text";
+  const triggerIcon = supportedTriggerIconNames.includes(options.triggerIcon) ? options.triggerIcon : "chevron";
   const disabled = options.disabled === true;
   const optionsList = normalizeOptions(options.options);
   const selectedOption = selectedOptionFor(optionsList, options.value);
@@ -181,6 +196,7 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
   assertString(name, "name");
 
   const tokens = tokenDependenciesFor({ theme, triggerVariant });
+  const triggerIconPath = triggerIconPathFor({ systemKey, triggerIcon });
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",
@@ -191,6 +207,8 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
     label,
     name,
     triggerVariant,
+    triggerIcon,
+    triggerIconPath,
     disabled,
     state,
     value: selectedOption?.value ?? "",
@@ -223,6 +241,13 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
         runtimeSeam: "src/frontend/designSystem/layers/02-token/minimum-target-size/systems/default.mjs#minimumTargetSizeTokenSpec",
       },
     },
+    systemDependencies: {
+      glyphRegistry: {
+        systemKey,
+        semanticGlyphName: triggerIcon,
+        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+      },
+    },
     attributes: {
       id,
       class: "ds-menu-simple-select-control",
@@ -231,11 +256,14 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
       "data-menu-simple-select-state": state,
       "data-menu-simple-select-disabled": disabled ? "true" : "false",
       "data-menu-simple-select-trigger-variant": triggerVariant,
+      "data-menu-simple-select-trigger-icon": triggerIcon,
       "data-menu-simple-select-label": label,
     },
     styleVars: {
       "--primitive-menu-select-trigger-background": tokens.triggerFrame.backgroundValue,
       "--primitive-menu-select-trigger-foreground": tokens.triggerFrame.foregroundValue,
+      "--primitive-menu-select-trigger-supporting-foreground": tokens.triggerFrame.supportingForegroundValue,
+      "--primitive-menu-select-trigger-icon-foreground": tokens.triggerFrame.iconForegroundValue,
       "--primitive-menu-select-trigger-border": tokens.triggerFrame.borderValue,
       "--primitive-menu-select-trigger-radius": tokens.triggerFrame.radiusValue,
       "--primitive-menu-select-trigger-padding-block": tokens.triggerFrame.paddingBlockValue,
@@ -257,6 +285,7 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
       "--primitive-menu-select-panel-z-index": tokens.panelFrame.zIndexValue,
       "--primitive-menu-select-option-background": tokens.optionFrame.backgroundValue,
       "--primitive-menu-select-option-foreground": tokens.optionFrame.foregroundValue,
+      "--primitive-menu-select-option-supporting-foreground": tokens.optionFrame.supportingForegroundValue,
       "--primitive-menu-select-option-border": tokens.optionFrame.borderValue,
       "--primitive-menu-select-option-radius": tokens.optionFrame.radiusValue,
       "--primitive-menu-select-option-padding-block": tokens.optionFrame.paddingBlockValue,
@@ -265,9 +294,11 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
       "--primitive-menu-select-option-min-block-size": tokens.optionFrame.minBlockSize,
       "--primitive-menu-select-current-background": tokens.currentOptionFrame.backgroundValue,
       "--primitive-menu-select-current-foreground": tokens.currentOptionFrame.foregroundValue,
+      "--primitive-menu-select-current-supporting-foreground": tokens.currentOptionFrame.supportingForegroundValue,
       "--primitive-menu-select-current-border": tokens.currentOptionFrame.borderValue,
       "--primitive-menu-select-disabled-background": tokens.disabledOptionFrame.backgroundValue,
       "--primitive-menu-select-disabled-foreground": tokens.disabledOptionFrame.foregroundValue,
+      "--primitive-menu-select-disabled-supporting-foreground": tokens.disabledOptionFrame.supportingForegroundValue,
       "--primitive-menu-select-disabled-border": tokens.disabledOptionFrame.borderValue,
       "--primitive-menu-select-label-font-family": tokens.labelTextStyle.fontFamilyValue,
       "--primitive-menu-select-label-font-size": tokens.labelTextStyle.fontSizeValue,
@@ -324,13 +355,13 @@ export function renderMenuSimpleSelectControlPrimitive(options = {}) {
 
   const triggerContents =
     spec.triggerVariant === "icon"
-      ? `<span class="ds-menu-simple-select-trigger-icon" aria-hidden="true">v</span>`
+      ? renderTriggerIcon(spec)
       : `
         <span class="ds-menu-simple-select-trigger-copy">
           <span class="ds-menu-simple-select-trigger-label">${escapeHtml(spec.label)}</span>
           <span class="ds-menu-simple-select-trigger-value" data-menu-simple-select-current-label>${escapeHtml(spec.currentLabel)}</span>
         </span>
-        <span class="ds-menu-simple-select-trigger-icon" aria-hidden="true">v</span>
+        ${renderTriggerIcon({ ...spec, triggerIcon: "chevron", triggerIconPath: "M6 9l6 6 6-6" })}
       `;
 
   return `
@@ -349,17 +380,41 @@ export function renderMenuSimpleSelectControlPrimitive(options = {}) {
         ${triggerContents}
       </button>
       <div
-        id="${escapeHtml(`${spec.id}-listbox`)}"
         class="ds-menu-simple-select-menu"
-        role="listbox"
         tabindex="-1"
         hidden
-        data-menu-simple-select-listbox
-        aria-label="${escapeHtml(spec.label)}"
+        data-menu-simple-select-menu
       >
-        ${spec.options.length === 0 ? `<p class="ds-menu-simple-select-empty">No options</p>` : spec.options.map((option) => renderOption(spec, option)).join("")}
+        <div class="ds-menu-simple-select-sheet-header" data-menu-simple-select-sheet-header>
+          <span class="ds-menu-simple-select-sheet-title">${escapeHtml(spec.label)}</span>
+          <button class="ds-menu-simple-select-sheet-close" type="button" aria-label="Close ${escapeHtml(spec.label)}" data-menu-simple-select-close>
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        <div
+          id="${escapeHtml(`${spec.id}-listbox`)}"
+          class="ds-menu-simple-select-listbox"
+          role="listbox"
+          tabindex="-1"
+          data-menu-simple-select-listbox
+          aria-label="${escapeHtml(spec.label)}"
+        >
+          ${spec.options.length === 0 ? `<p class="ds-menu-simple-select-empty">No options</p>` : spec.options.map((option) => renderOption(spec, option)).join("")}
+        </div>
       </div>
     </div>
+  `;
+}
+
+function renderTriggerIcon(spec) {
+  return `
+    <span class="ds-menu-simple-select-trigger-icon" data-menu-simple-select-trigger-icon-name="${escapeHtml(spec.triggerIcon)}" aria-hidden="true">
+      <svg class="ds-menu-simple-select-trigger-glyph" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+        <path d="${escapeHtml(spec.triggerIconPath)}" />
+      </svg>
+    </span>
   `;
 }
 
@@ -369,12 +424,13 @@ function labelForTrigger(spec) {
 
 function setOpen(select, open) {
   const trigger = select.querySelector("[data-menu-simple-select-trigger]");
+  const menu = select.querySelector("[data-menu-simple-select-menu]");
   const listbox = select.querySelector("[data-menu-simple-select-listbox]");
-  if (!(trigger instanceof HTMLElement) || !(listbox instanceof HTMLElement)) {
+  if (!(trigger instanceof HTMLElement) || !(menu instanceof HTMLElement) || !(listbox instanceof HTMLElement)) {
     return;
   }
   trigger.setAttribute("aria-expanded", open ? "true" : "false");
-  listbox.hidden = !open;
+  menu.hidden = !open;
   select.dataset.menuSimpleSelectState = open ? "open" : "closed";
   if (open) {
     const current = listbox.querySelector('[aria-selected="true"]:not([disabled])');
@@ -438,6 +494,7 @@ export function attachMenuSimpleSelectControlPrimitiveController(root = document
 
     const trigger = select.querySelector("[data-menu-simple-select-trigger]");
     const listbox = select.querySelector("[data-menu-simple-select-listbox]");
+    const closeButton = select.querySelector("[data-menu-simple-select-close]");
 
     trigger?.addEventListener("click", () => {
       if (!(trigger instanceof HTMLButtonElement) || trigger.disabled) return;
@@ -457,6 +514,11 @@ export function attachMenuSimpleSelectControlPrimitiveController(root = document
       if (option instanceof HTMLButtonElement && !option.disabled) {
         selectOption(select, option);
       }
+    });
+
+    closeButton?.addEventListener("click", () => {
+      setOpen(select, false);
+      trigger instanceof HTMLElement && trigger.focus();
     });
 
     listbox?.addEventListener("keydown", (event) => {

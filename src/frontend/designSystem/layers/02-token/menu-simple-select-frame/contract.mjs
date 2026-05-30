@@ -14,6 +14,8 @@ export const menuSimpleSelectFrameTokenContract = {
     "frameRole",
     "backgroundValue",
     "foregroundValue",
+    "supportingForegroundValue",
+    "iconForegroundValue",
     "borderValue",
     "radiusValue",
     "paddingBlockValue",

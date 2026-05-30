@@ -24,6 +24,8 @@ describe("menu-simple-select-frame token", () => {
       expect.arrayContaining([
         "backgroundValue",
         "foregroundValue",
+        "supportingForegroundValue",
+        "iconForegroundValue",
         "borderValue",
         "radiusValue",
         "paddingBlockValue",
@@ -72,6 +74,8 @@ describe("menu-simple-select-frame token", () => {
       minInlineSize: "2.75rem",
       maxInlineSize: "2.75rem",
       paddingInlineValue: "0",
+      iconForegroundValue: "#008575",
+      supportingForegroundValue: "#64748b",
     });
     expect(tokenDefinitionV1.variants.find((variant) => variant.id.endsWith("panel-frame-default"))?.value).toMatchObject({
       maxBlockSize: "32rem",
@@ -91,6 +95,10 @@ describe("menu-simple-select-frame token", () => {
       title: "Menu Simple Select Frame Token",
     });
     expect(menuSimpleSelectFrameTokenSpec.variants).toHaveLength(18);
+    expect(menuSimpleSelectFrameTokenSpec.variants[0]).toMatchObject({
+      supportingForegroundValue: "#64748b",
+      iconForegroundValue: "#008575",
+    });
     expect(menuSimpleSelectFrameTokenSpec.consumerRestrictions).toContain(
       "Current and disabled frame values must be paired with primitive-owned programmatic state semantics.",
     );

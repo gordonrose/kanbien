@@ -1,5 +1,6 @@
 import {
   attachIconButtonControlPrimitiveController,
+  iconButtonControlPrimitive,
   renderIconButtonControlPrimitive,
 } from "../../03-primitive/icon-button-control/index.mjs";
 import {
@@ -10,6 +11,12 @@ import {
   attachTruncatingLabelPrimitiveController,
   renderTruncatingLabelPrimitive,
 } from "../../03-primitive/truncating-label/index.mjs";
+import {
+  attachHeaderMenuSimpleSelectPatternController,
+  headerFilterOptions,
+  headerSortOptions,
+  renderHeaderMenuSimpleSelectPattern,
+} from "../header-menu-simple-select/index.mjs";
 import { pageHeaderStructureTokenSpec } from "../../02-token/page-header-structure/systems/default.mjs";
 
 const patternName = "entity-page-header";
@@ -17,8 +24,8 @@ const leftSlotOrder = ["leading-control", "secondary-control", "primary-filter",
 const leftSlotWidths = {
   "leading-control": 1,
   "secondary-control": 1,
-  "primary-filter": 3,
-  "secondary-filter": 3,
+  "primary-filter": 4,
+  "secondary-filter": 4,
 };
 
 function assertString(value, fieldName) {
@@ -141,12 +148,13 @@ export const entityPageHeaderPatternContract = {
   status: "review-ready",
   contractPath: "docs/design-system/04-pattern-contract/shared/entity-page-header/EntityPageHeader-Contract.md",
   supportedSystems: ["default"],
-  requiredPatterns: [],
+  requiredPatterns: ["header-menu-simple-select"],
   requiredPrimitives: ["icon-button-control", "readiness-status-control", "truncating-label"],
   directTokenDependencies: ["page-header-structure"],
   consumerRules: [
     "Consumers must use this pattern for governed populated entity page headers.",
     "Consumers must not locally recreate optional-slot compaction, context-title expansion, status semantics, or icon-action behavior.",
+    "Consumers must collapse narrow and mobile header tooling into the pattern-owned header tools menu instead of squeezing independent controls.",
     "Consumers must not treat this pattern as an app adoption seam or component API.",
   ],
 };
@@ -159,8 +167,8 @@ export function entityPageHeaderPattern(options = {}) {
   const selectedEntity = options.selectedEntity ?? "Northstar Operations";
   const category = options.category ?? "Operations";
   const readinessState = options.readinessState ?? "ready";
-  const leadingControlLabel = options.leadingControlLabel ?? "Open filters";
-  const secondaryControlLabel = options.secondaryControlLabel ?? "Sort records";
+  const leadingControlLabel = options.leadingControlLabel ?? "Filter controls";
+  const secondaryControlLabel = options.secondaryControlLabel ?? "Sort controls";
   const showRegionBoundaries = options.showRegionBoundaries === true;
   const actions = normalizeActions(options.actions ?? []);
 
@@ -241,14 +249,16 @@ function renderLeadingSlot(spec, slot) {
   if (slot.id === "leading-control") {
     return `
       <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
-        ${renderIconButtonControlPrimitive({
+        ${renderHeaderMenuSimpleSelectPattern({
           systemKey: spec.systemKey,
           theme: spec.theme,
           id: `${spec.id}-${slot.id}`,
           label: spec.leadingControlLabel,
-          value: slot.id,
-          icon: "list",
-          frameIntent: "quiet",
+          name: `${spec.id}-filter-control`,
+          value: "selected",
+          triggerVariant: "icon",
+          triggerIcon: "filter",
+          options: headerFilterOptions,
         })}
       </div>
     `;
@@ -257,14 +267,47 @@ function renderLeadingSlot(spec, slot) {
   if (slot.id === "secondary-control") {
     return `
       <div class="ds-entity-page-header-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
-        ${renderIconButtonControlPrimitive({
+        ${renderHeaderMenuSimpleSelectPattern({
           systemKey: spec.systemKey,
           theme: spec.theme,
           id: `${spec.id}-${slot.id}`,
           label: spec.secondaryControlLabel,
-          value: slot.id,
-          icon: "list",
-          frameIntent: "quiet",
+          name: `${spec.id}-sort-control`,
+          value: "current",
+          triggerVariant: "icon",
+          triggerIcon: "sort",
+          options: headerSortOptions,
+        })}
+      </div>
+    `;
+  }
+
+  if (slot.id === "primary-filter") {
+    return `
+      <div class="ds-entity-page-header-filter-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
+        ${renderHeaderMenuSimpleSelectPattern({
+          systemKey: spec.systemKey,
+          theme: spec.theme,
+          id: `${spec.id}-filter-select`,
+          label: "Filters",
+          name: `${spec.id}-filters`,
+          value: "selected",
+          options: headerFilterOptions,
+        })}
+      </div>
+    `;
+  }
+
+  if (slot.id === "secondary-filter") {
+    return `
+      <div class="ds-entity-page-header-filter-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
+        ${renderHeaderMenuSimpleSelectPattern({
+          systemKey: spec.systemKey,
+          theme: spec.theme,
+          id: `${spec.id}-layer-select`,
+          label: "Layer",
+          name: `${spec.id}-layer`,
+          value: "organizations",
         })}
       </div>
     `;
@@ -272,7 +315,7 @@ function renderLeadingSlot(spec, slot) {
 
   return `
     <div class="ds-entity-page-header-filter-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)} aria-hidden="true">
-      <span>${slot.id === "primary-filter" ? "Filter group" : "Layer group"}</span>
+      <span>Filter group</span>
     </div>
   `;
 }
@@ -330,6 +373,140 @@ function renderActionSlot(spec, slot) {
   `;
 }
 
+function renderCollapsedMenuTrigger(spec) {
+  const trigger = iconButtonControlPrimitive({
+    systemKey: spec.systemKey,
+    theme: spec.theme,
+    id: `${spec.id}-tools-trigger`,
+    label: "Header tools",
+    value: "header-tools",
+    icon: "list",
+    frameIntent: "quiet",
+  });
+  const attributes = {
+    ...trigger.attributes,
+    "data-icon-button-control-style": cssVarStyle(trigger.styleVars),
+    "data-entity-page-header-tools-trigger": "",
+    "aria-haspopup": "dialog",
+    "aria-expanded": "false",
+    "aria-controls": `${spec.id}-tools-menu`,
+  };
+
+  return `
+    <button ${toAttributeString(attributes)}>
+      <svg class="ds-icon-button-control-glyph" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+        <path d="${escapeHtml(trigger.iconPath)}" />
+      </svg>
+    </button>
+  `;
+}
+
+function renderCollapsedSelectRows(spec) {
+  return `
+    <div class="ds-entity-page-header-tools-group" role="group" aria-label="Header selects">
+      ${renderHeaderMenuSimpleSelectPattern({
+        systemKey: spec.systemKey,
+        theme: spec.theme,
+        id: `${spec.id}-tools-filter-control`,
+        label: spec.leadingControlLabel,
+        name: `${spec.id}-tools-filter-control`,
+        value: "selected",
+        options: headerFilterOptions,
+      })}
+      ${renderHeaderMenuSimpleSelectPattern({
+        systemKey: spec.systemKey,
+        theme: spec.theme,
+        id: `${spec.id}-tools-sort-control`,
+        label: spec.secondaryControlLabel,
+        name: `${spec.id}-tools-sort-control`,
+        value: "current",
+        options: headerSortOptions,
+      })}
+      ${renderHeaderMenuSimpleSelectPattern({
+        systemKey: spec.systemKey,
+        theme: spec.theme,
+        id: `${spec.id}-tools-filter-select`,
+        label: "Filters",
+        name: `${spec.id}-tools-filters`,
+        value: "selected",
+        options: headerFilterOptions,
+      })}
+      ${renderHeaderMenuSimpleSelectPattern({
+        systemKey: spec.systemKey,
+        theme: spec.theme,
+        id: `${spec.id}-tools-layer-select`,
+        label: "Layer",
+        name: `${spec.id}-tools-layer`,
+        value: "organizations",
+      })}
+    </div>
+  `;
+}
+
+function renderCollapsedActionRows(spec) {
+  if (spec.actions.length === 0) {
+    return "";
+  }
+
+  return `
+    <div class="ds-entity-page-header-tools-group ds-entity-page-header-tools-actions" role="group" aria-label="Header actions">
+      ${spec.actions
+        .map(
+          (action, index) => `
+            <button
+              id="${escapeHtml(`${spec.id}-tools-action-${index + 1}`)}"
+              class="ds-entity-page-header-tools-action"
+              type="button"
+              data-entity-page-header-tools-action
+              data-entity-page-header-tools-action-value="${escapeHtml(action.value)}"
+            >
+              <span>${escapeHtml(action.label)}</span>
+            </button>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderCollapsedToolsSlot(spec) {
+  const slot = { id: "collapsed-tools", startColumn: 24, endColumn: 25 };
+  const closeButton = iconButtonControlPrimitive({
+    systemKey: spec.systemKey,
+    theme: spec.theme,
+    id: `${spec.id}-tools-close`,
+    label: "Close header tools",
+    value: "close-header-tools",
+    icon: "close",
+    frameIntent: "quiet",
+  });
+  const closeAttributes = {
+    ...closeButton.attributes,
+    "data-icon-button-control-style": cssVarStyle(closeButton.styleVars),
+    "data-entity-page-header-tools-close": "",
+  };
+
+  return `
+    <div class="ds-entity-page-header-tools-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
+      ${renderCollapsedMenuTrigger(spec)}
+      <div class="ds-entity-page-header-tools-menu" id="${escapeHtml(`${spec.id}-tools-menu`)}" data-entity-page-header-tools-menu hidden role="dialog" aria-label="Header tools">
+        <div class="ds-entity-page-header-tools-menu-header">
+          <span class="ds-entity-page-header-tools-menu-title">Header tools</span>
+          <button ${toAttributeString(closeAttributes)}>
+            <svg class="ds-icon-button-control-glyph" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="${escapeHtml(closeButton.iconPath)}" />
+            </svg>
+          </button>
+        </div>
+        <div class="ds-entity-page-header-tools-menu-body">
+          ${renderCollapsedSelectRows(spec)}
+          ${renderCollapsedActionRows(spec)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 export function renderEntityPageHeaderPattern(options = {}) {
   const spec = entityPageHeaderPattern(options);
   const attributes = {
@@ -351,6 +528,7 @@ export function renderEntityPageHeaderPattern(options = {}) {
             return renderLeadingSlot(spec, slot);
           })
           .join("")}
+        ${renderCollapsedToolsSlot(spec)}
       </header>
     </div>
   `;
@@ -388,9 +566,70 @@ export function attachEntityPageHeaderPatternController(root = document) {
         slot.style.gridColumn = `${gridColumnBoundary(startColumn)} / ${gridColumnBoundary(endColumn)}`;
       }
     }
+
+    const toolsTrigger = header.querySelector("[data-entity-page-header-tools-trigger]");
+    const toolsMenu = header.querySelector("[data-entity-page-header-tools-menu]");
+    const toolsClose = header.querySelector("[data-entity-page-header-tools-close]");
+    if (toolsTrigger instanceof HTMLButtonElement && toolsMenu instanceof HTMLElement) {
+      const closeToolsMenu = () => {
+        toolsTrigger.setAttribute("aria-expanded", "false");
+        toolsMenu.hidden = true;
+      };
+      const openToolsMenu = () => {
+        toolsTrigger.setAttribute("aria-expanded", "true");
+        toolsMenu.hidden = false;
+      };
+
+      toolsTrigger.addEventListener("click", (event) => {
+        event.stopImmediatePropagation();
+        if (toolsMenu.hidden) {
+          openToolsMenu();
+        } else {
+          closeToolsMenu();
+        }
+      });
+
+      toolsClose?.addEventListener("click", (event) => {
+        event.stopImmediatePropagation();
+        closeToolsMenu();
+        toolsTrigger.focus();
+      });
+
+      header.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeToolsMenu();
+          toolsTrigger.focus();
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (event.target instanceof Node && !header.contains(event.target)) {
+          closeToolsMenu();
+        }
+      });
+
+      for (const action of toolsMenu.querySelectorAll("[data-entity-page-header-tools-action]")) {
+        if (!(action instanceof HTMLButtonElement)) {
+          continue;
+        }
+        action.addEventListener("click", () => {
+          action.dispatchEvent(
+            new CustomEvent("icon-button-control:activate", {
+              bubbles: true,
+              detail: {
+                value: action.dataset.entityPageHeaderToolsActionValue,
+                id: action.id,
+              },
+            }),
+          );
+          closeToolsMenu();
+        });
+      }
+    }
   }
 
   attachIconButtonControlPrimitiveController(root);
   attachReadinessStatusControlPrimitiveController(root);
   attachTruncatingLabelPrimitiveController(root);
+  attachHeaderMenuSimpleSelectPatternController(root);
 }

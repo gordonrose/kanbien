@@ -33,6 +33,19 @@ export const headerLayerOptions = [
   { value: "users", label: "6 records", eyebrow: "Child", trailingLabel: "Users" },
 ];
 
+export const headerFilterOptions = [
+  { value: "selected", label: "0 selected", eyebrow: "Filters", trailingLabel: "Selected" },
+  { value: "ready", label: "Ready", eyebrow: "Status", trailingLabel: "Ready" },
+  { value: "needs-review", label: "Needs review", eyebrow: "Status", trailingLabel: "Needs review" },
+  { value: "blocked", label: "Blocked", eyebrow: "Status", trailingLabel: "Blocked" },
+];
+
+export const headerSortOptions = [
+  { value: "current", label: "Current", eyebrow: "Sort", trailingLabel: "Current" },
+  { value: "name", label: "Name", eyebrow: "Sort", trailingLabel: "Name" },
+  { value: "status", label: "Status", eyebrow: "Sort", trailingLabel: "Status" },
+];
+
 export function headerMenuSimpleSelectPattern(options = {}) {
   const systemKey = options.systemKey ?? "default";
   const theme = options.theme ?? "original";
@@ -40,6 +53,8 @@ export function headerMenuSimpleSelectPattern(options = {}) {
   const label = options.label ?? "Layer";
   const name = options.name ?? "headerLayer";
   const value = options.value ?? "organizations";
+  const triggerVariant = options.triggerVariant === "icon" ? "icon" : "text";
+  const triggerIcon = options.triggerIcon ?? "chevron";
   const primitive = menuSimpleSelectControlPrimitive({
     systemKey,
     theme,
@@ -47,6 +62,8 @@ export function headerMenuSimpleSelectPattern(options = {}) {
     label,
     name,
     value,
+    triggerVariant,
+    triggerIcon,
     options: options.options ?? headerLayerOptions,
   });
 
@@ -59,6 +76,8 @@ export function headerMenuSimpleSelectPattern(options = {}) {
     label,
     name,
     value: primitive.value,
+    triggerVariant,
+    triggerIcon: primitive.triggerIcon,
     primitive,
     consumerRestrictions: headerMenuSimpleSelectPatternContract.consumerRules,
   };
@@ -76,6 +95,8 @@ export function renderHeaderMenuSimpleSelectPattern(options = {}) {
         label: spec.label,
         name: spec.name,
         value: spec.value,
+        triggerVariant: spec.triggerVariant,
+        triggerIcon: spec.triggerIcon,
         options: spec.primitive.options,
       })}
     </div>

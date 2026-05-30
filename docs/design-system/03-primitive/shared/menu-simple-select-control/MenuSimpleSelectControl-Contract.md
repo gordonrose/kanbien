@@ -38,12 +38,12 @@ app-local CSS.
 | Observed Decision | Owning Layer | Existing Governed Seam | Missing Seam Or Blocker | Primitive Action |
 | --- | --- | --- | --- | --- |
 | Trigger opens a compact anchored menu. | `03-primitive` | none in active chain | primitive missing | Create primitive render/controller seam. |
-| Trigger can be text-backed or square icon-only. | `03-primitive` with `02-token` frame support | no primitive variant yet | icon trigger variant missing | Primitive owns trigger variant selection and preserves accessible label/current value when visible text is omitted. |
+| Trigger can be text-backed or square icon-only. | `03-primitive` with `02-token` frame and glyph-registry support | no primitive variant yet | icon trigger variant missing | Primitive owns trigger variant and semantic trigger-icon selection, preserving accessible label/current value when visible text is omitted. |
 | Listbox exposes mutually exclusive options and exactly one current option. | `03-primitive` | none in active chain | primitive missing | Primitive owns selected semantics and hidden value reflection. |
 | Escape/outside click dismisses without changing value. | `03-primitive` | none in active chain | controller missing | Primitive owns dismissal behavior. |
 | Arrow keys traverse enabled options. | `03-primitive` | none in active chain | controller missing | Primitive owns keyboard traversal. |
 | Option row may display eyebrow and trailing label. | `03-primitive` for semantics, later `04-pattern-contract` for rich data composition | none | pattern missing | Primitive allows optional text fields; pattern owns data mapping and header placement. |
-| Token values for trigger, panel, option, current, disabled, focus, and text are required. | `02-token` | `menu-simple-select-frame`, `label-text-style`, `supporting-text-style`, `focus-ring`, `minimum-target-size` | none | Consume signed token seams. |
+| Token values for trigger, chevron affordance, panel, option, current, disabled, focus, and text are required. | `02-token` | `menu-simple-select-frame`, `label-text-style`, `supporting-text-style`, `focus-ring`, `minimum-target-size` | none | Consume signed token seams. |
 
 ## Upstream Gates
 
@@ -58,9 +58,9 @@ app-local CSS.
 
 | Token Dependency | Shared Contract | System | System Implementation | Runtime Seam | Primitive Decision Supported | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `menu-simple-select-frame` | `docs/design-system/02-token/shared/menu-simple-select-frame/MenuSimpleSelectFrame-Contract.md` | `default` | `docs/design-system/02-token/systems/default/menu-simple-select-frame/MenuSimpleSelectFrame-Implementation.md` | `src/frontend/designSystem/layers/02-token/menu-simple-select-frame/systems/default.mjs#menuSimpleSelectFrameTokenSpec` | Text trigger, icon trigger, panel, option, current, disabled frames and scroll limits. | `consumable` |
+| `menu-simple-select-frame` | `docs/design-system/02-token/shared/menu-simple-select-frame/MenuSimpleSelectFrame-Contract.md` | `default` | `docs/design-system/02-token/systems/default/menu-simple-select-frame/MenuSimpleSelectFrame-Implementation.md` | `src/frontend/designSystem/layers/02-token/menu-simple-select-frame/systems/default.mjs#menuSimpleSelectFrameTokenSpec` | Text trigger, chevron foreground, icon trigger, panel, option, current, disabled frames and scroll limits. | `consumable` |
 | `label-text-style` | `docs/design-system/02-token/shared/label-text-style/LabelTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/label-text-style/LabelTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs#labelTextStyleTokenSpec` | Trigger value and option main label text. | `consumable` |
-| `supporting-text-style` | `docs/design-system/02-token/shared/supporting-text-style/SupportingTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/supporting-text-style/SupportingTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec` | Trigger label, option eyebrow, and trailing label text. | `consumable` |
+| `supporting-text-style` | `docs/design-system/02-token/shared/supporting-text-style/SupportingTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/supporting-text-style/SupportingTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec` | Uppercase trigger label, option eyebrow, and trailing label text. | `consumable` |
 | `focus-ring` | `docs/design-system/02-token/shared/focus-ring/FocusRing-Contract.md` | `default` | `docs/design-system/02-token/systems/default/focus-ring/FocusRing-Implementation.md` | `src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs#focusRingTokenSpec` | Visible keyboard focus. | `consumable` |
 | `minimum-target-size` | `docs/design-system/02-token/shared/minimum-target-size/MinimumTargetSize-Contract.md` | `default` | `docs/design-system/02-token/systems/default/minimum-target-size/MinimumTargetSize-Implementation.md` | `src/frontend/designSystem/layers/02-token/minimum-target-size/systems/default.mjs#minimumTargetSizeTokenSpec` | Trigger and option minimum interactive target. | `consumable` |
 
@@ -71,6 +71,10 @@ trigger may be text-backed or square icon-only. It opens from the trigger,
 closes on dismissal, updates the current value when an enabled option is
 selected, and reflects that value in a hidden input for containing forms or
 controllers.
+
+At mobile constrained widths, the opened menu may become a full-viewport sheet
+with an explicit close button. The sheet header must sit outside the actual
+`role="listbox"` element so options remain the only listbox children.
 
 The primitive owns keyboard open, traversal, selection, and Escape dismissal.
 It does not own product state, route navigation, data fetching, or header
@@ -101,8 +105,8 @@ This primitive follows the shared WCAG 2.2 AA default.
 
 | Variant | Required Behavior |
 | --- | --- |
-| `text` | Trigger shows the control label and current value using governed text tokens. |
-| `icon` | Trigger renders as a square icon-only target while preserving the full accessible trigger name and current-value announcement. |
+| `text` | Trigger shows the uppercase control label, current value, and green chevron affordance using governed token values. |
+| `icon` | Trigger renders as a square icon-only target with a governed semantic glyph such as filter or sort while preserving the full accessible trigger name and current-value announcement. |
 
 ## Data Or Event Contract
 

@@ -13,7 +13,11 @@
 
 ## Implementation Decision
 
-The default system uses compact, high-emphasis secondary text for dense
-controls. It deliberately avoids opacity so contrast does not depend on an
-untracked alpha value. Foreground colour is inherited from the consuming
-surface state rather than owned by this typography token.
+The default system uses compact, high-emphasis supporting text for dense
+controls. The default supporting row keeps natural case, while the control
+eyebrow variant uses the same compact scale with uppercase transform for
+field-like labels such as `Layer`.
+
+It deliberately avoids opacity so contrast does not depend on an untracked
+alpha value. Foreground colour is inherited from the consuming surface or
+frame state rather than owned by this typography token.

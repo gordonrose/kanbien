@@ -56,6 +56,7 @@ function isApprovedDisclosureBlock(selector: string, body: string): boolean {
     selector.includes(".ds-simple-dropdown-trigger-label") ||
     selector.includes(".ds-simple-dropdown-option-label") ||
     selector.includes(".ds-simple-dropdown-option-supporting") ||
+    selector.includes(".ds-readiness-status-control") ||
     body.includes("data-truncating-label")
   );
 }

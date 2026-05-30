@@ -40,7 +40,7 @@ app-local CSS.
 | Header status must be visible as text and programmatically exposed. | 03-primitive | none | Missing primitive in readiness index. | Create `readiness-status-control`. |
 | Header status must not rely on colour alone. | 03-primitive | entity-page-header behavior rule | Any coloured badge would need Layer 2 tokens. | Use text-backed status only. |
 | Status text may later sit inside a compact header region. | 04-pattern-contract | `page-header-structure` token | Header composition not created yet. | Defer slot placement to pattern. |
-| Long status copy may need disclosure if constrained. | 03-primitive | `truncating-label` accepted | This primitive keeps required visible text short; long disclosure remains a pattern or future primitive revision. | Do not truncate in the primitive contract. |
+| Status copy may need to yield inside a constrained one-line header. | 03-primitive | `readiness-status-control` owns the visible status text and accessible status name. | The entity header can compress before the whole context region hides. | Allow this primitive to compress as a single-line disclosure inside governed headers. |
 
 ## Upstream Gates
 
@@ -70,6 +70,11 @@ tooltip, or action behavior.
 
 The primitive must not create a visual badge, dot, icon, border, fill, or colour
 tone until those visual decisions are backed by signed Layer 2 tokens.
+
+Inside constrained governed headers, the primitive may compress as a single-line
+text disclosure before the parent header hides the whole context region.
+Consumers must not add local title-only disclosure, duplicate status clipping
+rules, or route-local tooltip behavior.
 
 ## Accessibility Contract
 
@@ -103,12 +108,12 @@ events and does not normalize backend domain models.
 
 | Field | Value |
 | --- | --- |
-| Can visible text be constrained? | no |
-| Text-disclosure primitive dependency | not-applicable |
-| Full-text disclosure behavior | The primitive only renders short approved labels. Longer explanatory text belongs to a later pattern or future primitive revision. |
+| Can visible text be constrained? | yes, only inside governed constrained headers |
+| Text-disclosure primitive dependency | self-owned by `readiness-status-control` for its short status label |
+| Full-text disclosure behavior | The accessible name preserves the status label and value; longer explanatory text belongs to a later pattern or future primitive revision. |
 | Fitting-text evidence | focused unit test and proof route |
-| Truncated-text evidence | not-applicable |
-| Forbidden fallback | raw ellipsis, clipping, title-only disclosure, route-local tooltip logic, or copied controller behavior |
+| Truncated-text evidence | entity page header pattern browser geometry at constrained widths |
+| Forbidden fallback | title-only disclosure, route-local tooltip logic, copied controller behavior, or consumer-owned duplicate clipping |
 
 ## Visual-Skin Boundary
 

@@ -18,6 +18,11 @@ indicators. It demonstrates that status meaning is carried by visible text and
 programmatic status semantics, not by colour, icon, fill, border, or badge
 shape.
 
+The primitive may compress as a single-line text disclosure only when a
+governed constrained header owns the parent overflow and hide behavior. The
+entity page header pattern supplies the constrained-width browser evidence for
+that composition.
+
 ## Token Evidence
 
 | Token | Evidence |
@@ -38,4 +43,5 @@ meaning.
 ## Consumer Boundary
 
 Later layers consume the runtime seam. They must not copy proof route markup,
-invent local badge CSS, or infer additional states from the proof fixture.
+invent local badge CSS, duplicate status clipping, or infer additional states
+from the proof fixture.

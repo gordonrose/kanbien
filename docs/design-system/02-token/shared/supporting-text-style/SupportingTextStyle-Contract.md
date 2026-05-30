@@ -16,8 +16,8 @@
 
 ## Purpose
 
-This token governs the secondary supporting text row inside a rectangular
-compact UI, such as `3 items` or `10 fields`.
+This token governs supporting text inside compact UI, including secondary rows
+such as `3 items` and short control eyebrows such as `Layer`.
 
 It does not define the primary label, item surface, foreground colour, current
 state, count calculation, or app data contract.
@@ -26,7 +26,7 @@ state, count calculation, or app data contract.
 
 | Scope | Token Decision | Value |
 | --- | --- | --- |
-| `shared contract` | Required role | `supporting text` |
+| `shared contract` | Required roles | `supporting text`; `control eyebrow text` |
 | `shared contract` | Overflow posture | Single-line truncation-ready text style |
 | `shared contract` | Foreground rule | Inherit foreground from the consuming item context. |
 | `system implementation` | Font family | Inter with system UI fallbacks |
@@ -34,6 +34,7 @@ state, count calculation, or app data contract.
 | `system implementation` | Font weight | `800` |
 | `system implementation` | Line height | `1.2` |
 | `system implementation` | Letter spacing | `0` |
+| `system implementation` | Control eyebrow transform | `uppercase` |
 | `system implementation` | Runtime seam | `src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec` |
 
 ## Rendered View
@@ -47,7 +48,7 @@ state, count calculation, or app data contract.
 
 | Consumer | Rule |
 | --- | --- |
-| `03-primitive` | May consume this token for secondary text inside compact controls such as `index-nav-item-control`. |
+| `03-primitive` | May consume this token for secondary text inside compact controls and field-like control eyebrows such as `menu-simple-select-control`. |
 | `04-pattern-contract` | May consume this token only through the primitive unless a future pattern owns direct supporting text. |
 | `app pages` | Denied; app pages must consume later governed primitives or patterns. |
 

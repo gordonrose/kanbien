@@ -26,11 +26,13 @@ describe("page-header-structure token seam", () => {
       layoutRole: "page header structure",
       visibleColumnCount: "24",
       gapValue: "0",
-      tokenValue: "1, 2, 3-5, 6-8, 9-19, 20, 21, 22, 23, 24",
+      tokenValue: "1, 2, 3-6, 7-10, 11-19, 20, 21, 22, 23, 24",
       sourceTokenName: "shared foundation header",
     });
 
-    expect(pageHeaderStructureTokenVariants[0].regions).toContain("context-title (9-19)");
+    expect(pageHeaderStructureTokenVariants[0].regions).toContain("primary-filter (3-6)");
+    expect(pageHeaderStructureTokenVariants[0].regions).toContain("secondary-filter (7-10)");
+    expect(pageHeaderStructureTokenVariants[0].regions).toContain("context-title (11-19)");
     expect(pageHeaderStructureTokenVariants[0].regions).toContain("action-5 (24-24)");
     expect(pageHeaderStructureTokenSpec.consumerRestrictions).toEqual(
       expect.arrayContaining([

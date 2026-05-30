@@ -6082,16 +6082,31 @@ html[dir="rtl"] .canonical-render-template-panel-list,
   grid-column: 2 / 3;
 }
 
-.token-page-header-group[data-page-header-span="3-5"] {
+.token-page-header-group[data-page-header-span="3-5"],
+.token-page-header-group[data-page-header-span="3-6"] {
   grid-column: 3 / 6;
 }
 
-.token-page-header-group[data-page-header-span="6-8"] {
+.token-page-header-group[data-page-header-span="3-6"] {
+  grid-column-end: 7;
+}
+
+.token-page-header-group[data-page-header-span="6-8"],
+.token-page-header-group[data-page-header-span="7-10"] {
   grid-column: 6 / 9;
 }
 
-.token-page-header-group[data-page-header-span="9-19"] {
+.token-page-header-group[data-page-header-span="7-10"] {
+  grid-column: 7 / 11;
+}
+
+.token-page-header-group[data-page-header-span="9-19"],
+.token-page-header-group[data-page-header-span="11-19"] {
   grid-column: 9 / var(--token-page-header-tail-20);
+}
+
+.token-page-header-group[data-page-header-span="11-19"] {
+  grid-column-start: 11;
 }
 
 .token-page-header-group[data-page-header-span="20"] {
@@ -8884,7 +8899,8 @@ html[data-theme="desert"] .token-header-layout,
     display: none;
   }
 
-  .token-page-header-group[data-page-header-span="9-19"] {
+  .token-page-header-group[data-page-header-span="9-19"],
+  .token-page-header-group[data-page-header-span="11-19"] {
     display: none;
   }
 }
