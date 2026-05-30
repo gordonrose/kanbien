@@ -467,6 +467,53 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "choice-grid-sample") {
+    return `
+      <div
+        class="token-spec-choice-grid-preview"
+        data-token-preview-choice-columns="${escapeHtml(variant.preview.columnCount)}"
+        data-token-preview-choice-row-gap="${escapeHtml(variant.preview.rowGap)}"
+        data-token-preview-choice-column-gap="${escapeHtml(variant.preview.columnGap)}"
+        data-token-preview-choice-collapse-threshold="${escapeHtml(variant.preview.optionCollapseThresholdInlineSize)}"
+        aria-hidden="true"
+      >
+        <span>Item 1</span>
+        <span>Item 2</span>
+        <span>Item 3</span>
+        <span>Item 4</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "choice-card-state-affordance-sample") {
+    return `
+      <div
+        class="token-spec-choice-affordance-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-choice-affordance-glyph-inline-size="${escapeHtml(variant.preview.glyphInlineSize)}"
+        data-token-preview-choice-affordance-glyph-block-size="${escapeHtml(variant.preview.glyphBlockSize)}"
+        data-token-preview-choice-affordance-leading-inline-size="${escapeHtml(variant.preview.leadingInlineSize)}"
+        data-token-preview-choice-affordance-trailing-min-inline-size="${escapeHtml(variant.preview.trailingMinInlineSize)}"
+        data-token-preview-choice-affordance-gap="${escapeHtml(variant.preview.contentGapValue)}"
+        data-token-preview-font-family="${escapeHtml(variant.preview.fontFamily)}"
+        data-token-preview-font-size="${escapeHtml(variant.preview.fontSize)}"
+        data-token-preview-font-weight="${escapeHtml(variant.preview.fontWeight)}"
+        data-token-preview-line-height="${escapeHtml(variant.preview.lineHeight)}"
+        aria-hidden="true"
+      >
+        ${renderChoiceAffordanceGlyph(variant.preview.glyphSemantic)}
+        <strong data-token-choice-affordance-disclosure-source>${escapeHtml(variant.preview.sample)}</strong>
+        <span class="token-spec-choice-affordance-state" data-token-choice-affordance-disclosure-source>${escapeHtml(variant.preview.stateText)}</span>
+        <span class="token-spec-choice-affordance-tooltip" role="tooltip" data-token-choice-affordance-tooltip>${escapeHtml(
+          `${variant.preview.sample} ${variant.preview.stateText}`,
+        )}</span>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "icon-size-sample") {
     return `
       <div class="token-spec-frame-preview" aria-hidden="true">
@@ -521,6 +568,28 @@ function renderVariantCard(pageModel, variant) {
 
 function renderList(items) {
   return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+}
+
+function renderChoiceAffordanceGlyph(glyphSemantic) {
+  const pathsBySemantic = {
+    "visibility-on": `
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="2.5" />
+    `,
+    "visibility-off": `
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="m4.5 4.5 15 15" />
+    `,
+    "selected-check": '<path d="m5 12 4 4 10-10" />',
+    "not-selected-x": '<path d="m7 7 10 10" /><path d="m17 7-10 10" />',
+  };
+  const paths = pathsBySemantic[glyphSemantic] ?? pathsBySemantic["not-selected-x"];
+  return `
+    <span class="token-spec-choice-affordance-glyph" data-token-choice-affordance-glyph-semantic="${escapeHtml(glyphSemantic)}">
+      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">${paths}</svg>
+    </span>
+  `;
 }
 
 function applyPreviewStyles(root) {
@@ -622,6 +691,48 @@ function applyPreviewStyles(root) {
     }
   }
 
+  for (const element of root.querySelectorAll("[data-token-preview-choice-columns]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-choice-columns", element.dataset.tokenPreviewChoiceColumns ?? "1");
+      element.style.setProperty("--token-preview-choice-row-gap", element.dataset.tokenPreviewChoiceRowGap ?? "");
+      element.style.setProperty("--token-preview-choice-column-gap", element.dataset.tokenPreviewChoiceColumnGap ?? "");
+      element.style.setProperty(
+        "--token-preview-choice-collapse-threshold",
+        element.dataset.tokenPreviewChoiceCollapseThreshold ?? "",
+      );
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-choice-affordance-glyph-inline-size]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty(
+        "--token-preview-choice-affordance-glyph-inline-size",
+        element.dataset.tokenPreviewChoiceAffordanceGlyphInlineSize ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-choice-affordance-glyph-block-size",
+        element.dataset.tokenPreviewChoiceAffordanceGlyphBlockSize ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-choice-affordance-leading-inline-size",
+        element.dataset.tokenPreviewChoiceAffordanceLeadingInlineSize ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-choice-affordance-trailing-min-inline-size",
+        element.dataset.tokenPreviewChoiceAffordanceTrailingMinInlineSize ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-choice-affordance-gap",
+        element.dataset.tokenPreviewChoiceAffordanceGap ?? "",
+      );
+      element.style.setProperty("--token-preview-font-family", element.dataset.tokenPreviewFontFamily ?? "");
+      element.style.setProperty("--token-preview-font-size", element.dataset.tokenPreviewFontSize ?? "");
+      element.style.setProperty("--token-preview-font-weight", element.dataset.tokenPreviewFontWeight ?? "");
+      element.style.setProperty("--token-preview-line-height", element.dataset.tokenPreviewLineHeight ?? "");
+    }
+  }
 }
 
 function isValidHex(value) {
@@ -653,6 +764,9 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   const buttonBackground = root.querySelector("[data-token-diagnostic-role='button-background']");
   const buttonForeground = root.querySelector("[data-token-diagnostic-role='button-foreground']");
   const buttonBorder = root.querySelector("[data-token-diagnostic-role='button-border']");
+  const choiceOptionBackground = root.querySelector("[data-token-diagnostic-role='choice-option-background']");
+  const choiceOptionForeground = root.querySelector("[data-token-diagnostic-role='choice-option-foreground']");
+  const choiceOptionBorder = root.querySelector("[data-token-diagnostic-role='choice-option-border']");
 
   if (!(input instanceof HTMLInputElement)) {
     return;
@@ -735,6 +849,22 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
       buttonBorder.style.color = value;
       buttonBorder.style.outline = `0.125rem solid color-mix(in srgb, ${value} 30%, ${surfaceValue})`;
       buttonBorder.style.outlineOffset = "0.125rem";
+    }
+    if (choiceOptionBackground instanceof HTMLElement) {
+      choiceOptionBackground.style.background = `color-mix(in srgb, ${value} ${tintSourceRatio}, ${surfaceValue})`;
+      choiceOptionBackground.style.color = value;
+    }
+    if (choiceOptionForeground instanceof HTMLElement) {
+      choiceOptionForeground.style.background = `color-mix(in srgb, ${value} ${tintSourceRatio}, ${surfaceValue})`;
+      choiceOptionForeground.style.color = foregroundSourceRatio
+        ? `color-mix(in srgb, ${value} ${foregroundSourceRatio}, ${foregroundMixTarget})`
+        : value;
+    }
+    if (choiceOptionBorder instanceof HTMLElement) {
+      choiceOptionBorder.style.background = surfaceValue;
+      choiceOptionBorder.style.color = value;
+      choiceOptionBorder.style.outline = `0.125rem solid color-mix(in srgb, ${value} 68%, ${surfaceValue})`;
+      choiceOptionBorder.style.outlineOffset = "0.125rem";
     }
     if (sourceValue instanceof HTMLElement) {
       sourceValue.textContent = value.toLowerCase();
@@ -881,6 +1011,67 @@ export function renderTokenSpecPage({ pageModel, target = document }) {
   `;
 
   applyPreviewStyles(root);
+  applyChoiceAffordanceDisclosure(root);
   applyDependencyOverrideDiagnostic(root, pageModel);
   applyInlineSizeRangeDiagnostic(root, pageModel);
+}
+
+function applyChoiceAffordanceDisclosure(root) {
+  const previews = Array.from(root.querySelectorAll(".token-spec-choice-affordance-preview"));
+
+  function hasOverflow(element) {
+    return element.scrollWidth > element.clientWidth + 1;
+  }
+
+  function positionTooltip(preview) {
+    const tooltip = preview.querySelector("[data-token-choice-affordance-tooltip]");
+    if (!(tooltip instanceof HTMLElement)) {
+      return;
+    }
+    const previewBox = preview.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    const viewport = preview.ownerDocument.defaultView;
+    const gutter = 8;
+    const width = tooltipBox.width || Math.min(320, Math.max(160, previewBox.width));
+    const height = tooltipBox.height || 48;
+    const viewportWidth = viewport?.innerWidth ?? 0;
+    const viewportHeight = viewport?.innerHeight ?? 0;
+    const top = previewBox.top - height - gutter >= gutter
+      ? previewBox.top - height - gutter
+      : Math.min(previewBox.bottom + gutter, Math.max(gutter, viewportHeight - height - gutter));
+    const left = Math.min(Math.max(previewBox.left, gutter), Math.max(gutter, viewportWidth - width - gutter));
+    tooltip.style.setProperty("--token-choice-affordance-tooltip-top", `${Math.round(top)}px`);
+    tooltip.style.setProperty("--token-choice-affordance-tooltip-left", `${Math.round(left)}px`);
+  }
+
+  function updateOverflow(preview) {
+    const sources = Array.from(preview.querySelectorAll("[data-token-choice-affordance-disclosure-source]"));
+    const overflows = sources.some((source) => source instanceof HTMLElement && hasOverflow(source));
+    preview.dataset.tokenChoiceAffordanceOverflow = overflows ? "true" : "false";
+    if (!overflows) {
+      preview.dataset.tokenChoiceAffordanceOpen = "false";
+    }
+  }
+
+  function setOpen(preview, open) {
+    const canOpen = preview.dataset.tokenChoiceAffordanceOverflow === "true";
+    preview.dataset.tokenChoiceAffordanceOpen = open && canOpen ? "true" : "false";
+    if (open && canOpen) {
+      positionTooltip(preview);
+      requestAnimationFrame(() => positionTooltip(preview));
+    }
+  }
+
+  for (const preview of previews) {
+    if (!(preview instanceof HTMLElement)) {
+      continue;
+    }
+    updateOverflow(preview);
+    if ("ResizeObserver" in window) {
+      const observer = new ResizeObserver(() => updateOverflow(preview));
+      observer.observe(preview);
+    }
+    preview.addEventListener("pointerenter", () => setOpen(preview, true));
+    preview.addEventListener("pointerleave", () => setOpen(preview, false));
+  }
 }

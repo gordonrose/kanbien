@@ -131,6 +131,24 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.choice-card-state-affordance") {
+          const registeredTokenModule = await registration.tokens?.choiceCardStateAffordance?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.dropdown-listbox-frame") {
+          const registeredTokenModule = await registration.tokens?.dropdownListboxFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
+        if (contractId === "tokens.dropdown-trigger-frame") {
+          const registeredTokenModule = await registration.tokens?.dropdownTriggerFrame?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.focus-ring") {
           const registeredTokenModule = await registration.tokens?.focusRing?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();

@@ -38,9 +38,23 @@ function isScannable(path: string): boolean {
 
 function isApprovedDisclosureBlock(selector: string, body: string): boolean {
   return (
+    selector.includes('data-radio-simple-select-legend-presentation="visually-hidden"') ||
+    selector.includes(".token-spec-choice-affordance-preview") ||
+    selector.includes(".token-spec-choice-affordance-state") ||
     selector.includes(".ds-truncating-label-text") ||
     selector.includes(".ds-index-nav-item-control-label") ||
     selector.includes(".ds-index-nav-item-control-supporting") ||
+    selector.includes(".ds-radio-simple-select-text") ||
+    selector.includes(".ds-radio-simple-select-supporting") ||
+    selector.includes(".ds-radio-simple-select-group-supporting") ||
+    selector.includes(".ds-card-list-select-text") ||
+    selector.includes(".ds-card-list-select-supporting") ||
+    selector.includes(".ds-card-list-select-group-supporting") ||
+    selector.includes(".ds-card-list-select-state-text") ||
+    selector.includes(".ds-card-list-select-input") ||
+    selector.includes(".ds-simple-dropdown-trigger-label") ||
+    selector.includes(".ds-simple-dropdown-option-label") ||
+    selector.includes(".ds-simple-dropdown-option-supporting") ||
     body.includes("data-truncating-label")
   );
 }

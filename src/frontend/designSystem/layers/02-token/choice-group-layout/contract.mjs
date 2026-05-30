@@ -1,0 +1,25 @@
+export const choiceGroupLayoutTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.choice-group-layout",
+  tokenType: "choice-group-layout",
+  requiredVariantRoles: ["choice group layout"],
+  requiredColumnCounts: [1, 2, 3, 4],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "layoutRole",
+    "columnCount",
+    "gridTemplateColumns",
+    "rowGapValue",
+    "columnGapValue",
+    "optionCollapseThresholdInlineSize",
+    "maxInlineSize",
+    "responsiveBehavior",
+  ],
+  metadataFields: ["layoutRole", "columnCount", "responsiveBehavior", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "responsiveRule"],
+  consumerRules: [
+    "Consumers must use this token for governed choice-group column layout instead of local grid literals.",
+    "This token approves requested 1, 2, 3, and 4 column layouts; consuming primitives own responsive collapse evidence.",
+    "This token does not define option frame visuals, radio semantics, selected state, focus behavior, or text disclosure.",
+  ],
+};

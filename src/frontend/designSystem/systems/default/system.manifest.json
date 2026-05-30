@@ -23,6 +23,24 @@
       "implementationExport": "buttonFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/button-frame"
     },
+    "tokens.choice-card-state-affordance": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/choice-card-state-affordance/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/choiceCardStateAffordance.tokens.mjs",
+      "implementationExport": "choiceCardStateAffordanceTokenSpec",
+      "pageRoute": "/design-system/default/tokens/choice-card-state-affordance"
+    },
+    "tokens.dropdown-listbox-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/dropdown-listbox-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/dropdownListboxFrame.tokens.mjs",
+      "implementationExport": "dropdownListboxFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/dropdown-listbox-frame"
+    },
+    "tokens.dropdown-trigger-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/dropdown-trigger-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/dropdownTriggerFrame.tokens.mjs",
+      "implementationExport": "dropdownTriggerFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/dropdown-trigger-frame"
+    },
     "tokens.error-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/error-text-style/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/errorTextStyle.tokens.mjs",
