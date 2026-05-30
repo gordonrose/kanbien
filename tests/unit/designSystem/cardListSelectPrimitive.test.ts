@@ -28,6 +28,7 @@ describe("card-list-select primitive", () => {
       variant: "visibility",
       tokenDependencies: {
         choiceOptionFrameDefault: { variantId: "choice-option-frame-default-original" },
+        choiceOptionFrameError: { variantId: "choice-option-frame-error-original" },
         choiceCardStateAffordanceVisible: { variantId: "choice-card-state-affordance-visible-original" },
         choiceGroupLayout: { variantId: "choice-group-layout-2-column" },
       },
@@ -76,6 +77,23 @@ describe("card-list-select primitive", () => {
     );
     expect(() => cardListSelectPrimitive({ columns: 5, options })).toThrow(
       "card-list-select columns must be 1, 2, 3, or 4.",
+    );
+  });
+
+  it("supports error state and visually hidden semantic legends for field composition", () => {
+    const html = renderCardListSelectPrimitive({
+      state: "error",
+      legendPresentation: "visually-hidden",
+      selectedValues: [],
+      options,
+    });
+
+    expect(html).toContain('data-card-list-select-state="error"');
+    expect(html).toContain('data-card-list-select-option-state="error"');
+    expect(html).toContain('aria-invalid="true"');
+    expect(html).toContain('data-card-list-select-legend-presentation="visually-hidden"');
+    expect(() => cardListSelectPrimitive({ legendPresentation: "hidden", options })).toThrow(
+      'card-list-select legendPresentation must be "visible" or "visually-hidden".',
     );
   });
 });

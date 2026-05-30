@@ -39,6 +39,7 @@ function isScannable(path: string): boolean {
 function isApprovedDisclosureBlock(selector: string, body: string): boolean {
   return (
     selector.includes('data-radio-simple-select-legend-presentation="visually-hidden"') ||
+    selector.includes('data-card-list-select-legend-presentation="visually-hidden"') ||
     selector.includes(".token-spec-choice-affordance-preview") ||
     selector.includes(".token-spec-choice-affordance-state") ||
     selector.includes(".ds-truncating-label-text") ||

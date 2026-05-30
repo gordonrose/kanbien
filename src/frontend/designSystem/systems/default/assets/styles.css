@@ -1931,6 +1931,19 @@
   line-height: var(--primitive-card-list-label-line-height);
 }
 
+.ds-card-list-select-legend[data-card-list-select-legend-presentation="visually-hidden"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .ds-card-list-select-group-supporting {
   max-inline-size: 100%;
   margin: var(--primitive-card-list-group-copy-gap, 0.25rem) 0 0;
@@ -1995,6 +2008,12 @@
   background: var(--primitive-card-list-disabled-background);
   color: var(--primitive-card-list-disabled-foreground);
   cursor: not-allowed;
+}
+
+.ds-card-list-select-option[data-card-list-select-option-state="error"] .ds-card-list-select-option-label {
+  border-color: var(--primitive-card-list-error-border);
+  background: var(--primitive-card-list-error-background);
+  color: var(--primitive-card-list-error-foreground);
 }
 
 .ds-card-list-select-option-label:has(.ds-card-list-select-input:focus-visible) {
@@ -2098,6 +2117,24 @@
 }
 
 .ds-radio-simple-select-field .ds-field-row-control-slot {
+  border: 0;
+  min-block-size: auto;
+}
+
+.card-list-select-field-proof-host {
+  overflow: visible;
+}
+
+.card-list-select-field-proof-host[data-card-list-select-field-review-width="narrow"] {
+  width: min(100%, 24rem);
+}
+
+.ds-card-list-select-field {
+  display: grid;
+  min-width: 0;
+}
+
+.ds-card-list-select-field .ds-field-row-control-slot {
   border: 0;
   min-block-size: auto;
 }

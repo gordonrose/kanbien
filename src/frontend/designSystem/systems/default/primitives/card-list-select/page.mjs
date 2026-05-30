@@ -91,6 +91,7 @@ function renderPage(state) {
               ${renderOption("default", "Default", state.fieldState)}
               ${renderOption("disabled-group", "Disabled group", state.fieldState)}
               ${renderOption("disabled-option", "Disabled option", state.fieldState)}
+              ${renderOption("error", "Error", state.fieldState)}
             </select>
           </label>
           <label>

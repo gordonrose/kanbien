@@ -11,7 +11,7 @@ import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/sys
 const primitiveName = "card-list-select";
 const supportedThemes = new Set(["original", "dark", "desert"]);
 const supportedVariants = new Set(["visibility", "priority"]);
-const allowedStates = new Set(["default", "disabled-group", "disabled-option"]);
+const allowedStates = new Set(["default", "disabled-group", "disabled-option", "error"]);
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -64,6 +64,11 @@ function tokenDependenciesFor({ theme, columns }) {
     choiceOptionFrameTokenSpec,
     (variant) => variant.theme === theme && variant.state === "disabled",
     `card-list-select requires a signed ${theme}/disabled choice-option-frame token.`,
+  );
+  const errorFrame = findVariant(
+    choiceOptionFrameTokenSpec,
+    (variant) => variant.theme === theme && variant.state === "error",
+    `card-list-select requires a signed ${theme}/error choice-option-frame token.`,
   );
   const layout = findVariant(
     choiceGroupLayoutTokenSpec,
@@ -124,6 +129,7 @@ function tokenDependenciesFor({ theme, columns }) {
   return {
     defaultFrame,
     disabledFrame,
+    errorFrame,
     focusRing,
     hiddenAffordance,
     labelTextStyle,
@@ -159,6 +165,13 @@ function normalizeOptions(options) {
 function compactPriorityOrder(order, options) {
   const allowed = new Set(options.map((option) => option.value));
   return Array.from(new Set(Array.isArray(order) ? order : [])).filter((value) => allowed.has(value));
+}
+
+function normalizeDescriptionIds(value) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((id) => typeof id === "string" && id.trim().length > 0);
 }
 
 export const cardListSelectPrimitiveContract = {
@@ -199,9 +212,11 @@ export function cardListSelectPrimitive(options = {}) {
   const variant = options.variant ?? "visibility";
   const state = options.state ?? "default";
   const columns = Number(options.columns ?? 2);
+  const legendPresentation = options.legendPresentation ?? "visible";
   const normalizedOptions = normalizeOptions(options);
   const selectedValues = Array.from(new Set(Array.isArray(options.selectedValues) ? options.selectedValues : []));
   const priorityOrder = compactPriorityOrder(options.priorityOrder ?? selectedValues, normalizedOptions);
+  const externalDescriptionIds = normalizeDescriptionIds(options.externalDescriptionIds);
 
   assertString(systemKey, "systemKey");
   assertString(theme, "theme");
@@ -226,9 +241,13 @@ export function cardListSelectPrimitive(options = {}) {
   if (!Number.isInteger(columns) || columns < 1 || columns > 4) {
     throw new RangeError("card-list-select columns must be 1, 2, 3, or 4.");
   }
+  if (!["visible", "visually-hidden"].includes(legendPresentation)) {
+    throw new RangeError('card-list-select legendPresentation must be "visible" or "visually-hidden".');
+  }
 
   const tokens = tokenDependenciesFor({ theme, columns });
-  const descriptionIds = supportingText ? [`${id}-supporting`] : [];
+  const invalid = state === "error";
+  const descriptionIds = supportingText ? [`${id}-supporting`, ...externalDescriptionIds] : [...externalDescriptionIds];
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",
@@ -242,9 +261,11 @@ export function cardListSelectPrimitive(options = {}) {
     variant,
     state,
     columns,
+    legendPresentation,
     options: normalizedOptions,
     selectedValues,
     priorityOrder,
+    externalDescriptionIds,
     eventName: cardListSelectPrimitiveContract.eventName,
     ids: {
       rootId: id,
@@ -256,6 +277,7 @@ export function cardListSelectPrimitive(options = {}) {
       choiceOptionFrameDefault: { tokenName: tokens.defaultFrame.tokenName, variantId: tokens.defaultFrame.id },
       choiceOptionFrameSelected: { tokenName: tokens.selectedFrame.tokenName, variantId: tokens.selectedFrame.id },
       choiceOptionFrameDisabled: { tokenName: tokens.disabledFrame.tokenName, variantId: tokens.disabledFrame.id },
+      choiceOptionFrameError: { tokenName: tokens.errorFrame.tokenName, variantId: tokens.errorFrame.id },
       choiceGroupLayout: { tokenName: tokens.layout.tokenName, variantId: tokens.layout.id },
       choiceCardStateAffordanceVisible: { tokenName: tokens.visibleAffordance.tokenName, variantId: tokens.visibleAffordance.id },
       choiceCardStateAffordanceHidden: { tokenName: tokens.hiddenAffordance.tokenName, variantId: tokens.hiddenAffordance.id },
@@ -282,7 +304,9 @@ export function cardListSelectPrimitive(options = {}) {
       "data-card-list-select-state": state,
       "data-card-list-select-theme": theme,
       "data-card-list-select-columns-requested": String(columns),
+      "data-card-list-select-legend-presentation": legendPresentation,
       "aria-describedby": descriptionIds.length > 0 ? descriptionIds.join(" ") : null,
+      "aria-invalid": invalid ? "true" : null,
       disabled: state === "disabled-group" ? true : null,
     },
     styleVars: {
@@ -301,6 +325,9 @@ export function cardListSelectPrimitive(options = {}) {
       "--primitive-card-list-disabled-background": tokens.disabledFrame.backgroundValue,
       "--primitive-card-list-disabled-foreground": tokens.disabledFrame.foregroundValue,
       "--primitive-card-list-disabled-border": tokens.disabledFrame.borderValue,
+      "--primitive-card-list-error-background": tokens.errorFrame.backgroundValue,
+      "--primitive-card-list-error-foreground": tokens.errorFrame.foregroundValue,
+      "--primitive-card-list-error-border": tokens.errorFrame.borderValue,
       "--primitive-card-list-radius": tokens.defaultFrame.radiusValue,
       "--primitive-card-list-padding-block": tokens.defaultFrame.paddingBlockValue,
       "--primitive-card-list-padding-inline": tokens.defaultFrame.paddingInlineValue,
@@ -390,7 +417,7 @@ export function renderCardListSelectPrimitive(options = {}) {
       const optionId = `${spec.id}-${option.idSuffix}`;
       const optionDisabled = spec.state === "disabled-group" || option.disabled || (spec.state === "disabled-option" && index === 1);
       const checked = spec.variant === "priority" ? spec.priorityOrder.includes(option.value) : spec.selectedValues.includes(option.value);
-      const optionState = optionDisabled ? "disabled" : checked ? "selected" : "default";
+      const optionState = optionDisabled ? "disabled" : checked ? "selected" : spec.state === "error" ? "error" : "default";
       const tooltipId = `${optionId}-tooltip`;
       const inputAttributes = {
         id: optionId,
@@ -400,6 +427,7 @@ export function renderCardListSelectPrimitive(options = {}) {
         value: option.value,
         checked,
         disabled: optionDisabled ? true : null,
+        "aria-invalid": spec.state === "error" ? "true" : null,
         "aria-describedby": spec.ids.describedBy || null,
         "data-card-list-select-input": "",
       };
@@ -434,7 +462,9 @@ export function renderCardListSelectPrimitive(options = {}) {
 
   return `
     <fieldset ${toAttributeString(attributes)}>
-      <legend id="${escapeHtml(spec.ids.legendId)}" class="ds-card-list-select-legend">
+      <legend id="${escapeHtml(spec.ids.legendId)}" class="ds-card-list-select-legend" data-card-list-select-legend-presentation="${escapeHtml(
+        spec.legendPresentation,
+      )}">
         <span class="ds-card-list-select-text" data-card-list-select-disclosure-source>${escapeHtml(spec.label)}</span>
       </legend>
       ${

@@ -39,6 +39,8 @@ The primitive must:
 - keep visible/hidden and priority variants behaviorally separate
 - compact priority ranks whenever an item is deselected
 - allow 1, 2, 3, or 4 requested columns through `choice-group-layout`
+- support default, disabled group, disabled option, and error visual states through signed `choice-option-frame` variants
+- allow the semantic legend to be visible or visually hidden when a field pattern supplies the visible label
 - preserve RTL and constrained-width rendering without overlapping text
 - show text-disclosure tooltip behavior only when rendered text truncates
 
