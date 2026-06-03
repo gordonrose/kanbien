@@ -9,7 +9,7 @@ helpers, or proof-only controls.
 
 | Demo Page | Shared artifact status | Upstream component | Demo surface | Fixture and state coverage | Rendered evidence | Consumer boundary |
 | --- | --- | --- | --- | --- | --- | --- |
-| _none yet_ | _not-applicable_ | _not-applicable_ | _not-applicable_ | _not-applicable_ | _not-applicable_ | Layer 6 harness activated; no demo page has passed yet. |
+| `record-list-component-demo` | `review-ready` | `record-list-component` review-ready for `default` | `/design-system/default/demos/record-list-component`; `src/frontend/designSystem/systems/default/demos/record-list-component/` | populated records, root-users non-reorder pressure, empty records, disabled row pressure | `tests/visual/designSystem/demos/recordListComponentDemoRoute.spec.ts`; live browser check on `http://localhost:3000/design-system/default/demos/record-list-component` | Imports `renderRecordListComponent` and `attachRecordListComponentController`; later consumers must use the Layer 5 seam, not demo markup or proof controls. |
 
 ## Template Only Or Not Yet Created
 

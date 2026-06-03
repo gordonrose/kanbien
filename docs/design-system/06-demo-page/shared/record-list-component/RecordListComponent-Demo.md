@@ -8,11 +8,11 @@
 | UI family | `record-list` |
 | Demo page name | `record-list-component-demo` |
 | Harness layer | `06-demo-page` |
-| Demo status | `draft` |
+| Demo status | `review-ready` |
 | Upstream component contract | `docs/design-system/05-component-seam/shared/record-list/RecordListComponent-Contract.md` |
 | Shared demo artifact path | `docs/design-system/06-demo-page/shared/record-list-component/RecordListComponent-Demo.md` |
 | Planned demo route or surface | `/design-system/default/demos/record-list-component` |
-| Files affected now | `docs/design-system/06-demo-page/shared/record-list-component/RecordListComponent-Demo.md` |
+| Files affected now | `docs/design-system/06-demo-page/shared/record-list-component/RecordListComponent-Demo.md`; `src/frontend/designSystem/systems/default/demos/record-list-component/index.html`; `src/frontend/designSystem/systems/default/demos/record-list-component/page.mjs`; `tests/visual/designSystem/demos/recordListComponentDemoRoute.spec.ts`; `docs/design-system/06-demo-page/demo-readiness-index.md` |
 
 ## Purpose
 
@@ -173,14 +173,14 @@ has approved the receptor.
 
 | Step | Layer | Action | Blocking Reason |
 | --- | --- | --- | --- |
-| 1 | `06-demo-page` | Keep this artifact as `draft` until the demo route and browser proof exist. | Rendered route and evidence are not implemented yet. |
-| 2 | `06-demo-page` | Implement `/design-system/default/demos/record-list-component` using the Layer 5 runtime seam. | none |
+| 1 | `06-demo-page` | Treat this demo artifact as `review-ready`. | none |
+| 2 | `06-demo-page` | Keep browser evidence current when the component seam changes. | none |
 | 3 | `07-canonical-scenarios` | Activate the canonical-scenarios harness after the demo page passes. | `07-canonical-scenarios` is scaffold-only. |
 
 ## Next Layer
 
 | Field | Value |
 | --- | --- |
-| Next expected layer | `06-demo-page` |
-| Next layer status | `blocked` |
-| Reason | The draft artifact is ready to guide implementation, but the demo route and rendered browser evidence are still missing. |
+| Next expected layer | `07-canonical-scenarios` |
+| Next layer status | `scaffold-only` |
+| Reason | The demo page can pass Layer 6; canonical scenario work must wait for an active Layer 7 harness. |
