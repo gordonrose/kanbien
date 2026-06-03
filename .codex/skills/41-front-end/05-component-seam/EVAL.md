@@ -50,6 +50,13 @@ content, event handling, or consumer obligations.
 Pass only if unsupported affordances are explicit when the upstream pattern
 supports behavior that a target feature or component seam will not expose.
 
+Pass only if configurable pattern affordances are exposed as receptors only
+when the upstream pattern contract governs both enabled and disabled postures.
+
+Pass only if each disabled affordance posture removes or suppresses the
+relevant controls, events, feedback, and consumer obligations rather than
+leaving inert or misleading UI behind.
+
 Pass only if `Feature Projection Boundary` maps each in-scope feature fact or
 action to a receptor, feature-owned source, adapter responsibility, and
 backend/API field requirement, or explicitly states `not applicable`.
@@ -90,6 +97,9 @@ Fail if receptor categories become labels without enforcement.
 
 Fail if optional receptors are used to avoid declaring an unsupported
 affordance.
+
+Fail if a component receptor invents a disabled affordance posture that the
+upstream pattern does not already govern.
 
 ## Layer Boundary Checks
 

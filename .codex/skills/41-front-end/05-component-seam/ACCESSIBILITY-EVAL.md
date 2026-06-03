@@ -42,6 +42,10 @@ Pass only if unsupported affordances do not leave keyboard-only or assistive
 technology users with dead controls, silent state changes, or misleading
 announcements.
 
+Pass only if configurable affordance receptors preserve accessibility in both
+postures, including removal or suppression of disabled controls, shortcuts,
+state announcements, and live feedback when the affordance is off.
+
 Pass only if rendered accessibility evidence is required before claiming a
 frontend-visible implementation or proof route works.
 

@@ -197,6 +197,13 @@ Unsupported affordances must be explicit. For example, a reorderable component
 used by a non-reorderable feature must declare reorder as unsupported rather
 than leaving the handler absent and ambiguous.
 
+When an upstream pattern supports a feature-configurable affordance, the
+component may expose that decision as a receptor only if the upstream pattern
+already governs both enabled and disabled behavior, including markup,
+controller handling, accessibility feedback, and consumer obligations. If the
+disabled posture is missing, route the correction back to `04-pattern-contract`
+before adding the receptor.
+
 When an API route feeds a governed component, the feature loop must prove that
 the API/view model supplies every receptor fact the component uses, or record
 the missing field as a blocker, adapter derivation, or deliberate non-use.

@@ -83,6 +83,16 @@ event handling, or consumer obligations.
 | --- | --- | --- |
 | `<affordance>` | `<reason>` | `<must not pass, must declare unsupported, or use different seam>` |
 
+## Configurable Pattern Affordances
+
+Use this section only when a feature may enable or disable an affordance that
+the upstream pattern already governs. If no configurable affordance is in
+scope, state `not applicable`.
+
+| Affordance | Upstream Pattern Postures | Component Receptor | Enabled Behavior | Disabled Behavior | Required Evidence |
+| --- | --- | --- | --- | --- | --- |
+| `<affordance>` | `<enabled-and-disabled-contract-path-or-blocker>` | `<receptor-or-none>` | `<observable behavior>` | `<suppressed controls, events, feedback, or obligations>` | `<test-or-artifact>` |
+
 ## Feature Projection Boundary
 
 Use this section when feature/domain/API behavior maps into component

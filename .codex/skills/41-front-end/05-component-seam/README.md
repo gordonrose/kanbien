@@ -48,5 +48,8 @@ Check that imports are narrow and do not create casual cross-feature coupling.
 Check that unsupported affordances are explicit instead of implied by missing
 handlers.
 
+Check that configurable pattern affordances are exposed as receptors only when
+the upstream pattern already owns enabled and disabled behavior.
+
 Check that backend/API fields needed by receptors are supplied by the route
 contract or derived in a feature-owned adapter.
