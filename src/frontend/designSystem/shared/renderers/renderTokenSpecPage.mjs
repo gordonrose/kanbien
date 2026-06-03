@@ -1149,6 +1149,11 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   const toggleTrackOn = root.querySelector("[data-token-diagnostic-role='toggle-track-on']");
   const toggleThumbOn = root.querySelector("[data-token-diagnostic-role='toggle-thumb-on']");
   const toggleBorderOn = root.querySelector("[data-token-diagnostic-role='toggle-border-on']");
+  const statusBackground = root.querySelector("[data-token-diagnostic-role='status-background']");
+  const statusForeground = root.querySelector("[data-token-diagnostic-role='status-foreground']");
+  const statusBorder = root.querySelector("[data-token-diagnostic-role='status-border']");
+  const statusSubtle = root.querySelector("[data-token-diagnostic-role='status-subtle']");
+  const statusStrong = root.querySelector("[data-token-diagnostic-role='status-strong']");
 
   if (!(input instanceof HTMLInputElement)) {
     return;
@@ -1267,6 +1272,28 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
           : value
       } 68%, ${surfaceValue})`;
       toggleBorderOn.style.outlineOffset = "0.125rem";
+    }
+    if (statusBackground instanceof HTMLElement) {
+      statusBackground.style.background = `color-mix(in srgb, ${value} 8%, ${surfaceValue})`;
+      statusBackground.style.color = value;
+    }
+    if (statusForeground instanceof HTMLElement) {
+      statusForeground.style.background = surfaceValue;
+      statusForeground.style.color = value;
+    }
+    if (statusBorder instanceof HTMLElement) {
+      statusBorder.style.background = surfaceValue;
+      statusBorder.style.color = value;
+      statusBorder.style.outline = `0.125rem solid color-mix(in srgb, ${value} 54%, ${surfaceValue})`;
+      statusBorder.style.outlineOffset = "0.125rem";
+    }
+    if (statusSubtle instanceof HTMLElement) {
+      statusSubtle.style.background = `color-mix(in srgb, ${value} 6%, ${surfaceValue})`;
+      statusSubtle.style.color = value;
+    }
+    if (statusStrong instanceof HTMLElement) {
+      statusStrong.style.background = `color-mix(in srgb, ${value} 16%, ${surfaceValue})`;
+      statusStrong.style.color = value;
     }
     if (sourceValue instanceof HTMLElement) {
       sourceValue.textContent = value.toLowerCase();

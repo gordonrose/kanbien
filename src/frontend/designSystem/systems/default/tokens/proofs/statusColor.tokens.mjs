@@ -214,6 +214,57 @@ export const statusColorTokenSpec = {
     ["formulaOrMapping", "Formula or mapping"],
   ],
   variants: statusColorTokenVariants,
+  diagnostic: {
+    kind: "dependency-hex-override",
+    kicker: "Dependency diagnostic",
+    label: "Review Warning Source Dependency",
+    description:
+      "Change the proof-only warning source HEX and host surface to verify status colour derivations without changing signed token data.",
+    inputLabel: "Preview warning HEX",
+    defaultHex: warningSourceByTheme.original,
+    resetLabel: "Reset",
+    previewLabel: "Derived warning colour values",
+    validStatus: "Temporary preview only. Signed status-colour token values remain unchanged.",
+    invalidStatus: "Enter a six-digit HEX value such as #8a4b08.",
+    surfaceInputLabel: "Host surface",
+    surfaceOptions: [...surfaceByTheme.entries()].map(([theme, variant]) => ({
+      label: `${theme} surface`,
+      tokenName: variant.tokenName,
+      value: variant.preview.background,
+    })),
+    previews: [
+      {
+        role: "source",
+        label: "Warning source",
+        sample: warningSourceByTheme.original,
+      },
+      {
+        role: "status-background",
+        label: "Warning background",
+        sample: "8% source over surface",
+      },
+      {
+        role: "status-foreground",
+        label: "Warning foreground",
+        sample: "source colour",
+      },
+      {
+        role: "status-border",
+        label: "Warning border",
+        sample: "54% source over surface",
+      },
+      {
+        role: "status-subtle",
+        label: "Subtle background",
+        sample: "6% source over surface",
+      },
+      {
+        role: "status-strong",
+        label: "Strong background",
+        sample: "16% source over surface",
+      },
+    ],
+  },
   consumerRestrictions: [
     "Consumers must import this token seam instead of inventing local warning colours.",
     "The current token approves warning only; success, info, destructive, and broader error status colours remain unapproved here.",
