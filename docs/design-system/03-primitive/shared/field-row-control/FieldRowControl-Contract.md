@@ -16,7 +16,7 @@ It owns label and description structure, stable state hooks, token-backed spacin
 
 The primitive renders one label, one control slot, and optional helper or error text.
 
-The visible label must render through `truncating-label`; `field-row-control` must not implement local ellipsis, clipping, tooltip, or full-text disclosure behavior.
+The visible label must render through `truncating-label` in non-focusable label mode; `field-row-control` must not implement local ellipsis, clipping, tooltip, or full-text disclosure behavior.
 
 The primitive returns stable IDs for the label and description text so a future hosted control can wire `aria-labelledby` and `aria-describedby`.
 
@@ -30,7 +30,7 @@ The primitive must reject unsupported states instead of silently rendering an un
 
 The label and description IDs must be present in rendered markup when their corresponding text exists.
 
-When the label text is visually truncated, the full label must be available through the governed `truncating-label` hover and keyboard-focus disclosure behavior. Fitting labels must not show a tooltip.
+When the label text is visually truncated, the full label must be available through the governed `truncating-label` disclosure behavior without adding an extra keyboard focus target above the hosted control. Fitting labels must not show a tooltip.
 
 The field row must not claim native input semantics. The hosted control primitive owns native roles, values, keyboard behavior, focus behavior, `disabled`, and `readonly`.
 

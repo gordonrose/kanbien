@@ -91,12 +91,12 @@ test.describe("field-row-control primitive route", () => {
     await page.locator("[data-field-row-width-control]").selectOption("narrow");
     await expect(label).toHaveAttribute("data-truncating-label-overflow", "true");
 
-    await label.focus();
+    await label.hover();
     await expect(label).toHaveAttribute("data-truncating-label-open", "true");
     await expect(tooltip).toHaveText("Entity organization label with long governed field row text");
     await expect(tooltip).toHaveCSS("opacity", "1");
 
-    await page.keyboard.press("Escape");
+    await page.mouse.move(0, 0);
     await expect(label).toHaveAttribute("data-truncating-label-open", "false");
 
     await page.locator("[data-field-row-label-control]").selectOption("short");

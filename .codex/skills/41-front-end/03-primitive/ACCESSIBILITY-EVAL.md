@@ -45,6 +45,11 @@ names the missing token. Accessibility evidence must not be satisfied by
 inventing local marker shape, size, placement, thickness, spacing, radius,
 color source, or variants inside the primitive.
 
+Pass only if rendered proof preserves the signed token's non-text contrast
+requirements for visible control parts, state indicators, markers, glyphs,
+borders, tracks, thumbs, rails, or handles across each approved theme/state
+pairing the primitive exposes.
+
 Pass only if target-size expectations are named for pointer-operated
 primitives, or a blocker names the missing token evidence.
 
@@ -76,6 +81,10 @@ Fail if color is the only carrier of state or meaning.
 
 Fail if a primitive avoids color-only state by adding an unsigned visual
 indicator such as a bar, dot, underline, badge, icon, checkmark, or overlay.
+
+Fail if a primitive consumes signed visual tokens but renders a non-text control
+part, state indicator, marker, glyph, border, track, thumb, rail, or handle so
+that it is not visibly distinguishable from its adjacent rendered surface.
 
 Fail if an interactive primitive omits keyboard activation or focus visibility
 requirements.

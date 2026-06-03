@@ -10,6 +10,10 @@ export const defaultGlyphRegistry = {
       semanticName: "filter",
       svgPath: "M7 7h10l-4 5v4l-2 1v-5z",
     },
+    "chevron-down": {
+      semanticName: "chevron-down",
+      svgPath: "M6 9l6 6l6-6",
+    },
     list: {
       semanticName: "list",
       svgPath: "M5 7h14M5 12h14M5 17h14",

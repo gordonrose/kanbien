@@ -43,6 +43,8 @@ describe("simple-dropdown-control primitive", () => {
     expect(spec.tokenDependencies.dropdownTriggerFrame.tokenName).toBe("--dropdown-trigger-frame-default-original");
     expect(spec.tokenDependencies.dropdownListboxFrame.tokenName).toBe("--dropdown-listbox-frame-original");
     expect(spec.tokenDependencies.choiceOptionFrameSelected.tokenName).toBe("--choice-option-frame-selected-original");
+    expect(spec.tokenDependencies.iconSize.tokenName).toBe("--icon-button-glyph-size");
+    expect(spec.systemDependencies.glyphRegistry.semanticGlyphName).toBe("chevron-down");
 
     const html = renderSimpleDropdownControlPrimitive({
       id: "dropdown-test",
@@ -59,6 +61,7 @@ describe("simple-dropdown-control primitive", () => {
     expect(html).toContain('role="listbox"');
     expect(html).toContain('role="option"');
     expect(html).toContain('aria-selected="true"');
+    expect(html).toContain('class="ds-simple-dropdown-trigger-indicator"');
     expect(simpleDropdownControlPrimitiveContract.consumerRules.join(" ")).toContain("listbox ARIA");
   });
 

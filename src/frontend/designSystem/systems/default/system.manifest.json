@@ -5,6 +5,12 @@
   "description": "Default design-system implementation for review-ready governed frontend contracts.",
   "assetsBase": "/design-system/systems/default/assets",
   "contracts": {
+    "tokens.accordion-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/accordion-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/accordionFrame.tokens.mjs",
+      "implementationExport": "accordionFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/accordion-frame"
+    },
     "tokens.background-color": {
       "contractModule": "src/frontend/designSystem/layers/02-token/background-color/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/backgroundColor.tokens.mjs",
@@ -29,6 +35,12 @@
       "implementationExport": "choiceCardStateAffordanceTokenSpec",
       "pageRoute": "/design-system/default/tokens/choice-card-state-affordance"
     },
+    "tokens.count-card-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/count-card-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/countCardFrame.tokens.mjs",
+      "implementationExport": "countCardFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/count-card-frame"
+    },
     "tokens.dropdown-listbox-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/dropdown-listbox-frame/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/dropdownListboxFrame.tokens.mjs",
@@ -52,6 +64,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/errorTextStyle.tokens.mjs",
       "implementationExport": "errorTextStyleTokenSpec",
       "pageRoute": "/design-system/default/tokens/error-text-style"
+    },
+    "tokens.field-container-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/field-container-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/fieldContainerFrame.tokens.mjs",
+      "implementationExport": "fieldContainerFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/field-container-frame"
     },
     "tokens.focus-ring": {
       "contractModule": "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
@@ -131,6 +149,12 @@
       "implementationExport": "scrollbarSkinTokenSpec",
       "pageRoute": "/design-system/default/tokens/scrollbar-skin"
     },
+    "tokens.status-color": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/status-color/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/statusColor.tokens.mjs",
+      "implementationExport": "statusColorTokenSpec",
+      "pageRoute": "/design-system/default/tokens/status-color"
+    },
     "tokens.label-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/labelTextStyle.tokens.mjs",
@@ -166,6 +190,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelHeaderFrame.tokens.mjs",
       "implementationExport": "panelHeaderFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/panel-header-frame"
+    },
+    "tokens.panel-stack-placement": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/panel-stack-placement/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelStackPlacement.tokens.mjs",
+      "implementationExport": "panelStackPlacementTokenSpec",
+      "pageRoute": "/design-system/default/tokens/panel-stack-placement"
     },
     "tokens.page-header-structure": {
       "contractModule": "src/frontend/designSystem/layers/02-token/page-header-structure/contract.mjs",
@@ -220,6 +250,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/textareaGrowth.tokens.mjs",
       "implementationExport": "textareaGrowthTokenSpec",
       "pageRoute": "/design-system/default/tokens/textarea-growth"
+    },
+    "tokens.toggle-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/toggle-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/toggleFrame.tokens.mjs",
+      "implementationExport": "toggleFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/toggle-frame"
     },
     "tokens.tooltip-text-style": {
       "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs",

@@ -14,6 +14,7 @@ test.describe("simple-dropdown-control primitive route", () => {
     await expect(page.getByRole("heading", { name: "Simple Dropdown Control Primitive", level: 1 })).toBeVisible();
     const trigger = page.getByRole("button", { name: "Record management page" });
     await expect(trigger).toHaveAttribute("aria-haspopup", "listbox");
+    await expect(trigger.locator(".ds-simple-dropdown-trigger-indicator")).toBeVisible();
     await trigger.click();
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
     await expect(page.getByRole("listbox")).toBeVisible();

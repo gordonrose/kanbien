@@ -225,6 +225,7 @@ export function renderFieldRowControlPrimitive(options = {}) {
           theme: spec.theme,
           id: spec.ids.labelId,
           text: spec.label,
+          focusable: false,
         })}
         ${spec.state === "required" ? `<span class="ds-field-row-control-required" aria-hidden="true">required</span>` : ""}
       </div>

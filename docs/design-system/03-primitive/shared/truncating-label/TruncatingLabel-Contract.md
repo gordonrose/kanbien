@@ -21,7 +21,7 @@
 | Field | Value |
 | --- | --- |
 | Source behavior need | Text that does not fit its container must truncate without breaking layout while preserving access to the full value. |
-| Primitive job | Render one focusable text label that clips visibly and reveals its full text through governed disclosure behavior. |
+| Primitive job | Render one text label that clips visibly and reveals its full text through governed disclosure behavior. It may be focusable when used standalone, or non-focusable when hosted inside another interactive primitive that owns focus. |
 | Expected consumers | `04-pattern-contract`, `05-component-seam`, and later app adoption after those layers consume the runtime primitive seam. |
 | Non-goals | This primitive is not a button, menu, popover, field row, nav item, badge, validation message, product workflow, page layout, component API, or app adoption seam. |
 
@@ -39,7 +39,7 @@ app-local CSS.
 | --- | --- |
 | Behavior rule status | `review-ready` |
 | Token readiness source checked | `docs/design-system/02-token/token-readiness-index.md` |
-| Required tokens consumable by selected systems | `yes for default label-text-style, tooltip-surface, tooltip-text-style, focus-ring, and minimum-target-size` |
+| Required tokens consumable by selected systems | `yes for default label-text-style, supporting-text-style, tooltip-surface, tooltip-text-style, focus-ring, and minimum-target-size` |
 | Primitive inventory checked | `docs/design-system/03-primitive/primitive-readiness-index.md`; no consumable truncating text primitive existed before this artifact |
 
 ## Token Dependencies
@@ -47,6 +47,7 @@ app-local CSS.
 | Token Dependency | Shared Contract | System | System Implementation | Runtime Seam | Primitive Decision Supported | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `label-text-style` | `docs/design-system/02-token/shared/label-text-style/LabelTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/label-text-style/LabelTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs#labelTextStyleTokenSpec` | Visible clipped label typography. | `consumable` |
+| `supporting-text-style` | `docs/design-system/02-token/shared/supporting-text-style/SupportingTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/supporting-text-style/SupportingTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec` | Visible clipped supporting-text typography. | `consumable` |
 | `tooltip-surface` | `docs/design-system/02-token/shared/tooltip-surface/TooltipSurface-Contract.md` | `default` | `docs/design-system/02-token/systems/default/tooltip-surface/TooltipSurface-Implementation.md` | `src/frontend/designSystem/layers/02-token/tooltip-surface/systems/default.mjs#tooltipSurfaceTokenSpec` | Full-text disclosure surface visuals. | `consumable` |
 | `tooltip-text-style` | `docs/design-system/02-token/shared/tooltip-text-style/TooltipTextStyle-Contract.md` | `default` | `docs/design-system/02-token/systems/default/tooltip-text-style/TooltipTextStyle-Implementation.md` | `src/frontend/designSystem/layers/02-token/tooltip-text-style/systems/default.mjs#tooltipTextStyleTokenSpec` | Full-text disclosure typography. | `consumable` |
 | `focus-ring` | `docs/design-system/02-token/shared/focus-ring/FocusRing-Contract.md` | `default` | `docs/design-system/02-token/systems/default/focus-ring/FocusRing-Implementation.md` | `src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs#focusRingTokenSpec` | Visible keyboard focus. | `consumable` |
@@ -61,8 +62,13 @@ When the host width is too small, the visible text clips with an ellipsis
 without resizing the host, overlapping adjacent content, or changing the full
 text value.
 
-Focus and pointer hover reveal the full text in the disclosure surface. Click
-or tap toggles the disclosure surface. Escape dismisses the disclosure.
+When the primitive owns focus, focus and pointer hover reveal the full text in
+the disclosure surface. Click or tap toggles the disclosure surface. Escape
+dismisses the disclosure.
+
+When a containing interactive primitive owns focus, `truncating-label` may be
+rendered non-focusable so it does not create nested focus targets. Pointer hover
+still reveals full text when overflow is present.
 
 The primitive does not emit product events or app actions.
 
@@ -71,12 +77,14 @@ The primitive does not emit product events or app actions.
 The primitive follows the shared WCAG 2.2 AA default in
 `.codex/skills/41-front-end/accessibility/WCAG-2.2-AA-DEFAULT.md`.
 
-The primitive uses a focusable text element, not a button role. The focusable
-element keeps the full value as its accessible name and references the tooltip
-surface through `aria-describedby`.
+The primitive uses a text element, not a button role. In standalone mode the
+element is focusable, keeps the full value as its accessible name, and
+references the tooltip surface through `aria-describedby`.
 
-Keyboard users can Tab to the label, read the full value, and dismiss the
-visible disclosure with Escape.
+Keyboard users can Tab to standalone labels, read the full value, and dismiss
+the visible disclosure with Escape. When a parent interactive primitive owns
+focus, the parent must preserve an accessible name or description for the
+truncated text.
 
 Pointer and touch users can reveal the full text without losing the underlying
 label value.

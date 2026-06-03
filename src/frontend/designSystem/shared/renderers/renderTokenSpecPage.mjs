@@ -323,6 +323,31 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "panel-stack-placement-sample") {
+    return `
+      <div
+        class="token-spec-panel-stack-placement-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius ?? "")}"
+        data-token-preview-desktop-gap="${escapeHtml(variant.desktopAdjacencyGapValue)}"
+        data-token-preview-overlay-inset="${escapeHtml(variant.overlayInsetValue)}"
+        aria-hidden="true"
+      >
+        <div class="token-spec-panel-stack-placement-desktop">
+          <span>Primary panel</span>
+          <span>Child panel</span>
+          <span>Grandchild panel</span>
+        </div>
+        <div class="token-spec-panel-stack-placement-mobile">
+          <span>Covered</span>
+          <span>Active overlay</span>
+        </div>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "menu-simple-select-trigger-sample") {
     const textTrigger = variant.preview.frameRole !== "icon trigger frame";
     return `
@@ -362,6 +387,27 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "field-row-frame-sample") {
+    return `
+      <div
+        class="token-spec-field-row-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-field-row-gap="${escapeHtml(variant.preview.rowGap)}"
+        data-token-preview-field-row-label-gap="${escapeHtml(variant.preview.labelToControlGap)}"
+        data-token-preview-field-row-message-gap="${escapeHtml(variant.preview.controlToMessageGap)}"
+        data-token-preview-field-row-control-min-block-size="${escapeHtml(variant.preview.controlSlotMinBlockSize)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-field-row-frame-label">${escapeHtml(variant.preview.label)}</span>
+        <span class="token-spec-field-row-frame-control">${escapeHtml(variant.preview.control)}</span>
+        <span class="token-spec-field-row-frame-message">${escapeHtml(variant.preview.message)}</span>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "drag-drop-affordance-sample") {
     return `
       <div
@@ -385,6 +431,25 @@ function renderVariantPreview(variant) {
           <small>${escapeHtml(variant.preview.supportingText)}</small>
         </span>
         <span class="token-spec-drag-drop-marker-label">${escapeHtml(variant.preview.markerLabel)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "field-container-frame-sample") {
+    return `
+      <div
+        class="token-spec-field-container-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-min-block-size="${escapeHtml(variant.preview.minBlockSize)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-field-container-frame-label">${escapeHtml(variant.preview.label)}</span>
+        <span class="token-spec-field-container-frame-control">${escapeHtml(variant.preview.control)}</span>
       </div>
     `;
   }
@@ -442,6 +507,35 @@ function renderVariantPreview(variant) {
         aria-hidden="true"
       >
         <span class="token-spec-button-frame-sample">${escapeHtml(variant.preview.sample)}</span>
+      </div>
+    `;
+  }
+
+  if (variant.preview.kind === "toggle-frame-sample") {
+    return `
+      <div
+        class="token-spec-toggle-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-toggle-track-inline-size="${escapeHtml(variant.preview.trackInlineSize)}"
+        data-token-preview-toggle-track-block-size="${escapeHtml(variant.preview.trackBlockSize)}"
+        data-token-preview-toggle-track-border-width="${escapeHtml(variant.preview.trackBorderWidth)}"
+        data-token-preview-toggle-thumb-background="${escapeHtml(variant.preview.thumbBackground)}"
+        data-token-preview-toggle-thumb-inline-size="${escapeHtml(variant.preview.thumbInlineSize)}"
+        data-token-preview-toggle-thumb-block-size="${escapeHtml(variant.preview.thumbBlockSize)}"
+        data-token-preview-toggle-thumb-offset="${escapeHtml(variant.preview.thumbOffset)}"
+        data-token-preview-toggle-track-padding="${escapeHtml(variant.preview.trackPadding)}"
+        data-token-preview-toggle-track-radius="${escapeHtml(variant.preview.trackRadius)}"
+        data-token-preview-toggle-thumb-radius="${escapeHtml(variant.preview.thumbRadius)}"
+        data-token-preview-toggle-thumb-shadow="${escapeHtml(variant.preview.thumbShadow)}"
+        data-token-preview-toggle-motion-duration="${escapeHtml(variant.preview.motionDuration)}"
+        data-token-preview-toggle-motion-easing="${escapeHtml(variant.preview.motionEasing)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-toggle-frame-track">
+          <span class="token-spec-toggle-frame-thumb"></span>
+        </span>
       </div>
     `;
   }
@@ -609,6 +703,29 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "count-card-frame-sample") {
+    return `
+      <div
+        class="token-spec-count-card-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-count-card-gap="${escapeHtml(variant.preview.contentGap)}"
+        data-token-preview-count-card-count-background="${escapeHtml(variant.preview.countBackground)}"
+        data-token-preview-count-card-count-foreground="${escapeHtml(variant.preview.countForeground)}"
+        data-token-preview-count-card-count-border="${escapeHtml(variant.preview.countBorder)}"
+        data-token-preview-count-card-count-min-inline-size="${escapeHtml(variant.preview.countSlotMinInlineSize)}"
+        aria-hidden="true"
+      >
+        <strong>${escapeHtml(variant.preview.sample)}</strong>
+        <span>${escapeHtml(variant.preview.count)}</span>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "icon-size-sample") {
     return `
       <div class="token-spec-frame-preview" aria-hidden="true">
@@ -756,6 +873,29 @@ function applyPreviewStyles(root) {
     }
   }
 
+  for (const element of root.querySelectorAll(".token-spec-panel-stack-placement-preview[data-token-preview-border]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-desktop-gap", element.dataset.tokenPreviewDesktopGap ?? "");
+      element.style.setProperty("--token-preview-overlay-inset", element.dataset.tokenPreviewOverlayInset ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-field-row-gap]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-field-row-gap", element.dataset.tokenPreviewFieldRowGap ?? "");
+      element.style.setProperty("--token-preview-field-row-label-gap", element.dataset.tokenPreviewFieldRowLabelGap ?? "");
+      element.style.setProperty("--token-preview-field-row-message-gap", element.dataset.tokenPreviewFieldRowMessageGap ?? "");
+      element.style.setProperty(
+        "--token-preview-field-row-control-min-block-size",
+        element.dataset.tokenPreviewFieldRowControlMinBlockSize ?? "",
+      );
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+    }
+  }
+
   for (const element of root.querySelectorAll(".token-spec-frame-preview[data-token-preview-border]")) {
     if (element instanceof HTMLElement) {
       element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
@@ -875,6 +1015,51 @@ function applyPreviewStyles(root) {
       element.style.setProperty("--token-preview-line-height", element.dataset.tokenPreviewLineHeight ?? "");
     }
   }
+
+  for (const element of root.querySelectorAll("[data-token-preview-count-card-gap]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-count-card-gap", element.dataset.tokenPreviewCountCardGap ?? "");
+      element.style.setProperty(
+        "--token-preview-count-card-count-background",
+        element.dataset.tokenPreviewCountCardCountBackground ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-count-card-count-foreground",
+        element.dataset.tokenPreviewCountCardCountForeground ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-count-card-count-border",
+        element.dataset.tokenPreviewCountCardCountBorder ?? "",
+      );
+      element.style.setProperty(
+        "--token-preview-count-card-count-min-inline-size",
+        element.dataset.tokenPreviewCountCardCountMinInlineSize ?? "",
+      );
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-toggle-track-inline-size]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-toggle-track-inline-size", element.dataset.tokenPreviewToggleTrackInlineSize ?? "");
+      element.style.setProperty("--token-preview-toggle-track-block-size", element.dataset.tokenPreviewToggleTrackBlockSize ?? "");
+      element.style.setProperty("--token-preview-toggle-track-border-width", element.dataset.tokenPreviewToggleTrackBorderWidth ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-background", element.dataset.tokenPreviewToggleThumbBackground ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-inline-size", element.dataset.tokenPreviewToggleThumbInlineSize ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-block-size", element.dataset.tokenPreviewToggleThumbBlockSize ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-offset", element.dataset.tokenPreviewToggleThumbOffset ?? "");
+      element.style.setProperty("--token-preview-toggle-track-padding", element.dataset.tokenPreviewToggleTrackPadding ?? "");
+      element.style.setProperty("--token-preview-toggle-track-radius", element.dataset.tokenPreviewToggleTrackRadius ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-radius", element.dataset.tokenPreviewToggleThumbRadius ?? "");
+      element.style.setProperty("--token-preview-toggle-thumb-shadow", element.dataset.tokenPreviewToggleThumbShadow ?? "");
+      element.style.setProperty("--token-preview-toggle-motion-duration", element.dataset.tokenPreviewToggleMotionDuration ?? "");
+      element.style.setProperty("--token-preview-toggle-motion-easing", element.dataset.tokenPreviewToggleMotionEasing ?? "");
+    }
+  }
 }
 
 function isValidHex(value) {
@@ -909,6 +1094,9 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
   const choiceOptionBackground = root.querySelector("[data-token-diagnostic-role='choice-option-background']");
   const choiceOptionForeground = root.querySelector("[data-token-diagnostic-role='choice-option-foreground']");
   const choiceOptionBorder = root.querySelector("[data-token-diagnostic-role='choice-option-border']");
+  const toggleTrackOn = root.querySelector("[data-token-diagnostic-role='toggle-track-on']");
+  const toggleThumbOn = root.querySelector("[data-token-diagnostic-role='toggle-thumb-on']");
+  const toggleBorderOn = root.querySelector("[data-token-diagnostic-role='toggle-border-on']");
 
   if (!(input instanceof HTMLInputElement)) {
     return;
@@ -1007,6 +1195,26 @@ function applyDependencyOverrideDiagnostic(root, pageModel) {
       choiceOptionBorder.style.color = value;
       choiceOptionBorder.style.outline = `0.125rem solid color-mix(in srgb, ${value} 68%, ${surfaceValue})`;
       choiceOptionBorder.style.outlineOffset = "0.125rem";
+    }
+    if (toggleTrackOn instanceof HTMLElement) {
+      toggleTrackOn.style.background = `color-mix(in srgb, ${value} ${tintSourceRatio}, ${surfaceValue})`;
+      toggleTrackOn.style.color = value;
+    }
+    if (toggleThumbOn instanceof HTMLElement) {
+      toggleThumbOn.style.background = surfaceValue;
+      toggleThumbOn.style.color = foregroundSourceRatio
+        ? `color-mix(in srgb, ${value} ${foregroundSourceRatio}, ${foregroundMixTarget})`
+        : value;
+    }
+    if (toggleBorderOn instanceof HTMLElement) {
+      toggleBorderOn.style.background = surfaceValue;
+      toggleBorderOn.style.color = value;
+      toggleBorderOn.style.outline = `0.125rem solid color-mix(in srgb, ${
+        foregroundSourceRatio
+          ? `color-mix(in srgb, ${value} ${foregroundSourceRatio}, ${foregroundMixTarget})`
+          : value
+      } 68%, ${surfaceValue})`;
+      toggleBorderOn.style.outlineOffset = "0.125rem";
     }
     if (sourceValue instanceof HTMLElement) {
       sourceValue.textContent = value.toLowerCase();

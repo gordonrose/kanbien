@@ -27,6 +27,12 @@ why the token has no accessibility impact.
 Pass only if color tokens name contrast expectations, theme proof, and
 color-independent meaning requirements.
 
+Pass only if tokens that define visible non-text control parts, state
+indicators, markers, glyphs, borders, tracks, thumbs, rails, or handles name
+and evidence non-text contrast expectations for every approved theme/state
+pairing. A token proof must not pass by proving text contrast while leaving a
+control affordance visually indistinct from its adjacent token-backed surface.
+
 Pass only if focus tokens name visible focus expectations across required
 themes and constrained states.
 
@@ -57,6 +63,11 @@ Fail if color can be the only carrier of meaning.
 
 Fail if foreground/background token pairings are approved without contrast
 requirements or a recorded blocker.
+
+Fail if a token-backed non-text control part, state indicator, marker, glyph,
+border, track, thumb, rail, or handle is approved without evidence that it is
+visibly distinguishable from its adjacent token-backed surface in each approved
+theme/state pairing.
 
 Fail if focus visibility is approved without visible-focus requirements or a
 recorded blocker.

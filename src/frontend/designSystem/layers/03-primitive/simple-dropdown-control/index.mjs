@@ -5,11 +5,13 @@ import { dropdownTriggerFrameTokenSpec } from "../../02-token/dropdown-trigger-f
 import { errorTextStyleTokenSpec } from "../../02-token/error-text-style/systems/default.mjs";
 import { fieldValueTextStyleTokenSpec } from "../../02-token/field-value-text-style/systems/default.mjs";
 import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
+import { iconSizeTokenSpec } from "../../02-token/icon-size/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
 import { tooltipSurfaceTokenSpec } from "../../02-token/tooltip-surface/systems/default.mjs";
 import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/systems/default.mjs";
+import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
 
 const primitiveName = "simple-dropdown-control";
 const allowedStates = new Set(["default", "required", "disabled", "error"]);
@@ -128,6 +130,11 @@ function tokenDependenciesFor({ theme, state }) {
     (variant) => variant.id === "target-size-interactive-all",
     "simple-dropdown-control requires a signed minimum-target-size token.",
   );
+  const iconSize = findVariant(
+    iconSizeTokenSpec,
+    (variant) => variant.id === "icon-size-button-glyph-default",
+    "simple-dropdown-control requires a signed icon-size token for the trigger indicator glyph.",
+  );
 
   return {
     bodyRegionFrame,
@@ -137,6 +144,7 @@ function tokenDependenciesFor({ theme, state }) {
     errorTextStyle,
     fieldValueTextStyle,
     focusRing,
+    iconSize,
     labelTextStyle,
     listboxFrame,
     minimumTargetSize,
@@ -165,6 +173,13 @@ function normalizeOptions(rawOptions) {
   });
 }
 
+function glyphPathFor(systemKey) {
+  if (systemKey !== "default") {
+    throw new RangeError(`simple-dropdown-control has no glyph registry for "${systemKey}".`);
+  }
+  return resolveDefaultGlyphPath("chevron-down");
+}
+
 export const simpleDropdownControlPrimitiveContract = {
   schema: "kanbien.designSystem.primitiveContract.v1",
   primitiveName,
@@ -185,7 +200,9 @@ export const simpleDropdownControlPrimitiveContract = {
     "focus-ring",
     "minimum-target-size",
     "body-region-frame",
+    "icon-size",
   ],
+  requiredSystemDependencies: ["default glyph registry"],
   allowedStates: Array.from(allowedStates),
   eventName: "simple-dropdown:change",
   consumerRules: [
@@ -225,6 +242,7 @@ export function simpleDropdownControlPrimitive(options = {}) {
   }
 
   const tokens = tokenDependenciesFor({ theme, state });
+  const iconPath = glyphPathFor(systemKey);
   const selectedOption = normalizedOptions.find((option) => option.value === selectedValue) ?? null;
   const invalid = state === "error";
   const disabled = state === "disabled";
@@ -263,7 +281,16 @@ export function simpleDropdownControlPrimitive(options = {}) {
       bodyRegionFrame: { tokenName: tokens.bodyRegionFrame.tokenName, variantId: tokens.bodyRegionFrame.id },
       tooltipSurface: { tokenName: tokens.tooltipSurface.tokenName, variantId: tokens.tooltipSurface.id },
       focusRing: { tokenName: tokens.focusRing.tokenName, variantId: tokens.focusRing.id },
+      iconSize: { tokenName: tokens.iconSize.tokenName, variantId: tokens.iconSize.id },
     },
+    systemDependencies: {
+      glyphRegistry: {
+        systemKey,
+        semanticGlyphName: "chevron-down",
+        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+      },
+    },
+    iconPath,
     attributes: {
       id,
       class: "ds-simple-dropdown-control",
@@ -341,6 +368,8 @@ export function simpleDropdownControlPrimitive(options = {}) {
       "--primitive-dropdown-focus-offset": tokens.focusRing.offsetValue,
       "--primitive-dropdown-target-min-height": tokens.minimumTargetSize.minimumHeight,
       "--primitive-dropdown-target-min-width": tokens.minimumTargetSize.minimumWidth,
+      "--primitive-dropdown-indicator-inline-size": tokens.iconSize.inlineSize,
+      "--primitive-dropdown-indicator-block-size": tokens.iconSize.blockSize,
     },
     consumerRestrictions: simpleDropdownControlPrimitiveContract.consumerRules,
   };
@@ -414,6 +443,9 @@ export function renderSimpleDropdownControlPrimitive(options = {}) {
       )}" data-simple-dropdown-hidden-input />
       <button ${toAttributeString(triggerAttributes)}>
         <span class="ds-simple-dropdown-trigger-label" data-simple-dropdown-disclosure-source>${escapeHtml(spec.selectedLabel)}</span>
+        <svg class="ds-simple-dropdown-trigger-indicator" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="${escapeHtml(spec.iconPath)}" />
+        </svg>
       </button>
       <div ${toAttributeString(listboxAttributes)}>
         ${optionsHtml}

@@ -8,7 +8,13 @@ test.describe("field-row-frame token route", () => {
     await expect(page.getByRole("heading", { name: "Field Row Frame Token", level: 1 })).toBeVisible();
     await expect(page.getByText("body-region-frame + minimum-target-size")).toBeVisible();
     await expect(page.getByText("0.75rem row gap")).toBeVisible();
+    await expect(page.getByText("0.5rem label gap")).toBeVisible();
+    await expect(page.getByText("0.375rem message gap")).toBeVisible();
     await expect(page.getByText("44px control slot minimum height")).toBeVisible();
+    const preview = page.locator(".token-spec-field-row-frame-preview").first();
+    await expect(preview.getByText("Field label")).toBeVisible();
+    await expect(preview.getByText("Hosted control slot")).toBeVisible();
+    await expect(preview.getByText("Helper or error message")).toBeVisible();
     await expect(page.getByText("Future hosted controls must consume their own signed tokens")).toBeVisible();
   });
 });

@@ -43,6 +43,7 @@ describe("field-row-control primitive", () => {
     expect(html).toContain('aria-labelledby="field-row-test-label"');
     expect(html).toContain('id="field-row-test-label"');
     expect(html).toContain('data-truncating-label=""');
+    expect(html).not.toContain('tabindex="0"');
     expect(html).toContain('aria-describedby="field-row-test-helper"');
     expect(html).toContain('data-field-row-control-slot="provided"');
     expect(html).toContain('data-field-row-control-slot-state="default"');

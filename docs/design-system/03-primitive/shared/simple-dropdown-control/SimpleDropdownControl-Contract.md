@@ -29,11 +29,17 @@ It does not own field labels, product validation, search, async loading, multi-s
 - `focus-ring`
 - `minimum-target-size`
 - `body-region-frame`
+- `icon-size`
+
+## Required System Dependencies
+
+- default glyph registry: `chevron-down`
 
 ## Contract
 
 - The root exposes one trigger button and one owned listbox.
 - The trigger exposes `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`, and the current value.
+- The trigger must include a visual dropdown indicator glyph from the selected design system's glyph registry.
 - Options expose `role="option"` and `aria-selected`.
 - Keyboard interaction follows the simple dropdown behavior rule.
 - The listbox uses the signed popup max-height values and scrolls internally when option content exceeds the signed limit.

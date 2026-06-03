@@ -1,10 +1,12 @@
 import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
+import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
 import { tooltipSurfaceTokenSpec } from "../../02-token/tooltip-surface/systems/default.mjs";
 import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/systems/default.mjs";
 
 const primitiveName = "truncating-label";
+const supportedTextStyles = new Set(["label", "supporting"]);
 const supportedSystems = new Map([
   [
     "default",
@@ -12,6 +14,7 @@ const supportedSystems = new Map([
       focusRingTokenSpec,
       labelTextStyleTokenSpec,
       minimumTargetSizeTokenSpec,
+      supportingTextStyleTokenSpec,
       tooltipSurfaceTokenSpec,
       tooltipTextStyleTokenSpec,
     },
@@ -59,14 +62,21 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
-function tokenDependenciesFor({ systemKey, theme }) {
+function tokenDependenciesFor({ systemKey, theme, textStyle }) {
   const proof = getSystemProof(systemKey);
 
-  const labelTextStyle = findVariant(
-    proof.labelTextStyleTokenSpec,
-    (variant) => variant.role === "short label text",
-    "truncating-label requires a signed label-text-style token for short label text.",
-  );
+  const textStyleToken =
+    textStyle === "supporting"
+      ? findVariant(
+          proof.supportingTextStyleTokenSpec,
+          (variant) => variant.role === "supporting text",
+          "truncating-label requires a signed supporting-text-style token for supporting text.",
+        )
+      : findVariant(
+          proof.labelTextStyleTokenSpec,
+          (variant) => variant.role === "short label text",
+          "truncating-label requires a signed label-text-style token for short label text.",
+        );
   const tooltipTextStyle = findVariant(
     proof.tooltipTextStyleTokenSpec,
     (variant) => variant.role === "tooltip disclosure text",
@@ -89,7 +99,7 @@ function tokenDependenciesFor({ systemKey, theme }) {
   );
 
   return {
-    labelTextStyle,
+    textStyleToken,
     tooltipTextStyle,
     tooltipSurface,
     focusRing,
@@ -112,6 +122,7 @@ export const truncatingLabelPrimitiveContract = {
   supportedThemes: ["original", "dark", "desert"],
   requiredTokens: [
     "label-text-style",
+    "supporting-text-style",
     "tooltip-surface",
     "tooltip-text-style",
     "focus-ring",
@@ -129,13 +140,19 @@ export function truncatingLabelPrimitive(options = {}) {
   const systemKey = options.systemKey ?? "default";
   const theme = options.theme ?? "original";
   const text = options.text ?? "";
+  const textStyle = options.textStyle ?? "label";
+  const focusable = options.focusable ?? true;
   const id = options.id ?? `truncating-label-${Math.random().toString(36).slice(2, 10)}`;
 
   assertString(theme, "theme");
   assertString(text, "text");
+  assertString(textStyle, "textStyle");
   assertString(id, "id");
+  if (!supportedTextStyles.has(textStyle)) {
+    throw new RangeError(`truncating-label does not support textStyle "${textStyle}".`);
+  }
 
-  const tokens = tokenDependenciesFor({ systemKey, theme });
+  const tokens = tokenDependenciesFor({ systemKey, theme, textStyle });
   const tooltipId = `${id}-tooltip`;
 
   return {
@@ -144,6 +161,8 @@ export function truncatingLabelPrimitive(options = {}) {
     systemKey,
     theme,
     text,
+    textStyle,
+    focusable,
     id,
     tooltipId,
     states: {
@@ -155,9 +174,20 @@ export function truncatingLabelPrimitive(options = {}) {
     },
     tokenDependencies: {
       labelTextStyle: {
-        tokenName: tokens.labelTextStyle.tokenName,
-        variantId: tokens.labelTextStyle.id,
-        runtimeSeam: "src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs#labelTextStyleTokenSpec",
+        tokenName: tokens.textStyleToken.tokenName,
+        variantId: tokens.textStyleToken.id,
+        runtimeSeam:
+          textStyle === "supporting"
+            ? "src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec"
+            : "src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs#labelTextStyleTokenSpec",
+      },
+      textStyle: {
+        tokenName: tokens.textStyleToken.tokenName,
+        variantId: tokens.textStyleToken.id,
+        runtimeSeam:
+          textStyle === "supporting"
+            ? "src/frontend/designSystem/layers/02-token/supporting-text-style/systems/default.mjs#supportingTextStyleTokenSpec"
+            : "src/frontend/designSystem/layers/02-token/label-text-style/systems/default.mjs#labelTextStyleTokenSpec",
       },
       tooltipSurface: {
         tokenName: tokens.tooltipSurface.tokenName,
@@ -182,7 +212,7 @@ export function truncatingLabelPrimitive(options = {}) {
     },
     semantics: {
       element: "span",
-      focusable: true,
+      focusable,
       interactiveRole: null,
       accessibleName: text,
       describedBy: "set only when rendered text is truncated",
@@ -192,12 +222,13 @@ export function truncatingLabelPrimitive(options = {}) {
     attributes: {
       id,
       class: "ds-truncating-label",
-      tabindex: "0",
+      tabindex: focusable ? "0" : null,
       "aria-label": text,
       "aria-describedby": null,
       "aria-expanded": "false",
       "data-truncating-label": "",
       "data-truncating-label-theme": theme,
+      "data-truncating-label-text-style": textStyle,
     },
     tooltipAttributes: {
       id: tooltipId,
@@ -206,12 +237,12 @@ export function truncatingLabelPrimitive(options = {}) {
       "data-truncating-label-tooltip": "",
     },
     styleVars: {
-      "--primitive-label-font-family": tokens.labelTextStyle.fontFamilyValue,
-      "--primitive-label-font-size": tokens.labelTextStyle.fontSizeValue,
-      "--primitive-label-font-weight": tokens.labelTextStyle.fontWeightValue,
-      "--primitive-label-line-height": tokens.labelTextStyle.lineHeightValue,
-      "--primitive-label-letter-spacing": tokens.labelTextStyle.letterSpacingValue,
-      "--primitive-label-text-transform": tokens.labelTextStyle.textTransform,
+      "--primitive-label-font-family": tokens.textStyleToken.fontFamilyValue,
+      "--primitive-label-font-size": tokens.textStyleToken.fontSizeValue,
+      "--primitive-label-font-weight": tokens.textStyleToken.fontWeightValue,
+      "--primitive-label-line-height": tokens.textStyleToken.lineHeightValue,
+      "--primitive-label-letter-spacing": tokens.textStyleToken.letterSpacingValue,
+      "--primitive-label-text-transform": tokens.textStyleToken.textTransform,
       "--primitive-tooltip-font-family": tokens.tooltipTextStyle.fontFamilyValue,
       "--primitive-tooltip-font-size": tokens.tooltipTextStyle.fontSizeValue,
       "--primitive-tooltip-font-weight": tokens.tooltipTextStyle.fontWeightValue,
@@ -235,9 +266,9 @@ export function truncatingLabelPrimitive(options = {}) {
       "--primitive-target-min-height": tokens.minimumTargetSize.minimumHeight,
     },
     layoutStyles: {
-      "min-width": `min(100%, ${tokens.minimumTargetSize.minimumWidth})`,
-      height: tokens.minimumTargetSize.minimumHeight,
-      "min-height": tokens.minimumTargetSize.minimumHeight,
+      "min-width": focusable ? `min(100%, ${tokens.minimumTargetSize.minimumWidth})` : "0",
+      height: focusable ? tokens.minimumTargetSize.minimumHeight : "auto",
+      "min-height": focusable ? tokens.minimumTargetSize.minimumHeight : "auto",
     },
     consumerRestrictions: truncatingLabelPrimitiveContract.consumerRules,
   };

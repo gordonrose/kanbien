@@ -6,6 +6,10 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function topPosition(page: Page, selector: string) {
+  return page.locator(selector).evaluate((element) => element.getBoundingClientRect().top);
+}
+
 test.describe("entity body panel pattern route", () => {
   test("renders the governed body panel pattern and width evidence", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
@@ -19,12 +23,36 @@ test.describe("entity body panel pattern route", () => {
     await expect(page.getByText("body-region-control", { exact: true })).toBeVisible();
     await expect(page.getByText("--body-region-frame")).toBeVisible();
     await expect(page.getByText("26rem", { exact: true })).toBeVisible();
+    await expect(page.locator("[data-entity-body-panel-governed-form]")).toBeVisible();
+    await expect(page.locator("[data-field-container-control]")).toHaveCount(7);
+    await expect(page.getByRole("button", { name: "Identity" })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("[data-text-field-control]").first()).toBeVisible();
+    await expect(page.locator("[data-textarea-control]").first()).toBeVisible();
+    await expect(page.locator("#entity-body-panel-proof-name-container [data-text-field-control]")).toBeVisible();
+
+    await page.getByRole("button", { name: "Configuration" }).click();
+    await expect(page.locator("[data-radio-simple-select-field]").first()).toBeVisible();
+    await expect(page.locator("[data-simple-dropdown-field]").first()).toBeVisible();
+    await expect(page.locator("[data-toggle-field]").first()).toBeVisible();
+    await expect(page.locator("#entity-body-panel-proof-page-template-container [data-simple-dropdown-field]")).toBeVisible();
+
+    await page.getByRole("button", { name: "List display" }).click();
+    await expect(page.locator("[data-card-list-select-field]").first()).toBeVisible();
+    await expect(page.locator("#entity-body-panel-proof-list-display-container [data-card-list-select-field]")).toBeVisible();
+    await expect(page.locator("[data-entity-body-panel-blocked-foundations]")).toContainText("Drawer select and workflow builder");
 
     await page.locator("[data-entity-body-panel-width-control]").selectOption("squeezed");
     await expect(page.locator("[data-entity-body-panel-proof-host]")).toHaveAttribute(
       "data-entity-body-panel-proof-width",
       "squeezed",
     );
+    await expect
+      .poll(async () => {
+        const firstTop = await topPosition(page, "#entity-body-panel-proof-name-container");
+        const secondTop = await topPosition(page, "#entity-body-panel-proof-key-container");
+        return secondTop > firstTop + 24;
+      })
+      .toBe(true);
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 
@@ -47,6 +75,11 @@ test.describe("entity body panel pattern route", () => {
     await page.locator("[data-entity-body-panel-state-control]").selectOption("blocked-foundation");
     await expect(page.locator("[data-entity-body-panel-state-evidence]")).toContainText("renders no body children");
     await expect.poll(() => scrollRegion.evaluate((element) => element.children.length)).toBe(0);
+
+    await page.locator("[data-entity-body-panel-state-control]").selectOption("default");
+    await page.locator("[data-entity-body-panel-hosted-control]").selectOption("static-proof");
+    await expect(page.locator("[data-entity-body-panel-governed-form]")).toHaveCount(0);
+    await expect(page.getByText("Static proof content", { exact: false })).toBeVisible();
 
     await page.locator("[data-entity-body-panel-mobile-control]").selectOption("internal-scroll");
     await expect(scrollRegion).toHaveAttribute("data-scroll-region-control-mobile-mode", "internal-scroll");

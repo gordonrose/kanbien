@@ -11,32 +11,32 @@ The entity body panel may not render real form controls until each control famil
 | Field row foundation | Review-ready | `form-field` behavior rule; `field-row-frame` token; `field-row-control` primitive |
 | Single-line text field | Review-ready | `text-entry-control` behavior rule; `field-value-text-style` and `text-control-frame` tokens; `text-field-control` primitive |
 | Textarea | Review-ready | `text-entry-control` behavior rule; `textarea-growth` token; `textarea-control` primitive |
-| Entity body panel | Review-ready Layer 4 pattern | `entity-body-panel` pattern composes `body-region-control` and hosts future governed controls |
+| Entity body panel | Review-ready Layer 4 pattern | `entity-body-panel` pattern composes `body-region-control` and hosts already-governed child seams while blocking missing families |
+| Accordion | Review-ready Layer 4 pattern | `accordion` behavior rule; `accordion-frame` token; `accordion-section-control` primitive; `accordion-group` pattern |
+| Radio button simple select | Accepted Layer 4 field pattern | `radio-simple-select-field` composes `field-row-control` and `radio-simple-select` |
+| Toggle on/off element | Review-ready Layer 4 field pattern | `toggle-field` composes `field-row-control` and `toggle-control` |
+| Simple dropdown | Review-ready Layer 4 field pattern | `simple-dropdown-field` composes `field-row-control` and `simple-dropdown-control` |
+| Card list prioritization/view-hide select | Review-ready Layer 4 field pattern | `card-list-select-field` composes `field-row-control` and `card-list-select` |
 
 ## Remaining Control Families
 
 | Form shape | Earliest missing layer | Why it is not ready yet |
 | --- | --- | --- |
-| Radio button simple select | Layer 1 behavior rule | Needs selection behavior, group naming, keyboard behavior, selected state, disabled state, and option data contract. |
-| Card list prioritization select | Layer 1 behavior rule | Needs ordering behavior, selected priority semantics, card/item state, keyboard behavior, and no-color-only state rules. |
-| Card list view/hide select | Layer 1 behavior rule | Needs selected versus hidden semantics, state naming, keyboard behavior, and list-item contract. |
-| Toggle on/off element | Layer 1 behavior rule | Needs switch semantics, pressed/checked state, disabled/read-only posture, and target/focus token dependencies. |
-| Simple dropdown | Layer 1 behavior rule | Needs trigger/listbox/menu decision, keyboard behavior, popover positioning, selected value contract, and empty option behavior. |
-| Drawer select | Layer 1 behavior rule | Needs drawer layering, single versus multiple selection behavior, search/filter posture, close behavior, and mobile rules. |
-| Accordion | Layer 1 behavior rule | Needs disclosure semantics, heading/button relationship, multi-open policy, keyboard behavior, and nested field relationship. |
+| Drawer select | Layer 1 reusable foundations | Blocked by `panel-stack` and `searchable-selection-panel` behavior foundations before drawer-select-specific behavior can be honest. See `docs/design-system/drawer-select-panel-stack-implementation-plan.md`. |
 | Workflow builder | Layer 1 behavior rule | Needs domain-shaped interaction model before tokens or primitives can be honest. |
 
 ## Recommended Next Order
 
-1. Radio button simple select.
-2. Toggle on/off element.
-3. Simple dropdown.
-4. Accordion.
-5. Card list select foundation, then prioritization and view/hide variants.
-6. Drawer select.
-7. Workflow builder.
+1. Panel stack.
+2. Searchable selection panel.
+3. Drawer select.
+4. Workflow builder.
+5. Later component seam work for composing governed field patterns into higher-level entity form flows.
 
-This order promotes the smallest reusable control semantics first, then builds toward the more composite form-builder surfaces.
+This order promotes reusable panel placement and searchable selection semantics
+before drawer select consumes them. Drawer select must not invent side-panel
+placement, stacked-panel overlay behavior, search behavior, selected/not-selected
+grouping, selectable-card roots, or selected-summary cards locally.
 
 ## Rendered Views Added
 
@@ -48,3 +48,10 @@ This order promotes the smallest reusable control semantics first, then builds t
 - `/design-system/default/primitives/text-field-control`
 - `/design-system/default/tokens/textarea-growth`
 - `/design-system/default/primitives/textarea-control`
+- `/design-system/default/tokens/accordion-frame`
+- `/design-system/default/primitives/accordion-section-control`
+- `/design-system/default/patterns/accordion-group`
+- `/design-system/default/patterns/radio-simple-select-field`
+- `/design-system/default/patterns/toggle-field`
+- `/design-system/default/patterns/simple-dropdown-field`
+- `/design-system/default/patterns/card-list-select-field`

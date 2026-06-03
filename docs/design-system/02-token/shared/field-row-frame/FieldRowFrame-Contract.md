@@ -4,7 +4,7 @@
 
 `field-row-frame` governs reusable spacing and sizing values for a field row that hosts one label, one future control slot, and optional helper or error text.
 
-It prevents each future form-control primitive from inventing its own label gap, message gap, and hosted-control minimum slot size.
+It prevents each future form-control primitive from inventing its own label gap, message gap, hosted-control minimum slot size, or visual grouping density.
 
 ## Shared Contract
 
@@ -32,4 +32,4 @@ If a downstream control needs border, background, radius, error color, focus beh
 
 ## Required Proof
 
-The default design-system proof route must show the upstream token dependencies, final spacing and size values, and at least one constrained-width rendering that proves labels and helper/error text do not overlap their container.
+The default design-system proof route must show the upstream token dependencies, final spacing and size values, and at least one rendering of the actual label, hosted-control slot, and helper/error-message relationship. A generic surface card is not enough evidence for this token because it cannot show the governed gaps.

@@ -23,7 +23,8 @@ state, scroll posture, width rails, and hosted-control blockers.
 It does not define text fields, text areas, radio groups, card selects,
 toggles, dropdowns, drawer selects, accordions, workflow builders, validation
 messages, product data, save behavior, component seams, templates, canonicals,
-or app adoption.
+or app adoption. It may host already-governed child primitives and patterns
+without owning their internal behavior.
 
 ## Preflight Decision Ledger
 
@@ -32,15 +33,30 @@ or app adoption.
 | Body frame, spacing, width rails, height rails | `02-token` | `body-region-frame` | none | Consume through `body-region-control`. |
 | Labelled body region, allowed state attributes, `aria-busy`, mobile scroll posture | `03-primitive` | `body-region-control` | none | Compose the primitive. |
 | Long body content needs a hosted scroll owner | `03-primitive` | `scroll-region-control` through `body-region-control` | none | Consume through primitive composition. |
+| Complete fields need an outer field box | `02-token`, `03-primitive` | `field-container-frame`; `field-container-control` | none | Wrap governed child fields through the primitive; do not add local form-field card CSS. |
 | Empty, loading, and blocked body states must not fake form UI | `04-pattern-contract` | this pattern | none | Render no body children for those states and expose evidence outside the body region. |
-| Real form and builder controls | earlier layers per family | none for most requested controls | missing behavior, tokens, primitives, and patterns | Block real rendering. |
+| Governed text field and textarea controls | `03-primitive` | `text-field-control`; `textarea-control` | none | May host through supplied child content. |
+| Governed field patterns | `04-pattern-contract` | `radio-simple-select-field`; `simple-dropdown-field`; `toggle-field`; `card-list-select-field`; `accordion-group` | none | May host through supplied child content. |
+| Drawer select and workflow builder controls | earlier layers per family | none | missing behavior, tokens, primitives, and patterns | Block real rendering. |
 
 ## Composition Contract
 
 The pattern renders one `body-region-control` primitive.
 
+When the pattern hosts governed form fields, each complete field must be wrapped
+with `field-container-control`. The container primitive owns the outer field
+surface and spacing; hosted child primitives and patterns retain their own
+label, control, validation, focus, and event behavior.
+
+When governed fields share a row, the pattern must collapse those fields to
+single-column rows under narrow available inline space. The pattern owns that
+composition breakpoint; field primitives must not change their own spacing or
+behavior to compensate for cramped sibling layout.
+
 For `default`, `read-only`, `editable`, and `error`, the pattern may pass
-already-governed child content into the body region.
+already-governed child content into the body region. Child primitives and
+patterns retain ownership of their labels, focus behavior, state semantics,
+validation wiring, event forwarding, and controller attachment.
 
 For `empty`, `loading`, and `blocked-foundation`, the pattern renders no child
 content. Empty-state presentation, loading previews, and blocked-foundation UI
@@ -62,7 +78,7 @@ visual placeholders that look like real controls.
 | `empty` | Hosts no child content; empty-state UI remains blocked. |
 | `loading` | Hosts no child content; loading UI remains blocked while `aria-busy` is supplied by the primitive. |
 | `read-only` | Hosts supplied governed child content; child families own read-only semantics. |
-| `editable` | Hosts supplied governed child content only after child families are governed. |
+| `editable` | Hosts supplied governed child content; each child family owns its own mutability rules. |
 | `error` | Hosts supplied governed child content; validation UI remains blocked. |
 | `blocked-foundation` | Hosts no child content because a needed child family is missing. |
 
@@ -80,8 +96,8 @@ visual placeholders that look like real controls.
 | Evidence area | Requirement |
 | --- | --- |
 | runtime | Unit proof must show accepted primitive composition and empty/loading/blocked child suppression. |
-| rendered proof | Browser proof must show state controls, width pressure, direction, no horizontal overflow, and no fake children for empty/loading/blocked states. |
-| downstream boundary | Proof must show hosted controls are blocked until their own lower-layer foundations exist. |
+| rendered proof | Browser proof must show state controls, width pressure, direction, no horizontal overflow, governed child seams, narrow-width field-row collapse, and no fake children for empty/loading/blocked states. |
+| downstream boundary | Proof must show governed child seams are hosted through their own runtime seams, while drawer select and workflow builder remain blocked until their own lower-layer foundations exist. |
 
 ## Rendered View
 

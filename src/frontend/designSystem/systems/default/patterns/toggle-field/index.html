@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Toggle Field Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/default/assets/styles.css" />
+  </head>
+  <body data-pattern-layer-surface="toggle-field">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/default/patterns/toggle-field" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </header>
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Toggle Field</span></li>
+          </ol>
+        </nav>
+      </section>
+      <nav class="context-nav" aria-label="Toggle field pattern navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/default/patterns/toggle-field" data-tooltip="Toggle Field" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M7 7h10a5 5 0 0 1 0 10H7A5 5 0 0 1 7 7zm0 2a3 3 0 0 0 0 6h10a3 3 0 0 0 0-6H7zm0.5 1.5a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3z" /></svg></span>
+            <span class="context-nav-label">Toggle</span>
+          </a>
+        </div>
+      </nav>
+      <main class="design-system-page-main" data-pattern-proof-page></main>
+    </div>
+    <script type="module" src="/design-system/systems/default/patterns/toggle-field/page.mjs"></script>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>
