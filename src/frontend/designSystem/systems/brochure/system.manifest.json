@@ -1,0 +1,135 @@
+{
+  "schema": "kanbien.designSystem.systemManifest.v1",
+  "systemKey": "brochure",
+  "label": "Brochure",
+  "description": "Public brochure design-system variant for the temporary same-origin brochure pages.",
+  "assetsBase": "/design-system/systems/brochure/assets",
+  "contracts": {
+    "tokens.background-color": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/background-color/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/backgroundColor.tokens.mjs",
+      "implementationExport": "backgroundColorTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/background-color"
+    },
+    "tokens.button-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/button-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/buttonFrame.tokens.mjs",
+      "implementationExport": "buttonFrameTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/button-frame"
+    },
+    "tokens.content-width": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/content-width/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/contentWidth.tokens.mjs",
+      "implementationExport": "contentWidthTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/content-width"
+    },
+    "tokens.focus-ring": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/focusRing.tokens.mjs",
+      "implementationExport": "focusRingTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/focus-ring"
+    },
+    "tokens.label-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/label-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/labelTextStyle.tokens.mjs",
+      "implementationExport": "labelTextStyleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/label-text-style"
+    },
+    "tokens.link-decoration": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/link-decoration/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/linkDecoration.tokens.mjs",
+      "implementationExport": "linkDecorationTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/link-decoration"
+    },
+    "tokens.link-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/link-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/linkTextStyle.tokens.mjs",
+      "implementationExport": "linkTextStyleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/link-text-style"
+    },
+    "tokens.list-marker-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/list-marker-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/listMarkerStyle.tokens.mjs",
+      "implementationExport": "listMarkerStyleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/list-marker-style"
+    },
+    "tokens.minimum-target-size": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/minimum-target-size/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/minimumTargetSize.tokens.mjs",
+      "implementationExport": "minimumTargetSizeTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/minimum-target-size"
+    },
+    "tokens.panel-corner-radius": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/panel-corner-radius/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/panelCornerRadius.tokens.mjs",
+      "implementationExport": "panelCornerRadiusTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/panel-corner-radius"
+    },
+    "tokens.pipeline-showcase-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/pipeline-showcase-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/pipelineShowcaseFrame.tokens.mjs",
+      "implementationExport": "pipelineShowcaseFrameTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/pipeline-showcase-frame"
+    },
+    "tokens.primary-color-source": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/primary-color-source/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/primaryColorSource.tokens.mjs",
+      "implementationExport": "primaryColorSourceTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/primary-color-source"
+    },
+    "tokens.primary-tinted-background": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/primary-tinted-background/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/primaryTintedBackground.tokens.mjs",
+      "implementationExport": "primaryTintedBackgroundTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/primary-tinted-background"
+    },
+    "tokens.primary-tinted-foreground": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/primary-tinted-foreground/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/primaryTintedForeground.tokens.mjs",
+      "implementationExport": "primaryTintedForegroundTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/primary-tinted-foreground"
+    },
+    "tokens.spacing-scale": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/spacing-scale/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/spacingScale.tokens.mjs",
+      "implementationExport": "spacingScaleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/spacing-scale"
+    },
+    "tokens.supporting-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/supporting-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/supportingTextStyle.tokens.mjs",
+      "implementationExport": "supportingTextStyleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/supporting-text-style"
+    },
+    "tokens.surface-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/surface-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/surfaceFrame.tokens.mjs",
+      "implementationExport": "surfaceFrameTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/surface-frame"
+    },
+    "tokens.tooltip-surface": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-surface/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/tooltipSurface.tokens.mjs",
+      "implementationExport": "tooltipSurfaceTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/tooltip-surface"
+    },
+    "tokens.tooltip-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/tooltip-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/tooltipTextStyle.tokens.mjs",
+      "implementationExport": "tooltipTextStyleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/tooltip-text-style"
+    },
+    "tokens.typography-scale": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/typography-scale/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/typographyScale.tokens.mjs",
+      "implementationExport": "typographyScaleTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/typography-scale"
+    },
+    "tokens.visual-proof-ornament": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/visual-proof-ornament/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/brochure/tokens/proofs/visualProofOrnament.tokens.mjs",
+      "implementationExport": "visualProofOrnamentTokenSpec",
+      "pageRoute": "/design-system/brochure/tokens/visual-proof-ornament"
+    }
+  }
+}

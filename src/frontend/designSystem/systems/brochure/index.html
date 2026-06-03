@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Brochure System</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/public-site.css?v=20260530-brochure-system-1" />
+  </head>
+  <body class="public-site-body">
+    <div class="design-system-shell public-site-shell">
+      <header class="top-nav top-nav-no-utilities public-site-top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/brochure/" aria-current="page">Brochure</a>
+            <a class="nav-link" href="/design-system/default/">Default</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav public-site-sub-nav" aria-label="Page breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Brochure system</span></li>
+          </ol>
+        </nav>
+      </section>
+
+      <main class="public-site-page">
+        <section class="public-site-project-hero" aria-labelledby="brochure-system-title">
+          <p class="public-site-eyebrow">Variant</p>
+          <h1 id="brochure-system-title">Brochure design-system variant</h1>
+          <p class="public-site-project-hook">
+            This variant owns the public brochure identity: warmer surfaces, editorial panels, public pipeline tabs,
+            and the same responsive dropdown behavior used by the live brochure pages.
+          </p>
+          <div class="public-site-actions">
+            <a class="public-site-button public-site-button-primary" href="/projects/front-end-builder">View live consumer</a>
+            <a class="public-site-button" href="/design-system/brochure/patterns/brochure-evidence-section">Evidence pattern proof</a>
+            <a class="public-site-button" href="/design-system/default/">Compare default system</a>
+          </div>
+        </section>
+
+        <section class="public-site-detail-section" aria-labelledby="brochure-system-contract-title">
+          <p class="public-site-eyebrow">Current seam</p>
+          <h2 id="brochure-system-contract-title">What the brochure consumes</h2>
+          <ul class="public-site-check-list">
+            <li>Public-site CSS is served from `/design-system/systems/brochure/assets/public-site.css`.</li>
+            <li>Pipeline tab behavior is served from `/design-system/systems/brochure/assets/public-site.js`.</li>
+            <li>Evidence-section pattern proof lives at `/design-system/brochure/patterns/brochure-evidence-section`.</li>
+            <li>The brochure pages consume this variant instead of owning their visual identity locally.</li>
+          </ul>
+        </section>
+      </main>
+
+      <script type="module" src="/design-system/assets/app.mjs"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Focus Ring Tokens</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/styles.css" />
+  </head>
+  <body data-token-layer-surface="focus-ring">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/tokens" aria-current="page">Tokens</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">FR</span>
+            <span class="profile-meta"><strong>Focus Ring</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/tokens">Token Layer</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Focus Ring</span></li>
+          </ol>
+        </nav>
+      </section>
+
+      <nav class="context-nav" aria-label="Focus ring token navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/tokens" data-tooltip="Token Layer">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h6v6H5zm8 0h6v6h-6zM5 13h6v6H5zm8 0h6v6h-6z" /></svg>
+            </span>
+            <span class="context-nav-label">Tokens</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/brochure/tokens/focus-ring" data-tooltip="Focus Ring" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 4a8 8 0 1 0 8 8h-3a5 5 0 1 1-5-5zM12 2v4M12 18v4M2 12h4M18 12h4" /></svg>
+            </span>
+            <span class="context-nav-label">Focus</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main" data-token-spec-page></main>
+    </div>
+
+    <script type="module" src="/design-system/systems/brochure/tokens/focus-ring/page.mjs"></script>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

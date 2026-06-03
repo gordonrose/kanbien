@@ -1,0 +1,26 @@
+export const typographyScaleTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.typography-scale",
+  tokenType: "typography-scale",
+  requiredVariantRoles: ["eyebrow text", "page title", "body copy", "section heading"],
+  requiredThemes: ["all"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "textStyleRole",
+    "fontFamilyValue",
+    "fontSizeValue",
+    "fontWeightValue",
+    "lineHeightValue",
+    "letterSpacingValue",
+    "textTransform",
+    "layoutContext",
+    "zoomBehavior",
+  ],
+  metadataFields: ["textStyleRole", "layoutContext", "theme", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "overflowRule"],
+  consumerRules: [
+    "Consumers must use this token for governed editorial text instead of local typography literals.",
+    "This token does not define status, error, tooltip, form label, or compact control text.",
+    "Text overflow and disclosure behavior remain owned by the consuming primitive or pattern.",
+  ],
+};

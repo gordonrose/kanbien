@@ -1,0 +1,25 @@
+export const surfaceFrameTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.surface-frame",
+  tokenType: "surface-frame",
+  requiredVariantRoles: ["panel surface", "elevated panel", "navigation surface", "showcase surface"],
+  requiredThemes: ["all"],
+  requiredVariantFields: ["id", "tokenName", "value", "preview", "metadata", "useCaseInstructions"],
+  valueFields: [
+    "surfaceRole",
+    "backgroundValue",
+    "foregroundValue",
+    "borderValue",
+    "borderWidthValue",
+    "radiusValue",
+    "shadowValue",
+    "layoutContext",
+  ],
+  metadataFields: ["surfaceRole", "layoutContext", "theme", "accessibility"],
+  useCaseInstructionFields: ["allowedUse", "forbiddenUse", "compositionRule"],
+  consumerRules: [
+    "Consumers must use this token for governed surface frames instead of local background, border, radius, or shadow literals.",
+    "This token does not define component anatomy, layout grid, padding, or interaction behavior.",
+    "Surface contrast and elevation must not be the only indication of state or interactivity.",
+  ],
+};

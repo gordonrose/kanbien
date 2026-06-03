@@ -1,0 +1,52 @@
+@import url("/design-system/assets/token-spec.css");
+
+:root {
+  --ink: #1f2933;
+  --ink-soft: #53616f;
+  --paper: #f6f8f3;
+  --line: rgba(40, 56, 71, 0.16);
+  --line-strong: rgba(40, 56, 71, 0.28);
+  --accent: #1f6f78;
+  --accent-strong: #174d54;
+  --accent-soft: #e8f2ef;
+  --accent-text: #1f2933;
+  --surface-1: #fffdf8;
+  --token-container-background: #fffdf8;
+  --surface-2: rgba(255, 253, 248, 0.96);
+  --surface-3: rgba(251, 242, 223, 0.88);
+  --nav-avatar-bg: linear-gradient(135deg, #1f6f78, #68b0a6);
+  --shadow: 0 1.25rem 3rem rgba(23, 38, 47, 0.12);
+  --shadow-soft: 0 0.6rem 1.4rem rgba(23, 38, 47, 0.08);
+  --radius: 0.5rem;
+  --radius-sm: 0.5rem;
+}
+
+html[data-theme="dark"],
+[data-theme-scope="dark"] {
+  --ink: #f8faf7;
+  --ink-soft: #c5d2ce;
+  --paper: #162126;
+  --line: rgba(197, 210, 206, 0.2);
+  --line-strong: rgba(197, 210, 206, 0.34);
+  --accent: #68b0a6;
+  --accent-strong: #8bc9c1;
+  --surface-1: #223139;
+  --token-container-background: #223139;
+  --surface-2: rgba(34, 49, 57, 0.96);
+  --surface-3: rgba(44, 65, 73, 0.9);
+}
+
+html[data-theme="desert"],
+[data-theme-scope="desert"] {
+  --ink: #2f261d;
+  --ink-soft: #725c43;
+  --paper: #f7efe1;
+  --line: rgba(151, 111, 74, 0.24);
+  --line-strong: rgba(151, 111, 74, 0.36);
+  --accent: #c77d2a;
+  --accent-strong: #8d511d;
+  --surface-1: #fff8ec;
+  --token-container-background: #fff8ec;
+  --surface-2: rgba(255, 248, 236, 0.96);
+  --surface-3: rgba(234, 215, 184, 0.86);
+}

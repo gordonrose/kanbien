@@ -1,0 +1,25 @@
+export const linkTextStyleTokenContract = {
+  schema: "kanbien.designSystem.tokenContract.v1",
+  contractId: "tokens.link-text-style",
+  tokenType: "link-text-style",
+  status: "review-ready",
+  contractPath: "docs/design-system/02-token/shared/link-text-style/LinkTextStyle-Contract.md",
+  behaviorRulePath: "docs/design-system/01-behavior-rule/shared/brochure-text-link-action/BrochureTextLinkAction-Behaviour.md",
+  requiredFields: [
+    "linkRole",
+    "fontFamilyValue",
+    "fontSizeValue",
+    "fontWeightValue",
+    "lineHeightValue",
+    "letterSpacingValue",
+    "textTransform",
+    "foregroundValue",
+    "hoverForegroundValue",
+    "layoutContext",
+  ],
+  consumerRules: [
+    "Consumers must use this token through a governed runtime seam.",
+    "Consumers must not copy link text literals into route-local or app-local CSS.",
+    "Link primitives must pair this token with signed decoration and focus tokens.",
+  ],
+};
