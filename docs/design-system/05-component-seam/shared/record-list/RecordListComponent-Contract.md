@@ -46,7 +46,7 @@ template, canonical, app-like review surface, or visible defect.
 | Pattern readiness source checked | `docs/design-system/04-pattern-contract/pattern-readiness-index.md` |
 | Required pattern consumable by selected systems | `yes` |
 | Pattern runtime seam status | `implemented` |
-| Consumer contexts known | `partial`; design-system demo/canonical/app-adoption layers are expected but scaffold-only, and root-admin users is recorded only as a pressure-test mapping. |
+| Consumer contexts known | `partial`; design-system demo is now active for next-layer work, canonical/app-adoption layers are still expected but scaffold-only, and root-admin users is recorded only as a pressure-test mapping. |
 
 ## Pattern Dependency
 
@@ -190,12 +190,12 @@ Consumers must not weaken accessibility requirements recorded here.
 | Step | Layer | Action | Blocking Reason |
 | --- | --- | --- | --- |
 | 1 | `05-component-seam` | Accept this `RecordListComponent` seam as `review-ready`. | none |
-| 2 | `06-demo-page` | Activate the demo-page harness before creating a rendered component demo. | `06-demo-page` is scaffold-only. |
+| 2 | `06-demo-page` | Create a rendered component demo artifact and proof surface that consumes this seam. | none |
 
 ## Next Layer
 
 | Field | Value |
 | --- | --- |
 | Next expected layer | `06-demo-page` |
-| Next layer status | `scaffold-only` |
-| Reason | The component seam can pass Layer 5, but rendered demo work must wait for an active Layer 6 harness. |
+| Next layer status | `allowed` |
+| Reason | The demo-page harness is active and can now govern rendered evidence that consumes this component seam. |

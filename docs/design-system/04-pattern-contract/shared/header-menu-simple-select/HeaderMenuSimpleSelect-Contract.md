@@ -116,12 +116,12 @@ Consumers must not treat the pattern as a component seam or app adoption seam.
 | Step | Layer | Action | Blocking Reason |
 | --- | --- | --- | --- |
 | 1 | `04-pattern-contract` | Treat this pattern as review-ready if focused tests pass. | none |
-| 2 | `05-component-seam` | Activate the component-seam harness before creating an app-consumable header selector component. | Layer 5 is scaffold-only. |
+| 2 | `05-component-seam` | Create an app-consumable header selector component seam. | none |
 
 ## Next Layer
 
 | Field | Value |
 | --- | --- |
 | Next expected layer | `05-component-seam` |
-| Next layer status | `scaffold-only` |
-| Reason | Pattern work can pass, but app-consumable component work must wait for the Layer 5 harness. |
+| Next layer status | `allowed` |
+| Reason | The Layer 5 harness is active and can now govern a header selector component seam. |

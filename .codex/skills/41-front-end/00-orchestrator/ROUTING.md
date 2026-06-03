@@ -106,13 +106,34 @@ Required evals:
 - `../05-component-seam/EVAL.md`
 - `../05-component-seam/ACCESSIBILITY-EVAL.md`
 
+### 06 Demo Page
+
+Status: active.
+
+Use for requests that ask to define, confirm, revise, retire, or govern a
+rendered demo page or equivalent review surface after required component-seam
+gates have passed.
+
+Use when canonical, app adoption, or parity-test work is blocked by missing
+rendered evidence that a governed component seam works across required states,
+interactions, accessibility, responsive contexts, themes, direction, or
+magnification.
+
+Layer skill:
+
+- `../06-demo-page/SKILL.md`
+
+Required evals:
+
+- `../06-demo-page/EVAL.md`
+- `../06-demo-page/ACCESSIBILITY-EVAL.md`
+
 ## Scaffolded Layers
 
 The following layers currently have README scaffolds only.
 
 They must not be used as full governed layer skills until their skill structure exists.
 
-- `06-demo-page`
 - `07-canonical-scenarios`
 - `08-first-app-adoption`
 - `09-adoption-parity-test`
@@ -167,6 +188,13 @@ passed, route to `05-component-seam`.
 If the request asks for demo, canonical, app adoption, or parity test before
 component seam work has passed, route to `05-component-seam` when upstream
 gates already pass.
+
+If the request asks for demo work and required component seam work has passed,
+route to `06-demo-page`.
+
+If the request asks for canonical, app adoption, or parity test before demo
+page work has passed, route to `06-demo-page` when upstream gates already
+pass.
 
 If the request asks for a pattern, component, demo, canonical, app adoption, or parity test before a passed behavior rule, route to `01-behavior-rule`.
 

@@ -44,6 +44,7 @@ The same noun can appear in multiple layers. For example, `button` can mean:
 | Primitive | The low-level button affordance: activation, disabled behavior, accessible name, and focus behavior. |
 | Pattern | A button group or action area that composes buttons with priority, spacing, overflow, and placement rules. |
 | Component seam | The exported `Button` or `ButtonGroup` interface that demos and apps consume. |
+| Demo page | The rendered review surface that proves a component seam through honest fixtures, interactions, accessibility, and responsive evidence. |
 
 Use this routing rule:
 
@@ -59,7 +60,7 @@ Example: `Menu Trigger` is a primitive. `icon-size`, `target-size`, and
 the trigger with menu surface and item behavior. `RowActionMenu` is a component
 seam if it is the exported interface apps consume.
 
-Layer ask guidance for layers `05` through `10` still lives in
+Layer ask guidance for layers `07` through `10` still lives in
 `01-behavior-rule/SKILL.md` until those layers become active. Layers
-`02-token`, `03-primitive`, and `04-pattern-contract` have their own active
-skills and evals.
+`02-token`, `03-primitive`, `04-pattern-contract`, `05-component-seam`, and
+`06-demo-page` have their own active skills and evals.

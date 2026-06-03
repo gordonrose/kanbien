@@ -60,7 +60,7 @@ It must not define primitives, token values, pattern structure, component APIs, 
 
 | Item | Reason |
 | --- | --- |
-| App adoption | The component-seam and app-adoption layers are not active enough to claim real-app use. |
+| App adoption | The entity-page-header component seam and app-adoption layer have not passed, so this cannot claim real-app use. |
 | Form fields inside the entity body | They belong to the form component stream and must not be mixed into this header family. |
 | Header column spans, spacing, colours, badges, and icons | These are token, primitive, or pattern decisions, not behavior-rule decisions. |
 
@@ -70,7 +70,7 @@ It must not define primitives, token values, pattern structure, component APIs, 
 | --- | --- | --- |
 | Readiness/status badge semantics and rendering | 03-primitive | The header needs non-color status communication before a pattern can compose it safely. |
 | Header slot ownership and composition | 04-pattern-contract | Composition belongs after required tokens and primitives are consumable. |
-| Public component API or render seam | 05-component-seam | The component-seam layer is scaffold-only. |
+| Public component API or render seam | 05-component-seam | The Layer 5 harness is active, but this family still needs a component seam. |
 | App page adoption | 08-first-app-adoption | App adoption is blocked until the full governed chain exists. |
 
 ## Mandatory Review Dimensions
