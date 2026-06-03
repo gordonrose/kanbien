@@ -18,6 +18,8 @@ const fiveActions = [
   { label: "Add related", value: "add-related", icon: "plus" },
 ];
 
+type EntityPageHeaderSlot = { id: string };
+
 describe("entity-page-header pattern seam", () => {
   it("declares the governed primitive and token dependencies", () => {
     const header = entityPageHeaderPattern({
@@ -84,16 +86,16 @@ describe("entity-page-header pattern seam", () => {
       actions: fiveActions.slice(0, 2),
     });
 
-    expect(slots.find((slot) => slot.id === "context-title")).toMatchObject({
+    expect(slots.find((slot: EntityPageHeaderSlot) => slot.id === "context-title")).toMatchObject({
       startColumn: 11,
       endColumn: 23,
       width: 12,
     });
-    expect(slots.find((slot) => slot.id === "action-1")).toMatchObject({
+    expect(slots.find((slot: EntityPageHeaderSlot) => slot.id === "action-1")).toMatchObject({
       startColumn: 23,
       endColumn: 24,
     });
-    expect(slots.find((slot) => slot.id === "action-2")).toMatchObject({
+    expect(slots.find((slot: EntityPageHeaderSlot) => slot.id === "action-2")).toMatchObject({
       startColumn: 24,
       endColumn: 25,
     });

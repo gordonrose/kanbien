@@ -6,6 +6,11 @@ import {
   tokenDefinitionV1,
 } from "../../../src/frontend/designSystem/layers/02-token/drag-drop-affordance-frame/systems/default.mjs";
 
+type TokenVariant = {
+  id: string;
+  value?: unknown;
+};
+
 describe("drag-drop-affordance-frame token", () => {
   it("declares reusable drag/drop roles and value fields", () => {
     expect(dragDropAffordanceFrameTokenContract).toMatchObject({
@@ -42,7 +47,7 @@ describe("drag-drop-affordance-frame token", () => {
       },
     });
 
-    expect(tokenDefinitionV1.variants.map((variant) => variant.id)).toEqual(
+    expect(tokenDefinitionV1.variants.map((variant: TokenVariant) => variant.id)).toEqual(
       expect.arrayContaining([
         "drag-drop-affordance-frame-source",
         "drag-drop-affordance-frame-preview",
@@ -52,7 +57,7 @@ describe("drag-drop-affordance-frame token", () => {
       ]),
     );
     expect(tokenDefinitionV1.variants).toHaveLength(9);
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "drag-drop-affordance-frame-drop-marker")?.value).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id === "drag-drop-affordance-frame-drop-marker")?.value).toMatchObject({
       frameRole: "drop marker",
       markerMinBlockSize: "4.75rem",
       markerLabelValue: "Drop here",

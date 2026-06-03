@@ -6,6 +6,11 @@ import {
   tokenDefinitionV1,
 } from "../../../src/frontend/designSystem/layers/02-token/record-list-item-frame/systems/default.mjs";
 
+type TokenVariant = {
+  id: string;
+  value?: unknown;
+};
+
 describe("record-list-item-frame token", () => {
   it("declares required roles and value fields", () => {
     expect(recordListItemFrameTokenContract).toMatchObject({
@@ -42,7 +47,7 @@ describe("record-list-item-frame token", () => {
       },
     });
 
-    expect(tokenDefinitionV1.variants.map((variant) => variant.id)).toEqual(
+    expect(tokenDefinitionV1.variants.map((variant: TokenVariant) => variant.id)).toEqual(
       expect.arrayContaining([
         "record-list-item-frame-row",
         "record-list-item-frame-selected",
@@ -52,7 +57,7 @@ describe("record-list-item-frame token", () => {
       ]),
     );
     expect(tokenDefinitionV1.variants).toHaveLength(9);
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "record-list-item-frame-selected")?.value).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id === "record-list-item-frame-selected")?.value).toMatchObject({
       frameRole: "selected item row",
       backgroundValue: "#e4f4f1",
       borderValue: "#77c2b6",

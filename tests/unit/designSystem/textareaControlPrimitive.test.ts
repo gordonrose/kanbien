@@ -6,9 +6,21 @@ import {
   textareaControlPrimitive,
 } from "../../../src/frontend/designSystem/layers/03-primitive/textarea-control/index.mjs";
 
+type TextareaGrowthVariant = {
+  id: string;
+  initialRows: string;
+  maxBlockSizeValue: string;
+};
+
 describe("textarea-control primitive", () => {
   it("exposes governed textarea growth variants", () => {
-    expect(textareaGrowthTokenVariants.map((variant) => [variant.id, variant.initialRows, variant.maxBlockSizeValue])).toEqual([
+    expect(
+      textareaGrowthTokenVariants.map((variant: TextareaGrowthVariant) => [
+        variant.id,
+        variant.initialRows,
+        variant.maxBlockSizeValue,
+      ]),
+    ).toEqual([
       ["textarea-growth-one-line", "1", "50vh"],
       ["textarea-growth-multi-line", "5", "75vh"],
       ["textarea-growth-paragraph", "15", "90vh"],

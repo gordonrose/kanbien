@@ -7,6 +7,8 @@ import {
   simpleDropdownControlPrimitiveContract,
 } from "../../../src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs";
 
+type TokenVariantWithId = { id: string };
+
 describe("simple-dropdown-control primitive", () => {
   it("exposes a governed trigger frame token seam", () => {
     expect(dropdownTriggerFrameTokenSpec).toMatchObject({
@@ -14,10 +16,10 @@ describe("simple-dropdown-control primitive", () => {
       systemKey: "default",
       tokenType: "dropdown-trigger-frame",
     });
-    expect(dropdownTriggerFrameTokenSpec.variants.map((variant) => variant.id)).toContain(
+    expect(dropdownTriggerFrameTokenSpec.variants.map((variant: TokenVariantWithId) => variant.id)).toContain(
       "dropdown-trigger-frame-default-original",
     );
-    expect(dropdownTriggerFrameTokenSpec.variants.map((variant) => variant.id)).toContain(
+    expect(dropdownTriggerFrameTokenSpec.variants.map((variant: TokenVariantWithId) => variant.id)).toContain(
       "dropdown-trigger-frame-open-original",
     );
     expect(dropdownTriggerFrameTokenSpec.consumerRestrictions.join(" ")).toContain("text-control-frame");

@@ -6,6 +6,13 @@ import {
   tokenDefinitionV1,
 } from "../../../src/frontend/designSystem/layers/02-token/menu-simple-select-frame/systems/default.mjs";
 
+type TokenVariant = {
+  id: string;
+  metadata?: unknown;
+  preview?: unknown;
+  value?: unknown;
+};
+
 describe("menu-simple-select-frame token", () => {
   it("declares required frame roles and value fields", () => {
     expect(menuSimpleSelectFrameTokenContract).toMatchObject({
@@ -53,7 +60,7 @@ describe("menu-simple-select-frame token", () => {
       },
     });
 
-    expect(tokenDefinitionV1.variants.map((variant) => variant.id)).toEqual(
+    expect(tokenDefinitionV1.variants.map((variant: TokenVariant) => variant.id)).toEqual(
       expect.arrayContaining([
         "menu-simple-select-trigger-frame-default",
         "menu-simple-select-trigger-frame-icon",
@@ -70,31 +77,31 @@ describe("menu-simple-select-frame token", () => {
       ]),
     );
     expect(tokenDefinitionV1.variants).toHaveLength(18);
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "menu-simple-select-trigger-frame-icon")?.value).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id === "menu-simple-select-trigger-frame-icon")?.value).toMatchObject({
       minInlineSize: "2.75rem",
       maxInlineSize: "2.75rem",
       paddingInlineValue: "0",
       iconForegroundValue: "#008575",
       supportingForegroundValue: "#64748b",
     });
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "menu-simple-select-trigger-frame-icon")?.preview).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id === "menu-simple-select-trigger-frame-icon")?.preview).toMatchObject({
       kind: "menu-simple-select-trigger-sample",
       frameRole: "icon trigger frame",
       iconForeground: "#008575",
     });
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id === "menu-simple-select-trigger-frame-default")?.preview).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id === "menu-simple-select-trigger-frame-default")?.preview).toMatchObject({
       kind: "menu-simple-select-trigger-sample",
       frameRole: "trigger frame",
       labelText: "Layer",
       valueText: "Current",
       iconForeground: "#008575",
     });
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id.endsWith("panel-frame-default"))?.value).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id.endsWith("panel-frame-default"))?.value).toMatchObject({
       maxBlockSize: "32rem",
       zIndexValue: "20",
       scrollBehavior: "anchored panel owns internal option scrolling when options exceed max block size",
     });
-    expect(tokenDefinitionV1.variants.find((variant) => variant.id.endsWith("option-frame-current"))?.metadata).toMatchObject({
+    expect(tokenDefinitionV1.variants.find((variant: TokenVariant) => variant.id.endsWith("option-frame-current"))?.metadata).toMatchObject({
       state: "current",
     });
   });

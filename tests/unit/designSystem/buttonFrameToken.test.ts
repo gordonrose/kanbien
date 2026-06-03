@@ -5,6 +5,8 @@ import {
   buttonFrameTokenVariants,
 } from "../../../src/frontend/designSystem/layers/02-token/button-frame/systems/default.mjs";
 
+type TokenVariantWithId = { id: string };
+
 describe("button-frame token seam", () => {
   it("exposes governed icon and text action frame variants for each theme", () => {
     expect(buttonFrameTokenSpec).toMatchObject({
@@ -14,7 +16,7 @@ describe("button-frame token seam", () => {
     });
 
     expect(buttonFrameTokenVariants).toHaveLength(9);
-    expect(buttonFrameTokenVariants.map((variant) => variant.id)).toEqual([
+    expect(buttonFrameTokenVariants.map((variant: TokenVariantWithId) => variant.id)).toEqual([
       "button-frame-icon-quiet-original",
       "button-frame-icon-subtle-original",
       "button-frame-text-action-original",

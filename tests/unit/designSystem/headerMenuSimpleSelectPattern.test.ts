@@ -12,6 +12,8 @@ import {
 } from "../../../src/frontend/designSystem/layers/04-pattern-contract/header-menu-simple-select/index.mjs";
 import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
 
+type SelectOption = { value: string };
+
 describe("header-menu-simple-select pattern seam", () => {
   it("composes the governed menu-simple-select-control primitive", () => {
     const pattern = headerMenuSimpleSelectPattern({
@@ -34,7 +36,7 @@ describe("header-menu-simple-select pattern seam", () => {
   });
 
   it("keeps the representative layer options available to the pattern", () => {
-    expect(headerLayerOptions.map((option) => option.value)).toEqual([
+    expect(headerLayerOptions.map((option: SelectOption) => option.value)).toEqual([
       "chats",
       "tenants",
       "owners",
@@ -44,8 +46,8 @@ describe("header-menu-simple-select pattern seam", () => {
       "business-units",
       "users",
     ]);
-    expect(headerFilterOptions.map((option) => option.value)).toEqual(["selected", "ready", "needs-review", "blocked"]);
-    expect(headerSortOptions.map((option) => option.value)).toEqual(["current", "name", "status"]);
+    expect(headerFilterOptions.map((option: SelectOption) => option.value)).toEqual(["selected", "ready", "needs-review", "blocked"]);
+    expect(headerSortOptions.map((option: SelectOption) => option.value)).toEqual(["current", "name", "status"]);
   });
 
   it("supports icon trigger composition for one-column header controls", () => {

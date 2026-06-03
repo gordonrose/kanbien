@@ -43,7 +43,7 @@ test.describe("index nav panel pattern route", () => {
     await page.locator("[data-index-nav-panel-count-control]").selectOption("3");
     const shortListState = await page.locator("[data-index-nav-panel]").evaluate((panel) => {
       const listItems = Array.from(panel.querySelectorAll("[data-index-nav-item-control]"));
-      const lastItem = listItems.at(-1);
+      const lastItem = listItems[listItems.length - 1];
       const panelRect = panel.getBoundingClientRect();
       const lastItemRect = lastItem?.getBoundingClientRect();
 
