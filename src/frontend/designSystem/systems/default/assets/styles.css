@@ -297,6 +297,47 @@
   border-radius: var(--token-preview-radius, var(--radius-sm));
 }
 
+.token-spec-detail-slot-frame-preview {
+  display: grid;
+  gap: var(--token-preview-gap, 0.75rem);
+  align-content: start;
+  box-sizing: border-box;
+  min-block-size: 8rem;
+  max-block-size: var(--token-preview-max-block-size, 32rem);
+  min-inline-size: min(100%, var(--token-preview-min-inline-size, 18rem));
+  padding-block: var(--token-preview-padding-block, 0.5rem);
+  padding-inline: var(--token-preview-padding-inline, 0.5rem);
+  border: 0.0625rem solid var(--token-preview-border, var(--line));
+  border-radius: var(--token-preview-radius, var(--radius-sm));
+  overflow: hidden;
+}
+
+.token-spec-detail-slot-frame-header,
+.token-spec-detail-slot-frame-card {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.token-spec-detail-slot-frame-header span,
+.token-spec-detail-slot-frame-card strong {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.token-spec-detail-slot-frame-header strong,
+.token-spec-detail-slot-frame-card span {
+  overflow-wrap: anywhere;
+}
+
+.token-spec-detail-slot-frame-card {
+  padding: 0.75rem;
+  border: 0.0625rem solid var(--token-preview-border, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--token-preview-detail-surface, var(--surface-1));
+}
+
 .token-spec-menu-select-trigger-preview {
   display: flex;
   align-items: center;
@@ -955,6 +996,23 @@
   color: var(--ink);
   font: inherit;
   font-size: 0.82rem;
+}
+
+.detail-slot-control-proof-controls {
+  grid-template-columns: minmax(14rem, 1fr) repeat(4, minmax(8rem, 12rem));
+}
+
+.detail-slot-control-proof-host {
+  display: grid;
+  inline-size: min(100%, 32rem);
+}
+
+.detail-slot-control-proof-host[data-detail-slot-control-proof-width="narrow"] {
+  inline-size: min(100%, 22rem);
+}
+
+.detail-slot-control-proof-host[data-detail-slot-control-proof-width="mobile"] {
+  inline-size: min(100%, 24rem);
 }
 
 .primitive-proof-row {
@@ -3444,6 +3502,35 @@
   color: var(--record-list-item-supporting, var(--ink-soft));
 }
 
+.ds-record-list-item-keyboard-hint {
+  position: absolute;
+  z-index: var(--primitive-tooltip-z-index, 40);
+  inset-block-end: calc(100% + 0.375rem);
+  inset-inline-start: 0.5rem;
+  width: min(max-content, 18rem, calc(100vw - 4rem));
+  max-width: min(18rem, calc(100vw - 4rem));
+  padding: 0.375rem 0.5rem;
+  border: 0.0625rem solid var(--primitive-tooltip-border, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--primitive-tooltip-background, var(--paper));
+  box-shadow: var(--primitive-tooltip-shadow, var(--shadow-soft));
+  color: var(--primitive-tooltip-foreground, var(--ink));
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.125rem);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+}
+
+.ds-record-list-item-control:focus .ds-record-list-item-keyboard-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .ds-record-list-item-drop-marker {
   display: grid;
   place-items: center;
@@ -3458,6 +3545,238 @@
   box-shadow:
     inset 0 0 0 0.0625rem color-mix(in srgb, white 40%, transparent),
     0 0.25rem 0.65rem color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.ds-record-list-pattern {
+  display: grid;
+  grid-template-columns:
+    minmax(0, var(--pattern-record-list-list-fr, 1fr))
+    auto
+    minmax(
+      var(--pattern-record-list-detail-min-inline-size, var(--primitive-detail-slot-min-inline-size, 18rem)),
+      var(--pattern-record-list-detail-fr, 2fr)
+    );
+  gap: var(--primitive-detail-slot-gap, 0.75rem);
+  align-items: stretch;
+  inline-size: 100%;
+}
+
+.ds-record-list-pattern[data-record-list-pattern-resize-state="manual"] {
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(
+      var(--pattern-record-list-detail-min-inline-size, var(--primitive-detail-slot-min-inline-size, 18rem)),
+      var(--pattern-record-list-detail-inline-size, 26rem)
+    );
+}
+
+.ds-record-list-pattern-list-pane,
+.ds-detail-slot-control {
+  min-width: 0;
+}
+
+.ds-record-list-pattern-list-pane {
+  grid-column: 1;
+}
+
+.ds-record-list-pattern-resize {
+  position: relative;
+  grid-column: 2;
+  min-block-size: 100%;
+}
+
+.ds-record-list-pattern-resize .ds-resize-handle-control {
+  position: static;
+  inset: auto;
+  block-size: 100%;
+  min-block-size: 100%;
+}
+
+.ds-record-list-pattern > .ds-detail-slot-control {
+  grid-column: 3;
+}
+
+.ds-record-list-pattern-list {
+  display: grid;
+  min-width: 0;
+}
+
+.ds-record-list-pattern-list > [role="listitem"] + [role="listitem"] .ds-record-list-item-control {
+  border-block-start: 0;
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.ds-record-list-pattern-list > [role="listitem"]:has(+ [role="listitem"]) .ds-record-list-item-control {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.ds-record-list-pattern-empty {
+  display: grid;
+  min-block-size: 7rem;
+  place-items: center;
+  margin: 0;
+  border: 0.0625rem dashed var(--primitive-detail-slot-border, var(--line));
+  border-radius: var(--primitive-detail-slot-radius, var(--radius-sm));
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.ds-record-list-pattern-live-region {
+  position: absolute;
+  width: 0.0625rem;
+  height: 0.0625rem;
+  margin: -0.0625rem;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.ds-detail-slot-control {
+  display: grid;
+  gap: var(--primitive-detail-slot-gap, 0.75rem);
+  align-content: start;
+  max-block-size: var(--primitive-detail-slot-max-block-size, none);
+  overflow: auto;
+  min-inline-size: min(100%, var(--primitive-detail-slot-min-inline-size, 18rem));
+  max-inline-size: var(--primitive-detail-slot-max-inline-size, 100%);
+  padding-block: var(--primitive-detail-slot-padding-block, 0.5rem);
+  padding-inline: var(--primitive-detail-slot-padding-inline, 0.5rem);
+  border: 0.0625rem solid var(--primitive-detail-slot-border, var(--line));
+  border-radius: var(--primitive-detail-slot-radius, var(--radius-sm));
+  background: var(--primitive-detail-slot-background, var(--paper));
+  color: var(--primitive-detail-slot-foreground, var(--ink));
+}
+
+.ds-detail-slot-control[data-detail-slot-control-state="closed"] {
+  opacity: 0.72;
+}
+
+.ds-detail-slot-control-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.ds-detail-slot-control-header h2,
+.ds-detail-slot-control-card h3,
+.ds-detail-slot-control-card p,
+.ds-detail-slot-control-empty {
+  margin: 0;
+}
+
+.ds-detail-slot-control-header h2 {
+  font-size: 1rem;
+}
+
+.ds-detail-slot-control-body,
+.ds-detail-slot-control-card {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ds-detail-slot-control-card {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 0.0625rem solid var(--primitive-detail-slot-border, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--primitive-detail-slot-surface, color-mix(in srgb, var(--accent) 4%, var(--paper)));
+  color: var(--primitive-detail-slot-foreground, var(--ink));
+}
+
+.ds-detail-slot-control-card h3 {
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+}
+
+.ds-detail-slot-control-empty {
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.record-list-pattern-proof-host {
+  display: grid;
+  inline-size: min(100%, 74rem);
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="narrow"] {
+  inline-size: min(100%, 40rem);
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] {
+  position: relative;
+  inline-size: min(100%, 24rem);
+  min-block-size: 24rem;
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern {
+  grid-template-columns: 1fr;
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-resize {
+  display: none;
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-list-pane,
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+  grid-column: 1;
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  inline-size: auto !important;
+  block-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: none;
+  max-block-size: none;
+  border-radius: var(--primitive-detail-slot-radius, var(--radius-sm));
+}
+
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
+  display: none;
+}
+
+@media (max-width: 44rem) {
+  .ds-record-list-pattern {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-record-list-pattern-resize {
+    display: none;
+  }
+
+  .ds-record-list-pattern-list-pane,
+  .ds-record-list-pattern > .ds-detail-slot-control {
+    grid-column: 1;
+  }
+
+  .ds-detail-slot-control {
+    max-block-size: none;
+  }
+
+  .ds-record-list-pattern > .ds-detail-slot-control {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    box-sizing: border-box;
+    inline-size: auto !important;
+    block-size: 100dvh;
+    min-inline-size: 0;
+    max-inline-size: none;
+    border-radius: 0;
+  }
+
+  .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
+    display: none;
+  }
 }
 
 .ds-index-nav-item-control {

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Record List Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/default/assets/styles.css" />
+  </head>
+  <body data-pattern-layer-surface="record-list">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/default/patterns/record-list" aria-current="page">Patterns</a>
+          </div>
+        </nav>
+      </header>
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Record List Pattern</span></li>
+          </ol>
+        </nav>
+      </section>
+      <main class="design-system-page-main-no-context-nav" data-pattern-proof-root></main>
+    </div>
+    <script type="module" src="/design-system/systems/default/patterns/record-list/page.mjs"></script>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

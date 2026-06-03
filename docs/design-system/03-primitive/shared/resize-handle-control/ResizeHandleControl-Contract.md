@@ -39,6 +39,16 @@ Pointer drag, ArrowLeft, ArrowRight, Home, and End update the controlled inline
 size. The primitive must clamp every value to the supplied min and max inline
 sizes before applying it or emitting an event.
 
+The consumer must declare whether the controlled target is resized from
+`inline-end` or `inline-start`. `inline-end` preserves the common right-edge
+panel behavior where dragging right increases width. `inline-start` supports
+leading-edge drawers where dragging right decreases width and dragging left
+increases width.
+
+Attach-time initialization may apply the current clamped inline size to the
+target, but it must not emit `resize-handle-control:resize`; consumers use that
+event as evidence of an intentional manual resize.
+
 ## Consumer Restrictions
 
 Consumers must not recreate resize handle markup, ARIA behavior, pointer

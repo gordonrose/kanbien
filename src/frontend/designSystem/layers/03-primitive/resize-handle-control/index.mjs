@@ -85,6 +85,7 @@ export function resizeHandleControlPrimitive(options = {}) {
   const maxInlineSize = options.maxInlineSize ?? "";
   const currentInlineSize = options.currentInlineSize ?? minInlineSize;
   const stepInlineSize = options.stepInlineSize ?? "1rem";
+  const resizeEdge = options.resizeEdge ?? "inline-end";
 
   assertString(systemKey, "systemKey");
   assertString(theme, "theme");
@@ -95,6 +96,11 @@ export function resizeHandleControlPrimitive(options = {}) {
   assertString(maxInlineSize, "maxInlineSize");
   assertString(currentInlineSize, "currentInlineSize");
   assertString(stepInlineSize, "stepInlineSize");
+  assertString(resizeEdge, "resizeEdge");
+
+  if (!["inline-start", "inline-end"].includes(resizeEdge)) {
+    throw new RangeError(`resize-handle-control does not support resizeEdge "${resizeEdge}".`);
+  }
 
   const tokens = tokenDependenciesFor({ theme });
 
@@ -110,6 +116,7 @@ export function resizeHandleControlPrimitive(options = {}) {
     maxInlineSize,
     currentInlineSize,
     stepInlineSize,
+    resizeEdge,
     eventName: resizeHandleControlPrimitiveContract.eventName,
     tokenDependencies: {
       resizeHandle: {
@@ -145,6 +152,7 @@ export function resizeHandleControlPrimitive(options = {}) {
       "data-resize-handle-control-max-inline-size": maxInlineSize,
       "data-resize-handle-control-current-inline-size": currentInlineSize,
       "data-resize-handle-control-step-inline-size": stepInlineSize,
+      "data-resize-handle-control-edge": resizeEdge,
     },
     styleVars: {
       "--primitive-resize-handle-hit-area-inline-size": tokens.resizeHandle.hitAreaInlineSize,
@@ -191,7 +199,7 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function applyInlineSize(control, nextPixels) {
+function applyInlineSize(control, nextPixels, options = {}) {
   const ownerDocument = control.ownerDocument ?? document;
   const targetId = control.dataset.resizeHandleControlTargetId;
   const target = targetId ? ownerDocument.getElementById(targetId) : null;
@@ -208,12 +216,27 @@ function applyInlineSize(control, nextPixels) {
   target.style.setProperty("--pattern-index-nav-panel-inline-size", nextCssValue);
   control.dataset.resizeHandleControlCurrentInlineSize = nextCssValue;
   control.setAttribute("aria-valuenow", nextCssValue);
+  if (options.emit === false) {
+    return;
+  }
   control.dispatchEvent(
     new CustomEvent(resizeHandleControlPrimitiveContract.eventName, {
       bubbles: true,
       detail: { id: control.id, targetId, inlineSize: nextCssValue },
     }),
   );
+}
+
+function currentTargetWidth(control, ownerDocument = document) {
+  const targetId = control.dataset.resizeHandleControlTargetId;
+  const target = targetId ? ownerDocument.getElementById(targetId) : null;
+  if (target instanceof HTMLElement) {
+    const width = target.getBoundingClientRect().width;
+    if (Number.isFinite(width) && width > 0) {
+      return width;
+    }
+  }
+  return toPixels(control.dataset.resizeHandleControlCurrentInlineSize, ownerDocument);
 }
 
 export function attachResizeHandleControlPrimitiveController(root = document) {
@@ -242,7 +265,7 @@ export function attachResizeHandleControlPrimitiveController(root = document) {
     const target = ownerDocument.getElementById(control.dataset.resizeHandleControlTargetId ?? "");
     if (target instanceof HTMLElement) {
       const initial = toPixels(control.dataset.resizeHandleControlCurrentInlineSize, ownerDocument);
-      applyInlineSize(control, initial || target.getBoundingClientRect().width);
+      applyInlineSize(control, initial || target.getBoundingClientRect().width, { emit: false });
     }
 
     control.addEventListener("keydown", (event) => {
@@ -251,12 +274,14 @@ export function attachResizeHandleControlPrimitiveController(root = document) {
       const min = toPixels(control.dataset.resizeHandleControlMinInlineSize, ownerDocument);
       const max = toPixels(control.dataset.resizeHandleControlMaxInlineSize, ownerDocument);
 
+      const edgeMultiplier = control.dataset.resizeHandleControlEdge === "inline-start" ? -1 : 1;
+
       if (event.key === "ArrowRight") {
         event.preventDefault();
-        applyInlineSize(control, current + step);
+        applyInlineSize(control, current + step * edgeMultiplier);
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
-        applyInlineSize(control, current - step);
+        applyInlineSize(control, current - step * edgeMultiplier);
       } else if (event.key === "Home") {
         event.preventDefault();
         applyInlineSize(control, min);
@@ -270,11 +295,12 @@ export function attachResizeHandleControlPrimitiveController(root = document) {
       event.preventDefault();
       control.setPointerCapture?.(event.pointerId);
       const startX = event.clientX;
-      const startWidth = toPixels(control.dataset.resizeHandleControlCurrentInlineSize, ownerDocument);
+      const startWidth = currentTargetWidth(control, ownerDocument);
       const direction = ownerDocument.defaultView?.getComputedStyle(control).direction === "rtl" ? -1 : 1;
+      const edgeMultiplier = control.dataset.resizeHandleControlEdge === "inline-start" ? -1 : 1;
 
       const onPointerMove = (moveEvent) => {
-        applyInlineSize(control, startWidth + (moveEvent.clientX - startX) * direction);
+        applyInlineSize(control, startWidth + (moveEvent.clientX - startX) * direction * edgeMultiplier);
       };
       const onPointerUp = () => {
         control.removeEventListener("pointermove", onPointerMove);

@@ -8,6 +8,7 @@ import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-sty
 const primitiveName = "record-list-item-control";
 const supportedThemes = new Set(["original", "dark", "desert"]);
 const allowedStates = new Set(["default", "selected", "disabled", "dragging"]);
+const attachedRecordListItemControlRoots = new WeakSet();
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -169,7 +170,12 @@ export function recordListItemControlPrimitive(options = {}) {
 
 export function renderRecordListItemControlPrimitive(options = {}) {
   const spec = recordListItemControlPrimitive(options);
-  const describedBy = [spec.subtitle ? `${spec.itemId}-subtitle` : "", spec.meta ? `${spec.itemId}-meta` : ""]
+  const keyboardHintId = spec.draggable ? `${spec.itemId}-keyboard-hint` : "";
+  const describedBy = [
+    spec.subtitle ? `${spec.itemId}-subtitle` : "",
+    spec.meta ? `${spec.itemId}-meta` : "",
+    keyboardHintId,
+  ]
     .filter(Boolean)
     .join(" ");
   const attrs = [
@@ -183,6 +189,7 @@ export function renderRecordListItemControlPrimitive(options = {}) {
     `aria-pressed="${spec.selected ? "true" : "false"}"`,
     spec.disabled ? `aria-disabled="true" disabled` : "",
     spec.draggable ? `draggable="true"` : "",
+    spec.draggable ? `aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"` : "",
     describedBy ? `aria-describedby="${escapeHtml(describedBy)}"` : "",
   ].filter(Boolean).join(" ");
 
@@ -193,6 +200,11 @@ export function renderRecordListItemControlPrimitive(options = {}) {
         ${spec.subtitle ? `<small id="${escapeHtml(spec.itemId)}-subtitle" class="ds-record-list-item-subtitle">${escapeHtml(spec.subtitle)}</small>` : ""}
       </span>
       ${spec.meta ? `<span id="${escapeHtml(spec.itemId)}-meta" class="ds-record-list-item-meta">${escapeHtml(spec.meta)}</span>` : ""}
+      ${
+        spec.draggable
+          ? `<span id="${escapeHtml(keyboardHintId)}" class="ds-record-list-item-keyboard-hint">Use Alt plus Arrow Up or Arrow Down to reorder.</span>`
+          : ""
+      }
     </button>
   `;
 }
@@ -206,6 +218,21 @@ function dispatchItemEvent(node, name, detail) {
 
 function closestItem(target) {
   return target instanceof Element ? target.closest("[data-record-list-item-control]") : null;
+}
+
+function adjacentItem(item, direction) {
+  const wrapper = item.closest("[role='listitem']");
+  const sibling = direction === "previous"
+    ? wrapper?.previousElementSibling ?? item.previousElementSibling
+    : wrapper?.nextElementSibling ?? item.nextElementSibling;
+  if (!(sibling instanceof HTMLElement)) {
+    return null;
+  }
+  if (sibling.matches("[data-record-list-item-control]")) {
+    return sibling;
+  }
+  const nested = sibling.querySelector("[data-record-list-item-control]");
+  return nested instanceof HTMLElement ? nested : null;
 }
 
 function removeDropMarkers(root) {
@@ -241,6 +268,11 @@ function allowMoveDrop(event) {
 }
 
 export function attachRecordListItemControlPrimitiveController(root = document) {
+  if (attachedRecordListItemControlRoots.has(root)) {
+    return;
+  }
+  attachedRecordListItemControlRoots.add(root);
+
   let draggedItemId = "";
 
   root.addEventListener("click", (event) => {
@@ -267,12 +299,7 @@ export function attachRecordListItemControlPrimitiveController(root = document) 
     }
     if (event.altKey && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
       event.preventDefault();
-      const sibling = event.key === "ArrowUp"
-        ? item.previousElementSibling
-        : item.nextElementSibling;
-      const target = sibling instanceof HTMLElement && sibling.matches("[data-record-list-item-control]")
-        ? sibling
-        : null;
+      const target = adjacentItem(item, event.key === "ArrowUp" ? "previous" : "next");
       if (!target) {
         return;
       }

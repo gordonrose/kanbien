@@ -32,7 +32,8 @@ Click, Enter, and Space emit `record-list-item:open`.
 
 Pointer drag emits `record-list-item:move` only after a valid drop target is
 chosen. Keyboard movement emits the same event shape without requiring pointer
-drag.
+drag. Keyboard movement uses `Alt+ArrowUp` to request moving before the
+previous item and `Alt+ArrowDown` to request moving after the next item.
 
 Selected, disabled, dragging, and drop-target states are programmatic and must
 use token-backed visual affordances. Selected rows must not render a leading
@@ -58,6 +59,11 @@ The item must expose visible focus, selected state when selected, disabled
 state when disabled, and a usable keyboard path for open and move intents.
 
 Native drag/drop must not be the only way to request movement.
+
+When a draggable item has visible focus, the primitive must expose visible
+instructional text for the keyboard reorder shortcut. The same instruction must
+be referenced through `aria-describedby` so the behavior is discoverable for
+screen-reader users without making every row permanently noisy.
 
 ## Consumer Restrictions
 

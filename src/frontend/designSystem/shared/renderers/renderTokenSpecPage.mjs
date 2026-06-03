@@ -295,6 +295,34 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "detail-slot-frame-sample") {
+    return `
+      <div
+        class="token-spec-detail-slot-frame-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-detail-surface="${escapeHtml(variant.preview.detailSurface)}"
+        data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+        data-token-preview-padding-block="${escapeHtml(variant.preview.paddingBlock)}"
+        data-token-preview-padding-inline="${escapeHtml(variant.preview.paddingInline)}"
+        data-token-preview-gap="${escapeHtml(variant.preview.gap)}"
+        data-token-preview-min-inline-size="${escapeHtml(variant.preview.minInlineSize)}"
+        data-token-preview-max-block-size="${escapeHtml(variant.preview.maxBlockSize)}"
+        aria-hidden="true"
+      >
+        <div class="token-spec-detail-slot-frame-header">
+          <span>${escapeHtml(variant.preview.supportingText)}</span>
+          <strong>${escapeHtml(variant.preview.sample)}</strong>
+        </div>
+        <div class="token-spec-detail-slot-frame-card">
+          <span>Northstar Operations</span>
+          <strong>Ready</strong>
+        </div>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "menu-simple-select-trigger-sample") {
     const textTrigger = variant.preview.frameRole !== "icon trigger frame";
     return `
@@ -712,6 +740,19 @@ function applyPreviewStyles(root) {
     if (element instanceof HTMLElement) {
       element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
       element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll("[data-token-preview-detail-surface]")) {
+    if (element instanceof HTMLElement) {
+      element.style.borderColor = element.dataset.tokenPreviewBorder ?? "";
+      element.style.setProperty("--token-preview-detail-surface", element.dataset.tokenPreviewDetailSurface ?? "");
+      element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
+      element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
+      element.style.setProperty("--token-preview-gap", element.dataset.tokenPreviewGap ?? "");
+      element.style.setProperty("--token-preview-min-inline-size", element.dataset.tokenPreviewMinInlineSize ?? "");
+      element.style.setProperty("--token-preview-max-block-size", element.dataset.tokenPreviewMaxBlockSize ?? "");
     }
   }
 

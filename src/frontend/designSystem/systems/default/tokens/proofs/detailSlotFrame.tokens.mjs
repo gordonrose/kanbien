@@ -1,0 +1,213 @@
+import { detailSlotFrameTokenContract } from "../../../../layers/02-token/detail-slot-frame/contract.mjs";
+
+const themeValues = {
+  original: {
+    backgroundValue: "#ffffff",
+    foregroundValue: "#111827",
+    borderValue: "#dbe4f0",
+    detailSurfaceValue: "color-mix(in srgb, #635bff 4%, #ffffff)",
+  },
+  dark: {
+    backgroundValue: "#171b22",
+    foregroundValue: "#f4f7fb",
+    borderValue: "#334155",
+    detailSurfaceValue: "#1e2634",
+  },
+  desert: {
+    backgroundValue: "#fffaf0",
+    foregroundValue: "#493327",
+    borderValue: "#decfb8",
+    detailSurfaceValue: "#f8efd8",
+  },
+};
+
+export const tokenTypeTemplate = {
+  schema: "kanbien.designSystem.tokenTypeTemplate.v1",
+  tokenType: "detail-slot-frame",
+  previewKind: "detail-slot-frame-sample",
+  variantSchema: {
+    valueFields: [
+      "frameRole",
+      "theme",
+      "backgroundValue",
+      "foregroundValue",
+      "borderValue",
+      "detailSurfaceValue",
+      "radiusValue",
+      "paddingBlockValue",
+      "paddingInlineValue",
+      "gapValue",
+      "minInlineSize",
+      "maxInlineSize",
+      "mobileInlineSize",
+      "mobileBreakpointValue",
+      "maxBlockSize",
+      "scrollBehavior",
+    ],
+    metadataFields: ["frameRole", "theme", "responsiveBehavior", "scrollBehavior", "accessibility"],
+    useCaseInstructionFields: ["allowedUse", "forbiddenUse", "responsiveBehavior"],
+  },
+};
+
+export const tokenDefinitionV1 = {
+  schema: "kanbien.designSystem.tokenDefinition.v1",
+  contractScope: "shared",
+  designSystem: "default",
+  uiFamily: "detail-slot",
+  tokenType: "detail-slot-frame",
+  status: "review-ready",
+  behaviorRulePath: "docs/design-system/01-behavior-rule/shared/record-list-item/RecordListItem-Behaviour.md",
+  tokenContractPath: "docs/design-system/02-token/shared/detail-slot-frame/DetailSlotFrame-Contract.md",
+  tokenDefinitionPath: "docs/design-system/02-token/systems/default/detail-slot-frame/DetailSlotFrame-Implementation.md",
+  page: {
+    route: "/design-system/default/tokens/detail-slot-frame",
+    htmlPath: "src/frontend/designSystem/systems/default/tokens/detail-slot-frame/index.html",
+    title: "Detail Slot Frame Token",
+    description: "Review governed detail-slot surface, theme, sizing, and scroll values before drawer-like primitives consume them.",
+  },
+  codeSeam: {
+    contractModule: "src/frontend/designSystem/layers/02-token/detail-slot-frame/contract.mjs",
+    contractExport: "detailSlotFrameTokenContract",
+    governedRuntimeModule: "src/frontend/designSystem/layers/02-token/detail-slot-frame/systems/default.mjs",
+    systemProofModule: "src/frontend/designSystem/systems/default/tokens/proofs/detailSlotFrame.tokens.mjs",
+    systemTokenExport: "detailSlotFrameTokenSpec",
+    rendererModule: "src/frontend/designSystem/shared/renderers/renderTokenSpecPage.mjs",
+    rendererExport: "renderTokenSpecPage",
+    allowedConsumers: ["03-primitive", "04-pattern-contract"],
+  },
+  dependencies: [],
+  variants: Object.entries(themeValues).map(([theme, values]) => ({
+    id: `detail-slot-frame-${theme}`,
+    tokenName: `--detail-slot-frame-${theme}`,
+    value: {
+      frameRole: "detail slot frame",
+      theme,
+      ...values,
+      radiusValue: "0",
+      paddingBlockValue: "0.5rem",
+      paddingInlineValue: "0.5rem",
+      gapValue: "0.75rem",
+      minInlineSize: "18rem",
+      maxInlineSize: "100%",
+      mobileInlineSize: "100vw",
+      mobileBreakpointValue: "44rem",
+      maxBlockSize: "32rem",
+      scrollBehavior: "desktop detail slots may own internal scrolling; mobile detail slots may expand to full inline size and scroll with page unless a later overlay primitive explicitly owns viewport scroll",
+    },
+    derivation: {
+      sourceTokenName: "none",
+      sourceValue: "none",
+      formulaOrMapping: "standalone detail-slot frame values selected by theme",
+      renderedValue: `${values.backgroundValue} panel / ${values.detailSurfaceValue} detail surface`,
+    },
+    preview: {
+      kind: "detail-slot-frame-sample",
+      sample: "Organization detail",
+      supportingText: "Open record",
+      background: values.backgroundValue,
+      foreground: values.foregroundValue,
+      border: values.borderValue,
+      detailSurface: values.detailSurfaceValue,
+      radius: "0",
+      paddingBlock: "0.5rem",
+      paddingInline: "0.5rem",
+      gap: "0.75rem",
+      minInlineSize: "18rem",
+      maxBlockSize: "32rem",
+      label: `${theme} detail slot`,
+    },
+    metadata: {
+      frameRole: "detail slot frame",
+      theme,
+      responsiveBehavior: "two-pane patterns may place the slot beside a list on desktop and stack it full-width below the list at narrow widths",
+      scrollBehavior: "the primitive owns internal scroll values, while the consuming pattern chooses page placement",
+      accessibility: "Surface, border, and foreground values must maintain readable contrast without relying on color alone for state.",
+    },
+    useCaseInstructions: [
+      "Use for reusable detail-slot or drawer-like panels that expose selected record content beside or below a source collection.",
+      "Do not use for list rows, cards, page shells, arbitrary app sidebars, modal dialogs, or menu popovers.",
+      "Mobile fullscreen overlay behavior requires a later primitive behavior decision; this token only defines frame values.",
+    ],
+  })),
+};
+
+export const variants = tokenDefinitionV1.variants;
+
+function toPageVariant(variant) {
+  return {
+    id: variant.id,
+    tokenName: variant.tokenName,
+    tokenValue: variant.derivation.renderedValue,
+    frameRole: variant.value.frameRole,
+    theme: variant.value.theme,
+    backgroundValue: variant.value.backgroundValue,
+    foregroundValue: variant.value.foregroundValue,
+    borderValue: variant.value.borderValue,
+    detailSurfaceValue: variant.value.detailSurfaceValue,
+    radiusValue: variant.value.radiusValue,
+    paddingBlockValue: variant.value.paddingBlockValue,
+    paddingInlineValue: variant.value.paddingInlineValue,
+    gapValue: variant.value.gapValue,
+    minInlineSize: variant.value.minInlineSize,
+    maxInlineSize: variant.value.maxInlineSize,
+    mobileInlineSize: variant.value.mobileInlineSize,
+    mobileBreakpointValue: variant.value.mobileBreakpointValue,
+    maxBlockSize: variant.value.maxBlockSize,
+    scrollBehavior: variant.value.scrollBehavior,
+    sourceTokenName: variant.derivation.sourceTokenName,
+    sourceValue: variant.derivation.sourceValue,
+    formulaOrMapping: variant.derivation.formulaOrMapping,
+    accessibility: variant.metadata.accessibility,
+    preview: variant.preview,
+    usage: [
+      { label: "Allowed", text: variant.useCaseInstructions[0] },
+      { label: "Denied", text: variant.useCaseInstructions[1] },
+      { label: "Responsive", text: variant.useCaseInstructions[2] },
+    ],
+  };
+}
+
+export const detailSlotFrameTokenVariants = variants.map(toPageVariant);
+
+export const detailSlotFrameTokenSpec = {
+  contractId: detailSlotFrameTokenContract.contractId,
+  systemKey: tokenDefinitionV1.designSystem,
+  tokenType: "detail-slot-frame",
+  title: tokenDefinitionV1.page.title,
+  description: tokenDefinitionV1.page.description,
+  variantSectionDescription: "These variants govern detail-slot frame values by theme.",
+  tokenTypeTemplate,
+  summaryPanels: [
+    {
+      label: "Detail",
+      title: "Reusable detail slot",
+      variantId: "detail-slot-frame-original",
+      supportingText: "Detail-slot theme and sizing values are tokenized before primitives or patterns compose them.",
+    },
+  ],
+  variantFields: [
+    ["frameRole", "Role"],
+    ["theme", "Theme"],
+    ["backgroundValue", "Panel background"],
+    ["foregroundValue", "Foreground"],
+    ["borderValue", "Border"],
+    ["detailSurfaceValue", "Detail surface"],
+    ["minInlineSize", "Min width"],
+    ["mobileInlineSize", "Mobile width"],
+    ["mobileBreakpointValue", "Mobile breakpoint"],
+    ["maxBlockSize", "Desktop max height"],
+    ["scrollBehavior", "Scroll behavior"],
+    ["formulaOrMapping", "Formula or mapping"],
+  ],
+  variants: detailSlotFrameTokenVariants,
+  consumerRestrictions: [
+    "Consumers must import this token seam instead of hard-coding detail-slot surface, theme, width, breakpoint, padding, radius, border, or scroll-height values.",
+    "The detail-slot frame token does not approve close-button behavior, focus return, selected-record content, list composition, modal semantics, or app adoption.",
+    "Patterns may compose this token only through a governed detail-slot primitive once that primitive is consumable.",
+  ],
+  requiredEvidence: [
+    "Rendered proof must show original, dark, and desert surfaces without a white fallback.",
+    "Primitive proof must verify the detail slot applies the active theme values.",
+    "Pattern proof must verify list/detail composition uses the primitive seam rather than route-local aside markup.",
+  ],
+};

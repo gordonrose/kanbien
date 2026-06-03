@@ -83,6 +83,9 @@ describe("record-list-item-control primitive", () => {
     expect(html).toContain('data-record-list-item-state="selected"');
     expect(html).toContain('aria-pressed="true"');
     expect(html).toContain('draggable="true"');
+    expect(html).toContain('aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"');
+    expect(html).toContain("Use Alt plus Arrow Up or Arrow Down to reorder.");
+    expect(html).toContain('aria-describedby="ledgerworks-subtitle ledgerworks-meta ledgerworks-keyboard-hint"');
     expect(html).toContain("LedgerWorks Finance");
     expect(html).toContain("Needs review");
   });
@@ -95,8 +98,10 @@ describe("record-list-item-control primitive", () => {
 
     expect(source).toContain("record-list-item:open");
     expect(source).toContain("record-list-item:move");
+    expect(source).toContain("attachedRecordListItemControlRoots");
     expect(source).toContain('event.key === "Enter"');
     expect(source).toContain("event.altKey");
+    expect(source).toContain("adjacentItem");
     expect(source).toContain('event.key === "ArrowUp"');
     expect(source).toContain('addEventListener("dragstart"');
     expect(source).toContain('addEventListener("dragover"');
@@ -108,5 +113,17 @@ describe("record-list-item-control primitive", () => {
     expect(source).toContain('addEventListener("dragenter"');
     expect(source).toContain("removeDropMarkers(root)");
     expect(source).toContain("clearDragState(root)");
+  });
+
+  it("shows a focus-visible keyboard reorder hint without making it permanent row copy", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/systems/default/assets/styles.css"),
+      "utf8",
+    );
+
+    expect(styles).toContain(".ds-record-list-item-keyboard-hint");
+    expect(styles).toContain(".ds-record-list-item-control:focus .ds-record-list-item-keyboard-hint");
+    expect(styles).toContain("opacity: 0;");
+    expect(styles).toContain("opacity: 1;");
   });
 });
