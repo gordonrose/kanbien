@@ -21,13 +21,13 @@ Status: `review-ready`
 | Theme | Proves child row primitive and detail-slot primitive consume signed theme variants. | Runtime input |
 | Direction | Proves list/detail composition remains reachable in LTR and RTL. | Proof-only diagnostic pressure |
 | Width | Proves desktop split and constrained/narrow review behavior. | Proof-only diagnostic pressure |
-| Ratio | Proves `1:2`, `1:4`, and `1:5` list-to-detail starting column variants. | Runtime input |
+| Ratio | Proves `1:2`, `1:4`, and `1:5` list-to-total starting list-share variants. | Runtime input |
 | Fixture count | Proves empty state, short list, and longer list reorder behavior. | Proof-only diagnostic pressure |
 
 ## Scroll And Responsive Ownership
 
 The proof route owns page scrolling. The pattern owns the detail-slot open and
-closed posture plus the initial list-to-detail ratio. The resize primitive owns
+closed posture plus the initial list-to-total ratio. The resize primitive owns
 manual separator behavior. The list itself uses normal document flow in this
 Layer 4 contract; fixed-height internal scrolling is deferred until a later
 panel or page composition asks for it with signed scroll ownership.

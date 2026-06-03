@@ -17,20 +17,20 @@ const attachedRecordListPatternRoots = new WeakSet();
 const ratioVariants = {
   "1:5": {
     listFr: "1fr",
-    detailFr: "5fr",
-    label: "List 1 / detail 5",
+    detailFr: "4fr",
+    label: "List 1 / total 5",
     initialDetailInlineSize: "36rem",
   },
   "1:4": {
     listFr: "1fr",
-    detailFr: "4fr",
-    label: "List 1 / detail 4",
+    detailFr: "3fr",
+    label: "List 1 / total 4",
     initialDetailInlineSize: "32rem",
   },
   "1:2": {
     listFr: "1fr",
-    detailFr: "2fr",
-    label: "List 1 / detail 2",
+    detailFr: "1fr",
+    label: "List 1 / total 2",
     initialDetailInlineSize: "26rem",
   },
 };
@@ -107,7 +107,7 @@ export const recordListPatternContract = {
   directTokenDependencies: [],
   eventNames: ["record-list:open", "record-list:close", "record-list:reorder"],
   consumerRules: [
-    "Consumers must use this pattern for governed reorderable record lists with a detail slot.",
+    "Consumers must use this pattern for governed record lists with a detail slot, including reorder-enabled and reorder-disabled applications.",
     "Consumers must not locally recreate row markup, drag handlers, keyboard move behavior, item disabled semantics, detail-slot aside markup, or close-button behavior.",
     "Consumers must not treat this pattern as an app adoption seam, component prop API, canonical scenario, backend persistence contract, or entity panel implementation.",
   ],
@@ -326,7 +326,7 @@ function configureRecordListResizeBounds(pattern) {
   const gap = toPixels(patternStyle.columnGap || patternStyle.gap, ownerDocument);
   const minDetailInlineSize = toPixels(resizeControl.dataset.resizeHandleControlMinInlineSize, ownerDocument);
   const availableInlineSize = Math.max(0, patternInlineSize - resizeInlineSize - gap * 2);
-  const maxDetailInlineSize = Math.max(minDetailInlineSize, (availableInlineSize * 5) / 6);
+  const maxDetailInlineSize = Math.max(minDetailInlineSize, (availableInlineSize * 4) / 5);
   const maxCssValue = `${Math.round(maxDetailInlineSize)}px`;
 
   resizeControl.dataset.resizeHandleControlMaxInlineSize = maxCssValue;

@@ -81,7 +81,7 @@ handling, or consumer obligations are included.
 | `selectedItemId` | `state` | string or empty string | optional | feature | Forward current selection to the pattern. | Unknown ids result in the pattern selecting the first enabled item. |
 | `openItemId` | `state` | string or empty string | optional | feature | Forward open detail state to the pattern. | Unknown ids result in the pattern selecting the first enabled item. |
 | `detailContentHtml` | `content` | governed HTML string for the open detail body | optional | feature adapter | Replace only the upstream pattern's proof placeholder detail body. | Default to pattern placeholder; non-string values are rejected. |
-| `initialDetailRatio` | `state` | `1:5`, `1:4`, or `1:2` | optional | feature | Forward the initial desktop list-detail ratio to the pattern as `ratio`. | Default to `1:2`; unsupported values are rejected through the pattern. |
+| `initialDetailRatio` | `state` | `1:5`, `1:4`, or `1:2` | optional | feature | Forward the initial desktop list-to-total ratio to the pattern as `ratio`. | Default to `1:2`; unsupported values are rejected through the pattern. |
 | `allowResize` | `state` | boolean | optional | feature | Forward whether the governed resize handle is rendered. | Default to `true`. |
 | `allowReorder` | `state` | boolean | optional | feature | Forward whether row reorder affordances are exposed by the governed pattern. | Default to `true`; `false` renders non-draggable rows and suppresses reorder affordances. |
 

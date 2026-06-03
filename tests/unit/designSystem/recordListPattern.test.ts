@@ -32,11 +32,11 @@ describe("record-list pattern seam", () => {
       primitiveDependencies: ["record-list-item-control", "detail-slot-control", "resize-handle-control"],
     });
     expect(pattern.styleVars["--pattern-record-list-list-fr"]).toBe("1fr");
-    expect(pattern.styleVars["--pattern-record-list-detail-fr"]).toBe("2fr");
+    expect(pattern.styleVars["--pattern-record-list-detail-fr"]).toBe("1fr");
     expect(pattern.styleVars["--pattern-record-list-detail-max-inline-size"]).toBe("80rem");
   });
 
-  it("supports governed list-to-detail ratio variants", () => {
+  it("supports governed list-to-total ratio variants", () => {
     const wideDrawer = recordListPattern({
       id: "record-list-ratio",
       ratio: "1:5",
@@ -48,7 +48,7 @@ describe("record-list pattern seam", () => {
 
     expect(wideDrawer.ratioVariant).toMatchObject({
       listFr: "1fr",
-      detailFr: "5fr",
+      detailFr: "4fr",
       initialDetailInlineSize: "36rem",
     });
     expect(wideDrawer.styleVars["--pattern-record-list-detail-max-inline-size"]).toBe("80rem");
@@ -174,14 +174,14 @@ describe("record-list pattern seam", () => {
     expect(source).not.toContain('addEventListener("dragstart"');
   });
 
-  it("caps manual drawer resizing at the approved 1:5 list-to-detail allocation", () => {
+  it("caps manual drawer resizing at the approved 1:5 list-to-total allocation", () => {
     const source = readFileSync(
       resolve(process.cwd(), "src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs"),
       "utf8",
     );
 
     expect(source).toContain("configureRecordListResizeBounds");
-    expect(source).toContain("const maxDetailInlineSize = Math.max(minDetailInlineSize, (availableInlineSize * 5) / 6);");
+    expect(source).toContain("const maxDetailInlineSize = Math.max(minDetailInlineSize, (availableInlineSize * 4) / 5);");
     expect(source).toContain("resizeControl.dataset.resizeHandleControlMaxInlineSize = maxCssValue;");
     expect(source).toContain('pattern.style.setProperty("--pattern-record-list-detail-max-inline-size", maxCssValue);');
   });
@@ -213,6 +213,8 @@ describe("record-list pattern seam", () => {
     expect(patternRule).toContain("var(--pattern-record-list-list-fr");
     expect(patternRule).toContain("var(--pattern-record-list-detail-fr");
     expect(patternRule).toContain("var(--primitive-detail-slot-gap");
+    expect(styles).toContain('.ds-record-list-pattern[data-record-list-pattern-state="closed"]');
+    expect(styles).toContain('.ds-record-list-pattern[data-record-list-pattern-state="closed"] > .ds-detail-slot-control');
     expect(detailRule).toContain("var(--primitive-detail-slot-background");
     expect(styles).toContain("var(--primitive-detail-slot-surface");
     expect(styles).toContain(".ds-record-list-pattern-live-region");

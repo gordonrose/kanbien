@@ -14,8 +14,8 @@ coordination across rows, optional DOM reorder application from primitive move
 events, empty-list posture, and the placeholder detail body that later
 component seams may replace with an entity panel.
 
-The pattern also owns list-to-detail ratio variants for two-pane review:
-`1:5`, `1:4`, and `1:2`. These variants define the starting column balance
+The pattern also owns list-to-total ratio variants for two-pane review:
+`1:5`, `1:4`, and `1:2`. These variants define the starting list column share
 only. Manual resizing is delegated to `resize-handle-control`.
 
 ## Non-Goals
@@ -49,8 +49,10 @@ No governed `record-list` pattern existed before this contract.
   selected item or a row open event.
 - The detail body may show proof placeholder content, but later components
   must supply governed panel/body content through a downstream seam.
-- The pattern must support `1:5`, `1:4`, and `1:2` list-to-detail ratio
-  variants for initial desktop column balance.
+- The pattern must support `1:5`, `1:4`, and `1:2` list-to-total ratio
+  variants, where `1:2` gives the list half of the two-pane area.
+- When the detail slot is closed, the list must use the full pattern width and
+  the closed detail placeholder must not remain visible.
 - The pattern may compose `resize-handle-control` between the list and detail
   slot; manual resizing updates pattern placement values only after the resize
   primitive emits a resize event.

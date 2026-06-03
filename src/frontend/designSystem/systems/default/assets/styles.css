@@ -4287,7 +4287,7 @@
     transform 120ms ease;
 }
 
-.ds-record-list-item-control:focus .ds-record-list-item-keyboard-hint {
+.ds-record-list-item-control:focus-visible .ds-record-list-item-keyboard-hint {
   opacity: 1;
   transform: translateY(0);
 }
@@ -4332,6 +4332,10 @@
     );
 }
 
+.ds-record-list-pattern[data-record-list-pattern-state="closed"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .ds-record-list-pattern-list-pane,
 .ds-detail-slot-control {
   min-width: 0;
@@ -4354,8 +4358,16 @@
   min-block-size: 100%;
 }
 
+.ds-record-list-pattern[data-record-list-pattern-state="closed"] .ds-record-list-pattern-resize {
+  display: none;
+}
+
 .ds-record-list-pattern > .ds-detail-slot-control {
   grid-column: 3;
+}
+
+.ds-record-list-pattern[data-record-list-pattern-state="closed"] > .ds-detail-slot-control {
+  display: none;
 }
 
 .ds-record-list-pattern-list {
@@ -4465,30 +4477,37 @@
   inline-size: min(100%, 74rem);
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="narrow"] {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="narrow"],
+.record-list-pattern-proof-host[data-record-list-component-demo-width="narrow"] {
   inline-size: min(100%, 40rem);
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"],
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] {
   position: relative;
   inline-size: min(100%, 24rem);
   min-block-size: 24rem;
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern,
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern {
   grid-template-columns: 1fr;
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-resize {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-resize,
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern-resize {
   display: none;
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-list-pane,
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control,
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern-list-pane,
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
   grid-column: 1;
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control,
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -4501,7 +4520,8 @@
   border-radius: var(--primitive-detail-slot-radius, var(--radius-sm));
 }
 
-.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
+.record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"],
+.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
   display: none;
 }
 

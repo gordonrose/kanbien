@@ -122,7 +122,7 @@ describe("record-list-item-control primitive", () => {
     );
 
     expect(styles).toContain(".ds-record-list-item-keyboard-hint");
-    expect(styles).toContain(".ds-record-list-item-control:focus .ds-record-list-item-keyboard-hint");
+    expect(styles).toContain(".ds-record-list-item-control:focus-visible .ds-record-list-item-keyboard-hint");
     expect(styles).toContain("opacity: 0;");
     expect(styles).toContain("opacity: 1;");
   });
