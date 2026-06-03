@@ -43,6 +43,8 @@ The frontend design-system source tree uses these boundaries:
 
 Routes for switchable design-system review surfaces include the system key:
 
+- `/design-system/<system-key>/` when the registered system provides
+  `systems/<system-key>/index.html`
 - `/design-system/default/tokens/<token-key>`
 - `/design-system/<system-key>/tokens/<token-key>`
 - equivalent future paths for primitives, patterns, and components.
@@ -57,6 +59,9 @@ color, shape, and other visual decisions only behind those contracts.
   system's implementation folder.
 - System-specific CSS and token values must live under
   `systems/<system-key>/`, not top-level `assets/`.
+- System-specific overview pages may live at
+  `systems/<system-key>/index.html` and are served only for registered system
+  keys.
 - Token proof modules for a selected system live under
   `systems/<system-key>/tokens/proofs/`.
 - Governed runtime token seams consumed by primitives and later layers live

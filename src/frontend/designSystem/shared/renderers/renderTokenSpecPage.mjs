@@ -726,6 +726,40 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "visual-proof-ornament-sample") {
+    return `
+      <div
+        class="token-spec-visual-ornament-preview"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-grid-color="${escapeHtml(variant.preview.gridColor)}"
+        data-token-preview-grid-size="${escapeHtml(variant.preview.gridSize)}"
+        data-token-preview-chip-background="${escapeHtml(variant.preview.chipBackground)}"
+        data-token-preview-chip-border="${escapeHtml(variant.preview.chipBorder)}"
+        data-token-preview-chip-radius="${escapeHtml(variant.preview.chipRadius)}"
+        data-token-preview-chip-opacity="${escapeHtml(variant.preview.chipOpacity)}"
+        data-token-preview-line-color="${escapeHtml(variant.preview.lineColor)}"
+        data-token-preview-line-size="${escapeHtml(variant.preview.lineSize)}"
+        data-token-preview-accent-bar="${escapeHtml(variant.preview.accentBar)}"
+        data-token-preview-overlay="${escapeHtml(variant.preview.overlay)}"
+        data-token-preview-marker-size="${escapeHtml(variant.preview.markerSize)}"
+        data-token-preview-marker-background="${escapeHtml(variant.preview.markerBackground)}"
+        data-token-preview-marker-radius="${escapeHtml(variant.preview.markerRadius)}"
+        data-token-preview-ornament-id="${escapeHtml(variant.preview.ornamentId)}"
+        aria-hidden="true"
+      >
+        <span class="token-spec-visual-ornament-accent"></span>
+        <span class="token-spec-visual-ornament-chip token-spec-visual-ornament-chip-a"></span>
+        <span class="token-spec-visual-ornament-chip token-spec-visual-ornament-chip-b"></span>
+        <span class="token-spec-visual-ornament-chip token-spec-visual-ornament-chip-c"></span>
+        <span class="token-spec-visual-ornament-line"></span>
+        <span class="token-spec-visual-ornament-marker"></span>
+        <strong>${escapeHtml(variant.preview.sample)}</strong>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "icon-size-sample") {
     return `
       <div class="token-spec-frame-preview" aria-hidden="true">
@@ -913,6 +947,24 @@ function applyPreviewStyles(root) {
   for (const element of root.querySelectorAll("[data-token-preview-page-header-gap]")) {
     if (element instanceof HTMLElement) {
       element.style.setProperty("--token-header-one-stream-gap", element.dataset.tokenPreviewPageHeaderGap ?? "");
+    }
+  }
+
+  for (const element of root.querySelectorAll(".token-spec-visual-ornament-preview[data-token-preview-grid-color]")) {
+    if (element instanceof HTMLElement) {
+      element.style.setProperty("--token-preview-grid-color", element.dataset.tokenPreviewGridColor ?? "");
+      element.style.setProperty("--token-preview-grid-size", element.dataset.tokenPreviewGridSize ?? "");
+      element.style.setProperty("--token-preview-chip-background", element.dataset.tokenPreviewChipBackground ?? "");
+      element.style.setProperty("--token-preview-chip-border", element.dataset.tokenPreviewChipBorder ?? "");
+      element.style.setProperty("--token-preview-chip-radius", element.dataset.tokenPreviewChipRadius ?? "");
+      element.style.setProperty("--token-preview-chip-opacity", element.dataset.tokenPreviewChipOpacity ?? "");
+      element.style.setProperty("--token-preview-line-color", element.dataset.tokenPreviewLineColor ?? "");
+      element.style.setProperty("--token-preview-line-size", element.dataset.tokenPreviewLineSize ?? "");
+      element.style.setProperty("--token-preview-accent-bar", element.dataset.tokenPreviewAccentBar ?? "");
+      element.style.setProperty("--token-preview-overlay", element.dataset.tokenPreviewOverlay ?? "");
+      element.style.setProperty("--token-preview-marker-size", element.dataset.tokenPreviewMarkerSize ?? "");
+      element.style.setProperty("--token-preview-marker-background", element.dataset.tokenPreviewMarkerBackground ?? "");
+      element.style.setProperty("--token-preview-marker-radius", element.dataset.tokenPreviewMarkerRadius ?? "");
     }
   }
 

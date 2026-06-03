@@ -382,7 +382,7 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
   const normalizedPath = requestPath.replace(/^\/+|\/+$/g, "");
   const pathSegments = normalizedPath === "" ? [] : normalizedPath.split("/");
 
-  if (pathSegments[0] && getDesignSystem(pathSegments[0]) && pathSegments.length > 1) {
+  if (pathSegments[0] && getDesignSystem(pathSegments[0])) {
     const systemIndexCandidate = join(frontendRoot, "systems", ...pathSegments, "index.html");
     if (existsSync(systemIndexCandidate)) {
       return systemIndexCandidate;

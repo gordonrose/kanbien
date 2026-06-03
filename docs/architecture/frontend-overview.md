@@ -103,8 +103,8 @@ Current role:
   when canonical truth is backed by design-system canonical metadata
 - expose the first switchable-system contract boundary through
   `contracts/`, `registry/`, `shared/`, `layers/`, and
-  `systems/<system-key>/`, with the default system currently proving the
-  `background-color` token route
+  `systems/<system-key>/`, with `default` and `brochure` currently proving
+  separate system implementations
 - expose governed source seams for new layered design-system work under
   `src/frontend/designSystem/layers/<layer-number>/`
 - keep `systems/<system-key>/` as the selectable system implementation and
@@ -120,6 +120,11 @@ Current route model:
 
 - one HTML page per route or per `index.html` folder entry
 - a router that resolves request paths directly to matching HTML files
+- registered design-system roots may serve
+  `/design-system/<system-key>/` from
+  `src/frontend/designSystem/systems/<system-key>/index.html` when that file
+  exists; otherwise the request falls back through the normal design-system
+  file resolver
 - system-scoped token proof routes use `/design-system/<system-key>/tokens/*`
   so visual implementations can vary while the contract name and consumer
   obligations remain stable
