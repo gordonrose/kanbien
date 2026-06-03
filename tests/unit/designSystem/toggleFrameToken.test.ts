@@ -5,6 +5,10 @@ import {
   toggleFrameTokenVariants,
 } from "../../../src/frontend/designSystem/layers/02-token/toggle-frame/systems/default.mjs";
 
+type ToggleFrameVariant = {
+  id: string;
+};
+
 describe("toggle-frame token seam", () => {
   it("exposes governed toggle frame variants for every required theme and state", () => {
     expect(toggleFrameTokenSpec).toMatchObject({
@@ -14,7 +18,7 @@ describe("toggle-frame token seam", () => {
     });
 
     expect(toggleFrameTokenVariants).toHaveLength(15);
-    expect(toggleFrameTokenVariants.map((variant) => variant.id)).toEqual([
+    expect(toggleFrameTokenVariants.map((variant: ToggleFrameVariant) => variant.id)).toEqual([
       "toggle-frame-off-original",
       "toggle-frame-on-original",
       "toggle-frame-read-only-original",
@@ -53,17 +57,25 @@ describe("toggle-frame token seam", () => {
       theme: "original",
       thumbOffsetValue: "1.25rem",
     });
-    expect(toggleFrameTokenVariants.find((variant) => variant.id === "toggle-frame-off-dark")).toMatchObject({
+    expect(
+      toggleFrameTokenVariants.find((variant: ToggleFrameVariant) => variant.id === "toggle-frame-off-dark"),
+    ).toMatchObject({
       thumbBackgroundValue: "color-mix(in srgb, #f4f7fb 48%, #171b22)",
     });
-    expect(toggleFrameTokenVariants.find((variant) => variant.id === "toggle-frame-on-dark")).toMatchObject({
+    expect(
+      toggleFrameTokenVariants.find((variant: ToggleFrameVariant) => variant.id === "toggle-frame-on-dark"),
+    ).toMatchObject({
       thumbBackgroundValue: "color-mix(in srgb, #f4f7fb 68%, #171b22)",
     });
   });
 
   it("makes dependency derivation and consumer limits explicit", () => {
-    const onVariant = toggleFrameTokenVariants.find((variant) => variant.id === "toggle-frame-on-original");
-    const errorVariant = toggleFrameTokenVariants.find((variant) => variant.id === "toggle-frame-error-original");
+    const onVariant = toggleFrameTokenVariants.find(
+      (variant: ToggleFrameVariant) => variant.id === "toggle-frame-on-original",
+    );
+    const errorVariant = toggleFrameTokenVariants.find(
+      (variant: ToggleFrameVariant) => variant.id === "toggle-frame-error-original",
+    );
 
     expect(onVariant?.sourceTokenName).toContain("--primary-color-source-original");
     expect(onVariant?.sourceTokenName).toContain("--primary-tinted-background-original");

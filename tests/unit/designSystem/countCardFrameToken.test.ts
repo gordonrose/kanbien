@@ -5,6 +5,11 @@ import {
   countCardFrameTokenVariants,
 } from "../../../src/frontend/designSystem/layers/02-token/count-card-frame/systems/default.mjs";
 
+type CountCardFrameVariant = {
+  id: string;
+  state: string;
+};
+
 describe("count-card-frame token seam", () => {
   it("exposes governed count-card frame states across themes", () => {
     expect(countCardFrameTokenSpec).toMatchObject({
@@ -14,7 +19,7 @@ describe("count-card-frame token seam", () => {
     });
 
     expect(countCardFrameTokenVariants).toHaveLength(15);
-    expect(countCardFrameTokenVariants.map((variant) => variant.state)).toEqual([
+    expect(countCardFrameTokenVariants.map((variant: CountCardFrameVariant) => variant.state)).toEqual([
       "default",
       "selected",
       "disabled",
@@ -35,9 +40,11 @@ describe("count-card-frame token seam", () => {
 
   it("derives selected and error values from signed lower-layer tokens", () => {
     const selected = countCardFrameTokenVariants.find(
-      (variant) => variant.id === "count-card-frame-selected-original",
+      (variant: CountCardFrameVariant) => variant.id === "count-card-frame-selected-original",
     );
-    const error = countCardFrameTokenVariants.find((variant) => variant.id === "count-card-frame-error-original");
+    const error = countCardFrameTokenVariants.find(
+      (variant: CountCardFrameVariant) => variant.id === "count-card-frame-error-original",
+    );
 
     expect(selected?.sourceTokenName).toContain("--primary-tinted-background-original");
     expect(selected?.sourceTokenName).toContain("--primary-tinted-foreground-original");
@@ -48,7 +55,7 @@ describe("count-card-frame token seam", () => {
 
   it("derives warning from the broader status-color warning token", () => {
     const warning = countCardFrameTokenVariants.find(
-      (variant) => variant.id === "count-card-frame-warning-original",
+      (variant: CountCardFrameVariant) => variant.id === "count-card-frame-warning-original",
     );
 
     expect(warning?.sourceTokenName).toContain("--status-color-warning-original");

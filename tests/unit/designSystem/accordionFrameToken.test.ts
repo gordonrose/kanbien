@@ -5,6 +5,10 @@ import {
   accordionFrameTokenVariants,
 } from "../../../src/frontend/designSystem/layers/02-token/accordion-frame/systems/default.mjs";
 
+type AccordionFrameVariant = {
+  id: string;
+};
+
 describe("accordion-frame token seam", () => {
   it("exposes governed accordion frame variants for supported themes", () => {
     expect(accordionFrameTokenSpec).toMatchObject({
@@ -14,7 +18,7 @@ describe("accordion-frame token seam", () => {
     });
 
     expect(accordionFrameTokenVariants).toHaveLength(6);
-    expect(accordionFrameTokenVariants.map((variant) => variant.id)).toEqual([
+    expect(accordionFrameTokenVariants.map((variant: AccordionFrameVariant) => variant.id)).toEqual([
       "accordion-frame-original",
       "accordion-frame-tinted-original",
       "accordion-frame-dark",
@@ -25,7 +29,9 @@ describe("accordion-frame token seam", () => {
   });
 
   it("derives frame values from signed lower-layer tokens", () => {
-    const dark = accordionFrameTokenVariants.find((variant) => variant.id === "accordion-frame-dark");
+    const dark = accordionFrameTokenVariants.find(
+      (variant: AccordionFrameVariant) => variant.id === "accordion-frame-dark",
+    );
 
     expect(dark).toMatchObject({
       tokenName: "--accordion-frame-dark",
@@ -43,7 +49,9 @@ describe("accordion-frame token seam", () => {
     expect(dark?.sourceTokenName).toContain("--target-size-interactive-min");
     expect(dark?.sourceTokenName).toContain("--panel-corner-radius-flush");
 
-    const tinted = accordionFrameTokenVariants.find((variant) => variant.id === "accordion-frame-tinted-original");
+    const tinted = accordionFrameTokenVariants.find(
+      (variant: AccordionFrameVariant) => variant.id === "accordion-frame-tinted-original",
+    );
     expect(tinted).toMatchObject({
       tokenName: "--accordion-frame-tinted-original",
       tone: "tinted",

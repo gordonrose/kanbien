@@ -21,6 +21,10 @@ const sections = [
   },
 ];
 
+type AccordionSectionState = {
+  expanded: boolean;
+};
+
 describe("accordion-group pattern seam", () => {
   it("composes accordion-section-control without direct token ownership", () => {
     const group = accordionGroupPattern({
@@ -83,8 +87,12 @@ describe("accordion-group pattern seam", () => {
       ],
     });
 
-    expect(group.sections.map((section) => section.expanded)).toEqual([true, false, false]);
-    expect(group.primitives.map((primitive) => primitive.expanded)).toEqual([true, false, false]);
+    expect(group.sections.map((section: AccordionSectionState) => section.expanded)).toEqual([true, false, false]);
+    expect(group.primitives.map((primitive: AccordionSectionState) => primitive.expanded)).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 
   it("rejects empty groups because the pattern cannot prove absent section behavior", () => {

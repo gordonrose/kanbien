@@ -42,9 +42,13 @@ function isApprovedDisclosureBlock(selector: string, body: string): boolean {
     selector.includes('data-card-list-select-legend-presentation="visually-hidden"') ||
     selector.includes(".token-spec-choice-affordance-preview") ||
     selector.includes(".token-spec-choice-affordance-state") ||
+    selector.includes(".token-spec-count-card-frame-preview") ||
+    selector.includes(".ds-search-field-control-label") ||
     selector.includes(".ds-truncating-label-text") ||
     selector.includes(".ds-index-nav-item-control-label") ||
     selector.includes(".ds-index-nav-item-control-supporting") ||
+    selector.includes(".ds-count-card-control-label") ||
+    selector.includes(".ds-count-card-control-state-cue") ||
     selector.includes(".ds-radio-simple-select-text") ||
     selector.includes(".ds-radio-simple-select-supporting") ||
     selector.includes(".ds-radio-simple-select-group-supporting") ||

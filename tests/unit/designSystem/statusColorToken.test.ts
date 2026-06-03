@@ -5,6 +5,10 @@ import {
   statusColorTokenVariants,
 } from "../../../src/frontend/designSystem/layers/02-token/status-color/systems/default.mjs";
 
+type StatusColorVariant = {
+  id: string;
+};
+
 describe("status-color token seam", () => {
   it("exposes warning status colour variants across themes", () => {
     expect(statusColorTokenSpec).toMatchObject({
@@ -14,7 +18,7 @@ describe("status-color token seam", () => {
     });
 
     expect(statusColorTokenVariants).toHaveLength(3);
-    expect(statusColorTokenVariants.map((variant) => variant.id)).toEqual([
+    expect(statusColorTokenVariants.map((variant: StatusColorVariant) => variant.id)).toEqual([
       "status-color-warning-original",
       "status-color-warning-dark",
       "status-color-warning-desert",
