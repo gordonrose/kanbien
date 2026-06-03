@@ -27,7 +27,7 @@ Do not perform detailed layer work inside this skill.
 
 `05-component-seam` is active.
 
-`06-demo-page` is active.
+`06-use-case-page` is active.
 
 Layers `07` through `10` are scaffolded and not yet active as full skills.
 
@@ -69,7 +69,7 @@ When pattern contract work is needed and Gate 03 passes, use `../04-pattern-cont
 
 When component seam work is needed and Gate 04 passes, use `../05-component-seam/SKILL.md`.
 
-When demo page work is needed and Gate 05 passes, use `../06-demo-page/SKILL.md`.
+When use-case page work is needed and Gate 05 passes, use `../06-use-case-page/SKILL.md`.
 
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 

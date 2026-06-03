@@ -10,7 +10,7 @@ They are evidence for the component seam, not a substitute for the contract.
 
 ## Input
 
-The input is the demo page, component seam, and pattern contract.
+The input is the use-case page, component seam, and pattern contract.
 
 The layer also needs the required viewport, theme, direction, density, data-volume, loading, empty, error, and interaction cases.
 
@@ -31,4 +31,3 @@ Check that responsive, RTL, dark mode, and magnification risks are covered when 
 Check that each canonical points at the governed seam rather than a copied render.
 
 Check that scenario names are stable enough to survive future maintenance.
-

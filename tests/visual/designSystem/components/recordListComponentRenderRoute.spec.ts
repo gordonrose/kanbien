@@ -1,17 +1,27 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const route = "/design-system/default/demos/record-list-component";
+const route = "/design-system/default/components/record-list-component";
+const legacyDemoRoute = "/design-system/default/demos/record-list-component";
 
 async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
-test.describe("record list component demo route", () => {
+test.describe("record list component render route", () => {
+  test("legacy demo route redirects to the Layer 5 component render proof", async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(legacyDemoRoute);
+
+    await expect(page).toHaveURL(new RegExp(`${route}$`));
+    await expect(page.getByRole("heading", { name: "Record List Component Render Proof", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Design-System Route Families" })).toHaveCount(0);
+  });
+
   test("direct route renders the Layer 5 component seam instead of the overview fallback", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
     await page.goto(route);
 
-    await expect(page.getByRole("heading", { name: "Record List Component Demo", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Record List Component Render Proof", level: 1 })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Design-System Route Families" })).toHaveCount(0);
     await expect(page.locator("[data-record-list-component]")).toHaveCount(1);
     await expect(page.locator("[data-record-list-pattern]")).toHaveCount(1);
@@ -26,9 +36,9 @@ test.describe("record list component demo route", () => {
     await page.setViewportSize({ width: 1366, height: 900 });
     await page.goto(route);
 
-    await page.locator("[data-record-list-component-demo-control='fixtureState']").selectOption("root-users");
+    await page.locator("[data-record-list-component-render-control='fixtureState']").selectOption("root-users");
 
-    await expect(page.getByRole("heading", { name: "Record List Component Demo", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Record List Component Render Proof", level: 1 })).toBeVisible();
     await expect(page.locator("[data-record-list-pattern-reorder='disabled']")).toHaveCount(1);
     await expect(page.locator("[draggable='true']")).toHaveCount(0);
     await expect(page.locator("[aria-keyshortcuts='Alt+ArrowUp Alt+ArrowDown']")).toHaveCount(0);
@@ -38,8 +48,8 @@ test.describe("record list component demo route", () => {
   test("uses list-to-total ratio semantics and expands the list after close", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
     await page.goto(route);
-    await page.locator("[data-record-list-component-demo-control='width']").selectOption("wide");
-    await page.locator("[data-record-list-component-demo-control='ratio']").selectOption("1:2");
+    await page.locator("[data-record-list-component-render-control='width']").selectOption("wide");
+    await page.locator("[data-record-list-component-render-control='ratio']").selectOption("1:2");
 
     const openGeometry = await page.evaluate(() => {
       const host = document.querySelector(".record-list-pattern-proof-host");

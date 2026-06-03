@@ -15,7 +15,7 @@ accessibility behavior across the composition, allowed states, data shape when
 needed, visual-skin boundary, and consumer restrictions.
 
 The pattern layer does not create app adoption seams. It prepares a governed
-structure that later component seams, demo pages, canonical scenarios, and app
+structure that later component seams, render proofs, use-case pages, canonical scenarios, and app
 adoption can consume without recreating primitive behavior locally.
 
 ## Use When
@@ -170,7 +170,8 @@ one of:
 - primitive correction
 - pattern contract
 - component seam
-- demo page
+- component render proof
+- use-case page
 - canonical scenario
 - first app adoption
 - adoption/parity test

@@ -235,7 +235,8 @@ Before writing the TokenDefinitionArtifact, classify every requested detail as o
 - primitive
 - pattern plus contract
 - component seam
-- demo page
+- component render proof
+- use-case page
 - canonical scenario
 - first app adoption
 - adoption/parity test

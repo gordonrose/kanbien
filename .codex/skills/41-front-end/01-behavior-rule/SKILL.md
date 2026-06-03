@@ -1,6 +1,6 @@
 ---
 name: frontend-behavior-rule-maintainer
-description: Use when creating or revising the first governed front-end harness artifact for one UI family, before tokens, primitives, patterns, components, demos, canonicals, or app adoption are allowed.
+description: Use when creating or revising the first governed front-end harness artifact for one UI family, before tokens, primitives, patterns, components, component render proofs, use-case pages, canonicals, or app adoption are allowed.
 ---
 
 # Frontend Behavior Rule Maintainer
@@ -23,7 +23,9 @@ Use this skill when an existing behavior rule is too broad, vague, stale, contra
 
 Use this skill when later-layer work reveals missing, stale, or contradictory behavior-rule guidance for the same UI family.
 
-Use this skill when a request appears to mix behavior, token, primitive, pattern, component, demo, canonical, or app adoption decisions in one pass.
+Use this skill when a request appears to mix behavior, token, primitive,
+pattern, component, component render proof, use-case page, canonical, or app
+adoption decisions in one pass.
 
 Use this skill before proposing, planning, inventorying, evaluating blockers,
 explaining next steps, creating artifacts, or editing files for Layer 1
@@ -90,7 +92,7 @@ Do not create primitives.
 Do not create tokens.
 Do not create pattern contracts.
 Do not create component seams.
-Do not create demo routes.
+Do not create component render-proof or use-case routes.
 Do not create canonical scenarios.
 Do not adopt anything into the app.
 
@@ -98,7 +100,9 @@ Do not choose file paths, CSS selectors, component APIs, or app import paths unl
 
 Do not hide a missing business decision behind implementation language.
 
-Do not solve a missing token, primitive, pattern, component, demo, canonical, or app-adoption decision inside the behavior rule.
+Do not solve a missing token, primitive, pattern, component, component render
+proof, use-case page, canonical, or app-adoption decision inside the behavior
+rule.
 
 Do not combine two harness layers into one artifact because the next layer seems obvious.
 
@@ -111,7 +115,8 @@ Before writing the behavior rule, classify every requested detail as one of:
 - primitive
 - pattern plus contract
 - component seam
-- demo page
+- component render proof
+- use-case page
 - canonical scenario
 - first app adoption
 - adoption/parity test
@@ -121,7 +126,8 @@ Only behavior-rule details may be written as decisions in the behavior rule.
 
 Later-layer details may be recorded only as open decisions, dependencies, or recommended next steps.
 
-Do not define token, primitive, pattern, component, demo, canonical, or app-adoption decisions inside the behavior rule.
+Do not define token, primitive, pattern, component, component render proof,
+use-case page, canonical, or app-adoption decisions inside the behavior rule.
 
 ## Cross-Layer Name Boundary
 
@@ -132,7 +138,7 @@ The same noun can appear in multiple layers. Classify by the decision being requ
 - token: reusable visual, sizing, motion, layout, or state values
 - primitive: one low-level affordance or structural building block
 - pattern plus contract: reusable composition of primitives, tokens, states, data, slots, or consumer rules
-- component seam: public consumption boundary used by demos, canonicals, tests, and apps
+- component seam: public consumption boundary used by render proofs, use-case pages, canonicals, tests, and apps
 
 If the noun spans layers, split the ask into layer-specific decisions.
 
@@ -150,7 +156,7 @@ The bucket skeleton is used to classify the ask and record missing information i
 | primitive | `layer-bucket-templates/03-primitive.md` | `layer-output-templates/03-primitive/TEMPLATE.md` |
 | pattern plus contract | `layer-bucket-templates/04-pattern-contract.md` | `layer-output-templates/04-pattern-contract/TEMPLATE.md` |
 | component seam | `layer-bucket-templates/05-component-seam.md` | `layer-output-templates/05-component-seam/TEMPLATE.md` |
-| demo page | `layer-bucket-templates/06-demo-page.md` | `layer-output-templates/06-demo-page/TEMPLATE.md` |
+| use-case page | `layer-bucket-templates/06-use-case-page.md` | `layer-output-templates/06-use-case-page/TEMPLATE.md` |
 | canonical scenario | `layer-bucket-templates/07-canonical-scenarios.md` | `layer-output-templates/07-canonical-scenarios/TEMPLATE.md` |
 | first app adoption | `layer-bucket-templates/08-first-app-adoption.md` | `layer-output-templates/08-first-app-adoption/TEMPLATE.md` |
 | adoption/parity test | `layer-bucket-templates/09-adoption-parity-test.md` | `layer-output-templates/09-adoption-parity-test/TEMPLATE.md` |

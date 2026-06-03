@@ -115,7 +115,7 @@ or token consumption instead of routing back to `03-primitive`.
 Fail if the artifact revises pattern composition, slot ownership, or allowed
 states instead of routing back to `04-pattern-contract`.
 
-Fail if the artifact defines demo routes, demo fixtures, or canonical
+Fail if the artifact defines use-case pages, use-case fixtures, or canonical
 scenarios before those later layers.
 
 Fail if the artifact defines app wrappers, route topology, product workflow,

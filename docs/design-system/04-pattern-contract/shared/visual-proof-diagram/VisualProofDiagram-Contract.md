@@ -21,7 +21,7 @@
 | --- | --- |
 | Source behavior need | Visual proof diagrams need reusable composition that keeps semantic proof meaning in text while decorative material supports scanning. |
 | Pattern job | Compose one decorative proof surface with ordered text-bearing proof stages and connector ornamentation. |
-| Expected consumers | Later component seams, demo pages, canonicals, and brochure page adoption. |
+| Expected consumers | Later component seams, use-case pages, canonicals, and brochure page adoption. |
 | Non-goals | Component props, app data loading, workflow execution, canonical fixtures, app imports, validation state, and app-local CSS. |
 
 ## Layer Boundary
@@ -137,7 +137,7 @@ ornament posture, or the rule that text carries meaning.
 | --- | --- |
 | Planned pattern module | `src/frontend/designSystem/layers/04-pattern-contract/visual-proof-diagram/index.mjs` |
 | Planned pattern export | `visualProofDiagramPattern` |
-| Allowed consumers | `05-component-seam`, `06-demo-page`, `07-canonical-scenarios`, and `08-first-app-adoption` after their gates pass |
+| Allowed consumers | `05-component-seam`, `06-use-case-page`, `07-canonical-scenarios`, and `08-first-app-adoption` after their gates pass |
 | Consumers must use | `src/frontend/designSystem/layers/04-pattern-contract/visual-proof-diagram/index.mjs#renderVisualProofDiagramPattern` when runtime rendering is needed. |
 | Consumers must not use | `copied app markup, legacy route markup, screenshots, local CSS values, duplicated primitive behavior, or route-local proof markup` |
 

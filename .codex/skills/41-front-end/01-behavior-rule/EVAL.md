@@ -99,7 +99,8 @@ Fail if the artifact chooses token values before the token layer.
 
 Fail if the artifact defines component props or APIs before the component-seam layer.
 
-Fail if the artifact defines demo route behavior before the demo-page layer.
+Fail if the artifact defines render-proof or use-case route behavior before
+the owning later layer.
 
 Fail if the artifact defines canonical scenario files before the canonical-scenarios layer.
 

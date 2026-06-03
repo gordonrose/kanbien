@@ -264,8 +264,8 @@ pattern-contract layer.
 Fail if the PrimitiveDefinitionArtifact defines component props, adapters, or
 app import paths before the component-seam layer.
 
-Fail if the PrimitiveDefinitionArtifact defines demo routes or fixture behavior
-before the demo-page layer.
+Fail if the PrimitiveDefinitionArtifact defines render-proof, use-case route,
+or fixture behavior before the owning later layer.
 
 Fail if the PrimitiveDefinitionArtifact defines canonical scenario files before
 the canonical-scenarios layer.

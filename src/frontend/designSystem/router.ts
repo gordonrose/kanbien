@@ -651,6 +651,11 @@ export function createDesignSystemRouter(): Router {
 
   router.get(/.*/, (request, response, next) => {
     void (async () => {
+      if (request.path === "/default/demos/record-list-component") {
+        response.redirect(308, "/design-system/default/components/record-list-component");
+        return;
+      }
+
       const resolvedPage = resolveHtmlPage(frontendRoot, request.path);
       if (!resolvedPage) {
         response.status(404).send("Design-system route not found");

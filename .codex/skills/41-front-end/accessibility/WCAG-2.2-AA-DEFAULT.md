@@ -124,7 +124,11 @@ The pattern-contract layer owns structure, landmarks, headings, slots, field rel
 
 The component-seam layer owns making the accessible path the default API.
 
-The demo-page layer owns honest rendered examples that use the actual seam.
+The component-seam layer owns honest component render proofs that use the
+actual seam.
+
+The use-case-page layer owns honest rendered page-family examples that compose
+accepted seams.
 
 The canonical-scenarios layer owns stable coverage for accessibility-risk states and dimensions.
 

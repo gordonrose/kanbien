@@ -18,7 +18,7 @@ Use this as a pressure-test mapping, not as app adoption approval.
 - API or view-model source: `GET /v1/root-users` list response and feature-owned root-admin browser view model.
 - Feature-owned adapter: future root-admin root-users list adapter.
 - Unsupported component affordances: filter/query/result-count/status bar behavior is outside this component seam.
-- Compatibility or migration notes: existing `/root-admin/users` must not adopt this component until Layer 6/7/8/9 gates exist.
+- Compatibility or migration notes: existing `/root-admin/users` must not adopt this component until the use-case page, canonical, app-adoption, and parity gates exist and pass.
 
 ## Receptor Mapping
 
@@ -77,7 +77,7 @@ included.
 - Adapter/unit tests: required before app adoption.
 - API/view-model contract tests: required before app adoption.
 - Component receptor tests: covered by `tests/unit/designSystem/recordListComponent.test.ts` for generic seam behavior.
-- Browser/rendered proof: blocked until Layer 6/7/8/9 harnesses are active.
+- Browser/rendered proof: Layer 5 component render proof exists for the generic seam; root-users app adoption remains blocked until use-case page, canonical, app-adoption, and parity evidence exists.
 - Mock-honesty check: root-users fixtures must use the actual API response shape rather than component-convenience fields.
 - Unsupported-affordance tests: required before any root-users adoption.
 

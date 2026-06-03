@@ -20,16 +20,16 @@
 | --- | --- |
 | Pattern job consumed | The Layer 4 `record-list` pattern renders a governed list-detail structure with row open, close, reorder, resize, empty-state, and live-feedback behavior. |
 | Component seam job | Expose that pattern through one public component boundary with named receptors, component-level events, controller attachment, and feature-adapter rules. |
-| Expected consumers | Later demo, canonical, and app-adoption layers after their gates are active; feature-owned adapters may use this contract to map domain/API data into receptors. |
-| Non-goals | Status bars, filter panels, backend query construction, persisted sorting, root-admin route state, app adoption, demo fixtures, and canonical scenarios. |
+| Expected consumers | Layer 5 render proof, later use-case page, canonical, and app-adoption layers after their gates are active; feature-owned adapters may use this contract to map domain/API data into receptors. |
+| Non-goals | Status bars, filter panels, backend query construction, persisted sorting, root-admin route state, app adoption, use-case fixtures, and canonical scenarios. |
 
 ## Layer Boundary
 
 This ComponentSeamArtifact defines public receptors, event translation,
 controller ownership, import boundaries, and feature-adapter boundaries only.
 
-It does not define token values, primitive behavior, pattern composition, demo
-fixtures, canonical scenarios, app wrappers, backend query semantics,
+It does not define token values, primitive behavior, pattern composition,
+use-case fixtures, canonical scenarios, app wrappers, backend query semantics,
 persistence behavior, authorization rules, or route topology.
 
 ## Preflight Decision Ledger
@@ -46,7 +46,7 @@ template, canonical, app-like review surface, or visible defect.
 | Pattern readiness source checked | `docs/design-system/04-pattern-contract/pattern-readiness-index.md` |
 | Required pattern consumable by selected systems | `yes` |
 | Pattern runtime seam status | `implemented` |
-| Consumer contexts known | `partial`; design-system demo is now active for next-layer work, canonical/app-adoption layers are still expected but scaffold-only, and root-admin users is recorded only as a pressure-test mapping. |
+| Consumer contexts known | `partial`; Layer 5 render proof is now active for this seam, Layer 6 use-case page work is the next page-family step, canonical/app-adoption layers are still expected but scaffold-only, and root-admin users is recorded only as a pressure-test mapping. |
 
 ## Pattern Dependency
 
@@ -178,7 +178,7 @@ Consumers must not weaken accessibility requirements recorded here.
 | Store shared component contract at | `docs/design-system/05-component-seam/shared/record-list/RecordListComponent-Contract.md` |
 | Store runtime seam at | `src/frontend/designSystem/layers/05-component-seam/record-list/index.mjs` |
 | Stable lookup key | `shared/record-list/record-list-component/05-component-seam` |
-| How later layers consume it | Demo, canonical, and app-adoption layers import the runtime seam and consult this contract before creating review surfaces or app consumers. |
+| How later layers consume it | Render proof, use-case page, canonical, and app-adoption layers import the runtime seam and consult this contract before creating review surfaces or app consumers. |
 | What later layers must preserve | Receptor meanings, event translation, controller ownership, accessibility preservation, import boundary, and consumer restrictions unless a component revision is approved. |
 | What must not consume it | Backend code and persistence code must not import frontend component seams. |
 | What must not be used instead | Chat history, screenshots, app implementation, old design-system routes, pattern proof markup, or copied fragments. |
@@ -190,12 +190,13 @@ Consumers must not weaken accessibility requirements recorded here.
 | Step | Layer | Action | Blocking Reason |
 | --- | --- | --- | --- |
 | 1 | `05-component-seam` | Accept this `RecordListComponent` seam as `review-ready`. | none |
-| 2 | `06-demo-page` | Create a rendered component demo artifact and proof surface that consumes this seam. | none |
+| 2 | `05-component-seam` | Maintain the rendered component proof surface that consumes this seam. | none |
+| 3 | `06-use-case-page` | Create an entity-list or related use-case page artifact only when page-family composition is in scope. | none |
 
 ## Next Layer
 
 | Field | Value |
 | --- | --- |
-| Next expected layer | `06-demo-page` |
+| Next expected layer | `06-use-case-page` |
 | Next layer status | `allowed` |
-| Reason | The demo-page harness is active and can now govern rendered evidence that consumes this component seam. |
+| Reason | The Layer 5 render proof now governs isolated component evidence; Layer 6 should govern product/use-case page composition such as entity list or entity record pages. |

@@ -2,7 +2,7 @@
 
 This is bad because it defines a test before the adoption exists.
 
-> Run Playwright against `/root-admin/users` and compare the DOM to the demo page using `.filter-panel`.
+> Run Playwright against `/root-admin/users` and compare the DOM to a route-local proof page using `.filter-panel`.
 
 Problems:
 

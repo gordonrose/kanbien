@@ -153,13 +153,14 @@ later-layer contract, or proof-only wrapper.
 When this gate passes, the orchestrator may hand off to
 `../05-component-seam/SKILL.md`.
 
-## Gate 05: Component Seam To Demo Page
+## Gate 05: Component Seam To Use-Case Page
 
 Current status: active.
 
 Required component files:
 
 - component seam contract artifact for the target UI family
+- Layer 5 component render proof artifact or an explicit blocker
 - `../05-component-seam/EVAL.md`
 - `../05-component-seam/ACCESSIBILITY-EVAL.md`
 
@@ -181,37 +182,41 @@ The component artifact must show that consumers do not need to copy pattern
 proof markup, primitive wiring, controller behavior, accessibility feedback, or
 local CSS.
 
+The component artifact or render proof must show that the component seam
+renders honestly before Layer 6 page-family composition is allowed.
+
 When this gate passes, the orchestrator may hand off to
-`../06-demo-page/SKILL.md`.
+`../06-use-case-page/SKILL.md`.
 
-## Gate 06: Demo Page To Canonical Scenarios
+## Gate 06: Use-Case Page To Canonical Scenarios
 
-Current status: active for demo evaluation; canonical-scenarios layer is
+Current status: active for use-case page evaluation; canonical-scenarios layer is
 scaffold-only.
 
-Required demo files:
+Required use-case page files:
 
-- demo page artifact for the target UI family
-- `../06-demo-page/EVAL.md`
-- `../06-demo-page/ACCESSIBILITY-EVAL.md`
+- use-case page artifact for the target UI family
+- `../06-use-case-page/EVAL.md`
+- `../06-use-case-page/ACCESSIBILITY-EVAL.md`
 
-The demo artifact must pass `demo-page-pass`.
+The use-case page artifact must pass `use-case-page-pass`.
 
-The demo accessibility eval must pass `accessibility-pass` or have an explicit
+The use-case page accessibility eval must pass `accessibility-pass` or have an explicit
 approved exception.
 
-The demo artifact must name the next expected layer.
+The use-case page artifact must name the next expected layer.
 
-The demo artifact must show that it consumes the Layer 5 component seam rather
-than rebuilding pattern proof markup, primitive wiring, controller behavior,
-accessibility feedback, or local CSS.
+The use-case page artifact must show that it consumes Layer 5 component seams
+rather than rebuilding pattern proof markup, primitive wiring, controller
+behavior, accessibility feedback, or local CSS.
 
-The demo artifact must show that proof-only controls, fixtures, and route-local
-helpers are rendered evidence only, not construction APIs.
+The use-case page artifact must show that proof-only controls, fixtures, and
+route-local helpers are rendered evidence only, not construction APIs.
 
-The demo artifact must include required rendered evidence for component states,
-interactions, accessibility, responsive contexts, themes, direction,
-magnification, motion, and overflow, or record explicit blockers.
+The use-case page artifact must include required rendered evidence for page
+composition, component states, interactions, accessibility, responsive
+contexts, themes, direction, magnification, motion, and overflow, or record
+explicit blockers.
 
 Because `07-canonical-scenarios` is currently scaffold-only, the orchestrator
 must stop after this gate and say the canonical-scenarios layer needs its full
@@ -235,7 +240,7 @@ App adoption is blocked until the following gates exist and pass for the target 
 - primitive, unless explicitly not needed
 - pattern plus contract
 - component seam
-- demo page
+- use-case page
 - canonical scenarios
 
 App adoption must consume the same governed seam as the design-system surface.

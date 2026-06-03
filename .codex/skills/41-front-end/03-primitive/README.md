@@ -53,6 +53,7 @@ Check that any missing required token blocks primitive work and routes back to t
 
 Check that it has a named public boundary.
 
-Check that it defines state and accessibility behavior without relying on demo-page examples.
+Check that it defines state and accessibility behavior without relying on later
+render-proof or use-case page examples.
 
 Check that consumers cannot reasonably mistake the primitive for a page-local helper.

@@ -3,10 +3,10 @@ import {
   renderRecordListComponent,
 } from "../../../../layers/05-component-seam/record-list/index.mjs";
 
-const root = document.querySelector("[data-record-list-component-demo-root]");
+const root = document.querySelector("[data-record-list-component-render-root]");
 
 if (!(root instanceof HTMLElement)) {
-  throw new Error("record-list component demo root is missing.");
+  throw new Error("record-list component render proof root is missing.");
 }
 
 const organizationItems = [
@@ -100,7 +100,7 @@ function fixtureForState() {
 function renderDetailContent(fixture) {
   return `
     <section data-governed-detail-content>
-      <p class="token-spec-kicker">Demo detail</p>
+      <p class="token-spec-kicker">Render proof detail</p>
       <h3>${fixture.detailTitle}</h3>
       <p>${fixture.detailMeta}</p>
       <dl class="token-spec-definition-grid">
@@ -114,15 +114,15 @@ function renderDetailContent(fixture) {
 
 function renderControls() {
   return `
-    <section class="primitive-proof-controls" aria-label="Record list component demo controls">
+    <section class="primitive-proof-controls" aria-label="Record list component render proof controls">
       <div>
         <p class="token-spec-kicker">Review controls</p>
         <h2>Component pressure</h2>
-        <p>Controls change component receptors and proof contexts for rendered Layer 6 evidence.</p>
+        <p>Controls change component receptors and proof contexts for rendered Layer 5 evidence.</p>
       </div>
       <label>
         Fixture
-        <select data-record-list-component-demo-control="fixtureState">
+        <select data-record-list-component-render-control="fixtureState">
           <option value="organizations" ${selected("fixtureState", "organizations")}>Organizations</option>
           <option value="root-users" ${selected("fixtureState", "root-users")}>Root users without reorder</option>
           <option value="empty" ${selected("fixtureState", "empty")}>Empty</option>
@@ -131,7 +131,7 @@ function renderControls() {
       </label>
       <label>
         Theme
-        <select data-record-list-component-demo-control="theme">
+        <select data-record-list-component-render-control="theme">
           <option value="original" ${selected("theme", "original")}>Original</option>
           <option value="dark" ${selected("theme", "dark")}>Dark</option>
           <option value="desert" ${selected("theme", "desert")}>Desert</option>
@@ -139,14 +139,14 @@ function renderControls() {
       </label>
       <label>
         Direction
-        <select data-record-list-component-demo-control="direction">
+        <select data-record-list-component-render-control="direction">
           <option value="ltr" ${selected("direction", "ltr")}>LTR</option>
           <option value="rtl" ${selected("direction", "rtl")}>RTL</option>
         </select>
       </label>
       <label>
         Width
-        <select data-record-list-component-demo-control="width">
+        <select data-record-list-component-render-control="width">
           <option value="wide" ${selected("width", "wide")}>Wide</option>
           <option value="narrow" ${selected("width", "narrow")}>Narrow</option>
           <option value="mobile" ${selected("width", "mobile")}>Mobile</option>
@@ -154,18 +154,18 @@ function renderControls() {
       </label>
       <label>
         Ratio
-        <select data-record-list-component-demo-control="ratio">
+        <select data-record-list-component-render-control="ratio">
           <option value="1:2" ${selected("ratio", "1:2")}>1:2</option>
           <option value="1:4" ${selected("ratio", "1:4")}>1:4</option>
           <option value="1:5" ${selected("ratio", "1:5")}>1:5</option>
         </select>
       </label>
       <label class="primitive-proof-checkbox">
-        <input type="checkbox" data-record-list-component-demo-toggle="resizeEnabled" value="true" ${checked("resizeEnabled", "true")} />
+        <input type="checkbox" data-record-list-component-render-toggle="resizeEnabled" value="true" ${checked("resizeEnabled", "true")} />
         Resize enabled
       </label>
       <label class="primitive-proof-checkbox">
-        <input type="checkbox" data-record-list-component-demo-toggle="reorderEnabled" value="true" ${checked("reorderEnabled", "true")} ${reviewState.fixtureState === "root-users" || reviewState.fixtureState === "empty" ? "disabled" : ""} />
+        <input type="checkbox" data-record-list-component-render-toggle="reorderEnabled" value="true" ${checked("reorderEnabled", "true")} ${reviewState.fixtureState === "root-users" || reviewState.fixtureState === "empty" ? "disabled" : ""} />
         Reorder enabled
       </label>
     </section>
@@ -179,23 +179,23 @@ function renderDemo() {
     <section class="token-spec-page">
       <div class="token-spec-layout">
         <section class="token-spec-intro">
-          <p class="token-spec-kicker">06-demo-page</p>
-          <h1>Record List Component Demo</h1>
+          <p class="token-spec-kicker">05-component-seam render proof</p>
+          <h1>Record List Component Render Proof</h1>
           <p>Review the Layer 5 component seam with representative fixtures, receptor toggles, and environment pressure.</p>
         </section>
         ${renderControls()}
-        <section class="token-spec-section" aria-label="Component demo">
+        <section class="token-spec-section" aria-label="Component render proof">
           <div class="token-spec-section-header">
             <h2>Rendered Component</h2>
             <p>Open rows, close the detail slot, resize the pane, and inspect reorder-enabled or reorder-disabled postures.</p>
           </div>
           <div
             class="record-list-pattern-proof-host"
-            data-record-list-component-demo-width="${reviewState.width}"
+            data-record-list-component-render-width="${reviewState.width}"
             dir="${reviewState.direction}"
           >
             ${renderRecordListComponent({
-              id: "record-list-component-demo",
+              id: "record-list-component-render-proof",
               theme: reviewState.theme,
               listLabel: fixture.listLabel,
               detailLabel: fixture.detailLabel,
@@ -209,7 +209,7 @@ function renderDemo() {
               items: fixture.items,
             })}
           </div>
-          <p class="primitive-event-log" data-record-list-component-demo-log>Event log: waiting</p>
+          <p class="primitive-event-log" data-record-list-component-render-log>Event log: waiting</p>
           <dl class="token-spec-definition-grid">
             <div><dt>Component seam</dt><dd><code>recordListComponent</code></dd></div>
             <div><dt>Render seam</dt><dd><code>renderRecordListComponent</code></dd></div>
@@ -223,7 +223,7 @@ function renderDemo() {
   `;
 
   attachRecordListComponentController(root);
-  const log = root.querySelector("[data-record-list-component-demo-log]");
+  const log = root.querySelector("[data-record-list-component-render-log]");
   root.addEventListener("record-list-component:open", (event) => {
     log.textContent = `Event log: open ${event.detail.itemId}`;
   }, { once: true });
@@ -237,11 +237,11 @@ function renderDemo() {
     log.textContent = `Event log: resize detail ${event.detail.inlineSize}`;
   }, { once: true });
 
-  for (const control of root.querySelectorAll("[data-record-list-component-demo-control]")) {
+  for (const control of root.querySelectorAll("[data-record-list-component-render-control]")) {
     control.addEventListener("change", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLSelectElement)) return;
-      const name = target.dataset.recordListComponentDemoControl;
+      const name = target.dataset.recordListComponentRenderControl;
       if (name && Object.prototype.hasOwnProperty.call(reviewState, name)) {
         reviewState[name] = target.value;
         renderDemo();
@@ -249,11 +249,11 @@ function renderDemo() {
     });
   }
 
-  for (const control of root.querySelectorAll("[data-record-list-component-demo-toggle]")) {
+  for (const control of root.querySelectorAll("[data-record-list-component-render-toggle]")) {
     control.addEventListener("change", (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement)) return;
-      const name = target.dataset.recordListComponentDemoToggle;
+      const name = target.dataset.recordListComponentRenderToggle;
       if (name && Object.prototype.hasOwnProperty.call(reviewState, name)) {
         reviewState[name] = target.checked ? "true" : "false";
         renderDemo();

@@ -185,7 +185,8 @@ as one of:
 - primitive
 - pattern plus contract
 - component seam
-- demo page
+- component render proof
+- use-case page
 - canonical scenario
 - first app adoption
 - adoption/parity test

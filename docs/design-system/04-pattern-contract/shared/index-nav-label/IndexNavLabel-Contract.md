@@ -21,7 +21,7 @@
 | --- | --- |
 | Source behavior need | Constrained index navigation labels must not overlap their containers, and users must be able to access the full label when visible text truncates. |
 | Pattern job | Compose the accepted `truncating-label` primitive for one label inside a primary or secondary index-navigation context. |
-| Expected consumers | Later Layer 4 index-navigation patterns, Layer 5 component seams, demo pages, canonical scenarios, templates, and app adoption after those layers are active. |
+| Expected consumers | Later Layer 4 index-navigation patterns, Layer 5 component seams, use-case pages, canonical scenarios, templates, and app adoption after those layers are active. |
 | Non-goals | This pattern is not a full nav item, list, panel, route, selected-state model, count badge, menu, page section, component API, demo fixture, or app adoption seam. |
 
 ## Layer Boundary

@@ -23,7 +23,8 @@
 search option fixtures for use in governed header and toolbar surfaces.
 
 It does not own entity page header adoption, component props, backend data,
-route changes, persistence, demo pages, canonical scenarios, or app adoption.
+route changes, persistence, use-case pages, canonical scenarios, or app
+adoption.
 
 ## Upstream Gates
 

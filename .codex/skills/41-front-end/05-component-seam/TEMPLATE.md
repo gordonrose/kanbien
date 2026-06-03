@@ -20,16 +20,16 @@
 | --- | --- |
 | Pattern job consumed | `<one pattern responsibility this seam exposes>` |
 | Component seam job | `<one public consumption job>` |
-| Expected consumers | `<demo, canonical, app surface, feature family, or blocked>` |
-| Non-goals | `<demo fixtures, canonical scenarios, app adoption, backend workflow, or other out-of-scope decisions>` |
+| Expected consumers | `<component render proof, use-case page, canonical, app surface, feature family, or blocked>` |
+| Non-goals | `<use-case fixtures, canonical scenarios, app adoption, backend workflow, or other out-of-scope decisions>` |
 
 ## Layer Boundary
 
 This ComponentSeamArtifact may define public receptors, event translation,
 controller ownership, import boundaries, and feature-adapter boundaries only.
 
-It must not define token values, primitive behavior, pattern composition, demo
-fixtures, canonical scenarios, app wrappers, backend query semantics,
+It must not define token values, primitive behavior, pattern composition,
+use-case fixtures, canonical scenarios, app wrappers, backend query semantics,
 persistence behavior, authorization rules, or route topology.
 
 ## Preflight Decision Ledger

@@ -9,7 +9,7 @@ The harness is organized as a gated chain:
 3. Primitive
 4. Pattern plus contract
 5. Component seam
-6. Demo page
+6. Use-case page
 7. Canonical scenarios
 8. First app adoption
 9. Adoption/parity test
@@ -43,8 +43,9 @@ The same noun can appear in multiple layers. For example, `button` can mean:
 | Token | Button height, padding, radius, text color, or focus-ring values. |
 | Primitive | The low-level button affordance: activation, disabled behavior, accessible name, and focus behavior. |
 | Pattern | A button group or action area that composes buttons with priority, spacing, overflow, and placement rules. |
-| Component seam | The exported `Button` or `ButtonGroup` interface that demos and apps consume. |
-| Demo page | The rendered review surface that proves a component seam through honest fixtures, interactions, accessibility, and responsive evidence. |
+| Component seam | The exported `Button` or `ButtonGroup` interface that render proofs, use-case pages, and apps consume. |
+| Component render proof | Layer 5 rendered evidence that proves one component seam through honest fixtures, interactions, accessibility, and responsive evidence. |
+| Use-case page | Layer 6 page-family evidence that composes accepted component seams for a representative product use case. |
 
 Use this routing rule:
 
@@ -53,7 +54,7 @@ Use this routing rule:
 | Token | Reusable values | What reusable visual, sizing, motion, layout, or state value is needed? |
 | Primitive | One low-level affordance | What single UI building block behavior must be consistent? |
 | Pattern plus contract | Reusable composition | How do multiple primitives, tokens, data, states, or slots work together for a reusable UI situation? |
-| Component seam | Consumption boundary | What do demos and apps import, call, or consume so they do not copy the pattern locally? |
+| Component seam | Consumption boundary | What do render proofs, use-case pages, and apps import, call, or consume so they do not copy the pattern locally? |
 
 Example: `Menu Trigger` is a primitive. `icon-size`, `target-size`, and
 `focus-ring` are tokens it consumes. `Action Menu` is a pattern that composes
@@ -63,4 +64,4 @@ seam if it is the exported interface apps consume.
 Layer ask guidance for layers `07` through `10` still lives in
 `01-behavior-rule/SKILL.md` until those layers become active. Layers
 `02-token`, `03-primitive`, `04-pattern-contract`, `05-component-seam`, and
-`06-demo-page` have their own active skills and evals.
+`06-use-case-page` have their own active skills and evals.

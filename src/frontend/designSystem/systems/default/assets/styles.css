@@ -4478,36 +4478,36 @@
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="narrow"],
-.record-list-pattern-proof-host[data-record-list-component-demo-width="narrow"] {
+.record-list-pattern-proof-host[data-record-list-component-render-width="narrow"] {
   inline-size: min(100%, 40rem);
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"],
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] {
   position: relative;
   inline-size: min(100%, 24rem);
   min-block-size: 24rem;
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern,
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern {
   grid-template-columns: 1fr;
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-resize,
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern-resize {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern-resize {
   display: none;
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern-list-pane,
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control,
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern-list-pane,
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern-list-pane,
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
   grid-column: 1;
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control,
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -4521,7 +4521,7 @@
 }
 
 .record-list-pattern-proof-host[data-record-list-pattern-proof-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"],
-.record-list-pattern-proof-host[data-record-list-component-demo-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
+.record-list-pattern-proof-host[data-record-list-component-render-width="mobile"] .ds-record-list-pattern > .ds-detail-slot-control[data-detail-slot-control-state="closed"] {
   display: none;
 }
 

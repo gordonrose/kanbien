@@ -23,7 +23,9 @@
 
 ## Behavior Rule Recording
 
-Layer 7 must define canonical scenarios after the demo and seam exist. The behavior rule carries the required states and review dimensions forward.
+Layer 7 must define canonical scenarios after the use-case page and seam
+exist. The behavior rule carries the required states and review dimensions
+forward.
 
 ## Blockers Or Open Decisions
 

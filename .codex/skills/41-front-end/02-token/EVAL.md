@@ -190,8 +190,8 @@ data contracts before the pattern-contract layer.
 Fail if the TokenDefinitionArtifact defines component props, adapters, or import paths before
 the component-seam layer.
 
-Fail if the TokenDefinitionArtifact defines demo routes or fixture behavior before the
-demo-page layer.
+Fail if the TokenDefinitionArtifact defines render-proof, use-case route, or
+fixture behavior before the owning later layer.
 
 Fail if the TokenDefinitionArtifact defines canonical scenario files before the
 canonical-scenarios layer.

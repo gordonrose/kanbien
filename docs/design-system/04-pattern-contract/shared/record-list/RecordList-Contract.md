@@ -22,7 +22,7 @@ only. Manual resizing is delegated to `resize-handle-control`.
 
 This pattern does not define row visuals, drag marker visuals, row keyboard
 behavior, row ARIA, persisted sorting, backend updates, entity panel body
-content, canonical scenarios, demo pages, or app adoption.
+content, canonical scenarios, use-case pages, or app adoption.
 
 ## Upstream Dependencies
 

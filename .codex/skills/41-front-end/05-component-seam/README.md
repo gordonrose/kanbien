@@ -26,9 +26,11 @@ requirements.
 
 The output is a named consumable seam with a stable public import path and documented responsibilities.
 
-The design-system demo and first app adoption should be able to consume the same seam.
+The Layer 5 render proof, use-case pages, and first app adoption should be
+able to consume the same seam.
 
-The output should include any fixture or adapter shape needed to keep demos honest.
+The output should include any fixture or adapter shape needed to keep render
+proofs and use-case pages honest.
 
 When a feature slice is in scope, the output should require a receptor mapping
 using `docs/templates/component-receptor-mapping-template.md`.

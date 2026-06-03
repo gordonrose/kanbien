@@ -32,5 +32,5 @@ Check that the contract says what consumers may customize and what they must not
 
 Check that the data shape is representative of production rather than a convenience mock.
 
-Check that the pattern is not relying on the demo page as its source of truth.
-
+Check that the pattern is not relying on a render proof or use-case page as
+its source of truth.

@@ -1,6 +1,6 @@
 ---
 name: frontend-component-seam-maintainer
-description: Use when creating or revising governed Layer 5 component seams after a Layer 4 pattern contract passes, especially to define the public receptor, event, render, controller, and feature-adapter boundary that demos, canonicals, and app adoption must consume.
+description: Use when creating or revising governed Layer 5 component seams after a Layer 4 pattern contract passes, especially to define the public receptor, event, render, controller, feature-adapter boundary, and component render proof that use-case pages, canonicals, and app adoption must consume.
 ---
 
 # Frontend Component Seam Maintainer
@@ -18,15 +18,18 @@ adapter, CSS module export, or a named combination of those.
 Layer 5 owns receptors: the explicit public inputs where feature-owned data,
 state, content, and actions may enter the governed UI.
 
+Layer 5 also owns isolated component render proofs that prove the seam renders
+and behaves honestly before page-family composition starts.
+
 Layer 5 does not own product workflow, backend query semantics, persistence,
-authorization, route topology, app wrappers, demo fixtures, or canonical
-scenarios.
+authorization, route topology, app wrappers, use-case page fixtures, or
+canonical scenarios.
 
 ## Use When
 
 Use this skill when a Layer 4 pattern is review-ready or accepted and the repo
-needs a public consumable seam before demo, canonical, or app adoption work can
-proceed.
+needs a public consumable seam before use-case page, canonical, or app adoption
+work can proceed.
 
 Use this skill when feature work needs to map backend/API/domain behavior into
 pre-designed frontend receptors instead of copying pattern markup or controller
@@ -47,8 +50,8 @@ family.
 You need the pattern runtime seam when one exists, or a recorded blocker if the
 pattern can only be reviewed through a proof route.
 
-You need expected consumer contexts, such as design-system demo, canonical
-scenario set, first app surface, or feature family.
+You need expected consumer contexts, such as component render proof, use-case
+page, canonical scenario set, first app surface, or feature family.
 
 You need export conventions and import boundaries for the design-system layer
 being used.
@@ -83,6 +86,8 @@ Define only Layer 5 decisions:
 - allowed import path and consumers
 - forbidden local reconstruction
 - required evidence before later layers may consume the seam
+- isolated component render-proof responsibility when the seam needs rendered
+  evidence before Layer 6 page-family composition
 
 ## Allowed Files
 
@@ -94,6 +99,14 @@ Runtime component seams may be planned or created under:
 
 src/frontend/designSystem/layers/05-component-seam/<component-name>/
 
+Component render proof artifacts may be created under:
+
+docs/design-system/05-component-seam/render-proofs/<component-name>/<ComponentName>-RenderProof.md
+
+System component render proof routes may be planned or created under:
+
+src/frontend/designSystem/systems/<system-key>/components/<component-name>/
+
 When a component seam becomes consumable, update:
 
 docs/design-system/05-component-seam/component-readiness-index.md
@@ -103,7 +116,6 @@ when the user is building or refining the harness.
 
 ## Forbidden Moves
 
-Do not create demo routes.
 Do not create canonical scenarios.
 Do not adopt anything into the app.
 
@@ -134,14 +146,15 @@ one of:
 - primitive correction
 - pattern contract correction
 - component seam
-- demo page
+- component render proof
+- use-case page
 - canonical scenario
 - first app adoption
 - adoption/parity test
 - artifact/index update
 
-Only component-seam details may be written as approved decisions in the
-component artifact.
+Only component-seam and isolated component-render-proof details may be written
+as approved decisions in the Layer 5 artifact.
 
 If the seam needs a missing pattern behavior, stop and route back to
 `04-pattern-contract`.
