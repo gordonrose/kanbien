@@ -124,6 +124,7 @@ export function recordListPattern(options = {}) {
   const detailLabel = options.detailLabel ?? "Record detail";
   const ratio = options.ratio ?? "1:2";
   const resizable = options.resizable !== false;
+  const allowReorder = options.allowReorder !== false;
   const items = normalizeItems(options.items ?? []);
 
   assertString(systemKey, "systemKey");
@@ -160,6 +161,7 @@ export function recordListPattern(options = {}) {
     ratio,
     ratioVariant,
     resizable,
+    allowReorder,
     items,
     isEmpty: items.length === 0,
     primitiveDependencies: ["record-list-item-control", "detail-slot-control", "resize-handle-control"],
@@ -176,6 +178,7 @@ export function recordListPattern(options = {}) {
       "data-record-list-pattern": "",
       "data-record-list-pattern-theme": theme,
       "data-record-list-pattern-ratio": ratio,
+      "data-record-list-pattern-reorder": allowReorder ? "enabled" : "disabled",
       "data-record-list-pattern-open-item": openItem?.itemId ?? "",
       "data-record-list-pattern-state": items.length === 0 ? "empty" : openItem ? "open" : "closed",
       "data-record-list-pattern-resize-state": "ratio",
@@ -229,7 +232,7 @@ export function renderRecordListPattern(options = {}) {
                         meta: item.meta,
                         disabled: item.disabled,
                         selected: item.itemId === spec.openItemId,
-                        draggable: true,
+                        draggable: spec.allowReorder,
                       })}
                     </div>
                   `)
@@ -467,6 +470,9 @@ export function attachRecordListPatternController(root = document) {
   root.addEventListener("record-list-item:move", (event) => {
     const pattern = event.target instanceof Element ? event.target.closest("[data-record-list-pattern]") : null;
     if (!(pattern instanceof HTMLElement)) {
+      return;
+    }
+    if (pattern.dataset.recordListPatternReorder !== "enabled") {
       return;
     }
     const detail = event.detail ?? {};

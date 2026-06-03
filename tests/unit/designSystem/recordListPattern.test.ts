@@ -79,6 +79,30 @@ describe("record-list pattern seam", () => {
     expect(html).not.toContain("record-management-filter-trigger");
   });
 
+  it("can render without reorder affordances when the application disables reorder", () => {
+    const pattern = recordListPattern({
+      id: "record-list-no-reorder",
+      ariaLabel: "Organization records",
+      detailLabel: "Organization detail",
+      allowReorder: false,
+      items,
+    });
+    const html = renderRecordListPattern({
+      id: "record-list-no-reorder",
+      ariaLabel: "Organization records",
+      detailLabel: "Organization detail",
+      allowReorder: false,
+      items,
+    });
+
+    expect(pattern.allowReorder).toBe(false);
+    expect(pattern.attributes["data-record-list-pattern-reorder"]).toBe("disabled");
+    expect(html).toContain('data-record-list-pattern-reorder="disabled"');
+    expect(html).not.toContain('draggable="true"');
+    expect(html).not.toContain('aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"');
+    expect(html).not.toContain("Use Alt plus Arrow Up or Arrow Down to reorder.");
+  });
+
   it("renders a governed empty state without fake row controls", () => {
     const pattern = recordListPattern({
       id: "record-list-empty",
@@ -137,6 +161,7 @@ describe("record-list pattern seam", () => {
     expect(source).toContain("record-list-item:open");
     expect(source).toContain("record-list-item:move");
     expect(source).toContain("attachedRecordListPatternRoots");
+    expect(source).toContain('pattern.dataset.recordListPatternReorder !== "enabled"');
     expect(source).toContain("movedItem.focus({ preventScroll: true });");
     expect(source).toContain("announceMovement(pattern, source);");
     expect(source).toContain("movementAnnouncement");

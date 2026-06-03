@@ -10,9 +10,9 @@ Status: `review-ready`
 
 `record-list` composes governed record list item rows and a governed detail
 slot into a reusable list-detail structure. It owns selected/open item
-coordination across rows, DOM reorder application from primitive move events,
-empty-list posture, and the placeholder detail body that later component seams
-may replace with an entity panel.
+coordination across rows, optional DOM reorder application from primitive move
+events, empty-list posture, and the placeholder detail body that later
+component seams may replace with an entity panel.
 
 The pattern also owns list-to-detail ratio variants for two-pane review:
 `1:5`, `1:4`, and `1:2`. These variants define the starting column balance
@@ -57,11 +57,16 @@ No governed `record-list` pattern existed before this contract.
 - The pattern's manual resize max must not be narrower than the widest
   supported ratio in the default wide proof; switching from ratio sizing to
   manual resizing must not snap the detail slot down to a competing ceiling.
-- The pattern may apply DOM reorder in proof/runtime review when receiving
-  `record-list-item:move`; persistence belongs to later consumers.
-- After a successful move, the pattern must keep focus on the moved item and
-  update a polite atomic live region with item label, numeric position, total
-  count, and nearest-neighbor context when available.
+- The pattern must support a reorder-enabled and reorder-disabled posture.
+- When reorder is enabled, the pattern may apply DOM reorder in proof/runtime
+  review when receiving `record-list-item:move`; persistence belongs to later
+  consumers.
+- When reorder is disabled, rows must not expose draggable state, reorder
+  keyboard shortcuts, or move feedback as an affordance.
+- After a successful move in reorder-enabled posture, the pattern must keep
+  focus on the moved item and update a polite atomic live region with item
+  label, numeric position, total count, and nearest-neighbor context when
+  available.
 
 ## Data Contract
 
@@ -104,9 +109,9 @@ The pattern emits:
   removing or mutating the list items.
 - Empty state must be visible text and must not masquerade as a disabled row.
 - Reorder feedback must be available to assistive technology through a live
-  region. The announcement must include position context and should include
-  `after <previous item>` and/or `before <next item>` where those neighbors
-  exist.
+  region when reorder is enabled. The announcement must include position
+  context and should include `after <previous item>` and/or `before <next
+  item>` where those neighbors exist.
 
 ## Visual-Skin Boundary
 
@@ -117,8 +122,8 @@ lower layer later signs them as reusable values.
 
 ## Consumer Restrictions
 
-- Consumers must use this pattern for governed reorderable record lists with a
-  detail slot.
+- Consumers must use this pattern for governed record lists with a detail
+  slot, including reorder-enabled and reorder-disabled applications.
 - Consumers must not locally recreate row markup, drag handlers, keyboard move
   behavior, item disabled semantics, detail-slot aside markup, or close-button
   behavior.
