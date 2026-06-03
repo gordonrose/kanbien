@@ -42,6 +42,8 @@
 - Shared CSS seam:
 - Shared render seam:
 - Shared controller seam:
+- Shared component seam:
+- Component receptor mapping artifact:
 - Family-owned visible regions:
 - Host-owned visible regions:
 - Approved intentional deviations before implementation:

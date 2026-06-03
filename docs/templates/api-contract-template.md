@@ -56,6 +56,19 @@ not start from the implementation files.
 - Status code:
 - Response headers or cookies:
 
+## Frontend Projection
+
+Use this section when the route response feeds a governed component seam. If
+not applicable, state `not applicable`.
+
+- Governed component seam:
+- Component receptor mapping artifact:
+- Response fields required by receptors:
+- Fields derived by feature-owned adapter:
+- Unsupported component affordances:
+- Pagination / sorting / filtering fields exposed to UI:
+- Empty, loading, denied, disabled, or degraded state fields:
+
 ## Error Contract
 
 - Error codes:

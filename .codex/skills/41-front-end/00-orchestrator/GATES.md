@@ -131,8 +131,7 @@ been rendered locally.
 
 ## Gate 04: Pattern Contract To Component Seam
 
-Current status: active for pattern evaluation; component-seam layer is
-scaffold-only.
+Current status: active.
 
 Required pattern files:
 
@@ -151,15 +150,48 @@ The pattern artifact must show that every rendered child is a governed
 primitive, governed child pattern, browser-native wrapper, inherited
 later-layer contract, or proof-only wrapper.
 
-Because `05-component-seam` is currently scaffold-only, the orchestrator must
-stop after this gate and say the component-seam layer needs its full harness
-files before real component seam work can proceed.
+When this gate passes, the orchestrator may hand off to
+`../05-component-seam/SKILL.md`.
+
+## Gate 05: Component Seam To Demo Page
+
+Current status: active for component evaluation; demo-page layer is
+scaffold-only.
+
+Required component files:
+
+- component seam contract artifact for the target UI family
+- `../05-component-seam/EVAL.md`
+- `../05-component-seam/ACCESSIBILITY-EVAL.md`
+
+The component artifact must pass `component-seam-pass`.
+
+The component accessibility eval must pass `accessibility-pass` or have an
+explicit approved exception.
+
+The component artifact must name the next expected layer.
+
+The component artifact must show that every public receptor changes observable
+behavior, semantics, content, event handling, or consumer obligations.
+
+The component artifact must show that feature/API/domain behavior enters the
+seam through a feature-owned adapter or view model when feature projection is
+in scope.
+
+The component artifact must show that consumers do not need to copy pattern
+proof markup, primitive wiring, controller behavior, accessibility feedback, or
+local CSS.
+
+Because `06-demo-page` is currently scaffold-only, the orchestrator must stop
+after this gate and say the demo-page layer needs its full harness files before
+real demo work can proceed.
 
 ## Later Gates
 
-Gates after Gate 04 are intentionally not active yet.
+Gates after Gate 05 are intentionally not active yet.
 
-Do not invent pass conditions for layers `04` through `10` until each layer has its own full structure.
+Do not invent pass conditions for layers `06` through `10` until each layer has
+its own full structure.
 
 When a later layer becomes active, add its gate here in the same style as Gate 01.
 

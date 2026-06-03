@@ -85,13 +85,33 @@ Required evals:
 - `../04-pattern-contract/EVAL.md`
 - `../04-pattern-contract/ACCESSIBILITY-EVAL.md`
 
+### 05 Component Seam
+
+Status: active.
+
+Use for requests that ask to define, confirm, revise, retire, or govern a
+public component consumption seam after required pattern-contract gates have
+passed.
+
+Use when demo, canonical, app adoption, or feature implementation work is
+blocked by missing receptor, event, controller, adapter, import-boundary, or
+feature-projection decisions for a governed pattern.
+
+Layer skill:
+
+- `../05-component-seam/SKILL.md`
+
+Required evals:
+
+- `../05-component-seam/EVAL.md`
+- `../05-component-seam/ACCESSIBILITY-EVAL.md`
+
 ## Scaffolded Layers
 
 The following layers currently have README scaffolds only.
 
 They must not be used as full governed layer skills until their skill structure exists.
 
-- `05-component-seam`
 - `06-demo-page`
 - `07-canonical-scenarios`
 - `08-first-app-adoption`
@@ -140,6 +160,13 @@ to `04-pattern-contract`.
 If the request asks for a component, demo, canonical, app adoption, or parity
 test before required pattern contract work has passed, route to
 `04-pattern-contract` when upstream gates already pass.
+
+If the request asks for a component and required pattern contract work has
+passed, route to `05-component-seam`.
+
+If the request asks for demo, canonical, app adoption, or parity test before
+component seam work has passed, route to `05-component-seam` when upstream
+gates already pass.
 
 If the request asks for a pattern, component, demo, canonical, app adoption, or parity test before a passed behavior rule, route to `01-behavior-rule`.
 

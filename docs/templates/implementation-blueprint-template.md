@@ -34,11 +34,21 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Permission visibility behavior:
 - Session / expiry behavior:
 - Browser security considerations:
+- Governed component seams:
+- Component receptor mapping:
+  required / not-applicable / blocked
+- Component receptor mapping artifact:
+  use `docs/templates/component-receptor-mapping-template.md` when backend,
+  API, domain, query, filter, sort, pagination, or action behavior feeds a
+  governed component seam
+- Feature-owned adapter / view model:
+- Unsupported component affordances:
 
 ## Backend Plan
 
 - Route(s):
 - Request/response/error contract:
+- Frontend projection fields required by governed component receptors:
 - Feature-local files expected:
 - Cross-feature seams:
 - Feature manifests to update:
@@ -101,6 +111,7 @@ answer is "not needed".
 - Audit:
 - Edge:
 - Frontend:
+- Component receptor mapping:
 - Persistence-backed:
 - End-to-end:
 - Concurrency / idempotency:

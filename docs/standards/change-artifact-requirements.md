@@ -622,6 +622,8 @@ At minimum, define or update:
 - frontend module or feature description
 - route and screen-state definition
 - backend dependency map
+- governed component seam and receptor mapping when backend/API/domain
+  behavior feeds a governed component
 - permission expectations
 - accessibility considerations
 - design-system impact note
@@ -643,6 +645,9 @@ For material frontend and design-system work, also require:
 - machine-readable frontend quality-gate state manifest for the changed surface
 - frontend gate execution evidence, or an explicit environment blocker note
 - visual verification coverage for required viewport and direction states
+- for Layer 5 component-seam work, a component receptor mapping when a feature,
+  API, query, filter, sort, pagination, or action behavior maps into the
+  component seam
 - for promoted design-system families, a behavior lock and reference pack that
   pass `tests/audit/designSystem/artifactQualityGate.test.ts`, including the
   complexity-based reference-state minimum and explicit coverage of responsive,
@@ -659,7 +664,9 @@ adoption, also require:
 - a governed app-adoption preflight artifact or equivalent note naming:
   - the exact signed-off source route or reference truth
   - the family-owned versus host-owned boundary
-  - the required shared CSS, render, and controller seams
+  - the required shared CSS, render, controller, and component seams
+  - the component receptor mapping artifact when feature behavior feeds the
+    governed component
   - any explicitly approved intentional deviations
 - an adoption contract or parity checklist that records:
   - literal route-parity expectations
@@ -690,6 +697,8 @@ Treat the frontend loop as incomplete when:
 - the UI surface changed but route/screen states were not documented
 - degraded-performance behavior was left implicit
 - permission-aware rendering expectations were left implicit
+- governed component receptors were used without a feature-owned receptor
+  mapping when backend/API/domain behavior feeds the component
 - accessibility expectations were omitted for a materially changed frontend
   surface
 - a promoted design-system family lacks the structural behavior/reference

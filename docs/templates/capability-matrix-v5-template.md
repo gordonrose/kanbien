@@ -125,6 +125,8 @@ blank.
 - State owner
 - Shell governance
 - Design-system prerequisite
+- Governed component seam
+- Component receptor mapping required
 - Materialization model
 - Source placement
 - Frontend implementation readiness

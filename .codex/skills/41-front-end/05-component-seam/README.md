@@ -8,11 +8,19 @@ The seam may be a component, render function, controller, adapter, CSS module ex
 
 This is the primary anti-drift layer.
 
+It owns the public receptor contract: the allowed places where feature-owned
+data, state, content, actions, and accessibility copy may enter governed UI.
+
+Feature implementation maps backend/API/domain behavior into those receptors
+through a feature-owned adapter or view model.
+
 ## Input
 
 The input is an accepted pattern contract and the target consumer context.
 
-The layer also needs existing export conventions, app import boundaries, and any controller or data-adapter requirements.
+The layer also needs existing export conventions, app import boundaries,
+controller requirements, and any feature projection or data-adapter
+requirements.
 
 ## Output
 
@@ -21,6 +29,9 @@ The output is a named consumable seam with a stable public import path and docum
 The design-system demo and first app adoption should be able to consume the same seam.
 
 The output should include any fixture or adapter shape needed to keep demos honest.
+
+When a feature slice is in scope, the output should require a receptor mapping
+using `docs/templates/component-receptor-mapping-template.md`.
 
 ## Evaluation For 99% No-Rework Confidence
 
@@ -34,3 +45,8 @@ Check that the seam preserves the pattern contract's accessibility and state req
 
 Check that imports are narrow and do not create casual cross-feature coupling.
 
+Check that unsupported affordances are explicit instead of implied by missing
+handlers.
+
+Check that backend/API fields needed by receptors are supplied by the route
+contract or derived in a feature-owned adapter.

@@ -25,7 +25,9 @@ Do not perform detailed layer work inside this skill.
 
 `04-pattern-contract` is active.
 
-Layers `05` through `10` are scaffolded and not yet active as full skills.
+`05-component-seam` is active.
+
+Layers `06` through `10` are scaffolded and not yet active as full skills.
 
 Do not treat a scaffolded layer as implementation-ready.
 
@@ -62,6 +64,8 @@ When token work is needed and Gate 01 passes, use `../02-token/SKILL.md`.
 When primitive work is needed and Gate 02 passes, use `../03-primitive/SKILL.md`.
 
 When pattern contract work is needed and Gate 03 passes, use `../04-pattern-contract/SKILL.md`.
+
+When component seam work is needed and Gate 04 passes, use `../05-component-seam/SKILL.md`.
 
 When later-layer work is requested before that layer is active, stop and say the layer is scaffolded but not yet fully defined.
 

@@ -28,7 +28,9 @@
 - Shared CSS seam:
 - Shared render seam:
 - Shared controller seam:
+- Shared component seam:
 - Explicit allowed consumer inputs:
+- Component receptor mapping artifact:
 - Which required seams are still missing?
 - If a seam is missing, what is the stop condition?
 
