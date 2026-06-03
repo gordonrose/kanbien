@@ -155,6 +155,20 @@ combined with a system implementation, which should be avoided by default.
 | Evidence-only fields | `<fields used for review proof but not as runtime contract>` |
 | Over-structure avoided | `<fields, states, tables, or schemas deliberately not added>` |
 
+## Render Model
+
+Use this section to prevent token pages from rendering a generic preview when
+the token governs a specific structural, visual, or behavioral value.
+
+| Field | Value |
+| --- | --- |
+| Token governs | `<visual value | structural layout | typography role | surface | state affordance | motion | sizing | other>` |
+| Preview must render as | `<the actual browser shape or value reviewers must see>` |
+| Preview must not render as | `<generic card, metadata table, decorative sample, compressed strip, or not-applicable>` |
+| Downstream behavior this proof unlocks | `<primitive, pattern, or later behavior made safe by this rendered token proof>` |
+| Proof renderer seam | `<renderer module/export that can render this token type honestly>` |
+| Mobile or constrained proof requirement | `<required proof or not-applicable reason>` |
+
 ## Approved Token Decisions
 
 Use only the rows and columns needed for the token category. Classify each

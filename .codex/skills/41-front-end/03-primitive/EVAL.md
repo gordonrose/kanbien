@@ -93,6 +93,10 @@ must name the browser evidence that proves truncation cannot occur.
 Pass only if `Behavior Contract` describes observable primitive behavior
 without product workflow or page composition.
 
+Pass only if `Variant Inventory` classifies text, icon-only, open/closed,
+disabled, empty, mobile/fullscreen, RTL, and theme variants as applicable or
+not applicable, with evidence for applicable variants.
+
 Pass only if `Accessibility Contract` names concrete responsibilities rather
 than saying only "accessible" or "WCAG compliant."
 
@@ -113,6 +117,10 @@ Pass only if `Runtime Primitive Seam Policy` states whether the seam is
 planned, implemented, blocked, or not applicable; names the allowed seam shape;
 and prevents route-local markup, shared CSS alone, app wrappers, page layout,
 product workflow, and unsigned visual values from becoming the primitive API.
+
+Pass only if `Controller Attachment Model` is completed for primitives that
+own event handling, disclosure, measurement, focus movement, live
+announcements, or state synchronization.
 
 Pass only if `Required Evidence` changes what proof is needed before later
 layers can rely on the primitive.
@@ -225,6 +233,26 @@ artwork, SVG paths, image assets, font files, or other replaceable visual
 assets. Shared primitives may declare semantic asset names and behavior, but
 the selected system implementation must provide the actual artwork through an
 explicit system registry or signed downstream seam.
+
+Fail if an icon-only primitive variant is expected by a downstream header,
+toolbar, menu, or compact region and the primitive does not define the variant,
+accessible name rule, semantic icon name, target-size rule, and rendered proof.
+
+Fail if a primitive renders a visible text role, including label, eyebrow,
+supporting text, count, status, or metadata, without a signed text-style token
+dependency for that role.
+
+Fail if an open/closed control uses chevron, arrow, icon, or direction behavior
+that differs across token, primitive, or pattern proof routes without an
+explicit governed source and evidence.
+
+Fail if delegated or root-level event listeners can be attached repeatedly
+after proof rerenders, variant switches, theme switches, or route
+reinitialization.
+
+Fail if a primitive needs mobile fullscreen behavior for menus, drawers,
+popovers, or select-like overlays but the behavior is undefined or left for a
+pattern to invent locally.
 
 Fail if the PrimitiveDefinitionArtifact consumes a token-type template or
 route-local token page as if it were a signed token seam.

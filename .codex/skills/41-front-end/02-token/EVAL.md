@@ -74,6 +74,11 @@ revision, new token definition, or blocking is the result.
 Pass only if `Token Type Template Rationale` justifies the selected token-type
 template without claiming a universal industry-best-practice shape.
 
+Pass only if `Render Model` states what kind of decision the token governs,
+what the preview must render as, what it must not render as, which downstream
+behavior the proof unlocks, which renderer seam owns the preview, and whether
+mobile or constrained proof is required.
+
 Pass only if `Preflight Decision Ledger` is complete for route-derived,
 screenshot-derived, template-derived, canonical-derived, or visible-defect
 token work, or explicitly states `not applicable`.
@@ -199,6 +204,19 @@ contract, system proof module, and renderer seams.
 
 Fail if a derived token's rendered route hides where the value comes from or
 requires source inspection to understand the dependency chain.
+
+Fail if a structural, layout, ratio, collapse, typography-role, surface, or
+state-affordance token renders as a generic card, metadata table, decorative
+sample, or compressed preview that does not expose the governed browser
+behavior.
+
+Fail if a token proof route cannot demonstrate mobile, constrained-width,
+theme, RTL, or overflow behavior that the behavior rule or token render model
+names as required.
+
+Fail if the token proof route uses typography, icons, chevrons, surfaces,
+borders, spacing, or state markers that differ from the signed token decisions
+without classifying them as proof-only or inherited from a governed seam.
 
 Fail if a diagnostic override can be mistaken for changing signed token values,
 readiness-index truth, behavior contracts, accessibility contracts, or system

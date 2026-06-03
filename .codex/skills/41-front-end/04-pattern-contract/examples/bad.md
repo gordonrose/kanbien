@@ -80,3 +80,71 @@ Why it fails:
 - Global CSS inheritance can bypass the pattern's dependency ledger.
 - The pattern must classify scrollbar appearance as signed, browser-native,
   inherited from a governed seam, or blocked.
+
+## Bad Example: Pattern-Local Header Select
+
+This fails because the pattern reconstructs a select primitive inside a header
+region.
+
+> Render the primary and secondary filter selects directly in the entity page
+> header pattern because the markup is short and the source route already shows
+> the desired menu.
+
+Why it fails:
+
+- Trigger semantics, open/closed state, option behavior, icon-only variants,
+  keyboard handling, focus behavior, and mobile fullscreen behavior belong to
+  the primitive.
+- The pattern would copy source markup instead of consuming a governed runtime
+  seam.
+- The correct boundary is a menu simple select primitive with text and
+  icon-only variants, then a header pattern that composes those primitives.
+
+## Bad Example: Drawer Stacks Under List On Mobile
+
+This fails because the pattern chooses a mobile layout without honoring the
+behavior contract.
+
+> On narrow viewports, put the detail drawer below the list so both pieces
+> remain in normal document flow.
+
+Why it fails:
+
+- Mobile drawer behavior is a composition and focus contract, not a default CSS
+  stacking choice.
+- If the signed behavior says the drawer takes over the viewport, stacking
+  under the list hides the active context and makes close behavior ambiguous.
+- The proof must show the full overlay and the close action returning users to
+  the list.
+
+## Bad Example: Resize Bounds Fight Signed Ratios
+
+This fails because manual resize behavior invents min/max values unrelated to
+the pattern ratios.
+
+> Let the list/detail splitter drag freely down to a narrow minimum while also
+> offering 1:5 and 1:4 presets.
+
+Why it fails:
+
+- The manual minimum competes with the signed ratio presets.
+- The list can collapse into unreadable stacked text even though the pattern
+  claims a usable 1:5 minimum.
+- The correct boundary is to derive manual resize limits from the same signed
+  ratio or explicit pattern contract.
+
+## Bad Example: Context Text Escapes Header Region
+
+This fails because status text is treated as separate from the context-title
+region during collapse.
+
+> Let `Status: Ready` remain visible while the rest of the context title
+> truncates, even if it overlaps trailing actions.
+
+Why it fails:
+
+- The status text is part of the composed context region once the pattern
+  owns that region.
+- Text must share the region's truncation, hiding, and collapse behavior.
+- The proof must show that context text never sits behind actions and hides
+  completely when the signed collapse rule requires it.

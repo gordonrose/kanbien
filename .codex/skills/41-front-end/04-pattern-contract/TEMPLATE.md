@@ -80,6 +80,16 @@ Every rendered child must be classified before implementation.
 | --- | --- | --- | --- |
 | `<child>` | `<governed primitive | governed child pattern | browser-native wrapper | inherited later-layer contract | proof-only wrapper>` | `<path-or-reason>` | `<what consumers may or must not copy>` |
 
+## Primitive Reconstruction Check
+
+Every low-level interactive, semantic, or text-disclosure child must be traced
+to a governed primitive or child pattern before the pattern can render it. If
+none are present, state `not applicable`.
+
+| Child Or Affordance | Required Primitive Or Child Pattern | Local Reconstruction Risk | Status |
+| --- | --- | --- | --- |
+| button, icon button, close control, trigger, option, row action, drag handle, resize handle, tooltip, label, or text disclosure | `<governed seam>` | `<what would be recreated locally if missing>` | `<consumable | blocked | not-applicable>` |
+
 ## Accessibility Contract
 
 `<Concrete semantics, heading/list/region relationships, keyboard/focus flow, state exposure, target-size, status/error, motion, and WCAG 2.2 AA responsibilities across the composed pattern.>`
@@ -96,6 +106,27 @@ consumer obligations.
 ## Data Or Event Contract
 
 `<Use "Not applicable" when the pattern does not accept, normalize, emit, or display externally meaningful data.>`
+
+## Tactile Interaction Contract
+
+Complete this section for drag/drop, reorder, resize, drawer/menu open-close,
+dismiss, expand/collapse, or selection-changing pattern behavior. If not
+applicable, state `not applicable`.
+
+| Interaction | Pointer Behavior | Keyboard Behavior | Focus Result | Announced Result | Primitive Owner | Pattern Owner |
+| --- | --- | --- | --- | --- | --- | --- |
+| `<interaction>` | `<behavior>` | `<shortcut and rationale>` | `<retained, restored, or moved>` | `<live/context feedback or not-applicable>` | `<primitive seam>` | `<composition/state rule>` |
+
+## Responsive Collapse Contract
+
+Record how the pattern behaves under constrained width, mobile, zoom, and
+overlay pressure.
+
+| Mode | Visible Structure | Hidden Or Collapsed Items | Overlay Or Stack Rule | Minimum Size Or Ratio Source | Scroll Owner | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| desktop | `<structure>` | `<items-or-none>` | `<rule>` | `<token/pattern/primitive source>` | `<owner>` | `<proof or blocked>` |
+| narrow | `<structure>` | `<items-or-none>` | `<rule>` | `<token/pattern/primitive source>` | `<owner>` | `<proof or blocked>` |
+| mobile | `<structure>` | `<items-or-none>` | `<rule>` | `<token/pattern/primitive source>` | `<owner>` | `<proof or blocked>` |
 
 ## Text Overflow Disclosure
 

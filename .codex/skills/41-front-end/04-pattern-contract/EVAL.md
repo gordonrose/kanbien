@@ -86,12 +86,25 @@ Pass only if `Composition Ledger` classifies every rendered child as a
 governed primitive, governed child pattern, browser-native wrapper, inherited
 later-layer contract, or proof-only wrapper.
 
+Pass only if `Primitive Reconstruction Check` proves every low-level button,
+icon button, close control, trigger, option, row action, drag handle, resize
+handle, tooltip, label, or text-disclosure child is consumed from a governed
+primitive or child pattern, or explicitly states `not applicable`.
+
 Pass only if `Text Overflow Disclosure` lists every composed visible text area
 that can be constrained and names the child primitive that owns full-text
 disclosure.
 
 Pass only if `Accessibility Contract` names concrete composition
 responsibilities rather than saying only "accessible" or "WCAG compliant."
+
+Pass only if `Tactile Interaction Contract` is completed for pattern-level
+drag/drop, reorder, resize, drawer/menu open-close, dismiss, expand/collapse,
+or selection-changing behavior, or explicitly states `not applicable`.
+
+Pass only if `Responsive Collapse Contract` names desktop, narrow, and mobile
+structure, hidden or collapsed items, overlay or stack rules, minimum size or
+ratio source, scroll owner, and evidence.
 
 Pass only if `Public Consumption Boundary` prevents consumers from copying
 legacy route markup, local CSS, screenshots, or primitive behavior.
@@ -169,6 +182,23 @@ controller behavior, or token consumption instead of routing back to
 Fail if a rendered pattern contains an interactive affordance that is not a
 governed primitive dependency, even if the markup is small, copied from source
 material, or visually obvious.
+
+Fail if a pattern locally renders a menu trigger, select trigger, drawer close
+button, resize handle, drag handle, row action, icon button, tooltip trigger,
+or select option instead of consuming a governed primitive or child pattern.
+
+Fail if manual resize minimum or maximum behavior is not derived from a signed
+ratio, token, primitive, or explicit pattern contract.
+
+Fail if mobile drawer, menu, popover, or collapsed tooling behavior stacks
+under source content when the behavior contract requires a full overlay.
+
+Fail if title, status, metadata, or context text can escape its owning region,
+sit behind actions, or avoid the same truncation/collapse rules as the rest of
+the pattern's text region.
+
+Fail if a pattern collapse order is not tied to the behavior rule, signed
+structural token, or explicit pattern contract.
 
 Fail if responsive scroll behavior is implemented or asserted without naming
 the scroll owner for desktop, mobile, embedded, and proof-container review

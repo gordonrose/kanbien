@@ -108,3 +108,55 @@ Problems:
   radius locally.
 - If scrollbar styling matters, Layer 2 must sign the values and Layer 3 must
   define the primitive behavior before later layers consume it.
+
+## Bad Example: Missing Icon-Only Select Variant
+
+This is bad because a select-like primitive is created only for text labels
+while downstream header regions need square icon-only controls.
+
+> The menu simple select primitive supports a labeled trigger, but filter and
+> sort header regions render local square icon buttons because the primitive
+> has no icon-only variant.
+
+Problems:
+
+- Icon-only triggers need primitive-owned accessible names, target size,
+  keyboard behavior, open/closed state, and mobile behavior.
+- The pattern is forced to reconstruct primitive behavior locally.
+- The correct boundary is to add an icon-only primitive variant with semantic
+  icon names and signed token dependencies before the header pattern consumes
+  it.
+
+## Bad Example: Local Controller Listener Stacking
+
+This is bad because a primitive proof can rerender while attaching delegated
+listeners repeatedly.
+
+> Each variant switch calls `root.addEventListener(...)` again, so opening a
+> menu or moving a row starts firing duplicate handlers.
+
+Problems:
+
+- Proof routes often rebuild DOM under controls, so controller setup must be
+  idempotent.
+- Duplicate listeners can create false behavior, duplicate live-region
+  announcements, and hard-to-reproduce browser bugs.
+- The correct boundary is a controller attachment model with a cleanup hook,
+  `WeakSet`, data guard, or other explicit idempotency rule.
+
+## Bad Example: Reorder Without Focus Or Announcement
+
+This is bad because a reorder primitive lets keyboard users move an item but
+then loses their context.
+
+> Pressing the reorder shortcut moves a row, removes focus from the moved row,
+> and provides no live announcement of the new position.
+
+Problems:
+
+- The moved item remains the user's active object and should retain focus
+  unless the contract names another target.
+- A non-visual user needs result feedback when order changes.
+- Position alone may be insufficient when neighboring labels are available.
+- The correct boundary is retained focus plus a polite result announcement such
+  as position, total count, and before/after context.

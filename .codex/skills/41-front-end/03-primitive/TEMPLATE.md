@@ -81,6 +81,23 @@ consumer obligations.
 | --- | --- |
 | `<state>` | `<observable requirement>` |
 
+## Variant Inventory
+
+Include variants that change behavior, semantics, target size, layout
+pressure, text exposure, or consumer obligations. If a variant does not apply,
+state `not applicable` with the reason.
+
+| Variant | Applies? | Required Behavior | Evidence |
+| --- | --- | --- | --- |
+| text trigger or text control | `<yes | no>` | `<behavior or reason>` | `<proof or blocked>` |
+| icon-only trigger or control | `<yes | no>` | `<accessible name, target size, semantic icon name, and behavior>` | `<proof or blocked>` |
+| open and closed | `<yes | no>` | `<state behavior>` | `<proof or blocked>` |
+| disabled | `<yes | no>` | `<state behavior>` | `<proof or blocked>` |
+| empty or no-options | `<yes | no>` | `<state behavior>` | `<proof or blocked>` |
+| mobile or fullscreen | `<yes | no>` | `<mobile behavior>` | `<proof or blocked>` |
+| right-to-left | `<yes | no>` | `<direction behavior>` | `<proof or blocked>` |
+| theme variants | `<yes | no>` | `<theme behavior>` | `<proof or blocked>` |
+
 ## Data Or Event Contract
 
 `<Use "Not applicable" when the primitive does not accept, normalize, emit, or display externally meaningful data.>`
@@ -121,6 +138,21 @@ consumer obligations.
 | Seam must own | `<HTML semantics, state normalization, token resolution, class/data contract, or not-applicable reason>` |
 | Seam must not own | `route-local demo markup, app wrappers, page layout, product workflow, or unsigned visual values` |
 | First implementation posture | `<smallest runtime shape that would satisfy this primitive without smuggling later-layer work>` |
+
+## Controller Attachment Model
+
+Complete this section when the primitive owns event handling, disclosure,
+measurement, focus movement, live announcements, or state synchronization. If
+the primitive is purely static, state `not applicable`.
+
+| Field | Value |
+| --- | --- |
+| Event owner | `<primitive seam, browser-native, or not-applicable>` |
+| Listener attachment point | `<element, root, document, or not-applicable>` |
+| Idempotency guard | `<WeakSet, data attribute, cleanup hook, or not-applicable reason>` |
+| Rerender behavior | `<listeners preserved, reattached safely, cleaned up, or not-applicable>` |
+| Focus behavior | `<retained, restored, moved to named target, or not-applicable>` |
+| Programmatic feedback | `<aria-live, state attribute, emitted event, or not-applicable>` |
 
 ## Required Evidence
 

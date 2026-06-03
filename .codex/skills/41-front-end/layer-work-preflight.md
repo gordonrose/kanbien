@@ -55,6 +55,22 @@ diagnostic controls may be proof-only only when the rendered proof says so and
 browser evidence proves the control changes rendered evidence or preserves the
 promised behavior.
 
+## Failure Memory Checklist
+
+Before allowing the proposed layer to proceed, answer these checks for the
+source material or requested change. Any `yes` answer must be represented in
+the decision ledger above.
+
+| Check | Required Routing Pressure |
+| --- | --- |
+| Does the source include a button, trigger, handle, option, row action, close control, drag handle, resize affordance, or icon-only affordance? | Route to `03-primitive` unless a governed primitive seam already owns it. |
+| Does the source include a layout map, ratio, minimum size, collapse order, overlay posture, or mobile mode? | Route behavior meaning to `01-behavior-rule` and visual/layout values to `02-token` before `04-pattern-contract`. |
+| Does the source include typography, icon shape, chevron direction, surface, border, separator, marker, or spacing decisions? | Route to `02-token` unless those values are consumed through an existing governed primitive or child pattern. |
+| Does an interaction move, reorder, resize, reveal, hide, dismiss, select, or change context? | Route keyboard, focus, and result-announcement requirements to `01-behavior-rule` and `03-primitive` before pattern composition. |
+| Does the proposed proof need mobile, RTL, theme, zoom, constrained-width, overflow, or rerender evidence? | Record the proof as required evidence before readiness may be claimed. |
+| Would the proposed work rely on copied route markup, screenshot anatomy, chat memory, shared CSS alone, or a legacy design-system route? | Block and identify the governed runtime seam that must exist first. |
+| Could a proof route render without proving the actual signed decision? | Block until the proof renderer can show the governed behavior, dependency, and consumer boundary directly. |
+
 ## Stop Rules
 
 Stop and route back to `01-behavior-rule` if the observed behavior does not
@@ -74,6 +90,10 @@ multiple primitives or child patterns locally.
 
 Stop if a rendered proof control would be inert or if no browser evidence will
 assert the behavior the control is supposed to exercise.
+
+Stop if a tactile interaction lacks a recorded keyboard path, focus result, and
+assistive-technology result feedback when the action changes order, position,
+size, visibility, selection, or context.
 
 ## Examples
 

@@ -605,6 +605,43 @@ Allowed exception posture:
 Do not infer a pre-signoff exception from urgency, apparent simplicity, or the
 existence of partial design-system work.
 
+### Design-System Tactile Interaction Rule
+
+For governed frontend families, tactile interactions are behavior contracts,
+not visual polish.
+
+Tactile interactions include:
+
+- drag and drop
+- keyboard or pointer reorder
+- manual resize
+- open and close
+- dismiss
+- expand and collapse
+- selection changes
+- drawer, menu, popover, and overlay transitions
+
+Before a governed tactile interaction can be treated as signed off, the
+design-system chain must define:
+
+- pointer behavior
+- keyboard behavior and shortcut rationale
+- focus retention or restoration after the action
+- programmatic result feedback for assistive technology when the action changes
+  item order, position, size, visibility, or selection context
+- mobile behavior, including whether content stacks, hides, or becomes a full
+  overlay
+- reduced-width, zoom, and overflow behavior
+- the earliest owning layer for every visual, primitive, and composition
+  decision involved
+
+If a tactile interaction changes position or context, the result feedback must
+include enough context for a non-visual user to understand what changed. A
+plain position number is not enough when neighboring context is available.
+
+Do not let a pattern, component, demo, canonical, or app page locally invent
+tactile behavior while the behavior rule, token, or primitive layer is missing.
+
 ### Design-System Token Source Of Truth
 
 For governed frontend surfaces, signed-off token routes under

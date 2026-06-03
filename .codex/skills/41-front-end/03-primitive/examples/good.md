@@ -45,3 +45,29 @@ copying route-local markup or hard-coded colors.
 | Seam must own | Token-backed surface role resolution and the non-interactive semantic boundary. |
 | Seam must not own | route-local demo markup, app wrappers, page layout, product workflow, unsigned visual values, card behavior, panel behavior, spacing, border, or elevation |
 | First implementation posture | A small spec helper that maps an allowed surface role to a signed `background-color` token seam without producing app-specific markup. |
+
+## Good Example: Menu Simple Select Variants
+
+This passes because the primitive owns both text and icon-only trigger variants
+instead of forcing a header pattern to rebuild one locally.
+
+| Field | Value |
+| --- | --- |
+| Text trigger | Uses signed frame, label typography, value typography, and chevron token seams. |
+| Icon-only trigger | Uses the same trigger behavior with a semantic icon name, accessible name, signed target size, and no visible text. |
+| Mobile behavior | Opening the primitive in mobile mode creates a fullscreen option surface with a named close control and focus restoration. |
+| Controller model | Delegated listeners are guarded so proof rerenders do not attach duplicate handlers. |
+| Consumer boundary | Patterns may choose which variant to render, but may not recreate trigger markup, option behavior, ARIA, focus, or controller logic. |
+
+## Good Example: Keyboard Reorder Primitive
+
+This passes because the primitive treats reordering as tactile behavior rather
+than a visual row shuffle.
+
+| Field | Value |
+| --- | --- |
+| Keyboard command | `Alt+ArrowUp` and `Alt+ArrowDown`, with the shortcut rationale recorded in the behavior contract. |
+| Focus result | Focus remains on the moved item after each successful move. |
+| Announced result | A polite live region announces the moved item, new position, total count, and before/after neighbor context when available. |
+| Pointer parity | Drag/drop emits the same normalized reorder event and result announcement. |
+| Consumer boundary | Later patterns receive normalized move events and must not rebuild keyboard handling locally. |

@@ -22,6 +22,17 @@ not-applicable:
 - what later layers may consume
 - what later layers must not copy
 
+The rendered proof must show the actual kind of decision being governed. A
+structural token must render its structure. A layout or ratio token must render
+its layout behavior. A typography token must render the affected text role. A
+surface token must render the affected surface. Generic cards, tables,
+metadata-only rows, or decorative previews fail when they do not expose the
+governed behavior or value in the browser.
+
+Rendered proof routes must not require source inspection to understand what is
+being reviewed, which seam owns it, why the dependency matters, or what later
+layers may consume.
+
 ## Derived Or Dependent Token Proofs
 
 If a token is derived from, paired with, aliases, or is affected by another
@@ -77,6 +88,15 @@ prove the child consumes `truncating-label` or another approved text-disclosure
 primitive. Patterns must not satisfy truncation by local CSS, copied tooltip
 logic, title attributes, or proof-only hover text.
 
+If a pattern includes a tactile interaction, the proof must show or assert the
+pointer path, keyboard path, focus result, and programmatic result feedback for
+the relevant state change.
+
+If a pattern includes mobile behavior for drawers, menus, popovers, overlays,
+or collapsed action menus, the proof must show whether the surface stacks,
+hides, or takes over the viewport. A stacked mobile rendering fails when the
+behavior contract requires a full overlay.
+
 ## Proof Control Honesty
 
 Every proof control must have focused browser evidence showing that changing
@@ -88,6 +108,11 @@ the control either:
 - exposes a blocked or not-applicable reason
 
 Inert controls fail the proof.
+
+Proof controllers must be safe to initialize more than once on the same route.
+If a proof route rerenders variants, switches themes, or rebuilds DOM through a
+control, browser evidence must show that event listeners, announcements, focus
+behavior, and emitted events do not duplicate or drift after rerender.
 
 ## Browser Evidence
 
@@ -102,6 +127,10 @@ the relevant dimensions:
 - interaction states and emitted events for interactive controls
 - scroll owner and overflow behavior when scrolling exists
 - absence of horizontal overflow in constrained viewports
+- active server and served asset freshness when a visible browser defect was
+  reported or a running dev server could be stale
+- rerender or reinitialization behavior when the proof controller attaches
+  delegated listeners or rebuilds DOM
 
 If any dimension is intentionally deferred, the proof must say which later
 layer owns it and why the current layer can still be reviewed.

@@ -31,3 +31,29 @@ downstream dependency instead of defining props or app imports.
 | How to view | `none` |
 | Rendered view status | `not-created-for-docs-only` |
 | If unavailable | This example records the contract shape only; no pattern proof route exists. |
+
+## Good Example: List With Detail Overlay
+
+This passes because the pattern composes list, resize, and detail-slot
+primitives while naming responsive behavior explicitly.
+
+| Field | Value |
+| --- | --- |
+| Desktop structure | List and detail slot render side by side using signed ratio variants such as `1:5`, `1:4`, and `1:2`. |
+| Manual resize | Resize limits are derived from the signed minimum ratio, so dragging cannot collapse the list below the `1:5` usable width. |
+| Mobile structure | Opening a row displays the detail slot as a fullscreen overlay over the list. |
+| Close behavior | The close control restores users to the list context. |
+| Primitive consumption | Row reorder, drag/drop affordance, resize handle, detail close control, and text disclosure are consumed from governed primitives. |
+
+## Good Example: Header Pattern Consumes Select Primitives
+
+This passes because the pattern owns only composition and collapse order.
+
+| Field | Value |
+| --- | --- |
+| Filter regions | Compact icon-only select primitives render filter and sort actions. |
+| Select regions | Text trigger select primitives render primary and secondary selectors using signed typography and chevron tokens. |
+| Context region | Context title and status share one truncation and collapse contract. |
+| Narrow behavior | Context text hides before it can overlap action buttons. |
+| Mobile behavior | Header tooling collapses into a menu surface that lists each action by accessible name; select rows open fullscreen option overlays. |
+| Consumer boundary | The pattern may place primitives into signed regions, but must not recreate trigger, option, icon, or focus behavior. |

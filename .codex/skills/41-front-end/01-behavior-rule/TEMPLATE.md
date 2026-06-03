@@ -57,6 +57,16 @@ List only interactions that create behavior decisions for this family.
 | --- | --- |
 | `<interaction-name>` | `<behavior>` |
 
+## Interaction Outcomes
+
+Complete this section for interactions that move, reorder, resize, reveal,
+hide, dismiss, select, or otherwise change user context. If not applicable,
+state `not applicable`.
+
+| Interaction | Visible Result | Focus Result | Announced Result | Mobile Result | Owning Later Layer |
+| --- | --- | --- | --- | --- | --- |
+| `<interaction-name>` | `<what changes on screen>` | `<where focus stays or moves>` | `<programmatic result feedback or not-applicable reason>` | `<stack, hide, overlay, preserve, or not-applicable>` | `<02-token | 03-primitive | 04-pattern-contract | later>` |
+
 ## Explicitly Out Of Scope
 
 | Item | Reason |

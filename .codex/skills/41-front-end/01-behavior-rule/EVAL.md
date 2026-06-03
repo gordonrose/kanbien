@@ -40,6 +40,13 @@ Pass only if `Required Interactions` includes only interactions that create beha
 
 Pass only if every required interaction can be tested or reviewed.
 
+Pass only if `Interaction Outcomes` is completed for interactions that move,
+reorder, resize, reveal, hide, dismiss, select, or otherwise change user
+context, or explicitly states `not applicable`.
+
+Fail if a context-changing interaction lacks visible result, focus result,
+announced result, mobile result, or owning later-layer routing.
+
 Pass only if consumer restrictions prevent app-local recreation.
 
 Pass only if `Storage And Consumption Plan` names the stored artifact path, stable lookup key, how later layers consume it, what later layers preserve, what must not consume it, what must not be used instead, and required evals.

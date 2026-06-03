@@ -42,6 +42,26 @@ Fail if error states lack text identification or recovery guidance.
 
 Fail if status, loading, success, or failure messages are visually present but not programmatically determinable when required.
 
+Fail if a tactile interaction changes item order, item position, panel size,
+visibility, selection, or context without programmatic result feedback when a
+screen-reader user would not otherwise know what changed.
+
+Fail if a reorder, move, resize, drag/drop, dismiss, expand, collapse, menu,
+popover, drawer, or overlay interaction loses focus, moves focus to an
+unexplained target, or omits the required focus retention or restoration rule.
+
+Fail if a keyboard shortcut is required but the artifact does not name the
+shortcut, the browser or assistive-technology conflict risk, and the rationale
+or reference pattern used to choose it.
+
+Fail if an icon-only control has no accessible name, or if a collapsed/mobile
+menu replaces an icon-only control without exposing the control's human-readable
+name in the menu item.
+
+Fail if a tactile interaction communicates the result only through position,
+color, shape, motion, or visual layout when nearby textual context is available
+and relevant.
+
 Fail if a component seam requires normal consumers to manually wire critical ARIA for standard use.
 
 Fail if a demo or app adoption passes only because of fixture behavior that production does not have.
@@ -75,4 +95,3 @@ Use `accessibility-blocked` when required evidence cannot be gathered.
 Use `accessibility-fail` when the layer violates or omits an applicable requirement.
 
 Use `accessibility-exception-approved` only when an explicit exception exists with scope, reason, mitigation, owner, and follow-up gate.
-

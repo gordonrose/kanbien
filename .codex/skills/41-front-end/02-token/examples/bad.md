@@ -66,3 +66,40 @@ Problems:
   chain.
 - If changing the upstream value changes rendered output, the proof needs a
   proof-only diagnostic override and browser evidence.
+
+## Bad Example: Generic Structural Token Preview
+
+This is bad because a token route renders a structural layout token as generic
+metadata instead of proving the governed structure.
+
+> The page-header structure token page shows a small card with labels such as
+> `1`, `2`, `3-5`, and `9-19`, but the labels do not stick to the real
+> underlying columns and the mobile collapse behavior is not visible.
+
+Problems:
+
+- A structural token must render the structure it governs.
+- Reviewers cannot verify column spans, collapse order, mobile behavior, or
+  region boundaries from a generic card.
+- The rendered proof allows a downstream pattern to misread the token and
+  squash regions together.
+- The correct boundary is to update the token renderer so the route proves the
+  signed structural behavior before any pattern consumes it.
+
+## Bad Example: Token Proof Uses Unsigned Icon Or Typography
+
+This is bad because the token proof appears close to the intended control but
+uses icon or text styling that has not been signed by the relevant token.
+
+> The menu simple select frame token renders the word `Chevron` or a generic
+> arrow instead of the agreed small green up/down chevron, and the label text
+> uses local casing and weight.
+
+Problems:
+
+- Icon foreground, icon direction, label typography, and supporting text style
+  are token-layer values when the token governs the frame.
+- A later primitive can consume the wrong visual proof and drift from the
+  signed control.
+- The correct boundary is to sign the icon and typography values in the token
+  proof before the primitive or pattern consumes them.
