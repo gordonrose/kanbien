@@ -50,6 +50,11 @@ error-containing flags, and governed child HTML.
 
 Consumers must not render local accordion section markup or controller logic.
 
+Governed child HTML may include accepted child patterns such as
+`form-field-section`. The accordion group must host that content without
+changing the child pattern's field layout, focus behavior, validation
+semantics, drawer behavior, or tooltip behavior.
+
 ## Required Evidence
 
 Before later layers consume this pattern, proof must show:
@@ -60,5 +65,9 @@ Before later layers consume this pattern, proof must show:
 - opening one section collapses its previously open sibling
 - long titles use truncation disclosure
 - supporting text can be shown, hidden, and truncated with disclosure
+- governed child content can host a `form-field-section` without breaking
+  single-open behavior
+- governed child content can prove desktop and narrow child layout without
+  `accordion-group` redefining child layout rules
 - original, dark, and desert rendering
 - RTL and constrained/mobile width without horizontal overflow

@@ -16,8 +16,19 @@ Runtime seam:
 The proof renders a single-open accordion group using accepted
 `accordion-section-control` primitives.
 
-It exposes section count, expanded fixture, disabled section, long-title,
-supporting-text, theme, tone, and direction controls.
+It exposes section count, expanded fixture, disabled section, content fixture,
+hosted content width, long-title, supporting-text, theme, tone, and direction
+controls.
+
+The content fixture can render simple proof content or governed
+`form-field-section` content inside every accordion panel. The sections host
+representative governed field examples: identity text fields and textarea,
+workflow radio/dropdown/toggle fields, display drawer/card-list fields, and a
+compliance textarea. This proves hosted child patterns remain governed by
+their own seams while `accordion-group` preserves single-open behavior.
+Hosted content width is proof-only diagnostic pressure: it verifies that child
+pattern responsive behavior remains owned by the child pattern instead of
+being inferred from accordion direction, title pressure, or section count.
 
 ## Evidence
 
