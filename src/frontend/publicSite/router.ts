@@ -1,7 +1,6 @@
-import express, { Router } from "express";
-import { existsSync } from "node:fs";
-import { join, resolve } from "node:path";
-import { env } from "../../config/env";
+import { Router } from "express";
+
+const brochureDesignSystemAssetVersion = "20260530-brochure-system-1";
 
 function escapeHtml(value: string): string {
   return value
@@ -10,27 +9,6 @@ function escapeHtml(value: string): string {
     .split(">").join("&gt;")
     .split('"').join("&quot;")
     .split("'").join("&#39;");
-}
-
-function resolvePublicSiteRoot(): string {
-  const candidates =
-    env.nodeEnv === "production"
-      ? [
-          resolve(process.cwd(), "dist/frontend/publicSite"),
-          resolve(process.cwd(), "src/frontend/publicSite"),
-        ]
-      : [
-          resolve(process.cwd(), "src/frontend/publicSite"),
-          resolve(process.cwd(), "dist/frontend/publicSite"),
-        ];
-
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) {
-      return candidate;
-    }
-  }
-
-  return candidates[0];
 }
 
 type PublicSiteNavItem = {
@@ -149,6 +127,15 @@ function renderPipelineShowcase(
   steps: PublicSiteShowcaseStep[],
 ): string {
   return `<div class="public-site-showcase" data-public-site-showcase>
+    <select class="public-site-showcase-select" aria-label="${escapeHtml(label)} step" data-showcase-select>
+      ${steps
+        .map((step, index) => {
+          const stepNumber = String(index + 1).padStart(2, "0");
+
+          return `<option value="${escapeHtml(idPrefix)}-tab-${stepNumber}">${stepNumber} ${escapeHtml(step.label)}</option>`;
+        })
+        .join("")}
+    </select>
     <div class="public-site-showcase-tabs" role="tablist" aria-label="${escapeHtml(label)}">
       ${steps
         .map((step, index) => {
@@ -240,8 +227,8 @@ function renderPage(title: string, body: string, options: PublicSitePageOptions 
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="Kanbien build journal and public timeline for product discovery, design-system, feature compiler, and deployment work." />
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
-    <link rel="stylesheet" href="/assets/public-site.css" />
-    <script src="/assets/public-site.js" defer></script>
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/public-site.css?v=${brochureDesignSystemAssetVersion}" />
+    <script src="/design-system/systems/brochure/assets/public-site.js?v=${brochureDesignSystemAssetVersion}" defer></script>
   </head>
   <body class="public-site-body">
     <div class="design-system-shell public-site-shell">
@@ -579,6 +566,7 @@ function renderFrontEndBuilderPage(): string {
             <li>Visual proof: verifies responsive, theme, and interaction behavior.</li>
             <li>Issue reconciliations: turn escaped UI defects into stronger future checks.</li>
           </ul>
+          <a class="public-site-text-link" href="/design-system">View the design system</a>
         </section>
 
         <section class="public-site-detail-section" aria-labelledby="front-end-builder-private">
@@ -750,16 +738,6 @@ function renderBlogPlaceholder(): string {
 
 export function createPublicSiteRouter(): Router {
   const router = Router();
-  const publicSiteRoot = resolvePublicSiteRoot();
-
-  router.use(
-    "/assets",
-    express.static(join(publicSiteRoot, "assets"), {
-      fallthrough: false,
-      immutable: env.nodeEnv === "production",
-      maxAge: env.nodeEnv === "production" ? "1y" : 0,
-    }),
-  );
 
   router.get("/", (_request, response) => {
     response.type("html").send(renderHomePage());

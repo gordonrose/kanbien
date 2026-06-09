@@ -96,6 +96,7 @@ const tenantAuthSessionTtlSeconds = parseNumber(
 );
 
 const platformSecurityEnabled = readBooleanEnvOrDefault("PLATFORM_SECURITY_ENABLED", true);
+const harnessChatEnabled = readBooleanEnvOrDefault("HARNESS_CHAT_ENABLED", true);
 const publicReadWindowSeconds = readNumberEnvOrDefault("PUBLIC_READ_WINDOW_SECONDS", 60);
 const publicReadMaxAttempts = readNumberEnvOrDefault("PUBLIC_READ_MAX_ATTEMPTS", 120);
 const publicAuthWindowSeconds = readNumberEnvOrDefault("PUBLIC_AUTH_WINDOW_SECONDS", 300);
@@ -211,6 +212,9 @@ export const env = {
   },
   jobProcessing: {
     redisUrl,
+  },
+  harnessChat: {
+    enabled: harnessChatEnabled,
   },
   assets: {
     localStorageRoot: assetsLocalStorageRoot,

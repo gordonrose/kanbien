@@ -392,6 +392,10 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
     if (existsSync(systemHtmlCandidate)) {
       return systemHtmlCandidate;
     }
+
+    if (pathSegments.length === 1) {
+      return null;
+    }
   }
 
   if (

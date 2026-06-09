@@ -13,7 +13,7 @@ describe("feedback-text-style token seam", () => {
       tokenType: "feedback-text-style",
     });
 
-    expect(feedbackTextStyleTokenVariants.map((variant) => variant.id)).toEqual([
+    expect(feedbackTextStyleTokenVariants.map((variant: { id: string }) => variant.id)).toEqual([
       "feedback-text-style-neutral-original",
       "feedback-text-style-warning-original",
       "feedback-text-style-error-original",
@@ -27,9 +27,15 @@ describe("feedback-text-style token seam", () => {
   });
 
   it("derives foreground values from signed upstream token seams", () => {
-    const neutralDark = feedbackTextStyleTokenVariants.find((variant) => variant.id === "feedback-text-style-neutral-dark");
-    const warningDark = feedbackTextStyleTokenVariants.find((variant) => variant.id === "feedback-text-style-warning-dark");
-    const errorDark = feedbackTextStyleTokenVariants.find((variant) => variant.id === "feedback-text-style-error-dark");
+    const neutralDark = feedbackTextStyleTokenVariants.find(
+      (variant: { id: string }) => variant.id === "feedback-text-style-neutral-dark",
+    );
+    const warningDark = feedbackTextStyleTokenVariants.find(
+      (variant: { id: string }) => variant.id === "feedback-text-style-warning-dark",
+    );
+    const errorDark = feedbackTextStyleTokenVariants.find(
+      (variant: { id: string }) => variant.id === "feedback-text-style-error-dark",
+    );
 
     expect(neutralDark).toMatchObject({
       tokenName: "--feedback-text-style-neutral-dark",

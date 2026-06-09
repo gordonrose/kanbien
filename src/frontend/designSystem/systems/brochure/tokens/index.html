@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Brochure Tokens</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/public-site.css?v=20260530-brochure-system-1" />
+  </head>
+  <body class="public-site-body">
+    <div class="design-system-shell public-site-shell">
+      <header class="top-nav top-nav-no-utilities public-site-top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/brochure/" aria-current="page">Brochure</a>
+            <a class="nav-link" href="/design-system/default/">Default</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav public-site-sub-nav" aria-label="Page breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/brochure/">Brochure system</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Tokens</span></li>
+          </ol>
+        </nav>
+      </section>
+
+      <main class="public-site-page" data-brochure-token-list-page>
+        <section class="public-site-project-detail">
+          <div class="public-site-project-hero" aria-labelledby="brochure-token-list-title">
+            <p class="public-site-eyebrow">Tokens</p>
+            <h1 id="brochure-token-list-title">Brochure token inventory</h1>
+            <p class="public-site-project-hook">
+              Tokens are the named visual decisions that let the brochure variant keep its own public identity while
+              shared primitives and patterns keep their behaviour.
+            </p>
+          </div>
+
+          <section class="public-site-detail-section" aria-labelledby="brochure-token-list-intro">
+            <p class="public-site-eyebrow">Inventory</p>
+            <h2 id="brochure-token-list-intro">Shared and brochure-owned token decisions</h2>
+            <p>
+              Each row lists a shared token contract or a token already implemented by the brochure system. Brochure
+              proof rows link to their rendered token review page; shared-only rows remain visible so the missing
+              brochure proof work is obvious.
+            </p>
+          </section>
+
+          <section class="public-site-token-list" aria-label="Brochure design-system token inventory" data-brochure-token-list></section>
+        </section>
+      </main>
+
+      <div class="public-site-token-drawer-backdrop" data-brochure-token-drawer-backdrop hidden></div>
+      <div class="public-site-token-drawer-host" data-brochure-token-drawer-host></div>
+
+      <script type="module" src="/design-system/systems/brochure/tokens/page.mjs"></script>
+      <script type="module" src="/design-system/assets/app.mjs"></script>
+    </div>
+  </body>
+</html>

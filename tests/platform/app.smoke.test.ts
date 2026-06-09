@@ -39,5 +39,23 @@ describe("platform app smoke test", () => {
     expect(response.headers["content-security-policy"]).toContain(
       "connect-src 'self' http://127.0.0.1:8787",
     );
+    expect(response.headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  });
+
+  it("allows same-origin framing only for design-system proof drawers", async () => {
+    const app = createApp();
+    const designSystemResponse = await request(app)
+      .get("/design-system/brochure/tokens/background-color")
+      .set("host", "admin.example.test");
+    const publicSiteResponse = await request(app)
+      .get("/")
+      .set("host", "www.example.test");
+
+    expect(designSystemResponse.status).toBe(200);
+    expect(designSystemResponse.headers["x-frame-options"]).toBe("SAMEORIGIN");
+    expect(designSystemResponse.headers["content-security-policy"]).toContain("frame-src 'self'");
+    expect(designSystemResponse.headers["content-security-policy"]).toContain("frame-ancestors 'self'");
+
+    expect(publicSiteResponse.headers["content-security-policy"]).toContain("frame-ancestors 'none'");
   });
 });

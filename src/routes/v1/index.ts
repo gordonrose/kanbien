@@ -7,7 +7,6 @@ import {
   createNotificationDeliveryFeature,
   createQueuedNotificationEmailWriter,
 } from "../../features/notificationDelivery";
-import { createHarnessChatFeature } from "../../features/harnessChat";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createTenantAuthSessionLookupRepository } from "../../features/tenantAuth";
@@ -43,6 +42,7 @@ import { dbPool } from "../../lib/db";
 import { createRequireRootSession } from "../../lib/auth/middleware";
 import { createRateLimitMiddleware } from "../../lib/security/rateLimit";
 import { env } from "../../config/env";
+import type { RequestHandler } from "express";
 
 export const v1Router = Router();
 const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
@@ -185,6 +185,26 @@ const authenticatedGeneralRateLimit = createRateLimitMiddleware({
   getSubjectKey: (request) =>
     request.rootSession ? `${request.ip ?? "unknown"}|${request.rootSession.rootUserId}` : null,
 });
+
+function createLazyHarnessChatFeature(): RequestHandler {
+  let harnessChatRouterPromise: Promise<RequestHandler> | null = null;
+
+  return async (request, response, next) => {
+    try {
+      harnessChatRouterPromise ??= import("../../features/harnessChat").then(({ createHarnessChatFeature }) =>
+        createHarnessChatFeature(
+          dbPool,
+          rootRolesFeature.capabilityChecker,
+          platformSecurityRepository,
+        ),
+      );
+      const harnessChatRouter = await harnessChatRouterPromise;
+      harnessChatRouter(request, response, next);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
 
 v1Router.get("/health", publicReadRateLimit, (_request, response) => {
   response.status(200).json({ ok: true });
@@ -418,16 +438,14 @@ v1Router.use(
     platformSecurityRepository,
   ),
 );
-v1Router.use(
-  "/root-admin/harness-chat",
-  requireRootSession,
-  authenticatedGeneralRateLimit,
-  createHarnessChatFeature(
-    dbPool,
-    rootRolesFeature.capabilityChecker,
-    platformSecurityRepository,
-  ),
-);
+if (env.harnessChat.enabled) {
+  v1Router.use(
+    "/root-admin/harness-chat",
+    requireRootSession,
+    authenticatedGeneralRateLimit,
+    createLazyHarnessChatFeature(),
+  );
+}
 v1Router.use(
   "/assets",
   requireRootSession,

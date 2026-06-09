@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import request from "supertest";
@@ -34,14 +34,13 @@ describe("design-system system isolation guard", () => {
     expect(brochureBlock).not.toContain('/default/');
   });
 
-  it("keeps default routes free of brochure assets and public-site literals", async () => {
+  it("keeps default detail routes free of brochure assets and public-site literals", async () => {
     const app = createApp();
-    const defaultRoot = await request(app).get("/design-system/default/").set("host", "admin.example.test");
     const defaultBackground = await request(app)
       .get("/design-system/default/tokens/background-color")
       .set("host", "admin.example.test");
 
-    for (const response of [defaultRoot, defaultBackground]) {
+    for (const response of [defaultBackground]) {
       expect(response.status).toBe(200);
       expect(response.text).toContain("/design-system/assets/styles.css");
       expect(response.text).not.toContain("/design-system/systems/brochure/");
@@ -49,6 +48,7 @@ describe("design-system system isolation guard", () => {
       expect(response.text).not.toContain("public-site-body");
       expect(response.text).not.toContain("Brochure design-system variant");
     }
+
   });
 
   it("serves brochure routes from brochure assets without changing default routes", async () => {
@@ -65,6 +65,26 @@ describe("design-system system isolation guard", () => {
     expect(brochureBackground.status).toBe(200);
     expect(brochureBackground.text).toContain("Brochure background color");
     expect(brochureBackground.text).not.toContain("/design-system/systems/default/assets/styles.css");
+  });
+
+  it("lists every shared or brochure token on the brochure token inventory page", async () => {
+    const brochureTokenPage = await importRepoModule("src/frontend/designSystem/systems/brochure/tokens/page.mjs");
+    const tokenEntries = brochureTokenPage.tokenEntries as Array<[string, string, string]>;
+    const sharedTokenSlugs = readdirSync(resolve(process.cwd(), "docs/design-system/02-token/shared"), {
+      withFileTypes: true,
+    })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
+    const brochureTokenSlugs = readdirSync(
+      resolve(process.cwd(), "src/frontend/designSystem/systems/brochure/tokens"),
+      { withFileTypes: true },
+    )
+      .filter((entry) => entry.isDirectory() && entry.name !== "proofs")
+      .map((entry) => entry.name);
+
+    expect(tokenEntries.map(([slug]) => slug).sort()).toEqual(
+      [...new Set([...sharedTokenSlugs, ...brochureTokenSlugs])].sort(),
+    );
   });
 
   it("keeps brochure token proof styling on the shared token renderer instead of public-site CSS", async () => {

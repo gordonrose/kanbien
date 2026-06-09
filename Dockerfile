@@ -27,6 +27,7 @@ RUN apt-get update \
 COPY package.json package-lock.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+COPY src/frontend ./dist/src/frontend
 COPY src/features ./src/features
 
 EXPOSE 3000

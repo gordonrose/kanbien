@@ -50,6 +50,7 @@ Primary architecture decisions behind this shape live in:
 - `docs/architecture/adr/0022-add-a-web-app-surface-discovery-foundation-with-explicit-provider-seams-and-reconcile-links.md`
 - `docs/architecture/adr/0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md`
 - `docs/architecture/adr/0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
+- `docs/architecture/adr/0050-serve-temporary-public-brochure-through-same-origin-public-site-routes.md`
 
 ## Runtime Shape
 
@@ -60,6 +61,8 @@ The Express app is the same-origin composition point.
 Current mount posture:
 
 - `/design-system` serves governed HTML reference and canonical routes
+- `/`, `/projects`, and `/projects/*` serve the temporary public brochure site
+  through the same Express app
 - `/root-admin` serves the root-admin browser shell, helper downloads, static
   app assets under `/root-admin/assets/*`, and route modules under
   `/root-admin/routes/*`
@@ -146,6 +149,41 @@ Current route model:
   component, pattern, or page-template child families that need stable
   canonical launcher/detail URLs in addition to their review route, such as
   `kanban-column` and the `entity-management-page-*` child matrices
+
+### `publicSite`
+
+The public site is the temporary same-origin brochure surface under
+`src/frontend/publicSite`.
+
+Current role:
+
+- serve the public Kanbien homepage, project index, project detail pages, and
+  journal placeholder from the main Express app
+- publish brochure-facing explanation and evidence pages without introducing a
+  separate frontend framework or deployment surface
+- consume the `brochure` design-system implementation for public-site styling
+  and pipeline-showcase behavior
+
+Current route model:
+
+- server-rendered HTML is emitted by `src/frontend/publicSite/router.ts`
+- `/`, `/blog`, `/projects`, and `/projects/*` are mounted by `src/app.ts`
+- the public page shell links to `/design-system/assets/styles.css` for shared
+  design-system shell styling
+- brochure-specific public-site assets are served from
+  `/design-system/systems/brochure/assets/public-site.css` and
+  `/design-system/systems/brochure/assets/public-site.js`, with a version query
+  on the consuming HTML for rollbackable cache invalidation
+
+Current implementation posture:
+
+- this surface is intentionally temporary and governed by ADR `0050`
+- the public brochure pages do not mount a SPA bundle
+- the public pipeline tab/dropdown behavior is supplied by the brochure
+  design-system asset seam rather than by page-local public-site assets
+- public brochure styling should continue moving toward reusable
+  `/design-system/brochure` tokens, primitives, and patterns before broader
+  app adoption
 
 ### `rootAdminShell`
 

@@ -1,4 +1,5 @@
 import { readdirSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
@@ -92,8 +93,19 @@ function expectSingleItemContextNav(html: string, label: string) {
 }
 
 describe("design system route", () => {
-  it("serves every design-system HTML page with breadcrumbs and a display settings drawer", async () => {
-    const routes = [...new Set(walkHtmlFiles(designSystemRoot).map(routeForHtmlFile))].sort();
+  it("serves every full-shell design-system HTML page with breadcrumbs and a display settings drawer", async () => {
+    const routes = [...new Set(walkHtmlFiles(designSystemRoot)
+      .filter((path) => {
+        const html = readFileSync(path, "utf8");
+        return (
+          html.includes('class="top-nav')
+          && html.includes('class="sub-nav')
+          && html.includes('class="context-nav')
+          && html.includes('id="accessibility-drawer"')
+        );
+      })
+      .map(routeForHtmlFile))]
+      .sort();
 
     for (const route of routes) {
       const response = await request(createApp()).get(route).set("host", "admin.example.test");
@@ -178,14 +190,28 @@ describe("design system route", () => {
     expect(response.text).toContain("Kanbien Design System");
     expect(response.text).toContain("primary-nav-overflow-button");
     expect(response.text).toContain("profile-menu-button");
+    expect(response.text).toContain("/design-system/systems/brochure/assets/styles.css");
+    expect(response.text).toContain("/design-system/assets/designSystemHome.mjs");
+    expect(response.text).toContain("data-design-system-home");
+    expect(response.text).not.toContain("/design-system/systems/default/assets/styles.css");
     expect(response.text).toContain("mobile-nav-button");
     expect(response.text).toContain("breadcrumb-collapse-button");
-    expect(response.text).toContain("design-system-search");
+    expect(response.text).not.toContain("design-system-search");
+    expect(response.text).toContain("/design-system/systems/brochure/assets/public-site.css");
     expect(response.text).toContain("context-nav");
     expect(response.text).toContain("accessibility-button");
     expect(response.text).toContain("accessibility-drawer");
     expect(response.text).toContain("Design System");
     expect(response.text).toContain("/design-system/assets/styles.css");
+
+    const homeModule = readFileSync(join(designSystemRoot, "assets", "designSystemHome.mjs"), "utf8");
+    expect(homeModule).not.toContain("Select your design system:");
+    expect(homeModule).not.toContain("data-design-system-selector");
+    expect(homeModule).toContain("part sketchbook, part quality system");
+    expect(homeModule).not.toContain("41 front-end harness layer");
+    expect(homeModule).not.toContain("Layer Evidence");
+    expect(homeModule).toContain("Why it matters:");
+    expect(homeModule).not.toContain("showcase");
   });
 
   it("serves the dedicated top-nav component preview page", async () => {
@@ -681,9 +707,9 @@ describe("design system route", () => {
     expect(response.text).toContain("token-page-header-map");
     expect(response.text).toContain('data-page-header-span="1"');
     expect(response.text).toContain('data-page-header-span="2"');
-    expect(response.text).toContain('data-page-header-span="3-5"');
-    expect(response.text).toContain('data-page-header-span="6-8"');
-    expect(response.text).toContain('data-page-header-span="9-19"');
+    expect(response.text).toContain('data-page-header-span="3-6"');
+    expect(response.text).toContain('data-page-header-span="7-10"');
+    expect(response.text).toContain('data-page-header-span="11-19"');
     expect(response.text).toContain('data-page-header-span="20"');
     expect(response.text).toContain('data-page-header-span="24"');
     expect(response.text).toContain("token-list-page-structure-header");
@@ -1254,6 +1280,17 @@ describe("design system route", () => {
     expect(response.text).toContain("brochure-edit-drawer");
     expect(response.text).toContain("data-brochure-edit-target");
     expect(response.text).not.toContain("INTERNAL_ERROR");
+  });
+
+  it("serves the brochure token inventory route from the brochure system", async () => {
+    const response = await request(createApp()).get("/design-system/brochure/tokens").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("data-brochure-token-list-page");
+    expect(response.text).toContain("/design-system/systems/brochure/assets/public-site.css");
+    expect(response.text).toContain("/design-system/systems/brochure/tokens/page.mjs");
+    expect(response.text).not.toContain("/design-system/systems/default/assets/styles.css");
+    expect(response.text).not.toContain("Default design-system workspace");
   });
 
   it("serves the list page pattern demo route", async () => {

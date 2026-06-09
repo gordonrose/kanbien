@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kanbien Design System</title>
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/brochure/assets/public-site.css?v=20260530-brochure-system-1" />
   </head>
-  <body>
-    <div class="design-system-shell">
-      <header class="top-nav">
+  <body class="public-site-body">
+    <div class="design-system-shell public-site-shell">
+      <header class="top-nav public-site-top-nav">
         <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
           <span class="brand-mark" aria-hidden="true">K</span>
           <span class="brand-copy">
@@ -16,7 +18,7 @@
           </span>
         </a>
 
-        <nav class="primary-nav" aria-label="Primary">
+        <nav class="primary-nav public-site-primary-nav" aria-label="Primary">
           <div id="primary-nav-links" class="primary-nav-links">
             <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
             <a class="nav-link" href="/design-system/tokens">Tokens</a>
@@ -158,7 +160,7 @@
         </div>
       </div>
 
-      <section class="sub-nav" aria-label="Page search and breadcrumb">
+      <section class="sub-nav public-site-sub-nav" aria-label="Page breadcrumb">
         <nav class="breadcrumb-nav" aria-label="Breadcrumb">
           <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
             <button
@@ -211,22 +213,6 @@
             <li id="breadcrumb-current-item" class="hidden"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Home</span></li>
           </ol>
         </nav>
-
-        <form class="search-shell" role="search">
-          <label class="search-shell-field">
-            <input
-              id="design-system-search"
-              class="search-input"
-              type="search"
-              name="q"
-              placeholder="Search components, patterns, or docs"
-            />
-            <span class="search-submit-hint" aria-hidden="true">
-              <span class="search-submit-hint-copy">Press</span>
-              <span class="search-submit-hint-key">Enter</span>
-            </span>
-          </label>
-        </form>
       </section>
 
       <nav class="context-nav" aria-label="Section navigation">
@@ -387,61 +373,10 @@
         </div>
       </aside>
 
-      <main class="design-system-page-main">
-        <section class="component-catalog-section" aria-labelledby="design-system-overview-title">
-          <div class="component-catalog-section-header">
-            <h1 id="design-system-overview-title" class="component-catalog-section-title">Design-System Route Families</h1>
-            <p class="component-catalog-meta">
-              The live design system now exposes first-class routes for components, patterns, templates, token-layer review, and canonical review sets. Exploration remains a supporting proof surface rather than a top-level family.
-            </p>
-          </div>
-
-          <div class="component-catalog-grid">
-            <a class="component-catalog-card" href="/design-system/components">
-              <div class="component-catalog-card-header">
-                <p class="top-nav-preview-eyebrow">First-Class Route</p>
-                <h2 class="component-catalog-card-title">Components</h2>
-              </div>
-              <p class="component-catalog-card-copy">
-                Reusable implementation seams with bounded surfaces, including extracted list-detail child artifacts and shell primitives.
-              </p>
-            </a>
-
-            <a class="component-catalog-card" href="/design-system/patterns">
-              <div class="component-catalog-card-header">
-                <p class="top-nav-preview-eyebrow">First-Class Route</p>
-                <h2 class="component-catalog-card-title">Patterns</h2>
-              </div>
-              <p class="component-catalog-card-copy">
-                Reusable UX contracts for shell behavior, secondary chrome, drawers, settings payloads, and list-detail reading relationships.
-              </p>
-            </a>
-
-            <a class="component-catalog-card" href="/design-system/templates">
-              <div class="component-catalog-card-header">
-                <p class="top-nav-preview-eyebrow">First-Class Route</p>
-                <h2 class="component-catalog-card-title">Templates</h2>
-              </div>
-              <p class="component-catalog-card-copy">
-                Reusable page structures like `Page Shell`, `List Page`, and `Table Page` that compose shared navigation, shell chrome, and workflow rhythm into governed full-page templates.
-              </p>
-            </a>
-
-            <a class="component-catalog-card" href="/design-system/tokens">
-              <div class="component-catalog-card-header">
-                <p class="top-nav-preview-eyebrow">Review Route</p>
-                <h2 class="component-catalog-card-title">Token Layer</h2>
-              </div>
-              <p class="component-catalog-card-copy">
-                Starter cards for app background, typography use cases, controls, cards, inputs, overlays, lists, and entity drawers before each token family is reviewed in detail.
-              </p>
-            </a>
-          </div>
-        </section>
-
-      </main>
+      <main class="public-site-page" data-design-system-home></main>
     </div>
 
     <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/designSystemHome.mjs"></script>
   </body>
 </html>

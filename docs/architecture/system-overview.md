@@ -21,8 +21,8 @@ Today the system has:
   `organizationSearch`, `organizationBrandingReferences`, and
   `organizationExports`, and `harnessChat`
 - one unmounted backend foundation feature: `jobProcessing`
-- two mounted browser/frontend route families:
-  `/design-system` and `/root-admin`
+- three mounted browser/frontend route families:
+  `/`, `/design-system`, and `/root-admin`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 - one shared platform security layer for headers, rate limiting, and auth abuse
@@ -42,8 +42,8 @@ Frontend current-state detail lives in `docs/architecture/frontend-overview.md`.
 
 1. Requests enter the Express app in `src/app.ts`.
 2. Global security middleware applies shared headers and JSON parsing.
-3. Browser/frontend route families such as `/design-system` and `/root-admin`
-   are mounted explicitly in `src/app.ts`.
+3. Browser/frontend route families such as `/`, `/design-system`, and
+   `/root-admin` are mounted explicitly in `src/app.ts`.
 4. Versioned API requests are routed under `/v1`.
 5. `src/routes/v1/index.ts` applies route-class-specific rate limiting and
    dispatches to explicitly registered feature routers.
@@ -85,6 +85,12 @@ Frontend current-state detail lives in `docs/architecture/frontend-overview.md`.
   render, and interaction seams rather than app-local reconstructions. For
   governed app route families, the page shell itself is also now treated as a
   design-system-owned artifact rather than an app-local host.
+- `src/frontend/publicSite/*`
+  Temporary same-origin public brochure surface for the homepage, project
+  index, project detail pages, and journal placeholder. Its page HTML is
+  server-rendered by the public-site router, while brochure-specific styling
+  and pipeline behavior are consumed from the registered `brochure`
+  design-system asset seam.
 - `src/frontend/rootAdminShell/*`
   Same-origin root-admin browser shell, browser assets, route modules, and
   helper-download surface. The authenticated shell now consumes the

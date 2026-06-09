@@ -10,7 +10,12 @@ describe("public site home", () => {
     expect(response.text).toContain('data-public-site-header');
     expect(response.text).toContain('class="top-nav top-nav-no-utilities public-site-top-nav"');
     expect(response.text).toContain('class="brand-lockup" href="/" aria-label="Kanbien home"');
-    expect(response.text).toContain('<script src="/assets/public-site.js" defer></script>');
+    expect(response.text).toContain(
+      '<link rel="stylesheet" href="/design-system/systems/brochure/assets/public-site.css?v=20260530-brochure-system-1" />',
+    );
+    expect(response.text).toContain(
+      '<script src="/design-system/systems/brochure/assets/public-site.js?v=20260530-brochure-system-1" defer></script>',
+    );
     expect(response.text).toContain('class="primary-nav-links" aria-label="No public navigation items yet"></div>');
     expect(response.text).not.toContain('class="search-shell"');
     expect(response.text).not.toContain('class="context-nav"');
@@ -47,8 +52,12 @@ describe("public site home", () => {
   it("serves the public site stylesheet and journal placeholder linked by the home CTA", async () => {
     const app = createApp();
 
-    const stylesheet = await request(app).get("/assets/public-site.css").set("host", "kanbien.example.test");
-    const script = await request(app).get("/assets/public-site.js").set("host", "kanbien.example.test");
+    const stylesheet = await request(app)
+      .get("/design-system/systems/brochure/assets/public-site.css")
+      .set("host", "kanbien.example.test");
+    const script = await request(app)
+      .get("/design-system/systems/brochure/assets/public-site.js")
+      .set("host", "kanbien.example.test");
     const journal = await request(app).get("/blog").set("host", "kanbien.example.test");
 
     expect(stylesheet.status).toBe(200);
@@ -59,6 +68,12 @@ describe("public site home", () => {
     expect(stylesheet.text).toContain("font-weight: 600;");
     expect(stylesheet.text).toContain("background: transparent;");
     expect(stylesheet.text).toContain(".public-site-showcase-tabs");
+    expect(stylesheet.text).toContain(".public-site-showcase-select");
+    expect(stylesheet.text).toContain("appearance: none;");
+    expect(stylesheet.text).toContain("linear-gradient(45deg, transparent 50%, var(--public-site-accent-strong) 50%)");
+    expect(stylesheet.text).toContain("@media (max-width: 62rem)");
+    expect(stylesheet.text).toContain(".public-site-showcase-select {\n    display: block;");
+    expect(stylesheet.text).toContain(".public-site-showcase-tabs {\n    display: none;");
     expect(stylesheet.text).toContain("grid-template-columns: repeat(6, minmax(0, 1fr));");
     expect(stylesheet.text).toContain(".public-site-showcase-visual");
     expect(stylesheet.text).toContain(".public-site-showcase-visual-request");
@@ -70,6 +85,7 @@ describe("public site home", () => {
     expect(script.status).toBe(200);
     expect(script.text).toContain("function activateTab");
     expect(script.text).toContain("data-showcase-tab");
+    expect(script.text).toContain("data-showcase-select");
     expect(journal.status).toBe(200);
     expect(journal.text).toContain("Journal placeholder");
   });
@@ -137,6 +153,8 @@ describe("public site home", () => {
     expect(response.text).toContain("What this makes possible");
     expect(response.text).toContain("A public version of the pipeline");
     expect(response.text).toContain('class="public-site-showcase" data-public-site-showcase');
+    expect(response.text).toContain('class="public-site-showcase-select" aria-label="Feature Compiler pipeline step" data-showcase-select');
+    expect(response.text).toContain('<option value="feature-compiler-flow-tab-01">01 Feature request</option>');
     expect(response.text).toContain('role="tablist" aria-label="Feature Compiler pipeline"');
     expect(response.text).toContain('id="feature-compiler-flow-tab-01"');
     expect(response.text).toContain('aria-selected="true" aria-controls="feature-compiler-flow-panel-01"');
@@ -204,6 +222,7 @@ describe("public site home", () => {
     expect(response.text).toContain("Browser proof");
     expect(response.text).toContain("Shared renderer");
     expect(response.text).toContain("Evidence in the repo");
+    expect(response.text).toContain('<a class="public-site-text-link" href="/design-system">View the design system</a>');
     expect(response.text).toContain("What I am not publishing");
     expect(response.text).toContain("The detailed internal prompts, routing logic, review scoring, generation rules, and private implementation workflow are intentionally private.");
     expect(response.text).toContain('<a class="public-site-text-link" href="/projects">Back to projects</a>');
