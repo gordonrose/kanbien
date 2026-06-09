@@ -5,7 +5,13 @@ export const tokenTypeTemplate = {
   tokenType: "scrollbar-skin",
   previewKind: "scrollbar-sample",
   variantSchema: {
-    valueFields: ["scrollbarWidthValue", "scrollbarThumbValue", "scrollbarTrackValue", "scrollbarRadiusValue"],
+    valueFields: [
+      "scrollbarWidthValue",
+      "scrollbarGutterInlineSizeValue",
+      "scrollbarThumbValue",
+      "scrollbarTrackValue",
+      "scrollbarRadiusValue",
+    ],
     metadataFields: ["sourceTokenName", "formulaOrMapping", "accessibility"],
     useCaseInstructionFields: ["allowedUse", "forbiddenUse", "fallbackUse"],
   },
@@ -43,6 +49,7 @@ export const tokenDefinitionV1 = {
       tokenName: "--scrollbar-skin-primary",
       value: {
         scrollbarWidthValue: "thin",
+        scrollbarGutterInlineSizeValue: "0.75rem",
         scrollbarThumbValue: "color-mix(in srgb, #4f46e5 46%, #ffffff)",
         scrollbarTrackValue: "color-mix(in srgb, #4f46e5 10%, #ffffff)",
         scrollbarRadiusValue: "999px",
@@ -51,7 +58,7 @@ export const tokenDefinitionV1 = {
         sourceTokenName: "primary-color-source",
         sourceValue: "#4f46e5",
         formulaOrMapping: "thumb mixes primary source at 46% over white; track mixes primary source at 10% over white",
-        renderedValue: "thin styled scrollbar with primary-tinted thumb and track",
+        renderedValue: "thin styled scrollbar with 0.75rem WebKit gutter, primary-tinted thumb, and primary-tinted track",
       },
       preview: {
         kind: "scrollbar-sample",
@@ -62,6 +69,7 @@ export const tokenDefinitionV1 = {
         thumb: "color-mix(in srgb, #4f46e5 46%, #ffffff)",
         track: "color-mix(in srgb, #4f46e5 10%, #ffffff)",
         width: "thin",
+        gutterInlineSize: "0.75rem",
         radius: "999px",
         label: "Primary scrollbar",
       },
@@ -85,6 +93,7 @@ function toPageVariant(variant) {
     tokenName: variant.tokenName,
     tokenValue: variant.derivation.renderedValue,
     scrollbarWidthValue: variant.value.scrollbarWidthValue,
+    scrollbarGutterInlineSizeValue: variant.value.scrollbarGutterInlineSizeValue,
     scrollbarThumbValue: variant.value.scrollbarThumbValue,
     scrollbarTrackValue: variant.value.scrollbarTrackValue,
     scrollbarRadiusValue: variant.value.scrollbarRadiusValue,
@@ -122,6 +131,7 @@ export const scrollbarSkinTokenSpec = {
   ],
   variantFields: [
     ["scrollbarWidthValue", "Width"],
+    ["scrollbarGutterInlineSizeValue", "Gutter inline size"],
     ["scrollbarThumbValue", "Thumb"],
     ["scrollbarTrackValue", "Track"],
     ["scrollbarRadiusValue", "Radius"],

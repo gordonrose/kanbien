@@ -83,6 +83,8 @@ describe("record-list-item-control primitive", () => {
     expect(html).toContain('data-record-list-item-state="selected"');
     expect(html).toContain('aria-pressed="true"');
     expect(html).toContain('draggable="true"');
+    expect(html).toContain("data-focus-instruction-disclosure-host");
+    expect(html).toContain("data-focus-instruction-disclosure");
     expect(html).toContain('aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"');
     expect(html).toContain("Use Alt plus Arrow Up or Arrow Down to reorder.");
     expect(html).toContain('aria-describedby="ledgerworks-subtitle ledgerworks-meta ledgerworks-keyboard-hint"');
@@ -115,14 +117,21 @@ describe("record-list-item-control primitive", () => {
     expect(source).toContain("clearDragState(root)");
   });
 
-  it("shows a focus-visible keyboard reorder hint without making it permanent row copy", () => {
+  it("uses the shared focus-instruction-disclosure primitive instead of local hint CSS", () => {
     const styles = readFileSync(
       resolve(process.cwd(), "src/frontend/designSystem/systems/default/assets/styles.css"),
       "utf8",
     );
+    const source = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/layers/03-primitive/record-list-item-control/index.mjs"),
+      "utf8",
+    );
 
-    expect(styles).toContain(".ds-record-list-item-keyboard-hint");
-    expect(styles).toContain(".ds-record-list-item-control:focus-visible .ds-record-list-item-keyboard-hint");
+    expect(source).toContain("renderFocusInstructionDisclosurePrimitive");
+    expect(source).toContain("attachFocusInstructionDisclosurePrimitiveController");
+    expect(styles).toContain(".ds-focus-instruction-disclosure");
+    expect(styles).toContain("[data-focus-instruction-disclosure-host][data-focus-instruction-disclosure-open=\"true\"]");
+    expect(styles).not.toContain(".ds-record-list-item-keyboard-hint");
     expect(styles).toContain("opacity: 0;");
     expect(styles).toContain("opacity: 1;");
   });

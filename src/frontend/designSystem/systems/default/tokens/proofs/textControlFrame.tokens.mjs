@@ -1,28 +1,99 @@
 import { textControlFrameTokenContract } from "../../../../layers/02-token/text-control-frame/contract.mjs";
-import { bodyRegionFrameTokenSpec } from "./bodyRegionFrame.tokens.mjs";
+import { backgroundColorTokenVariants } from "./backgroundColor.tokens.mjs";
 import { minimumTargetSizeTokenSpec } from "./minimumTargetSize.tokens.mjs";
 
-const bodyRegionFrame = bodyRegionFrameTokenSpec.variants.find((variant) => variant.id === "body-region-frame-default");
 const minimumTarget = minimumTargetSizeTokenSpec.variants.find((variant) => variant.id === "target-size-interactive-all");
+const surfaceByTheme = new Map(
+  backgroundColorTokenVariants
+    .filter((variant) => variant.role === "surface foundation")
+    .map((variant) => [variant.theme, variant]),
+);
 
-if (!bodyRegionFrame || !minimumTarget) {
-  throw new Error("text-control-frame requires signed body-region-frame and minimum-target-size dependencies.");
+if (!minimumTarget) {
+  throw new Error("text-control-frame requires signed minimum-target-size dependency.");
 }
 
-function textControlFrameVariant({ state, backgroundValue, foregroundValue, borderValue, stateInstruction }) {
+const errorSourceByTheme = {
+  original: "#7a1f1f",
+  dark: "#ffb4b4",
+  desert: "#7a1f1f",
+};
+
+function surface(theme) {
+  const variant = surfaceByTheme.get(theme);
+  if (!variant) {
+    throw new Error(`Missing background surface token for ${theme}.`);
+  }
+  return variant;
+}
+
+function stateValues(theme, state) {
+  const surfaceVariant = surface(theme);
+  const baseBackground = surfaceVariant.preview.background;
+  const baseForeground = surfaceVariant.preview.foreground;
+  const baseBorder = `color-mix(in srgb, ${baseForeground} 16%, ${baseBackground})`;
+
+  if (state === "read-only") {
+    return {
+      backgroundValue: `color-mix(in srgb, ${baseForeground} 4%, ${baseBackground})`,
+      foregroundValue: `color-mix(in srgb, ${baseForeground} 78%, ${baseBackground})`,
+      borderValue: `color-mix(in srgb, ${baseBorder} 82%, ${baseBackground})`,
+      sourceTokenName: surfaceVariant.tokenName,
+      sourceValue: baseBackground,
+      formulaOrMapping: "read-only text-control values mix theme foreground and border over the signed theme surface",
+    };
+  }
+
+  if (state === "disabled") {
+    return {
+      backgroundValue: `color-mix(in srgb, ${baseForeground} 4%, ${baseBackground})`,
+      foregroundValue: `color-mix(in srgb, ${baseForeground} 54%, ${baseBackground})`,
+      borderValue: `color-mix(in srgb, ${baseBorder} 64%, ${baseBackground})`,
+      sourceTokenName: surfaceVariant.tokenName,
+      sourceValue: baseBackground,
+      formulaOrMapping: "disabled text-control values mix theme foreground and border over the signed theme surface",
+    };
+  }
+
+  if (state === "error") {
+    const errorForeground = errorSourceByTheme[theme];
+    return {
+      backgroundValue: `color-mix(in srgb, ${errorForeground} 6%, ${baseBackground})`,
+      foregroundValue: errorForeground,
+      borderValue: errorForeground,
+      sourceTokenName: surfaceVariant.tokenName,
+      sourceValue: `${baseBackground} + error source ${errorForeground}`,
+      formulaOrMapping:
+        "error text-control values mix a system error source over the signed theme surface; primitive semantics still own aria-invalid and error-description wiring",
+    };
+  }
+
+  return {
+    backgroundValue: baseBackground,
+    foregroundValue: baseForeground,
+    borderValue: baseBorder,
+    sourceTokenName: surfaceVariant.tokenName,
+    sourceValue: baseBackground,
+    formulaOrMapping: `${state} text-control frame inherits signed theme surface, foreground, and border`,
+  };
+}
+
+function textControlFrameVariant({ theme, state, stateInstruction }) {
+  const values = stateValues(theme, state);
   const radiusValue = "0.375rem";
   const paddingBlockValue = "0.5rem";
   const paddingInlineValue = "0.75rem";
 
   return {
-    id: `text-control-frame-${state}`,
-    tokenName: `--text-control-frame-${state}`,
+    id: `text-control-frame-${state}-${theme}`,
+    tokenName: `--text-control-frame-${state}-${theme}`,
     value: {
       state,
+      theme,
       frameRole: `text control ${state} frame`,
-      backgroundValue,
-      foregroundValue,
-      borderValue,
+      backgroundValue: values.backgroundValue,
+      foregroundValue: values.foregroundValue,
+      borderValue: values.borderValue,
       radiusValue,
       paddingBlockValue,
       paddingInlineValue,
@@ -30,25 +101,23 @@ function textControlFrameVariant({ state, backgroundValue, foregroundValue, bord
       maxInlineSize: "100%",
     },
     derivation: {
-      sourceTokenName: "body-region-frame + minimum-target-size",
-      sourceValue: `${bodyRegionFrame.borderValue} base frame border; ${minimumTarget.minimumHeight} target height`,
-      formulaOrMapping:
-        state === "default" || state === "required"
-          ? "default and required text-control surfaces derive from body-region-frame; minimum block size is the signed interactive target height; radius and padding are text-control frame values"
-          : `${state} text-control surface, foreground, and border are governed state frame values; minimum block size is the signed interactive target height; radius and padding are shared text-control frame values`,
-      renderedValue: `${backgroundValue} / ${foregroundValue} / ${borderValue} / ${radiusValue} radius / ${minimumTarget.minimumHeight} min height`,
+      sourceTokenName: `${values.sourceTokenName} + ${minimumTarget.tokenName}`,
+      sourceValue: `${values.sourceValue}; ${minimumTarget.minimumHeight} target height`,
+      formulaOrMapping: `${values.formulaOrMapping}; minimum block size is the signed interactive target height; radius and padding are shared text-control frame values`,
+      renderedValue: `${values.backgroundValue} / ${values.foregroundValue} / ${values.borderValue} / ${radiusValue} radius / ${minimumTarget.minimumHeight} min height`,
     },
     preview: {
       kind: "surface-card",
       sample: "Text control",
-      background: backgroundValue,
-      foreground: foregroundValue,
-      border: borderValue,
+      background: values.backgroundValue,
+      foreground: values.foregroundValue,
+      border: values.borderValue,
       radius: radiusValue,
-      label: `Text control ${state} frame`,
+      label: `${theme} text control ${state} frame`,
     },
     metadata: {
       state,
+      theme,
       frameRole: `text control ${state} frame`,
       responsiveBehavior: "text controls fill their field-row slot without creating horizontal overflow",
       accessibility:
@@ -61,6 +130,21 @@ function textControlFrameVariant({ state, backgroundValue, foregroundValue, bord
     ],
   };
 }
+
+const themes = ["original", "dark", "desert"];
+const states = ["default", "required", "read-only", "disabled", "error"];
+
+const stateInstructions = {
+  default: "Use for editable text-entry controls in the default state.",
+  required:
+    "Use for required text-entry controls; required meaning still needs primitive-owned required semantics and marker behavior.",
+  "read-only":
+    "Use for read-only text-entry controls; read-only meaning still needs native readonly semantics in the consuming primitive.",
+  disabled:
+    "Use for disabled text-entry controls; disabled meaning still needs native disabled semantics in the consuming primitive.",
+  error:
+    "Use for invalid text-entry controls; error meaning still needs aria-invalid and error-description wiring in the consuming primitive.",
+};
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -112,10 +196,10 @@ export const tokenDefinitionV1 = {
   },
   dependencies: [
     {
-      contractId: "tokens.body-region-frame",
-      variantId: bodyRegionFrame.id,
-      tokenName: bodyRegionFrame.tokenName,
-      value: bodyRegionFrame.borderValue,
+      contractId: "tokens.background-color",
+      variantId: "background-surface-*",
+      tokenName: "--background-surface-*",
+      value: "theme-specific surface foundation",
       relationship: "derived-from",
     },
     {
@@ -126,47 +210,15 @@ export const tokenDefinitionV1 = {
       relationship: "derived-from",
     },
   ],
-  variants: [
-    textControlFrameVariant({
-      state: "default",
-      backgroundValue: bodyRegionFrame.backgroundValue,
-      foregroundValue: bodyRegionFrame.foregroundValue,
-      borderValue: bodyRegionFrame.borderValue,
-      stateInstruction: "Use for editable text-entry controls in the default state.",
-    }),
-    textControlFrameVariant({
-      state: "required",
-      backgroundValue: bodyRegionFrame.backgroundValue,
-      foregroundValue: bodyRegionFrame.foregroundValue,
-      borderValue: bodyRegionFrame.borderValue,
-      stateInstruction:
-        "Use for required text-entry controls; required meaning still needs primitive-owned required semantics and marker behavior.",
-    }),
-    textControlFrameVariant({
-      state: "read-only",
-      backgroundValue: "#f8fafc",
-      foregroundValue: bodyRegionFrame.foregroundValue,
-      borderValue: "#cbd7e6",
-      stateInstruction:
-        "Use for read-only text-entry controls; read-only meaning still needs native readonly semantics in the consuming primitive.",
-    }),
-    textControlFrameVariant({
-      state: "disabled",
-      backgroundValue: "#f1f4f8",
-      foregroundValue: "#6b7483",
-      borderValue: "#e1e8f1",
-      stateInstruction:
-        "Use for disabled text-entry controls; disabled meaning still needs native disabled semantics in the consuming primitive.",
-    }),
-    textControlFrameVariant({
-      state: "error",
-      backgroundValue: "#fff7f7",
-      foregroundValue: "#7a1f1f",
-      borderValue: "#d94a4a",
-      stateInstruction:
-        "Use for invalid text-entry controls; error meaning still needs aria-invalid and error-description wiring in the consuming primitive.",
-    }),
-  ],
+  variants: themes.flatMap((theme) =>
+    states.map((state) =>
+      textControlFrameVariant({
+        theme,
+        state,
+        stateInstruction: stateInstructions[state],
+      }),
+    ),
+  ),
 };
 
 export const variants = tokenDefinitionV1.variants;
@@ -178,6 +230,7 @@ function toPageVariant(variant) {
     tokenValue: variant.derivation.renderedValue,
     frameRole: variant.value.frameRole,
     state: variant.value.state,
+    theme: variant.value.theme,
     backgroundValue: variant.value.backgroundValue,
     foregroundValue: variant.value.foregroundValue,
     borderValue: variant.value.borderValue,
@@ -189,7 +242,6 @@ function toPageVariant(variant) {
     sourceTokenName: variant.derivation.sourceTokenName,
     sourceValue: variant.derivation.sourceValue,
     formulaOrMapping: variant.derivation.formulaOrMapping,
-    theme: "all",
     accessibility: variant.metadata.accessibility,
     preview: variant.preview,
     usage: [
@@ -215,13 +267,14 @@ export const textControlFrameTokenSpec = {
     {
       label: "Frame",
       title: "Reusable text control frame",
-      variantId: "text-control-frame-default",
+      variantId: "text-control-frame-default-original",
       supportingText: "Surface, border, radius, padding, and target-height values are tokenized before native input primitives consume them.",
     },
   ],
   variantFields: [
     ["frameRole", "Role"],
     ["state", "State"],
+    ["theme", "Theme"],
     ["backgroundValue", "Background"],
     ["foregroundValue", "Foreground"],
     ["borderValue", "Border"],

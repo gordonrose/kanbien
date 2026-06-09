@@ -42,6 +42,7 @@ export const designSystems = {
       dropdownTriggerFrame: () => import("../systems/default/tokens/proofs/dropdownTriggerFrame.tokens.mjs"),
       dragDropAffordanceFrame: () => import("../systems/default/tokens/proofs/dragDropAffordanceFrame.tokens.mjs"),
       errorTextStyle: () => import("../systems/default/tokens/proofs/errorTextStyle.tokens.mjs"),
+      feedbackTextStyle: () => import("../systems/default/tokens/proofs/feedbackTextStyle.tokens.mjs"),
       focusRing: () => import("../systems/default/tokens/proofs/focusRing.tokens.mjs"),
       fieldContainerFrame: () => import("../systems/default/tokens/proofs/fieldContainerFrame.tokens.mjs"),
       fieldRowFrame: () => import("../systems/default/tokens/proofs/fieldRowFrame.tokens.mjs"),

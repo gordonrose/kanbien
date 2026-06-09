@@ -15,9 +15,10 @@
 
 ## Purpose
 
-The default system implementation exposes the reusable panel shell frame
-variant seeded by the governed index-navigation panel proof and broadened for
-later panel consumers.
+The default system implementation exposes reusable panel shell frame variants
+for the `original`, `dark`, and `desert` themes. The original variant is seeded
+by the governed index-navigation panel proof and broadened for later panel
+consumers.
 
 The implementation keeps the values reviewable through a rendered token route
 and a governed runtime seam.
@@ -36,9 +37,9 @@ and a governed runtime seam.
 | Field | Value |
 | --- | --- |
 | Upstream contract | `tokens.panel-corner-radius` |
-| Upstream variant or token | `panel-corner-radius-flush` |
-| Formula or mapping | Panel radius maps from the flush panel radius. |
-| What changes when upstream changes | Radius proof output changes in the rendered token page. |
+| Upstream variant or token | `panel-corner-radius-flush`; theme surface foundations |
+| Formula or mapping | Panel radius maps from the flush panel radius; panel background, foreground, and border map to the selected theme surface posture. |
+| What changes when upstream changes | Radius or theme surface proof output changes in the rendered token page. |
 | What must not change | Behavior contract, primitive semantics, accessibility contract, signed token values, or readiness truth. |
 
 ## System Token Implementation
@@ -52,6 +53,14 @@ and a governed runtime seam.
 | System page route | `/design-system/default/tokens/panel-frame` |
 | System proof status | `review-ready` |
 
+## Signed Variants
+
+| Variant | Theme | Background | Foreground | Border |
+| --- | --- | --- | --- | --- |
+| `panel-frame-default` | `original` | `#ffffff` | `#111827` | `#dbe4f0` |
+| `panel-frame-dark` | `dark` | `#171b22` | `#f4f7fb` | `#303845` |
+| `panel-frame-desert` | `desert` | `#fffaf0` | `#493327` | `#ead8be` |
+
 ## Rendered View
 
 | Field | Value |
@@ -62,6 +71,6 @@ and a governed runtime seam.
 
 ## Required Evidence
 
-Focused evidence must prove the rendered route exposes panel, header, and
-action variants; shows signed dependency identity; and supports width review
-without mutating signed values.
+Focused evidence must prove the rendered route exposes all theme variants,
+shows signed dependency identity, and supports width review without mutating
+signed values.

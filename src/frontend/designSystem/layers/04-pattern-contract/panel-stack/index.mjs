@@ -8,6 +8,7 @@ import { panelStackPlacementTokenSpec } from "../../02-token/panel-stack-placeme
 const patternName = "panel-stack";
 const allowedOrigins = new Set(["left", "right"]);
 const allowedViewports = new Set(["desktop", "mobile"]);
+const supportedThemes = new Set(["original", "dark", "desert"]);
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -82,6 +83,7 @@ export const panelStackPatternContract = {
 
 export function panelStackPattern(options = {}) {
   const systemKey = options.systemKey ?? "default";
+  const theme = options.theme ?? "original";
   const id = options.id ?? `panel-stack-${Math.random().toString(36).slice(2, 10)}`;
   const label = options.label ?? "Panel stack";
   const origin = options.origin ?? "right";
@@ -90,12 +92,16 @@ export function panelStackPattern(options = {}) {
   const activePanelId = options.activePanelId ?? panels[panels.length - 1]?.id;
 
   assertString(systemKey, "systemKey");
+  assertString(theme, "theme");
   assertString(id, "id");
   assertString(label, "label");
   assertString(origin, "origin");
   assertString(viewport, "viewport");
   assertString(activePanelId, "activePanelId");
 
+  if (!supportedThemes.has(theme)) {
+    throw new RangeError(`panel-stack does not support theme "${theme}".`);
+  }
   if (!allowedOrigins.has(origin)) {
     throw new RangeError(`panel-stack does not support origin "${origin}".`);
   }
@@ -115,6 +121,7 @@ export function panelStackPattern(options = {}) {
     const isActive = !isMobile || panel.id === activePanelId;
     const primitive = panelSurfaceControlPrimitive({
       systemKey,
+      theme,
       id: `${id}-${panel.id}`,
       label: panel.label,
       state: isActive ? "active" : "covered",
@@ -132,6 +139,7 @@ export function panelStackPattern(options = {}) {
     schema: "kanbien.designSystem.patternSpec.v1",
     patternName,
     systemKey,
+    theme,
     id,
     label,
     origin,
@@ -150,6 +158,7 @@ export function panelStackPattern(options = {}) {
       id,
       class: "ds-panel-stack",
       "data-panel-stack": "",
+      "data-panel-stack-theme": theme,
       "data-panel-stack-origin": origin,
       "data-panel-stack-viewport": viewport,
       "data-panel-stack-active-panel": activePanelId,
@@ -185,6 +194,7 @@ export function renderPanelStackPattern(options = {}) {
             >
               ${renderPanelSurfaceControlPrimitive({
                 systemKey: spec.systemKey,
+                theme: spec.theme,
                 id: `${spec.id}-${panel.id}`,
                 label: panel.label,
                 state: panel.state,

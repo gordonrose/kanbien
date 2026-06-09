@@ -16,27 +16,39 @@ describe("text field foundation tokens", () => {
     });
 
     expect(textControlFrameTokenVariants.map((variant: TokenVariantWithId) => variant.id)).toEqual([
-      "text-control-frame-default",
-      "text-control-frame-required",
-      "text-control-frame-read-only",
-      "text-control-frame-disabled",
-      "text-control-frame-error",
+      "text-control-frame-default-original",
+      "text-control-frame-required-original",
+      "text-control-frame-read-only-original",
+      "text-control-frame-disabled-original",
+      "text-control-frame-error-original",
+      "text-control-frame-default-dark",
+      "text-control-frame-required-dark",
+      "text-control-frame-read-only-dark",
+      "text-control-frame-disabled-dark",
+      "text-control-frame-error-dark",
+      "text-control-frame-default-desert",
+      "text-control-frame-required-desert",
+      "text-control-frame-read-only-desert",
+      "text-control-frame-disabled-desert",
+      "text-control-frame-error-desert",
     ]);
 
     expect(textControlFrameTokenVariants[0]).toMatchObject({
-      tokenName: "--text-control-frame-default",
+      tokenName: "--text-control-frame-default-original",
       frameRole: "text control default frame",
       state: "default",
-      borderValue: "#dbe4f0",
+      theme: "original",
+      borderValue: "color-mix(in srgb, #0f1115 16%, #ffffff)",
       radiusValue: "0.375rem",
       minBlockSize: "44px",
-      sourceTokenName: "body-region-frame + minimum-target-size",
+      sourceTokenName: "--background-surface-original + --target-size-interactive-min",
     });
-    expect(textControlFrameTokenVariants.find((variant: TokenVariantWithId) => variant.id === "text-control-frame-error")).toMatchObject({
+    expect(textControlFrameTokenVariants.find((variant: TokenVariantWithId) => variant.id === "text-control-frame-error-dark")).toMatchObject({
       state: "error",
-      backgroundValue: "#fff7f7",
-      foregroundValue: "#7a1f1f",
-      borderValue: "#d94a4a",
+      theme: "dark",
+      backgroundValue: "color-mix(in srgb, #ffb4b4 6%, #171b22)",
+      foregroundValue: "#ffb4b4",
+      borderValue: "#ffb4b4",
     });
   });
 });

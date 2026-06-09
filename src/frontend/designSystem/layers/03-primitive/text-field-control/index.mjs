@@ -50,8 +50,8 @@ function tokenDependenciesFor(theme) {
 function tokenDependenciesForState(theme, state) {
   const textControlFrame = findVariant(
     textControlFrameTokenSpec,
-    (variant) => variant.id === `text-control-frame-${state}`,
-    `text-field-control requires the signed text-control-frame token for ${state}.`,
+    (variant) => variant.id === `text-control-frame-${state}-${theme}`,
+    `text-field-control requires the signed text-control-frame token for ${state} in ${theme}.`,
   );
   const fieldValueTextStyle = findVariant(
     fieldValueTextStyleTokenSpec,

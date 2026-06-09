@@ -42,6 +42,12 @@ owns the visible label.
 The primitive may expose a `radio-simple-select:change` event after native
 selection changes. Event detail may include `name`, `value`, and `id`.
 
+Keyboard behavior must stay native: Tab enters and leaves the radio group
+according to browser behavior, while arrow keys move focus and selection
+between enabled same-name radio options. Downstream patterns must not add
+local tab stops to each option or replace the radio group with listbox-style
+navigation.
+
 ## Accessibility Contract
 
 The group must use `fieldset` and `legend` or equivalent native semantics. Each
@@ -107,5 +113,7 @@ Before later layers consume this primitive, the default-system proof must show:
 - 1, 2, 3, and 4 requested columns with constrained-width collapse
 - LTR and RTL rendering
 - keyboard radio behavior
+- arrow-key movement between non-selected enabled options in primitive,
+  field-pattern, and composed form proofs
 - tooltip disclosure for truncated text only
 - no horizontal overflow on desktop or mobile

@@ -2,7 +2,7 @@ import { errorTextStyleTokenContract } from "../../../../layers/02-token/error-t
 import { textControlFrameTokenSpec } from "./textControlFrame.tokens.mjs";
 
 const fontFamily = "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-const errorFrame = textControlFrameTokenSpec.variants.find((variant) => variant.id === "text-control-frame-error");
+const errorFrame = textControlFrameTokenSpec.variants.find((variant) => variant.id === "text-control-frame-error-original");
 
 if (!errorFrame) {
   throw new Error("error-text-style requires the signed text-control-frame error variant.");

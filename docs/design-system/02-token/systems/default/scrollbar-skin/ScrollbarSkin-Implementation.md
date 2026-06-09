@@ -11,8 +11,9 @@
 | Rendered proof | `/design-system/default/tokens/scrollbar-skin` |
 
 The default implementation derives a styled internal scrollbar from the primary
-color source and a quiet tinted track. It exists so patterns do not invent
-custom scrollbar values locally.
+color source and a quiet tinted track. It also signs the `0.75rem` WebKit
+scrollbar gutter used for focus and layout clearance. It exists so patterns do
+not invent custom scrollbar values locally.
 
 ## Rendered View
 

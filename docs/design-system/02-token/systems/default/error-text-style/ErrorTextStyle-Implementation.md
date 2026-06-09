@@ -14,5 +14,6 @@ View the proof route at `/design-system/default/tokens/error-text-style`.
 
 ## Source
 
-The foreground derives from the signed `text-control-frame-error` foreground so
-field-row error messages align with errored text-entry controls.
+The foreground derives from the signed `text-control-frame-error-original`
+foreground so field-row error messages align with errored original-theme
+text-entry controls. Theme-aware error text remains a separate token decision.

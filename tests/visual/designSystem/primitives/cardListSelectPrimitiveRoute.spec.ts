@@ -49,6 +49,9 @@ test.describe("card list select primitive route", () => {
     await expect(page.locator(".ds-card-list-select-state-text", { hasText: "Priority 3" }).first()).toBeVisible();
     await page.locator('input[value="description"]').uncheck({ force: true });
     await expect(page.locator(".ds-card-list-select-state-text", { hasText: "Priority 2" }).first()).toBeVisible();
+    await page.getByLabel("Affordance").selectOption("text-only");
+    await expect(page.locator(".ds-card-list-select-affordance svg")).toHaveCount(0);
+    await expect(page.locator(".ds-card-list-select-state-text", { hasText: "Priority 1" }).first()).toBeVisible();
     await expect.poll(() => renderedOptionLines(page)).not.toContain(2);
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });

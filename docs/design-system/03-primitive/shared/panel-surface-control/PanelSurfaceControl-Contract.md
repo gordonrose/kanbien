@@ -39,14 +39,14 @@ behavior, or app-specific content.
 | --- | --- |
 | Behavior rule status | `review-ready` |
 | Token readiness source checked | `docs/design-system/02-token/token-readiness-index.md` |
-| Required tokens consumable by selected systems | `yes for default panel-frame` |
+| Required tokens consumable by selected systems | `yes for default panel-frame original, dark, and desert variants` |
 | Primitive inventory checked | `docs/design-system/03-primitive/primitive-readiness-index.md`; no generic panel-surface primitive existed before this artifact |
 
 ## Token Dependencies
 
 | Token Dependency | System | Runtime Seam | Primitive Decision Supported | Status |
 | --- | --- | --- | --- | --- |
-| `panel-frame` | `default` | `src/frontend/designSystem/layers/02-token/panel-frame/systems/default.mjs#panelFrameTokenSpec` | Supplies panel surface, border, radius, padding, gap, width rails, and max block size. | `consumable` |
+| `panel-frame` | `default` | `src/frontend/designSystem/layers/02-token/panel-frame/systems/default.mjs#panelFrameTokenSpec` | Supplies theme-specific panel surface, border, foreground, radius, padding, gap, width rails, and max block size. | `consumable` |
 
 ## Behavior Contract
 
@@ -60,6 +60,10 @@ The primitive supports only these shell states:
 | `active` | The panel is visible and available to keyboard and assistive technology. |
 | `covered` | The panel remains in the stack but is covered by a child panel; it is hidden from assistive technology and must not compete for focus. |
 | `hidden` | The panel is not rendered as an available visible panel. |
+
+The primitive also accepts the signed theme names `original`, `dark`, and
+`desert`. Theme selection changes only the consumed `panel-frame` variant; it
+does not change panel behavior, state semantics, or accessibility posture.
 
 ## Accessibility Contract
 
@@ -83,6 +87,9 @@ and return behavior belong to the consuming `panel-stack` pattern.
 ## Consumer Restrictions
 
 Consumers must not hard-code values governed by `panel-frame`.
+
+Consumers must pass the selected theme to this primitive when a containing
+pattern exposes theme review. They must not recolor the rendered panel locally.
 
 Consumers must not recreate panel shell markup, state attributes, ARIA rules, or
 CSS variables locally when this primitive exists.

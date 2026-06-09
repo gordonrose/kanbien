@@ -181,6 +181,12 @@ describe("design-system system registry guard", () => {
           expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
         }
 
+        if (contractId === "tokens.feedback-text-style") {
+          const registeredTokenModule = await registration.tokens?.feedbackTextStyle?.();
+          expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();
+          expect(registeredTokenModule?.[contract.implementationExport]).toBe(implementationExport);
+        }
+
         if (contractId === "tokens.index-nav-item-surface") {
           const registeredTokenModule = await registration.tokens?.indexNavItemSurface?.();
           expect(registeredTokenModule, `${systemKey} registry must load ${contractId}`).toBeDefined();

@@ -26,6 +26,7 @@ behavior, or app adoption.
 | Field | Meaning |
 | --- | --- |
 | `scrollbarWidthValue` | Browser scrollbar width keyword or governed thickness value. |
+| `scrollbarGutterInlineSizeValue` | Physical inline gutter size used where scrollbar pseudo-elements need a length. |
 | `scrollbarThumbValue` | Thumb color value. |
 | `scrollbarTrackValue` | Track color value. |
 | `scrollbarRadiusValue` | Thumb radius value where the browser supports it. |
@@ -34,8 +35,9 @@ behavior, or app adoption.
 
 ## Consumer Restrictions
 
-Consumers must not set `scrollbar-width`, `scrollbar-color`, or scrollbar
-pseudo-element colors locally for governed internal scroll regions.
+Consumers must not set `scrollbar-width`, `scrollbar-color`, scrollbar gutter
+size, or scrollbar pseudo-element colors locally for governed internal scroll
+regions.
 
 Consumers must consume this token through a governed primitive or later-layer
 runtime seam.

@@ -8,9 +8,9 @@ It prevents text fields and text areas from inventing local input frame values.
 
 ## Shared Contract
 
-Every design system implementation must expose default, required, read-only, disabled, and error text-control frames before text-entry primitives consume control geometry and visual state.
+Every design system implementation must expose default, required, read-only, disabled, and error text-control frames for each supported theme before text-entry primitives consume control geometry and visual state.
 
-Each variant must provide state, background, foreground, border, radius, block padding, inline padding, minimum block size, and maximum inline size.
+Each variant must provide state, theme, background, foreground, border, radius, block padding, inline padding, minimum block size, and maximum inline size.
 
 ## Consumer Rules
 

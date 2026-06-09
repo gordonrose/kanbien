@@ -26,6 +26,7 @@ describe("panel-stack pattern seam", () => {
     expect(stack).toMatchObject({
       schema: "kanbien.designSystem.patternSpec.v1",
       patternName: "panel-stack",
+      theme: "original",
       origin: "right",
       viewport: "desktop",
       tokenDependencies: {
@@ -41,6 +42,34 @@ describe("panel-stack pattern seam", () => {
       },
     });
     expect(stack.panels.map((panel: { state: string }) => panel.state)).toEqual(["active", "active", "active"]);
+  });
+
+  it("passes theme through to panel-surface-control", () => {
+    const stack = panelStackPattern({
+      id: "drawer-stack",
+      label: "Drawer stack",
+      origin: "right",
+      viewport: "desktop",
+      theme: "dark",
+      panels,
+    });
+
+    expect(stack).toMatchObject({
+      theme: "dark",
+    });
+    expect(stack.panels[0]?.primitive).toMatchObject({
+      theme: "dark",
+      tokenDependencies: {
+        panelFrame: {
+          tokenName: "--panel-frame-dark",
+          variantId: "panel-frame-dark",
+        },
+      },
+      styleVars: {
+        "--primitive-panel-surface-background": "#171b22",
+        "--primitive-panel-surface-foreground": "#f4f7fb",
+      },
+    });
   });
 
   it("marks non-active mobile panels as covered through the panel surface primitive", () => {

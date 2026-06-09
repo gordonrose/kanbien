@@ -4,6 +4,10 @@ import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/s
 import { recordListItemFrameTokenSpec } from "../../02-token/record-list-item-frame/systems/default.mjs";
 import { dragDropAffordanceFrameTokenSpec } from "../../02-token/drag-drop-affordance-frame/systems/default.mjs";
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
+import {
+  attachFocusInstructionDisclosurePrimitiveController,
+  renderFocusInstructionDisclosurePrimitive,
+} from "../focus-instruction-disclosure/index.mjs";
 
 const primitiveName = "record-list-item-control";
 const supportedThemes = new Set(["original", "dark", "desert"]);
@@ -185,6 +189,7 @@ export function renderRecordListItemControlPrimitive(options = {}) {
     `data-record-list-item-id="${escapeHtml(spec.itemId)}"`,
     `data-record-list-item-state="${escapeHtml(spec.state)}"`,
     `data-record-list-item-theme="${escapeHtml(spec.theme)}"`,
+    spec.draggable ? `data-focus-instruction-disclosure-host` : "",
     `aria-label="${escapeHtml(spec.title)}"`,
     `aria-pressed="${spec.selected ? "true" : "false"}"`,
     spec.disabled ? `aria-disabled="true" disabled` : "",
@@ -202,7 +207,12 @@ export function renderRecordListItemControlPrimitive(options = {}) {
       ${spec.meta ? `<span id="${escapeHtml(spec.itemId)}-meta" class="ds-record-list-item-meta">${escapeHtml(spec.meta)}</span>` : ""}
       ${
         spec.draggable
-          ? `<span id="${escapeHtml(keyboardHintId)}" class="ds-record-list-item-keyboard-hint">Use Alt plus Arrow Up or Arrow Down to reorder.</span>`
+          ? renderFocusInstructionDisclosurePrimitive({
+              systemKey: spec.systemKey,
+              theme: spec.theme,
+              id: keyboardHintId,
+              text: "Use Alt plus Arrow Up or Arrow Down to reorder.",
+            })
           : ""
       }
     </button>
@@ -268,6 +278,8 @@ function allowMoveDrop(event) {
 }
 
 export function attachRecordListItemControlPrimitiveController(root = document) {
+  attachFocusInstructionDisclosurePrimitiveController(root);
+
   if (attachedRecordListItemControlRoots.has(root)) {
     return;
   }

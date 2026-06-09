@@ -51,6 +51,9 @@ describe("card-list-select primitive", () => {
     expect(html).toContain('data-card-list-select-glyph-semantic="visibility-on"');
     expect(html).toContain('data-card-list-select-glyph-semantic="visibility-off"');
     expect(html).toContain("<svg");
+    expect(html).toContain("data-focus-instruction-disclosure-host");
+    expect(html).toContain("data-focus-instruction-disclosure");
+    expect(html).toContain("Press Space to select or deselect this option.");
     expect(html).toContain("Visible");
     expect(html).toContain("Hidden");
   });
@@ -94,6 +97,28 @@ describe("card-list-select primitive", () => {
     expect(html).toContain('data-card-list-select-legend-presentation="visually-hidden"');
     expect(() => cardListSelectPrimitive({ legendPresentation: "hidden", options })).toThrow(
       'card-list-select legendPresentation must be "visible" or "visually-hidden".',
+    );
+  });
+
+  it("allows state text without leading glyphs through a primitive-owned presentation option", () => {
+    const spec = cardListSelectPrimitive({
+      affordancePresentation: "text-only",
+      selectedValues: ["email"],
+      options,
+    });
+    const html = renderCardListSelectPrimitive({
+      affordancePresentation: "text-only",
+      selectedValues: ["email"],
+      options,
+    });
+
+    expect(spec.affordancePresentation).toBe("text-only");
+    expect(html).toContain('data-card-list-select-affordance-presentation="text-only"');
+    expect(html).not.toContain('class="ds-card-list-select-affordance"');
+    expect(html).toContain("Visible");
+    expect(html).toContain("Hidden");
+    expect(() => cardListSelectPrimitive({ affordancePresentation: "hidden", options })).toThrow(
+      'card-list-select affordancePresentation must be "glyph-and-text" or "text-only".',
     );
   });
 });

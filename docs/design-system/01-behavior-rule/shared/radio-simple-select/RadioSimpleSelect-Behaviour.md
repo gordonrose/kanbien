@@ -76,8 +76,8 @@ The primitive must preserve native radio input behavior unless a later approved 
 | --- | --- |
 | click or tap enabled option | Selects that option and clears the previous selection in the same group. |
 | click or tap option label area | Activates the associated radio option; the label area must not become a separate competing control. |
-| tab into group | Focus enters the native radio group according to browser radio behavior. |
-| arrow through enabled radios | Native same-name radio keyboard behavior is preserved; arrow navigation must not be replaced by local listbox or card logic. |
+| tab into group | Focus enters the native radio group according to browser radio behavior, usually on the currently checked radio when one exists. Tab is not required to visit every non-selected radio. |
+| arrow through enabled radios | Native same-name radio keyboard behavior is preserved; arrow keys move focus and selection between enabled options and must not be replaced by local listbox or card logic. |
 | space on focused radio | Selects the focused enabled radio according to native behavior. |
 | leave group | Focus can move past the group without trapping the user. |
 | request full truncated text | Full text is available only when text is actually truncated and must not be implemented with native `title` alone. |

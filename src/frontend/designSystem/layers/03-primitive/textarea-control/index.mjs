@@ -46,7 +46,7 @@ function findVariant(tokenSpec, predicate, missingMessage) {
 }
 
 function tokenDependenciesFor(theme, growthVariant, state) {
-  const textControlFrame = findVariant(textControlFrameTokenSpec, (variant) => variant.id === `text-control-frame-${state}`, `textarea-control requires the signed text-control-frame token for ${state}.`);
+  const textControlFrame = findVariant(textControlFrameTokenSpec, (variant) => variant.id === `text-control-frame-${state}-${theme}`, `textarea-control requires the signed text-control-frame token for ${state} in ${theme}.`);
   const fieldValueTextStyle = findVariant(fieldValueTextStyleTokenSpec, (variant) => variant.id === "field-value-text-style-default", "textarea-control requires the signed field-value-text-style token.");
   const textareaGrowth = findVariant(textareaGrowthTokenSpec, (variant) => variant.id === `textarea-growth-${growthVariant}`, `textarea-control requires the signed textarea-growth token for ${growthVariant}.`);
   const focusRing = findVariant(focusRingTokenSpec, (variant) => variant.theme === theme, `textarea-control requires the signed focus-ring token for ${theme}.`);

@@ -37,6 +37,30 @@ describe("panel-surface-control primitive seam", () => {
     });
   });
 
+  it("resolves theme-specific panel frame values", () => {
+    const panel = panelSurfaceControlPrimitive({
+      id: "drawer-panel-dark",
+      label: "Drawer panel",
+      state: "active",
+      theme: "dark",
+    });
+
+    expect(panel).toMatchObject({
+      theme: "dark",
+      tokenDependencies: {
+        panelFrame: {
+          tokenName: "--panel-frame-dark",
+          variantId: "panel-frame-dark",
+        },
+      },
+      styleVars: {
+        "--primitive-panel-surface-background": "#171b22",
+        "--primitive-panel-surface-foreground": "#f4f7fb",
+        "--primitive-panel-surface-border": "#303845",
+      },
+    });
+  });
+
   it("renders covered panels as non-competing panel surfaces", () => {
     const html = renderPanelSurfaceControlPrimitive({
       id: "covered-panel",
@@ -67,6 +91,7 @@ describe("panel-surface-control primitive seam", () => {
     expect(panelSurfaceControlPrimitiveContract).toMatchObject({
       schema: "kanbien.designSystem.primitiveContract.v1",
       primitiveName: "panel-surface-control",
+      supportedThemes: ["original", "dark", "desert"],
       requiredTokens: ["panel-frame"],
       requiredPrimitives: [],
     });

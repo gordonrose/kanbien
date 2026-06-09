@@ -19,6 +19,16 @@ test.describe("radio-simple-select-field pattern route", () => {
     const existing = page.getByRole("radio", { name: "Existing" });
     const planned = page.getByRole("radio", { name: "Planned" });
     await expect(existing).toBeChecked();
+    await existing.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(planned).toBeFocused();
+    await expect(planned).toBeChecked();
+    await expect(existing).not.toBeChecked();
+    await expect(page.getByText("Selection log: planned")).toBeVisible();
+
+    await page.keyboard.press("ArrowLeft");
+    await expect(existing).toBeFocused();
+    await expect(existing).toBeChecked();
     await planned.check();
     await expect(planned).toBeChecked();
     await expect(existing).not.toBeChecked();

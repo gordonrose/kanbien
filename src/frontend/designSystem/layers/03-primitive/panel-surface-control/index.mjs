@@ -2,6 +2,7 @@ import { panelFrameTokenSpec } from "../../02-token/panel-frame/systems/default.
 
 const primitiveName = "panel-surface-control";
 const allowedStates = new Set(["active", "covered", "hidden"]);
+const supportedThemes = new Set(["original", "dark", "desert"]);
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -30,10 +31,10 @@ function cssVarStyle(styleValues) {
     .join("; ");
 }
 
-function panelFrameVariant() {
-  const variant = panelFrameTokenSpec.variants.find((candidate) => candidate.id === "panel-frame-default");
+function panelFrameVariant(theme) {
+  const variant = panelFrameTokenSpec.variants.find((candidate) => candidate.metadata?.theme === theme || candidate.theme === theme);
   if (!variant) {
-    throw new RangeError("panel-surface-control requires the signed panel-frame token.");
+    throw new RangeError(`panel-surface-control requires a signed ${theme} panel-frame token.`);
   }
   return variant;
 }
@@ -44,6 +45,7 @@ export const panelSurfaceControlPrimitiveContract = {
   status: "review-ready",
   contractPath: "docs/design-system/03-primitive/shared/panel-surface-control/PanelSurfaceControl-Contract.md",
   supportedSystems: ["default"],
+  supportedThemes: Array.from(supportedThemes),
   requiredTokens: ["panel-frame"],
   requiredPrimitives: [],
   allowedStates: Array.from(allowedStates),
@@ -56,20 +58,25 @@ export const panelSurfaceControlPrimitiveContract = {
 
 export function panelSurfaceControlPrimitive(options = {}) {
   const systemKey = options.systemKey ?? "default";
+  const theme = options.theme ?? "original";
   const id = options.id ?? `panel-surface-control-${Math.random().toString(36).slice(2, 10)}`;
   const label = options.label ?? "Panel";
   const state = options.state ?? "active";
 
   assertString(systemKey, "systemKey");
+  assertString(theme, "theme");
   assertString(id, "id");
   assertString(label, "label");
   assertString(state, "state");
 
+  if (!supportedThemes.has(theme)) {
+    throw new RangeError(`panel-surface-control does not support theme "${theme}".`);
+  }
   if (!allowedStates.has(state)) {
     throw new RangeError(`panel-surface-control does not support state "${state}".`);
   }
 
-  const frame = panelFrameVariant();
+  const frame = panelFrameVariant(theme);
   const isHidden = state === "hidden";
   const isCovered = state === "covered";
 
@@ -77,6 +84,7 @@ export function panelSurfaceControlPrimitive(options = {}) {
     schema: "kanbien.designSystem.primitiveSpec.v1",
     primitiveName,
     systemKey,
+    theme,
     id,
     label,
     state,
@@ -92,6 +100,7 @@ export function panelSurfaceControlPrimitive(options = {}) {
       class: "ds-panel-surface-control",
       "data-panel-surface-control": "",
       "data-panel-surface-control-state": state,
+      "data-panel-surface-control-theme": theme,
       "aria-label": label,
       "aria-hidden": isHidden || isCovered ? "true" : null,
       inert: isHidden || isCovered,

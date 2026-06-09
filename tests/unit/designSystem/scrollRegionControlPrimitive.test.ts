@@ -29,6 +29,7 @@ describe("scroll-region-control primitive seam", () => {
       styleVars: {
         "--primitive-scroll-region-max-block-size": "none",
         "--primitive-scrollbar-width": "thin",
+        "--primitive-scrollbar-gutter-inline-size": "0.75rem",
         "--primitive-scrollbar-radius": "999px",
       },
     });

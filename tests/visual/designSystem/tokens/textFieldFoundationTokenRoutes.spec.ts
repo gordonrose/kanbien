@@ -15,11 +15,11 @@ test.describe("text field foundation token routes", () => {
     await page.goto("/design-system/default/tokens/text-control-frame");
 
     await expect(page.getByRole("heading", { name: "Text Control Frame Token", level: 1 })).toBeVisible();
-    await expect(page.getByText("body-region-frame + minimum-target-size")).toHaveCount(5);
-    await expect(page.getByText("text-control-frame-error")).toBeVisible();
-    await expect(page.getByText("#fff7f7", { exact: true })).toBeVisible();
-    await expect(page.getByText("#d94a4a", { exact: true })).toBeVisible();
-    await expect(page.getByText("44px min height")).toHaveCount(5);
+    await expect(page.getByText("--background-surface-original + --target-size-interactive-min")).toHaveCount(5);
+    await expect(page.getByText("--background-surface-dark + --target-size-interactive-min")).toHaveCount(5);
+    await expect(page.getByText("text-control-frame-error-dark")).toBeVisible();
+    await expect(page.getByText("#ffb4b4", { exact: true })).toHaveCount(2);
+    await expect(page.getByText("44px min height")).toHaveCount(15);
     await expect(page.getByText("Text-entry primitives must consume this token before rendering native controls.")).toBeVisible();
   });
 });

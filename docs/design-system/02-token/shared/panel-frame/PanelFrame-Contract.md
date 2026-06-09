@@ -32,12 +32,17 @@ anatomy, backend data loading, or app adoption.
 | `shared contract` | Required role | `panel frame` |
 | `shared contract` | Panel frame must include | background, foreground, border, radius, padding, gap, min/standard/double/max inline size, mobile inline size, mobile breakpoint, and desktop max block size |
 | `shared contract` | Radius source | Panel shell radius must derive from `panel-corner-radius` |
+| `shared contract` | Required themes | `original`, `dark`, and `desert` |
 
 ## Consumer Restrictions
 
 Consumers must not hard-code panel min width, standard width, double width,
 max width, mobile width, breakpoint, padding, surface, radius, or scroll-height
 values in primitives, patterns, components, templates, or app pages.
+
+Consumers that expose a theme choice must resolve the matching signed
+`panel-frame` theme variant instead of reusing the original surface or adding
+route-local panel colors.
 
 Consumers must use `panel-header-frame` for panel header geometry instead of
 adding header variants to this token.

@@ -14,6 +14,8 @@ The proof route exposes default, selected, disabled, long text, dragging, and
 drop-marker states across original, dark, desert, RTL, and constrained widths.
 Row states consume `record-list-item-frame`; drag source, preview, and marker
 states consume `drag-drop-affordance-frame`.
+Focus-only keyboard reorder instruction disclosure is delegated to the shared
+`focus-instruction-disclosure` primitive.
 
 It emits open and move events to a proof log so reviewers can verify click,
 keyboard, and drag behavior without inspecting source.

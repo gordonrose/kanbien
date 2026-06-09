@@ -21,7 +21,7 @@ describe("search-field-control primitive", () => {
         labelId: "search-field-test-label",
       },
       tokenDependencies: {
-        textControlFrame: { variantId: "text-control-frame-default" },
+        textControlFrame: { variantId: "text-control-frame-default-original" },
         fieldValueTextStyle: { variantId: "field-value-text-style-default" },
         minimumTargetSize: { variantId: "target-size-interactive-all" },
       },
@@ -44,19 +44,29 @@ describe("search-field-control primitive", () => {
 
   it("maps states to native attributes and rejects unsupported states", () => {
     expect(searchFieldControlPrimitive({ state: "default" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-default",
+      variantId: "text-control-frame-default-original",
     });
     expect(searchFieldControlPrimitive({ state: "disabled" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-disabled",
+      variantId: "text-control-frame-disabled-original",
     });
     expect(renderSearchFieldControlPrimitive({ state: "disabled" })).toContain("disabled");
     expect(searchFieldControlPrimitive({ state: "error" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-error",
+      variantId: "text-control-frame-error-original",
     });
     expect(renderSearchFieldControlPrimitive({ state: "error" })).toContain('aria-invalid="true"');
     expect(() => searchFieldControlPrimitive({ state: "loading" })).toThrow(
       'search-field-control does not support state "loading".',
     );
+  });
+
+  it("selects text-control frame tokens by theme", () => {
+    const spec = searchFieldControlPrimitive({ theme: "dark" });
+
+    expect(spec.tokenDependencies.textControlFrame).toMatchObject({
+      variantId: "text-control-frame-default-dark",
+    });
+    expect(spec.styleVars["--primitive-text-control-background"]).toBe("#171b22");
+    expect(spec.styleVars["--primitive-text-control-foreground"]).toBe("#f4f7fb");
   });
 
   it("keeps filtering, selected grouping, and count summaries out of the primitive", () => {

@@ -45,7 +45,7 @@ describe("textarea-control primitive", () => {
         describedBy: "textarea-test-helper",
       },
       tokenDependencies: {
-        textControlFrame: { variantId: "text-control-frame-default" },
+        textControlFrame: { variantId: "text-control-frame-default-original" },
         fieldValueTextStyle: { variantId: "field-value-text-style-default" },
         textareaGrowth: { variantId: "textarea-growth-paragraph" },
       },
@@ -67,7 +67,7 @@ describe("textarea-control primitive", () => {
 
   it("rejects unsupported states and growth variants", () => {
     expect(textareaControlPrimitive({ state: "error" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-error",
+      variantId: "text-control-frame-error-original",
     });
     expect(() => textareaControlPrimitive({ state: "submitted" })).toThrow(
       'textarea-control does not support state "submitted".',
@@ -75,5 +75,11 @@ describe("textarea-control primitive", () => {
     expect(() => textareaControlPrimitive({ growthVariant: "freeform" })).toThrow(
       'textarea-control does not support growthVariant "freeform".',
     );
+  });
+
+  it("selects text-control frame tokens by theme", () => {
+    expect(textareaControlPrimitive({ theme: "dark" }).tokenDependencies.textControlFrame).toMatchObject({
+      variantId: "text-control-frame-default-dark",
+    });
   });
 });

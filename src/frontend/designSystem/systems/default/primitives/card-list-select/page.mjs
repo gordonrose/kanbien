@@ -59,6 +59,7 @@ function renderPage(state) {
     columns: Number(state.columns),
     selectedValues,
     priorityOrder,
+    affordancePresentation: state.affordancePresentation,
     theme: state.theme,
     options,
   });
@@ -106,6 +107,13 @@ function renderPage(state) {
             <select data-card-list-group-supporting-control>
               ${renderOption("hidden", "Hidden", state.groupSupporting)}
               ${renderOption("shown", "Shown", state.groupSupporting)}
+            </select>
+          </label>
+          <label>
+            <span>Affordance</span>
+            <select data-card-list-affordance-control>
+              ${renderOption("glyph-and-text", "Glyph and text", state.affordancePresentation)}
+              ${renderOption("text-only", "Text only", state.affordancePresentation)}
             </select>
           </label>
           <label>
@@ -169,6 +177,7 @@ function renderPage(state) {
               variant: state.variant,
               state: state.fieldState,
               columns: Number(state.columns),
+              affordancePresentation: state.affordancePresentation,
               selectedValues,
               priorityOrder,
               theme: state.theme,
@@ -185,6 +194,7 @@ function renderPage(state) {
             <div><dt>Focus token</dt><dd><code>${escapeHtml(spec.tokenDependencies.focusRing.tokenName)}</code></dd></div>
             <div><dt>Requested columns</dt><dd>${escapeHtml(String(spec.columns))}</dd></div>
             <div><dt>Variant</dt><dd>${escapeHtml(spec.variant)}</dd></div>
+            <div><dt>Affordance</dt><dd>${escapeHtml(spec.affordancePresentation)}</dd></div>
           </dl>
         </section>
       </div>
@@ -207,6 +217,7 @@ function renderPage(state) {
     ["[data-card-list-state-control]", "fieldState"],
     ["[data-card-list-option-text-control]", "optionText"],
     ["[data-card-list-group-supporting-control]", "groupSupporting"],
+    ["[data-card-list-affordance-control]", "affordancePresentation"],
     ["[data-card-list-columns-control]", "columns"],
     ["[data-card-list-label-length-control]", "labelLength"],
     ["[data-card-list-width-control]", "reviewWidth"],
@@ -227,6 +238,7 @@ renderPage({
   fieldState: "default",
   optionText: "plain",
   groupSupporting: "hidden",
+  affordancePresentation: "glyph-and-text",
   columns: "2",
   labelLength: "short",
   reviewWidth: "wide",

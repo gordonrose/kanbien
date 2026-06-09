@@ -23,6 +23,15 @@ It does not own the detail drawer that opens after selection.
 - `focus-ring`
 - `minimum-target-size`
 
+## Primitive Dependencies
+
+- `focus-instruction-disclosure`
+
+Keyboard reorder instruction copy must be rendered through the shared
+focus-instruction-disclosure primitive. `record-list-item-control` owns open,
+move, drag, and drop events; it must not recreate a local keyboard hint
+surface.
+
 ## Behavior Contract
 
 The primitive must render an enabled item as a button-like control with one
@@ -61,9 +70,10 @@ state when disabled, and a usable keyboard path for open and move intents.
 Native drag/drop must not be the only way to request movement.
 
 When a draggable item has visible focus, the primitive must expose visible
-instructional text for the keyboard reorder shortcut. The same instruction must
-be referenced through `aria-describedby` so the behavior is discoverable for
-screen-reader users without making every row permanently noisy.
+instructional text for the keyboard reorder shortcut through
+`focus-instruction-disclosure`. The same instruction must be referenced through
+`aria-describedby` so the behavior is discoverable for screen-reader users
+without making every row permanently noisy.
 
 ## Consumer Restrictions
 

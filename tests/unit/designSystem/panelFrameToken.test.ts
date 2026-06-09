@@ -13,9 +13,10 @@ describe("panel-frame token seam", () => {
       tokenType: "panel-frame",
     });
 
-    expect(panelFrameTokenVariants).toHaveLength(1);
+    expect(panelFrameTokenVariants).toHaveLength(3);
     expect(panelFrameTokenVariants.find((variant: { id: string }) => variant.id === "panel-frame-default")).toMatchObject({
       tokenName: "--panel-frame",
+      theme: "original",
       minInlineSize: "10rem",
       standardInlineSize: "13rem",
       doubleInlineSize: "26rem",
@@ -24,7 +25,23 @@ describe("panel-frame token seam", () => {
       mobileBreakpointValue: "44rem",
       maxBlockSize: "32rem",
       radiusValue: "0",
-      sourceTokenName: "--panel-corner-radius-flush",
+      sourceTokenName: "--panel-corner-radius-flush + background-color",
+    });
+    expect(panelFrameTokenVariants.find((variant: { id: string }) => variant.id === "panel-frame-dark")).toMatchObject({
+      tokenName: "--panel-frame-dark",
+      theme: "dark",
+      sourceTokenName: "--panel-corner-radius-flush + background-color",
+      backgroundValue: "#171b22",
+      foregroundValue: "#f4f7fb",
+      borderValue: "#303845",
+    });
+    expect(panelFrameTokenVariants.find((variant: { id: string }) => variant.id === "panel-frame-desert")).toMatchObject({
+      tokenName: "--panel-frame-desert",
+      theme: "desert",
+      sourceTokenName: "--panel-corner-radius-flush + background-color",
+      backgroundValue: "#fffaf0",
+      foregroundValue: "#493327",
+      borderValue: "#ead8be",
     });
   });
 });

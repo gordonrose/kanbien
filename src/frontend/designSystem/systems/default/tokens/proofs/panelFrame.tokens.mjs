@@ -12,6 +12,86 @@ if (!flushPanelRadius) {
 const surface = "#ffffff";
 const border = "#dbe4f0";
 
+const themeSurfaces = {
+  original: {
+    id: "panel-frame-default",
+    tokenName: "--panel-frame",
+    backgroundValue: surface,
+    foregroundValue: "#111827",
+    borderValue: border,
+    label: "Panel frame",
+  },
+  dark: {
+    id: "panel-frame-dark",
+    tokenName: "--panel-frame-dark",
+    backgroundValue: "#171b22",
+    foregroundValue: "#f4f7fb",
+    borderValue: "#303845",
+    label: "Dark panel frame",
+  },
+  desert: {
+    id: "panel-frame-desert",
+    tokenName: "--panel-frame-desert",
+    backgroundValue: "#fffaf0",
+    foregroundValue: "#493327",
+    borderValue: "#ead8be",
+    label: "Desert panel frame",
+  },
+};
+
+function panelVariant(theme) {
+  const themed = themeSurfaces[theme];
+  return {
+    id: themed.id,
+    tokenName: themed.tokenName,
+    value: {
+      frameRole: "panel frame",
+      backgroundValue: themed.backgroundValue,
+      foregroundValue: themed.foregroundValue,
+      borderValue: themed.borderValue,
+      radiusValue: flushPanelRadius.radiusValue,
+      paddingBlockValue: "0.5rem",
+      paddingInlineValue: "0.5rem",
+      gapValue: "0.75rem",
+      minInlineSize: "10rem",
+      standardInlineSize: "13rem",
+      doubleInlineSize: "26rem",
+      maxInlineSize: "100%",
+      mobileInlineSize: "100vw",
+      mobileBreakpointValue: "44rem",
+      maxBlockSize: "32rem",
+      scrollBehavior: "desktop panels may own internal scrolling; mobile panels may expand to screen width and scroll with page when the pattern selects page-scroll placement",
+    },
+    derivation: {
+      sourceTokenName: `${flushPanelRadius.tokenName} + background-color`,
+      sourceValue: `${flushPanelRadius.radiusValue}; ${theme} surface foundation`,
+      formulaOrMapping: "panel radius derives from the signed flush panel corner token; panel surface, foreground, and border are mapped to the selected theme surface posture",
+      renderedValue: "10rem min / 13rem standard / 26rem double / 100% available max / 100vw below 44rem",
+    },
+    preview: {
+      kind: "surface-card",
+      sample: "Panel",
+      background: themed.backgroundValue,
+      foreground: themed.foregroundValue,
+      border: themed.borderValue,
+      radius: flushPanelRadius.radiusValue,
+      label: themed.label,
+    },
+    metadata: {
+      frameRole: "panel frame",
+      responsiveBehavior: "resizable desktop width between minimum and available container width; single width, optional double width, and mobile full-screen inline size below the governed mobile breakpoint",
+      scrollBehavior: "desktop scroll ownership is selected by the consuming pattern; mobile page-scroll panels expand to content height",
+      theme,
+      accessibility: "Scroll ownership must not trap keyboard focus or hide controls from normal navigation.",
+    },
+    useCaseInstructions: [
+      "Use for reusable panel containers such as index panels and entity body panels.",
+      "Do not use for item surfaces, cards, page shells, app-local sidebars, or arbitrary route wrappers.",
+      "Mobile full-screen behavior belongs to the consuming pattern using this token, not to the token itself.",
+    ],
+  };
+}
+
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
   tokenType: "panel-frame",
@@ -75,56 +155,7 @@ export const tokenDefinitionV1 = {
       relationship: "derived-from",
     },
   ],
-  variants: [
-    {
-      id: "panel-frame-default",
-      tokenName: "--panel-frame",
-      value: {
-        frameRole: "panel frame",
-        backgroundValue: surface,
-        foregroundValue: "#111827",
-        borderValue: border,
-        radiusValue: flushPanelRadius.radiusValue,
-        paddingBlockValue: "0.5rem",
-        paddingInlineValue: "0.5rem",
-        gapValue: "0.75rem",
-        minInlineSize: "10rem",
-        standardInlineSize: "13rem",
-        doubleInlineSize: "26rem",
-        maxInlineSize: "100%",
-        mobileInlineSize: "100vw",
-        mobileBreakpointValue: "44rem",
-        maxBlockSize: "32rem",
-        scrollBehavior: "desktop panels may own internal scrolling; mobile panels may expand to screen width and scroll with page when the pattern selects page-scroll placement",
-      },
-      derivation: {
-        sourceTokenName: flushPanelRadius.tokenName,
-        sourceValue: flushPanelRadius.radiusValue,
-        formulaOrMapping: "panel radius derives from the signed flush panel corner token; width, padding, surface, and scroll values are generic panel frame decisions",
-        renderedValue: "10rem min / 13rem standard / 26rem double / 100% available max / 100vw below 44rem",
-      },
-      preview: {
-        kind: "surface-card",
-        sample: "Panel",
-        background: surface,
-        foreground: "#111827",
-        border,
-        radius: flushPanelRadius.radiusValue,
-        label: "Panel frame",
-      },
-      metadata: {
-        frameRole: "panel frame",
-        responsiveBehavior: "resizable desktop width between minimum and available container width; single width, optional double width, and mobile full-screen inline size below the governed mobile breakpoint",
-        scrollBehavior: "desktop scroll ownership is selected by the consuming pattern; mobile page-scroll panels expand to content height",
-        accessibility: "Scroll ownership must not trap keyboard focus or hide controls from normal navigation.",
-      },
-      useCaseInstructions: [
-        "Use for reusable panel containers such as index panels and entity body panels.",
-        "Do not use for item surfaces, cards, page shells, app-local sidebars, or arbitrary route wrappers.",
-        "Mobile full-screen behavior belongs to the consuming pattern using this token, not to the token itself.",
-      ],
-    },
-  ],
+  variants: [panelVariant("original"), panelVariant("dark"), panelVariant("desert")],
 };
 
 export const variants = tokenDefinitionV1.variants;
@@ -153,7 +184,7 @@ function toPageVariant(variant) {
     sourceTokenName: variant.derivation.sourceTokenName,
     sourceValue: variant.derivation.sourceValue,
     formulaOrMapping: variant.derivation.formulaOrMapping,
-    theme: "all",
+    theme: variant.metadata.theme,
     accessibility: variant.metadata.accessibility,
     preview: variant.preview,
     usage: [
@@ -172,7 +203,7 @@ export const panelFrameTokenSpec = {
   tokenType: "panel-frame",
   title: tokenDefinitionV1.page.title,
   description: tokenDefinitionV1.page.description,
-  variantSectionDescription: "This variant governs generic panel shell values.",
+  variantSectionDescription: "These variants govern generic panel shell values for each supported theme.",
   tokenTypeTemplate,
   summaryPanels: [
     {

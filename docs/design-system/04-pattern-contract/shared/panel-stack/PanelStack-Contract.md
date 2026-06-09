@@ -49,6 +49,10 @@ assistive-technology navigation.
 The consuming caller may choose `left` or `right` origin and the active panel.
 The pattern does not choose product routing or step state.
 
+The consuming caller may also pass a signed theme name. `panel-stack` must
+forward that theme to each `panel-surface-control` child instead of owning panel
+surface colors itself.
+
 ## Allowed States
 
 Only include states that change composition behavior or accessibility posture.
@@ -59,6 +63,7 @@ Only include states that change composition behavior or accessibility posture.
 | `mobile` | Active panel overlays covered panels; covered panels are inert through the primitive. |
 | `left` origin | Stack grows from the left edge. |
 | `right` origin | Stack grows from the right edge. |
+| `original`, `dark`, or `desert` theme | Each child panel resolves the matching `panel-frame` variant through `panel-surface-control`. |
 
 ## Accessibility Contract
 

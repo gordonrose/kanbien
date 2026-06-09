@@ -8,9 +8,9 @@ Rendered view: `/design-system/default/primitives/card-list-select`
 
 ## Proof Scope
 
-The default proof renders the shared `card-list-select` primitive using signed Layer 2 token seams for choice frames, choice layout, state affordances, typography, focus, target size, and tooltip disclosure.
+The default proof renders the shared `card-list-select` primitive using signed Layer 2 token seams for choice frames, choice layout, state affordances, typography, focus, target size, and tooltip disclosure. Focus-only keyboard instruction disclosure is delegated to the shared `focus-instruction-disclosure` primitive.
 
-The proof covers visibility and priority variants, option subtext on/off, group subtext on/off, 1-4 requested columns, RTL, theme variants, and constrained-width truncation.
+The proof covers visibility and priority variants, glyph-and-text versus text-only state affordance presentation, option subtext on/off, group subtext on/off, 1-4 requested columns, RTL, theme variants, and constrained-width truncation.
 
 ## Evidence
 

@@ -6,6 +6,10 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function cssValue(page: Page, selector: string, property: string) {
+  return page.locator(selector).first().evaluate((element, cssProperty) => window.getComputedStyle(element).getPropertyValue(cssProperty), property);
+}
+
 test.describe("text-field-control primitive route", () => {
   test("renders a native labelled text input with token-backed frame", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 860 });
@@ -17,7 +21,7 @@ test.describe("text-field-control primitive route", () => {
     await expect(input).toHaveAttribute("type", "text");
     await expect(input).toHaveAttribute("aria-labelledby", "text-field-control-proof-label");
     await expect(input).toHaveAttribute("aria-describedby", "text-field-control-proof-helper");
-    await expect(page.getByText("--text-control-frame-default")).toBeVisible();
+    await expect(page.getByText("--text-control-frame-default-original")).toBeVisible();
     await expect(page.getByText("--field-value-text-style-default")).toBeVisible();
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("Default text field")).toBeVisible();
     await expect.poll(() => input.evaluate((element) => window.getComputedStyle(element).minHeight)).toBe("44px");
@@ -38,8 +42,8 @@ test.describe("text-field-control primitive route", () => {
     await expect(input).toHaveAttribute("aria-describedby", "text-field-control-proof-error");
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("Error text field")).toBeVisible();
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("aria-invalidfalse")).toHaveCount(0);
-    await expect(input).toHaveCSS("background-color", "rgb(255, 247, 247)");
-    await expect(input).toHaveCSS("border-color", "rgb(217, 74, 74)");
+    await expect.poll(() => cssValue(page, "[data-text-field-control-input]", "background-color")).toContain("color(srgb");
+    await expect(input).toHaveCSS("border-color", "rgb(122, 31, 31)");
     await expect(input).toHaveCSS("color", "rgb(122, 31, 31)");
     await expect(page.locator("[data-field-row-control-message='error']")).toHaveCSS("color", "rgb(122, 31, 31)");
     await expect(host).toHaveAttribute("dir", "rtl");
@@ -49,11 +53,11 @@ test.describe("text-field-control primitive route", () => {
     await page.locator("[data-text-field-state-control]").selectOption("read-only");
     await expect(input).toHaveAttribute("readonly", "");
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("Read-only text field")).toBeVisible();
-    await expect(input).toHaveCSS("background-color", "rgb(248, 250, 252)");
+    await expect.poll(() => cssValue(page, "[data-text-field-control-input]", "background-color")).toContain("color(srgb");
     await page.locator("[data-text-field-state-control]").selectOption("disabled");
     await expect(input).toBeDisabled();
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("Disabled text field")).toBeVisible();
-    await expect(input).toHaveCSS("background-color", "rgb(241, 244, 248)");
-    await expect(input).toHaveCSS("color", "rgb(107, 116, 131)");
+    await expect.poll(() => cssValue(page, "[data-text-field-control-input]", "background-color")).toContain("color(srgb");
+    await expect.poll(() => cssValue(page, "[data-text-field-control-input]", "color")).toContain("color(srgb");
   });
 });

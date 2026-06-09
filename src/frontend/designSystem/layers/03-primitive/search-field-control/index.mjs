@@ -47,8 +47,8 @@ function tokenDependenciesForState(theme, state) {
   const textControlState = state === "disabled" ? "disabled" : state === "error" ? "error" : "default";
   const textControlFrame = findVariant(
     textControlFrameTokenSpec,
-    (variant) => variant.id === `text-control-frame-${textControlState}`,
-    `search-field-control requires the signed text-control-frame token for ${textControlState}.`,
+    (variant) => variant.id === `text-control-frame-${textControlState}-${theme}`,
+    `search-field-control requires the signed text-control-frame token for ${textControlState} in ${theme}.`,
   );
   const fieldValueTextStyle = findVariant(
     fieldValueTextStyleTokenSpec,

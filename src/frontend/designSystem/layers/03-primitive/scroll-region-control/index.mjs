@@ -111,6 +111,7 @@ export function scrollRegionControlPrimitive(options = {}) {
     styleVars: {
       "--primitive-scroll-region-max-block-size": maxBlockSize,
       "--primitive-scrollbar-width": tokens.scrollbarSkin.scrollbarWidthValue,
+      "--primitive-scrollbar-gutter-inline-size": tokens.scrollbarSkin.scrollbarGutterInlineSizeValue,
       "--primitive-scrollbar-thumb": tokens.scrollbarSkin.scrollbarThumbValue,
       "--primitive-scrollbar-track": tokens.scrollbarSkin.scrollbarTrackValue,
       "--primitive-scrollbar-radius": tokens.scrollbarSkin.scrollbarRadiusValue,

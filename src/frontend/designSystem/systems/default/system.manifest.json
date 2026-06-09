@@ -65,6 +65,12 @@
       "implementationExport": "errorTextStyleTokenSpec",
       "pageRoute": "/design-system/default/tokens/error-text-style"
     },
+    "tokens.feedback-text-style": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/feedback-text-style/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/feedbackTextStyle.tokens.mjs",
+      "implementationExport": "feedbackTextStyleTokenSpec",
+      "pageRoute": "/design-system/default/tokens/feedback-text-style"
+    },
     "tokens.field-container-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/field-container-frame/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/fieldContainerFrame.tokens.mjs",
@@ -196,6 +202,12 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/panelStackPlacement.tokens.mjs",
       "implementationExport": "panelStackPlacementTokenSpec",
       "pageRoute": "/design-system/default/tokens/panel-stack-placement"
+    },
+    "tokens.drawer-overlay-placement": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/drawer-overlay-placement/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/drawerOverlayPlacement.tokens.mjs",
+      "implementationExport": "drawerOverlayPlacementTokenSpec",
+      "pageRoute": "/design-system/default/tokens/drawer-overlay-placement"
     },
     "tokens.page-header-structure": {
       "contractModule": "src/frontend/designSystem/layers/02-token/page-header-structure/contract.mjs",

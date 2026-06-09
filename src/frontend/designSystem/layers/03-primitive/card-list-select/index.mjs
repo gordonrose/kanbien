@@ -7,11 +7,16 @@ import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/s
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
 import { tooltipSurfaceTokenSpec } from "../../02-token/tooltip-surface/systems/default.mjs";
 import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/systems/default.mjs";
+import {
+  attachFocusInstructionDisclosurePrimitiveController,
+  renderFocusInstructionDisclosurePrimitive,
+} from "../focus-instruction-disclosure/index.mjs";
 
 const primitiveName = "card-list-select";
 const supportedThemes = new Set(["original", "dark", "desert"]);
 const supportedVariants = new Set(["visibility", "priority"]);
 const allowedStates = new Set(["default", "disabled-group", "disabled-option", "error"]);
+const allowedAffordancePresentations = new Set(["glyph-and-text", "text-only"]);
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -183,6 +188,7 @@ export const cardListSelectPrimitiveContract = {
   supportedThemes: Array.from(supportedThemes),
   supportedVariants: Array.from(supportedVariants),
   allowedStates: Array.from(allowedStates),
+  allowedAffordancePresentations: Array.from(allowedAffordancePresentations),
   requiredTokens: [
     "choice-option-frame",
     "choice-group-layout",
@@ -197,7 +203,7 @@ export const cardListSelectPrimitiveContract = {
   eventName: "card-list-select:change",
   consumerRules: [
     "Consumers must use this primitive for governed multi-select card choices.",
-    "Consumers must not reconstruct checkbox semantics, priority ranking, state-affordance slots, responsive columns, or text-disclosure behavior locally.",
+    "Consumers must not reconstruct checkbox semantics, priority ranking, state-affordance presentation, responsive columns, or text-disclosure behavior locally.",
     "Consumers must not use this primitive for radio groups, dropdowns, navigation, workflow builders, or app adoption by itself.",
   ],
 };
@@ -213,6 +219,7 @@ export function cardListSelectPrimitive(options = {}) {
   const state = options.state ?? "default";
   const columns = Number(options.columns ?? 2);
   const legendPresentation = options.legendPresentation ?? "visible";
+  const affordancePresentation = options.affordancePresentation ?? "glyph-and-text";
   const normalizedOptions = normalizeOptions(options);
   const selectedValues = Array.from(new Set(Array.isArray(options.selectedValues) ? options.selectedValues : []));
   const priorityOrder = compactPriorityOrder(options.priorityOrder ?? selectedValues, normalizedOptions);
@@ -225,6 +232,7 @@ export function cardListSelectPrimitive(options = {}) {
   assertString(label, "label");
   assertString(variant, "variant");
   assertString(state, "state");
+  assertString(affordancePresentation, "affordancePresentation");
 
   if (systemKey !== "default") {
     throw new RangeError(`card-list-select has no system proof for "${systemKey}".`);
@@ -244,6 +252,9 @@ export function cardListSelectPrimitive(options = {}) {
   if (!["visible", "visually-hidden"].includes(legendPresentation)) {
     throw new RangeError('card-list-select legendPresentation must be "visible" or "visually-hidden".');
   }
+  if (!allowedAffordancePresentations.has(affordancePresentation)) {
+    throw new RangeError('card-list-select affordancePresentation must be "glyph-and-text" or "text-only".');
+  }
 
   const tokens = tokenDependenciesFor({ theme, columns });
   const invalid = state === "error";
@@ -262,6 +273,7 @@ export function cardListSelectPrimitive(options = {}) {
     state,
     columns,
     legendPresentation,
+    affordancePresentation,
     options: normalizedOptions,
     selectedValues,
     priorityOrder,
@@ -305,6 +317,7 @@ export function cardListSelectPrimitive(options = {}) {
       "data-card-list-select-theme": theme,
       "data-card-list-select-columns-requested": String(columns),
       "data-card-list-select-legend-presentation": legendPresentation,
+      "data-card-list-select-affordance-presentation": affordancePresentation,
       "aria-describedby": descriptionIds.length > 0 ? descriptionIds.join(" ") : null,
       "aria-invalid": invalid ? "true" : null,
       disabled: state === "disabled-group" ? true : null,
@@ -419,6 +432,7 @@ export function renderCardListSelectPrimitive(options = {}) {
       const checked = spec.variant === "priority" ? spec.priorityOrder.includes(option.value) : spec.selectedValues.includes(option.value);
       const optionState = optionDisabled ? "disabled" : checked ? "selected" : spec.state === "error" ? "error" : "default";
       const tooltipId = `${optionId}-tooltip`;
+      const keyboardHintId = `${optionId}-keyboard-hint`;
       const inputAttributes = {
         id: optionId,
         class: "ds-card-list-select-input",
@@ -428,7 +442,7 @@ export function renderCardListSelectPrimitive(options = {}) {
         checked,
         disabled: optionDisabled ? true : null,
         "aria-invalid": spec.state === "error" ? "true" : null,
-        "aria-describedby": spec.ids.describedBy || null,
+        "aria-describedby": [spec.ids.describedBy, keyboardHintId].filter(Boolean).join(" ") || null,
         "data-card-list-select-input": "",
       };
 
@@ -436,12 +450,13 @@ export function renderCardListSelectPrimitive(options = {}) {
         <div
           class="ds-card-list-select-option"
           data-card-list-select-option
+          data-focus-instruction-disclosure-host
           data-card-list-select-option-state="${escapeHtml(optionState)}"
           data-card-list-select-option-value="${escapeHtml(option.value)}"
         >
           <label class="ds-card-list-select-option-label" for="${escapeHtml(optionId)}">
             <input ${toAttributeString(inputAttributes)} />
-            ${renderOptionGlyph(optionGlyphSemantic(spec, option))}
+            ${spec.affordancePresentation === "glyph-and-text" ? renderOptionGlyph(optionGlyphSemantic(spec, option)) : ""}
             <span class="ds-card-list-select-option-copy">
               <span class="ds-card-list-select-text" data-card-list-select-disclosure-source>${escapeHtml(option.label)}</span>
               ${
@@ -452,6 +467,12 @@ export function renderCardListSelectPrimitive(options = {}) {
             </span>
             <span class="ds-card-list-select-state-text" data-card-list-select-state-text>${escapeHtml(optionStateText(spec, option))}</span>
           </label>
+          ${renderFocusInstructionDisclosurePrimitive({
+            systemKey: spec.systemKey,
+            theme: spec.theme,
+            id: keyboardHintId,
+            text: "Press Space to select or deselect this option.",
+          })}
           <span id="${escapeHtml(tooltipId)}" class="ds-card-list-select-tooltip" role="tooltip" data-card-list-select-tooltip>${escapeHtml(
             [option.label, option.supportingText].filter(Boolean).join(" "),
           )}</span>
@@ -526,27 +547,30 @@ export function attachCardListSelectPrimitiveController(root = document) {
     group.dataset.cardListSelectColumnsRendered = String(rendered);
   }
 
-  function positionTooltip(option) {
-    const tooltip = option.querySelector("[data-card-list-select-tooltip]");
-    if (!(tooltip instanceof HTMLElement)) {
+  function positionFloatingDisclosure(option, disclosure) {
+    if (!(disclosure instanceof HTMLElement)) {
       return;
     }
     const viewport = option.ownerDocument?.defaultView;
     const optionBox = option.getBoundingClientRect();
-    const tooltipBox = tooltip.getBoundingClientRect();
+    const disclosureBox = disclosure.getBoundingClientRect();
     const gutter = 8;
     const fallbackWidth = Math.min(320, Math.max(160, optionBox.width));
-    const tooltipWidth = tooltipBox.width || fallbackWidth;
-    const tooltipHeight = tooltipBox.height || 48;
+    const disclosureWidth = disclosureBox.width || fallbackWidth;
+    const disclosureHeight = disclosureBox.height || 48;
     const viewportWidth = viewport?.innerWidth ?? 0;
     const viewportHeight = viewport?.innerHeight ?? 0;
-    const aboveTop = optionBox.top - tooltipHeight - gutter;
+    const aboveTop = optionBox.top - disclosureHeight - gutter;
     const belowTop = optionBox.bottom + gutter;
-    const top = aboveTop >= gutter ? aboveTop : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter));
-    const left = Math.min(Math.max(optionBox.left, gutter), Math.max(gutter, viewportWidth - tooltipWidth - gutter));
+    const top = aboveTop >= gutter ? aboveTop : Math.min(belowTop, Math.max(gutter, viewportHeight - disclosureHeight - gutter));
+    const left = Math.min(Math.max(optionBox.left, gutter), Math.max(gutter, viewportWidth - disclosureWidth - gutter));
 
-    tooltip.style.setProperty("--primitive-card-list-tooltip-top", `${Math.round(top)}px`);
-    tooltip.style.setProperty("--primitive-card-list-tooltip-left", `${Math.round(left)}px`);
+    disclosure.style.setProperty("--primitive-card-list-floating-top", `${Math.round(top)}px`);
+    disclosure.style.setProperty("--primitive-card-list-floating-left", `${Math.round(left)}px`);
+  }
+
+  function positionTooltip(option) {
+    positionFloatingDisclosure(option, option.querySelector("[data-card-list-select-tooltip]"));
   }
 
   function setTooltipOpen(option, open) {
@@ -637,6 +661,7 @@ export function attachCardListSelectPrimitiveController(root = document) {
       .map((input) => input.value)
       .join(",");
     applyDeclaredStyles(group);
+    attachFocusInstructionDisclosurePrimitiveController(group);
     updateColumns(group);
     updateOptionStates(group);
 
@@ -665,8 +690,12 @@ export function attachCardListSelectPrimitiveController(root = document) {
       option.addEventListener("pointerenter", () => setTooltipOpen(option, true));
       option.addEventListener("pointerleave", () => setTooltipOpen(option, false));
       if (input instanceof HTMLInputElement) {
-        input.addEventListener("focus", () => setTooltipOpen(option, true));
-        input.addEventListener("blur", () => setTooltipOpen(option, false));
+        input.addEventListener("focus", () => {
+          setTooltipOpen(option, true);
+        });
+        input.addEventListener("blur", () => {
+          setTooltipOpen(option, false);
+        });
         input.addEventListener("keydown", (event) => {
           if (event.key === "Escape") {
             event.preventDefault();

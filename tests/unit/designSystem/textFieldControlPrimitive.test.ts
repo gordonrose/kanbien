@@ -22,7 +22,7 @@ describe("text-field-control primitive", () => {
         describedBy: "text-field-test-helper",
       },
       tokenDependencies: {
-        textControlFrame: { variantId: "text-control-frame-default" },
+        textControlFrame: { variantId: "text-control-frame-default-original" },
         fieldValueTextStyle: { variantId: "field-value-text-style-default" },
         minimumTargetSize: { variantId: "target-size-interactive-all" },
       },
@@ -44,23 +44,29 @@ describe("text-field-control primitive", () => {
 
   it("maps state to native attributes and rejects unsupported states", () => {
     expect(textFieldControlPrimitive({ state: "required" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-required",
+      variantId: "text-control-frame-required-original",
     });
     expect(renderTextFieldControlPrimitive({ state: "required" })).toContain("required");
     expect(textFieldControlPrimitive({ state: "read-only" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-read-only",
+      variantId: "text-control-frame-read-only-original",
     });
     expect(renderTextFieldControlPrimitive({ state: "read-only" })).toContain("readonly");
     expect(textFieldControlPrimitive({ state: "disabled" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-disabled",
+      variantId: "text-control-frame-disabled-original",
     });
     expect(renderTextFieldControlPrimitive({ state: "disabled" })).toContain("disabled");
     expect(textFieldControlPrimitive({ state: "error" }).tokenDependencies.textControlFrame).toMatchObject({
-      variantId: "text-control-frame-error",
+      variantId: "text-control-frame-error-original",
     });
     expect(renderTextFieldControlPrimitive({ state: "error", errorText: "Error" })).toContain('aria-invalid="true"');
     expect(() => textFieldControlPrimitive({ state: "textarea" })).toThrow(
       'text-field-control does not support state "textarea".',
     );
+  });
+
+  it("selects text-control frame tokens by theme", () => {
+    expect(textFieldControlPrimitive({ theme: "dark" }).tokenDependencies.textControlFrame).toMatchObject({
+      variantId: "text-control-frame-default-dark",
+    });
   });
 });

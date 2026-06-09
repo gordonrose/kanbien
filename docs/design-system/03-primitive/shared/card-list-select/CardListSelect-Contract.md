@@ -29,6 +29,15 @@ The primitive may consume only signed Layer 2 token seams:
 
 If any dependency is missing for a design system, that design system cannot prove or consume this primitive.
 
+## Primitive Dependencies
+
+- `focus-instruction-disclosure`
+
+Keyboard instruction copy for option selection must be rendered through the
+shared focus-instruction-disclosure primitive. `card-list-select` owns the
+checkbox behavior and selected-value updates; it must not recreate a local
+keyboard hint surface.
+
 ## Behavior Contract
 
 The primitive must:
@@ -41,8 +50,11 @@ The primitive must:
 - allow 1, 2, 3, or 4 requested columns through `choice-group-layout`
 - support default, disabled group, disabled option, and error visual states through signed `choice-option-frame` variants
 - allow the semantic legend to be visible or visually hidden when a field pattern supplies the visible label
+- allow `glyph-and-text` or `text-only` state-affordance presentation without changing checkbox semantics
 - preserve RTL and constrained-width rendering without overlapping text
 - show text-disclosure tooltip behavior only when rendered text truncates
+- expose a focus-only keyboard instruction for Space selection through
+  `focus-instruction-disclosure`
 
 ## Accessibility Contract
 
@@ -52,12 +64,12 @@ The primitive must preserve:
 - native checkbox focus and keyboard behavior
 - label association for every option
 - `aria-describedby` wiring only for real supporting/error/tooltip descriptions
-- color-independent state through glyph semantics plus trailing state text
+- color-independent state through trailing state text, with optional primitive-owned glyph semantics
 - disabled option and disabled group behavior when exposed
 
 ## Forbidden Local Behavior
 
-Consumers must not reconstruct card-list select markup, checkbox behavior, ranking logic, token CSS variables, text-disclosure behavior, or option state styling locally.
+Consumers must not reconstruct card-list select markup, checkbox behavior, ranking logic, state-affordance presentation, token CSS variables, text-disclosure behavior, or option state styling locally.
 
 This primitive is not approved for dropdowns, radio groups, navigation, workflow builders, or app adoption by itself.
 
