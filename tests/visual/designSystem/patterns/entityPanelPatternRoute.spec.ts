@@ -54,6 +54,31 @@ test.describe("entity panel pattern route", () => {
     await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-toggle-field]")).toBeVisible();
     await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-simple-dropdown-field]")).toBeVisible();
     await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-drawer-select]")).toBeVisible();
+    await page.locator("#entity-panel-proof-accordion-workflows-button").click();
+    await expect(page.locator("#entity-panel-proof-accordion-workflows-panel")).toBeHidden();
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const body = document.querySelector("[data-entity-panel-region='body']");
+          const region = document.querySelector("[data-entity-panel-region='body'] [data-body-region-control]");
+          const scroll = document.querySelector("[data-entity-panel-region='body'] [data-body-region-control-scroll]");
+          const accordion = document.querySelector("[data-entity-panel-region='body'] [data-accordion-group]");
+          if (
+            !(body instanceof HTMLElement) ||
+            !(region instanceof HTMLElement) ||
+            !(scroll instanceof HTMLElement) ||
+            !(accordion instanceof HTMLElement)
+          ) {
+            return Number.POSITIVE_INFINITY;
+          }
+          return Math.max(
+            Math.round(Math.abs(body.getBoundingClientRect().width - region.getBoundingClientRect().width)),
+            Math.round(Math.abs(scroll.getBoundingClientRect().width - accordion.getBoundingClientRect().width)),
+          );
+        }),
+      )
+      .toBeLessThanOrEqual(2);
+    await page.locator("#entity-panel-proof-accordion-workflows-button").click();
     await page.locator("#entity-panel-proof-accordion-workflows-panel [data-drawer-select] [data-count-card-control]").click();
     await expect(page.locator("[data-drawer-select][data-drawer-select-open='true']")).toBeVisible();
     await expect(page.locator("[data-panel-stack]")).toBeVisible();

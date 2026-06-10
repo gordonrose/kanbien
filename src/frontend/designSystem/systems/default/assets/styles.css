@@ -1477,7 +1477,14 @@
 .ds-entity-panel-body .ds-entity-body-panel,
 .ds-entity-panel-body .ds-body-region-control {
   block-size: 100%;
+  inline-size: 100%;
   min-block-size: 0;
+}
+
+.ds-entity-panel-body .ds-body-region-control [data-body-region-control-scroll],
+.ds-entity-panel-body [data-entity-panel-governed-body],
+.ds-entity-panel-body [data-accordion-group] {
+  inline-size: 100%;
 }
 
 .ds-entity-body-panel .ds-body-region-control {
@@ -3948,6 +3955,10 @@
   fill: none;
   transform: rotate(-90deg);
   transition: transform var(--primitive-accordion-motion-duration) var(--primitive-accordion-motion-easing);
+}
+
+[dir="rtl"] .ds-accordion-section-control-indicator {
+  transform: rotate(90deg);
 }
 
 .ds-accordion-section-control[data-accordion-section-control-expanded="true"] .ds-accordion-section-control-indicator {

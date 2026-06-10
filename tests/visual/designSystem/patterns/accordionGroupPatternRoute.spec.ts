@@ -182,6 +182,10 @@ test.describe("accordion group pattern route", () => {
 
     const host = page.locator(".accordion-group-proof-host").first();
     await expect(host).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("#accordion-group-proof-workflows .ds-accordion-section-control-indicator")).toHaveCSS(
+      "transform",
+      "matrix(0, 1, -1, 0, 0, 0)",
+    );
     const longTitle = page.getByRole("button", {
       name: "Identity and source authority accordion section with long governed title text",
     });

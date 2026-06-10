@@ -76,6 +76,10 @@ test.describe("accordion section control primitive route", () => {
     await page.locator("[data-accordion-title-control]").selectOption("long");
     await page.locator("[data-accordion-theme-control]").selectOption("dark");
     await page.locator("[data-accordion-direction-control]").selectOption("rtl");
+    await expect(page.locator("[data-accordion-section-control] .ds-accordion-section-control-indicator")).toHaveCSS(
+      "transform",
+      "matrix(0, 1, -1, 0, 0, 0)",
+    );
     await page.locator("[data-accordion-expanded-control]").selectOption("expanded");
 
     const button = page.getByRole("button", {
