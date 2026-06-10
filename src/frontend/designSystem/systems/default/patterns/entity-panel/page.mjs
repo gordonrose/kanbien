@@ -8,9 +8,9 @@ import {
   renderIndexNavPanelPattern,
 } from "../../../../layers/04-pattern-contract/index-nav-panel/index.mjs";
 import {
-  attachAccordionGroupPatternController,
-  renderAccordionGroupPattern,
-} from "../../../../layers/04-pattern-contract/accordion-group/index.mjs";
+  attachAccordionFormSectionPatternController,
+  renderAccordionFormSectionPattern,
+} from "../../../../layers/04-pattern-contract/accordion-form-section/index.mjs";
 import {
   attachCardListSelectFieldPatternController,
   renderCardListSelectFieldPattern,
@@ -40,10 +40,6 @@ import {
   renderTextareaControlPrimitive,
 } from "../../../../layers/03-primitive/textarea-control/index.mjs";
 import { attachFieldRowControlPrimitiveController } from "../../../../layers/03-primitive/field-row-control/index.mjs";
-import {
-  attachFieldContainerControlPrimitiveController,
-  renderFieldContainerControlPrimitive,
-} from "../../../../layers/03-primitive/field-container-control/index.mjs";
 
 const root = document.querySelector("[data-pattern-proof-root]");
 
@@ -104,34 +100,27 @@ function drawerPendingValues(state) {
   return Array.isArray(state.drawerPendingValues) ? state.drawerPendingValues : drawerCommittedValues(state);
 }
 
-function fieldContainerHtml(id, state, childHtml) {
-  return renderFieldContainerControlPrimitive({
-    id,
-    theme: proofTheme(state),
-    childHtml,
-  });
-}
-
-function identityFieldsHtml(state) {
+function identityFields(state) {
   const theme = proofTheme(state);
-  return `
-    <div class="entity-body-panel-proof-form-grid">
-      ${fieldContainerHtml(
-        "entity-panel-proof-name-container",
-        state,
-        renderTextFieldControlPrimitive({
+  return [
+    {
+      id: "entity-name",
+      label: "Entity name",
+      span: "span-1",
+      contentHtml: renderTextFieldControlPrimitive({
           id: "entity-panel-proof-name",
           label: "Entity name",
           name: "entity-name",
           value: "Organization",
           helperText: "Human-facing entity name displayed in governed surfaces.",
           theme,
-        }),
-      )}
-      ${fieldContainerHtml(
-        "entity-panel-proof-key-container",
-        state,
-        renderTextFieldControlPrimitive({
+      }),
+    },
+    {
+      id: "stable-key",
+      label: "Stable key",
+      span: "span-1",
+      contentHtml: renderTextFieldControlPrimitive({
           id: "entity-panel-proof-key",
           label: "Stable entity key",
           name: "stable-entity-key",
@@ -139,12 +128,13 @@ function identityFieldsHtml(state) {
           state: "read-only",
           helperText: "Stable key is locked once the entity definition exists.",
           theme,
-        }),
-      )}
-      ${fieldContainerHtml(
-        "entity-panel-proof-description-container",
-        state,
-        renderTextareaControlPrimitive({
+      }),
+    },
+    {
+      id: "description",
+      label: "Description fallback",
+      span: "span-2",
+      contentHtml: renderTextareaControlPrimitive({
           id: "entity-panel-proof-description",
           label: "Description fallback",
           name: "description-fallback",
@@ -153,21 +143,20 @@ function identityFieldsHtml(state) {
           helperText: "Textarea growth is governed by the textarea-control primitive.",
           growthVariant: "multi-line",
           theme,
-        }),
-      )}
-    </div>
-  `;
+      }),
+    },
+  ];
 }
 
-function workflowFieldsHtml(state) {
+function workflowFields(state) {
   const theme = proofTheme(state);
   const pendingValues = drawerPendingValues(state);
-  return `
-    <div class="entity-body-panel-proof-form-stack">
-      ${fieldContainerHtml(
-        "entity-panel-proof-feature-status-container",
-        state,
-        renderRadioSimpleSelectFieldPattern({
+  return [
+    {
+      id: "feature-status",
+      label: "Feature status",
+      span: "span-2",
+      contentHtml: renderRadioSimpleSelectFieldPattern({
           id: "entity-panel-proof-feature-status",
           name: "feature-status",
           label: "Feature status",
@@ -180,24 +169,26 @@ function workflowFieldsHtml(state) {
             { value: "planned", label: "Planned" },
             { value: "unassigned", label: "Not yet assigned" },
           ],
-        }),
-      )}
-      ${fieldContainerHtml(
-        "entity-panel-proof-workflow-toggle-container",
-        state,
-        renderToggleFieldPattern({
+      }),
+    },
+    {
+      id: "workflow-toggle",
+      label: "Workflow automation",
+      span: "span-1",
+      contentHtml: renderToggleFieldPattern({
           id: "entity-panel-proof-workflow-toggle",
           name: "workflow-automation",
           label: "Enable workflow automation",
           helperText: "Boolean toggle behavior is governed by toggle-field.",
           checked: true,
           theme,
-        }),
-      )}
-      ${fieldContainerHtml(
-        "entity-panel-proof-page-template-container",
-        state,
-        renderSimpleDropdownFieldPattern({
+      }),
+    },
+    {
+      id: "page-template",
+      label: "Page template",
+      span: "span-1",
+      contentHtml: renderSimpleDropdownFieldPattern({
           id: "entity-panel-proof-page-template",
           name: "page-template",
           label: "Page template",
@@ -209,12 +200,13 @@ function workflowFieldsHtml(state) {
             { value: "record_management_list_centric", label: "Record management list centric" },
             { value: "nested_record", label: "Nested record" },
           ],
-        }),
-      )}
-      ${fieldContainerHtml(
-        "entity-panel-proof-owning-feature-container",
-        state,
-        renderDrawerSelectFieldPattern({
+      }),
+    },
+    {
+      id: "owning-feature",
+      label: "Owning feature",
+      span: "span-2",
+      contentHtml: renderDrawerSelectFieldPattern({
           id: "entity-panel-proof-owning-feature",
           label: "Owning feature",
           helperText: "Choose the feature that owns this entity once it exists.",
@@ -247,17 +239,18 @@ function workflowFieldsHtml(state) {
               supportingText: "Owns list, drawer, and page display posture.",
             },
           ],
-        }),
-      )}
-    </div>
-  `;
+      }),
+    },
+  ];
 }
 
-function displayFieldsHtml(state) {
-  return fieldContainerHtml(
-    "entity-panel-proof-list-display-container",
-    state,
-    renderCardListSelectFieldPattern({
+function displayFields(state) {
+  return [
+    {
+      id: "list-display",
+      label: "List display",
+      span: "span-2",
+      contentHtml: renderCardListSelectFieldPattern({
       id: "entity-panel-proof-list-display",
       name: "list-display",
       label: "List display",
@@ -274,38 +267,47 @@ function displayFieldsHtml(state) {
         { value: "updated", label: "Updated at" },
       ],
     }),
-  );
+    },
+  ];
 }
 
 function governedAccordionBodyHtml(state) {
   return `
     <div class="entity-body-panel-proof-form" data-entity-panel-governed-body>
-      ${renderAccordionGroupPattern({
+      ${renderAccordionFormSectionPattern({
         id: "entity-panel-proof-accordion",
         label: "Entity panel governed body sections",
         headingLevel: 2,
         theme: proofTheme(state),
+        viewport: state.viewportMode === "mobile" ? "mobile" : "desktop",
+        widthPosture: state.viewportMode === "mobile" ? "narrow" : "desktop",
         tone: "neutral",
         sections: [
           {
             value: "identity",
             title: "Identity",
             supportingText: "Entity name, label keys, and source authority fields.",
+            formTitle: "Primary details",
+            formSupportingText: "Human-facing identity fields for the entity definition.",
             expanded: !state.drawerOpen,
-            contentHtml: identityFieldsHtml(state),
+            fields: identityFields(state),
           },
           {
             value: "workflows",
             title: "Workflows",
             supportingText: "Governed selectors and boolean controls.",
+            formTitle: "Workflow controls",
+            formSupportingText: "Workflow builder remains postponed; this section proves simpler governed controls.",
             expanded: Boolean(state.drawerOpen),
-            contentHtml: workflowFieldsHtml(state),
+            fields: workflowFields(state),
           },
           {
             value: "display",
             title: "List display",
             supportingText: "Governed card-list priority selection.",
-            contentHtml: displayFieldsHtml(state),
+            formTitle: "Display controls",
+            formSupportingText: "Drawer and card-list fields keep their own interaction contracts.",
+            fields: displayFields(state),
           },
         ],
       })}
@@ -540,7 +542,7 @@ function renderPage(state) {
               <li>The header is rendered through the governed <code>panel-header-control</code> primitive.</li>
               <li>The embedded secondary index is rendered through the governed <code>index-nav-panel</code> pattern.</li>
               <li>The body region is rendered through the governed <code>entity-body-panel</code> pattern.</li>
-              <li>The body content proof composes the governed <code>accordion-group</code> pattern and governed form-control seams.</li>
+              <li>The body content proof composes the governed <code>accordion-form-section</code> pattern and governed form-control seams.</li>
             </ul>
           </article>
           <article class="token-spec-note">
@@ -559,7 +561,6 @@ function renderPage(state) {
 
   attachEntityPanelPatternController(root);
   attachIndexNavPanelPatternController(root);
-  attachFieldContainerControlPrimitiveController(root);
   attachFieldRowControlPrimitiveController(root);
   attachTextFieldControlPrimitiveController(root);
   attachTextareaControlPrimitiveController(root);
@@ -568,7 +569,7 @@ function renderPage(state) {
   attachToggleFieldPatternController(root);
   attachCardListSelectFieldPatternController(root);
   attachDrawerSelectFieldPatternController(root);
-  attachAccordionGroupPatternController(root);
+  attachAccordionFormSectionPatternController(root);
   for (const panel of root.querySelectorAll("[data-entity-panel]")) {
     panel.dataset.entityPanelViewport = state.viewportMode;
   }

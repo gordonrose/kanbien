@@ -33,8 +33,8 @@ loading, component seams, canonical scenarios, templates, or app adoption.
 | Behavior rule | `review-ready`; `docs/design-system/01-behavior-rule/shared/entity-panel/EntityPanel-Behaviour.md` |
 | Token dependency | `panel-frame` is `review-ready` for `default` |
 | Primitive dependency | `panel-header-control`, `icon-button-control`, and `scroll-region-control` are `review-ready` for `default` |
-| Pattern dependency | `index-nav-panel` is `review-ready` for `default` |
-| Hosted controls | `blocked`; body content may be proof-only placeholder until hosted families are governed |
+| Pattern dependency | `index-nav-panel` and `entity-body-panel` are `review-ready` for `default` |
+| Hosted body proof | The default proof may host `accordion-form-section` and governed form-field seams; the entity-panel runtime seam still accepts body HTML rather than owning those child contracts |
 
 ## Composition Contract
 
@@ -123,5 +123,6 @@ Consumers must not copy proof-route markup, recreate panel frame values,
 rebuild header behavior, rebuild secondary index behavior, or invent body
 scroll CSS locally.
 
-Consumers must not treat proof-only body placeholder content as governed form
-or builder controls.
+Consumers must not treat proof-route hosted body content as entity-panel-owned
+form or builder controls. Hosted body content must remain governed by its own
+primitive or pattern contract before it is used as real downstream UI.
