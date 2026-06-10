@@ -37,6 +37,58 @@ function cssVarStyle(styleValues) {
     .join("; ");
 }
 
+function cssLengthToPixels(value, contextElement) {
+  const trimmed = String(value ?? "").trim();
+  if (trimmed.endsWith("px")) {
+    return Number.parseFloat(trimmed) || 0;
+  }
+  if (trimmed.endsWith("rem")) {
+    const win = contextElement.ownerDocument.defaultView;
+    const rootFontSize = Number.parseFloat(win?.getComputedStyle(contextElement.ownerDocument.documentElement).fontSize) || 16;
+    return (Number.parseFloat(trimmed) || 0) * rootFontSize;
+  }
+  return Number.parseFloat(trimmed) || 0;
+}
+
+function updatePageShellOverlayChromeOffset(stack) {
+  const doc = stack.ownerDocument;
+  const win = doc.defaultView;
+  if (!win) {
+    return;
+  }
+
+  const stackStyle = win.getComputedStyle(stack);
+  const fallbackTop = cssLengthToPixels(
+    stackStyle.getPropertyValue("--drawer-overlay-page-shell-block-start") || "0px",
+    stack,
+  );
+  const topNav = doc.querySelector(".design-system-shell > .top-nav, .top-nav");
+  const topNavBottom = topNav instanceof win.HTMLElement ? topNav.getBoundingClientRect().bottom : fallbackTop - win.scrollY;
+  const runtimeTop = Math.max(0, Math.min(fallbackTop, topNavBottom));
+
+  stack.style.setProperty("--pattern-drawer-overlay-runtime-block-start", `${runtimeTop}px`);
+  stack.style.setProperty("--pattern-drawer-overlay-runtime-block-size", `calc(100dvh - ${runtimeTop}px)`);
+  stack.dataset.panelStackShellChromeVisible = runtimeTop > 0 ? "true" : "false";
+}
+
+function attachPageShellOverlayController(stack) {
+  if (stack.dataset.panelStackShellOverlayController === "attached") {
+    updatePageShellOverlayChromeOffset(stack);
+    return;
+  }
+
+  const win = stack.ownerDocument.defaultView;
+  if (!win) {
+    return;
+  }
+
+  stack.dataset.panelStackShellOverlayController = "attached";
+  const update = () => updatePageShellOverlayChromeOffset(stack);
+  update();
+  win.addEventListener("scroll", update, { passive: true });
+  win.addEventListener("resize", update);
+}
+
 function stackPlacementVariant() {
   const variant = panelStackPlacementTokenSpec.variants.find(
     (candidate) => candidate.id === "panel-stack-placement-default",
@@ -230,6 +282,10 @@ export function attachPanelStackPatternController(root = document) {
       if (property && value) {
         stack.style.setProperty(property, value);
       }
+    }
+
+    if (stack.closest("[data-drawer-select-overlay='page-shell']")) {
+      attachPageShellOverlayController(stack);
     }
   }
 

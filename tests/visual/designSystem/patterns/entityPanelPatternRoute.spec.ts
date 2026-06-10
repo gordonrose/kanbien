@@ -6,6 +6,24 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function pageShellDrawerMetrics(page: Page) {
+  return page.evaluate(() => {
+    const stack = document.querySelector("[data-panel-stack]");
+    const topNav = document.querySelector(".top-nav");
+    if (!(stack instanceof HTMLElement) || !(topNav instanceof HTMLElement)) {
+      throw new Error("Missing panel stack or top nav for page-shell drawer geometry assertion.");
+    }
+    const stackBox = stack.getBoundingClientRect();
+    const topNavBox = topNav.getBoundingClientRect();
+    return {
+      stackTop: Math.round(stackBox.top),
+      stackHeight: Math.round(stackBox.height),
+      topNavBottom: Math.round(topNavBox.bottom),
+      viewportHeight: window.innerHeight,
+    };
+  });
+}
+
 test.describe("entity panel pattern route", () => {
   test("keeps the dedicated entity-body-panel route separate from the entity-panel shell route", async ({ page }) => {
     await page.goto("/design-system/default/patterns/entity-body-panel");
@@ -97,6 +115,25 @@ test.describe("entity panel pattern route", () => {
     await expect(page.locator("#entity-panel-proof-accordion-display-panel [data-card-list-select-field]")).toBeInViewport();
     await page.locator("[data-entity-panel-primary-control]").selectOption("hidden");
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeHidden();
+    await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
+  });
+
+  test("expands page-shell drawer overlay when header chrome scrolls off screen", async ({ page }) => {
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(route);
+
+    await page.locator("#entity-panel-proof-accordion-workflows-button").click();
+    await page.evaluate(() => window.scrollTo(0, 420));
+    await page.locator("#entity-panel-proof-accordion-workflows-panel [data-drawer-select] [data-count-card-control]").click();
+    await expect(page.locator("[data-panel-stack]")).toHaveCSS("position", "fixed");
+    await expect.poll(async () => (await pageShellDrawerMetrics(page)).topNavBottom).toBeLessThanOrEqual(0);
+    await expect.poll(async () => (await pageShellDrawerMetrics(page)).stackTop).toBe(0);
+    await expect
+      .poll(async () => {
+        const metrics = await pageShellDrawerMetrics(page);
+        return Math.abs(metrics.stackHeight - metrics.viewportHeight);
+      })
+      .toBeLessThanOrEqual(2);
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 

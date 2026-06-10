@@ -3522,8 +3522,9 @@
 .ds-drawer-select[data-drawer-select-overlay="page-shell"] .ds-panel-stack {
   position: var(--pattern-drawer-overlay-position);
   inset: var(--pattern-drawer-overlay-inset);
+  inset-block-start: var(--pattern-drawer-overlay-runtime-block-start, var(--drawer-overlay-page-shell-block-start));
   inline-size: var(--pattern-drawer-overlay-inline-size);
-  block-size: var(--pattern-drawer-overlay-block-size);
+  block-size: var(--pattern-drawer-overlay-runtime-block-size, var(--pattern-drawer-overlay-block-size));
   z-index: var(--pattern-drawer-overlay-layer);
   overflow: hidden;
 }
