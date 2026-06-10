@@ -3470,6 +3470,11 @@
   inline-size: min(100%, 26rem);
 }
 
+.accordion-form-section-proof-host[data-accordion-form-section-proof-viewport="mobile"] {
+  inline-size: min(100%, 26rem);
+  scroll-margin-block-start: 5rem;
+}
+
 .ds-drawer-select {
   display: grid;
   min-inline-size: 0;

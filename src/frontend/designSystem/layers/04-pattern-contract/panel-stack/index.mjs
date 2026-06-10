@@ -112,6 +112,7 @@ function attachContainedOverlayBoundaryController(stack, boundary) {
   stack.dataset.panelStackOverlayBoundaryController = "attached";
   const update = () => updateContainedOverlayBoundary(stack, boundary);
   update();
+  win.requestAnimationFrame(() => update());
   win.addEventListener("scroll", update, { passive: true });
   win.addEventListener("resize", update);
 }
