@@ -53,6 +53,13 @@ The consuming caller may also pass a signed theme name. `panel-stack` must
 forward that theme to each `panel-surface-control` child instead of owning panel
 surface colors itself.
 
+When a consumer marks an ancestor as `data-drawer-overlay-boundary`,
+`panel-stack` must constrain page-shell drawer overlays to that ancestor's
+rendered box. This is allowed for governed proof or composition hosts, such as
+a mobile viewport proof, where the host intentionally stands in for the page
+content area. Without that explicit boundary, page-shell drawer overlays use
+the real shell-preserving placement behavior.
+
 ## Allowed States
 
 Only include states that change composition behavior or accessibility posture.
@@ -83,6 +90,10 @@ Stack adjacency, overlay inset, mobile breakpoint, and layer order come from
 No route-local stack gaps, overlay offsets, z-index literals, panel widths, or
 panel surface values are allowed.
 
+Contained overlay boundaries are measured from the declared host's rendered
+box. Consumers may opt into that boundary, but they must not invent replacement
+overlay dimensions or drawer placement values locally.
+
 ## Public Consumption Boundary
 
 | Field | Value |
@@ -109,7 +120,7 @@ seam.
 | behavior | Unit proof must show desktop all-active posture and mobile active/covered posture. |
 | accessibility | Proof must show covered panels use the primitive covered state on mobile. |
 | token consumption | Unit proof must show `panel-stack-placement` is consumed directly and panel visuals come through `panel-surface-control`. |
-| rendered verification | Proof route must expose origin, viewport posture, active panel, and panel count controls. |
+| rendered verification | Proof route must expose origin, viewport posture, active panel, and panel count controls; consuming proof routes that declare contained overlay boundaries must verify the drawer fits that rendered boundary. |
 
 ## Rendered View
 

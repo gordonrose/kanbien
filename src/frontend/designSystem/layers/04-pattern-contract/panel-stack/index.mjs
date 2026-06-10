@@ -89,6 +89,33 @@ function attachPageShellOverlayController(stack) {
   win.addEventListener("resize", update);
 }
 
+function updateContainedOverlayBoundary(stack, boundary) {
+  const box = boundary.getBoundingClientRect();
+  stack.style.setProperty("--pattern-drawer-overlay-boundary-block-start", `${Math.max(0, box.top)}px`);
+  stack.style.setProperty("--pattern-drawer-overlay-boundary-inline-start", `${Math.max(0, box.left)}px`);
+  stack.style.setProperty("--pattern-drawer-overlay-boundary-inline-size", `${Math.max(0, box.width)}px`);
+  stack.style.setProperty("--pattern-drawer-overlay-boundary-block-size", `${Math.max(0, box.height)}px`);
+  stack.dataset.panelStackOverlayBoundary = "contained";
+}
+
+function attachContainedOverlayBoundaryController(stack, boundary) {
+  if (stack.dataset.panelStackOverlayBoundaryController === "attached") {
+    updateContainedOverlayBoundary(stack, boundary);
+    return;
+  }
+
+  const win = stack.ownerDocument.defaultView;
+  if (!win) {
+    return;
+  }
+
+  stack.dataset.panelStackOverlayBoundaryController = "attached";
+  const update = () => updateContainedOverlayBoundary(stack, boundary);
+  update();
+  win.addEventListener("scroll", update, { passive: true });
+  win.addEventListener("resize", update);
+}
+
 function stackPlacementVariant() {
   const variant = panelStackPlacementTokenSpec.variants.find(
     (candidate) => candidate.id === "panel-stack-placement-default",
@@ -284,7 +311,10 @@ export function attachPanelStackPatternController(root = document) {
       }
     }
 
-    if (stack.closest("[data-drawer-select-overlay='page-shell']")) {
+    const overlayBoundary = stack.closest("[data-drawer-overlay-boundary]");
+    if (overlayBoundary instanceof HTMLElement) {
+      attachContainedOverlayBoundaryController(stack, overlayBoundary);
+    } else if (stack.closest("[data-drawer-select-overlay='page-shell']")) {
       attachPageShellOverlayController(stack);
     }
   }

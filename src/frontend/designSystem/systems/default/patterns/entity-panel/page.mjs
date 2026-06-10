@@ -480,6 +480,7 @@ function renderPage(state) {
               data-entity-panel-proof-viewport="${escapeHtml(state.viewportMode)}"
               data-entity-panel-proof-active="${escapeHtml(state.mobileActiveRegion)}"
               data-entity-panel-primary-mode="${escapeHtml(state.primaryMode)}"
+              ${state.viewportMode === "mobile" ? 'data-drawer-overlay-boundary="proof-viewport"' : ""}
             >
               ${
                 state.primaryMode !== "hidden"
@@ -504,7 +505,7 @@ function renderPage(state) {
                           : [],
                         widthMode: "standard",
                         mobileMode: "page-scroll",
-                        resizable: true,
+                        resizable: !mobileReview,
                       })}
                     </aside>`
                   : ""

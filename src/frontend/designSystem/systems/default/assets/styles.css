@@ -2127,6 +2127,12 @@
 
 .ds-entity-panel-proof-shell[data-entity-panel-proof-viewport="mobile"][data-entity-panel-proof-active="primary-index"] .ds-entity-panel-proof-primary {
   display: block;
+  inline-size: 100%;
+}
+
+.ds-entity-panel-proof-shell[data-entity-panel-proof-viewport="mobile"][data-entity-panel-proof-active="primary-index"] .ds-entity-panel-proof-primary .ds-index-nav-panel {
+  width: 100%;
+  inline-size: 100%;
 }
 
 .ds-index-nav-panel[data-index-nav-panel-header-mode="hidden"] {
@@ -3529,6 +3535,14 @@
   block-size: var(--pattern-drawer-overlay-runtime-block-size, var(--pattern-drawer-overlay-block-size));
   z-index: var(--pattern-drawer-overlay-layer);
   overflow: hidden;
+}
+
+.ds-drawer-select[data-drawer-select-overlay="page-shell"] .ds-panel-stack[data-panel-stack-overlay-boundary="contained"] {
+  inset: auto;
+  inset-block-start: var(--pattern-drawer-overlay-boundary-block-start);
+  inset-inline-start: var(--pattern-drawer-overlay-boundary-inline-start);
+  inline-size: var(--pattern-drawer-overlay-boundary-inline-size);
+  block-size: var(--pattern-drawer-overlay-boundary-block-size);
 }
 
 .ds-drawer-select[data-drawer-select-overlay="page-shell"] .ds-panel-stack-item {

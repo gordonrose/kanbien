@@ -164,6 +164,45 @@ test.describe("entity panel pattern route", () => {
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 
+  test("contains mobile drawer overlays inside the rendered proof viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+
+    await page.locator("[data-entity-panel-viewport-control]").selectOption("mobile");
+    await page.locator("[data-entity-panel-secondary-header-control]").selectOption("shown");
+    await page.getByRole("button", { name: "Show secondary index" }).click();
+    await page.locator("[data-panel-header-control]").getByRole("button", { name: "Close panel" }).click();
+    await page.getByRole("button", { name: "Identity" }).click();
+    await page.getByRole("button", { name: "Owning Feature" }).click();
+    await expect(page.locator("[data-entity-panel-region='body']")).toHaveCSS("position", "absolute");
+
+    await page.locator("#entity-panel-proof-accordion-workflows-button").click();
+    await page.locator("#entity-panel-proof-owning-feature [data-count-card-control]").click();
+
+    const drawerStack = page.locator("#entity-panel-proof-owning-feature [data-panel-stack]");
+    await expect(drawerStack).toHaveAttribute("data-panel-stack-overlay-boundary", "contained");
+    const mobileOverlayFit = await drawerStack.evaluate((stack) => {
+      const proofSlot = document.querySelector("[data-entity-panel-proof-slot]");
+      if (!(stack instanceof HTMLElement) || !(proofSlot instanceof HTMLElement)) {
+        return { fits: false, stackWidth: 0, viewportWidth: window.innerWidth };
+      }
+
+      const stackBox = stack.getBoundingClientRect();
+      const slotBox = proofSlot.getBoundingClientRect();
+      return {
+        fits:
+          Math.abs(stackBox.top - slotBox.top) <= 2 &&
+          Math.abs(stackBox.left - slotBox.left) <= 2 &&
+          Math.abs(stackBox.width - slotBox.width) <= 2 &&
+          Math.abs(stackBox.height - slotBox.height) <= 2,
+        stackWidth: Math.round(stackBox.width),
+        viewportWidth: window.innerWidth,
+      };
+    });
+    expect(mobileOverlayFit.fits).toBe(true);
+    expect(mobileOverlayFit.stackWidth).toBeLessThan(mobileOverlayFit.viewportWidth);
+  });
+
   test("renders panel close action and optional secondary add action in the correct headers", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
     await page.goto(route);
@@ -294,8 +333,25 @@ test.describe("entity panel pattern route", () => {
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeHidden();
     await expect(page.locator("[data-entity-panel-region='body']")).toBeVisible();
     await expect(page.getByRole("button", { name: "Primary Details" })).not.toHaveAttribute("aria-current", "true");
+
     await page.locator("[data-entity-panel-mobile-active-control]").selectOption("primary-index");
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeVisible();
+    await expect(page.locator("[data-entity-panel-region='primary-index'] [data-index-nav-panel]")).toHaveAttribute(
+      "data-index-nav-panel-resizable",
+      "false",
+    );
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const region = document.querySelector("[data-entity-panel-region='primary-index']");
+          const panel = region?.querySelector("[data-index-nav-panel]");
+          if (!(region instanceof HTMLElement) || !(panel instanceof HTMLElement)) {
+            return Number.POSITIVE_INFINITY;
+          }
+          return Math.round(Math.abs(region.getBoundingClientRect().width - panel.getBoundingClientRect().width));
+        }),
+      )
+      .toBeLessThanOrEqual(2);
     await expect(page.getByText("Context bar and display-settings drawer composition is blocked")).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
