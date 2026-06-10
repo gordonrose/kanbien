@@ -17,3 +17,6 @@ The proof composes multiple `index-nav-item` patterns and exposes controls for
 theme, current item, disabled item posture, item count, and constrained width.
 Those controls exercise signed upstream variants or accessibility-sensitive
 composition behavior.
+
+The proof also reserves the `focus-ring` containment inset around the list
+items so keyboard focus shells remain visible inside panel and scroll hosts.

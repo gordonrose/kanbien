@@ -6,6 +6,29 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function focusRingFitsInside(locator: ReturnType<Page["locator"]>, boundarySelector: string) {
+  return locator.evaluate((element, selector) => {
+    const boundary = element.closest(selector);
+    if (!(element instanceof HTMLElement) || !(boundary instanceof HTMLElement)) {
+      return false;
+    }
+
+    const elementBox = element.getBoundingClientRect();
+    const boundaryBox = boundary.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const outlineWidth = Number.parseFloat(style.outlineWidth) || 0;
+    const outlineOffset = Number.parseFloat(style.outlineOffset) || 0;
+    const focusInset = outlineWidth + Math.max(outlineOffset, 0);
+
+    return (
+      elementBox.top - focusInset >= boundaryBox.top &&
+      elementBox.left - focusInset >= boundaryBox.left &&
+      elementBox.right + focusInset <= boundaryBox.right &&
+      elementBox.bottom + focusInset <= boundaryBox.bottom
+    );
+  }, boundarySelector);
+}
+
 test.describe("index nav pattern route", () => {
   test("renders primary and secondary panels with add actions", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
@@ -19,6 +42,10 @@ test.describe("index nav pattern route", () => {
     await expect(page.locator("[data-index-nav-panel]").nth(1)).toHaveCSS("border-radius", "0px");
     await expect(page.locator("[data-index-nav-item-control]").first()).not.toHaveCSS("border-radius", "0px");
     await expect(page.locator("[data-icon-button-control]").first()).not.toHaveCSS("border-radius", "0px");
+
+    const focusedPrimaryItem = page.getByRole("button", { name: "Workflow routing and operational handoff posture" });
+    await focusedPrimaryItem.focus();
+    expect(await focusRingFitsInside(focusedPrimaryItem, "[data-index-nav-panel]")).toBe(true);
 
     const listTopState = await page.locator("[data-index-nav-panel]").evaluateAll((panels) =>
       panels.map((panel) => {
@@ -34,8 +61,8 @@ test.describe("index nav pattern route", () => {
     expect(listTopState).toHaveLength(2);
     for (const state of listTopState) {
       expect(state.gapAfterHeader).not.toBeNull();
-      expect(state.gapAfterHeader ?? 0).toBeGreaterThanOrEqual(11);
-      expect(state.gapAfterHeader ?? 0).toBeLessThanOrEqual(13);
+      expect(state.gapAfterHeader ?? 0).toBeGreaterThanOrEqual(15);
+      expect(state.gapAfterHeader ?? 0).toBeLessThanOrEqual(17);
     }
 
     await page.getByRole("button", { name: "Add" }).first().click();

@@ -72,6 +72,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
         "sourceColorValue": "#635bff",
         "ringValue": "0.125rem solid color-mix(in srgb, #635bff 58%, white)",
         "offsetValue": "0.125rem",
+        "containmentInsetValue": "0.25rem",
         "contrastRequirement": "Must remain visibly distinguishable against approved original page, surface, and subtle background foundations.",
         "themeMapping": "original",
         "layoutImpact": "Uses outline outside the element box and must not shift layout."
@@ -105,6 +106,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
         "sourceColorValue": "#8b87ff",
         "ringValue": "0.125rem solid color-mix(in srgb, #8b87ff 58%, white)",
         "offsetValue": "0.125rem",
+        "containmentInsetValue": "0.25rem",
         "contrastRequirement": "Must remain visibly distinguishable against approved dark page and surface foundations.",
         "themeMapping": "dark",
         "layoutImpact": "Uses outline outside the element box and must not shift layout."
@@ -138,6 +140,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
         "sourceColorValue": "#9f5f24",
         "ringValue": "0.125rem solid color-mix(in srgb, #9f5f24 58%, white)",
         "offsetValue": "0.125rem",
+        "containmentInsetValue": "0.25rem",
         "contrastRequirement": "Must remain visibly distinguishable against approved desert page and surface foundations.",
         "themeMapping": "desert",
         "layoutImpact": "Uses outline outside the element box and must not shift layout."
@@ -190,7 +193,7 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | Selected token-type template | `token-type-templates/focus-ring.md` |
 | Drift or product failure prevented | Without a focus-ring token, every primitive can invent a different focus outline, offset, theme treatment, or layout-shifting focus style. |
 | Reference basis | WCAG 2.2 AA visible focus expectations, the shared Layer 2 token template, and existing route-local focus-visible evidence in `src/frontend/designSystem/assets/styles.css`. |
-| Behavior-changing fields | `focusRole`, `ringValue`, `offsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
+| Behavior-changing fields | `focusRole`, `ringValue`, `offsetValue`, `containmentInsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
 | Evidence-only fields | `preview`, `metadata.accessibility`, and use-case instruction text help review the token but do not define primitive keyboard behavior. |
 | Over-structure avoided | No component-specific focus tokens, no selected-state token, no hover token, no keyboard-navigation behavior, and no primitive states are defined here. |
 
@@ -200,11 +203,12 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | --- | --- | --- |
 | shared contract | Required focus role | `visible focus ring` |
 | shared contract | Required themes | `original`, `dark`, `desert` |
-| shared contract | Required value fields | `focusRole`, `ringValue`, `offsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
+| shared contract | Required value fields | `focusRole`, `ringValue`, `offsetValue`, `containmentInsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
 | system implementation | `default` visible focus ring width | `0.125rem` |
 | system implementation | `default` primary source dependency | `primary-color-source` variants by theme |
 | system implementation | `default` visible focus ring color expression | `color-mix(in srgb, <primary-color-source> 58%, white)` |
 | system implementation | `default` visible focus ring offset | `0.125rem` |
+| system implementation | `default` focus containment inset | `0.25rem` |
 | system implementation | `default` layout impact | Outline must not shift layout. |
 
 ## Shared Token Contract
@@ -212,8 +216,8 @@ canonical files, app imports, app wrappers, or product workflow behavior.
 | Field | Value |
 | --- | --- |
 | Contract module | `src/frontend/designSystem/layers/02-token/focus-ring/contract.mjs` |
-| Required roles or fields | Role: `visible focus ring`; fields: `focusRole`, `sourceTokenId`, `sourceTokenName`, `sourceColorValue`, `ringValue`, `offsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
-| Cross-system consumer rule | Every design system must preserve visible focus, theme-specific proof, and layout-stable rendering before primitives consume focus-ring tokens. |
+| Required roles or fields | Role: `visible focus ring`; fields: `focusRole`, `sourceTokenId`, `sourceTokenName`, `sourceColorValue`, `ringValue`, `offsetValue`, `containmentInsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
+| Cross-system consumer rule | Every design system must preserve visible focus, theme-specific proof, layout-stable rendering, and a containment inset for clipping hosts before primitives or patterns consume focus-ring tokens. |
 
 ## System Token Implementation
 

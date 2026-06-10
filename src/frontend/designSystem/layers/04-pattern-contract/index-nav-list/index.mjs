@@ -1,4 +1,5 @@
 import { indexNavListGapTokenSpec } from "../../02-token/index-nav-list-gap/systems/default.mjs";
+import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
 import {
   attachIndexNavItemPatternController,
   renderIndexNavItemPattern,
@@ -9,6 +10,7 @@ const supportedSystems = new Map([
   [
     "default",
     {
+      focusRingTokenSpec,
       indexNavListGapTokenSpec,
     },
   ],
@@ -77,15 +79,20 @@ function normalizeItems(items) {
   });
 }
 
-function tokenDependenciesFor({ systemKey }) {
+function tokenDependenciesFor({ systemKey, theme }) {
   const proof = getSystemProof(systemKey);
+  const focusRing = findVariant(
+    proof.focusRingTokenSpec,
+    (variant) => variant.role === "visible focus ring" && variant.theme === theme,
+    "index-nav-list requires a signed focus-ring token for item focus containment.",
+  );
   const listGap = findVariant(
     proof.indexNavListGapTokenSpec,
     (variant) => variant.id === "index-nav-list-gap-default",
     "index-nav-list requires a signed index-nav-list-gap token.",
   );
 
-  return { listGap };
+  return { focusRing, listGap };
 }
 
 export const indexNavListPatternContract = {
@@ -95,10 +102,11 @@ export const indexNavListPatternContract = {
   contractPath: "docs/design-system/04-pattern-contract/shared/index-nav-list/IndexNavList-Contract.md",
   supportedSystems: ["default"],
   requiredPatterns: ["index-nav-item"],
-  directTokenDependencies: ["index-nav-list-gap"],
+  directTokenDependencies: ["focus-ring", "index-nav-list-gap"],
   consumerRules: [
     "Consumers must use this pattern for governed vertical index-navigation lists.",
     "Consumers must not recreate index item behavior, ARIA, state handling, tooltip behavior, or spacing locally.",
+    "Consumers must preserve the signed focus-ring containment inset so item focus shells are not clipped by scroll or panel hosts.",
     "Consumers must not treat this pattern as a component seam, template, route, canonical scenario, or app adoption seam.",
   ],
 };
@@ -118,7 +126,7 @@ export function indexNavListPattern(options = {}) {
   assertString(ariaLabel, "ariaLabel");
   assertString(slot, "slot");
 
-  const tokens = tokenDependenciesFor({ systemKey });
+  const tokens = tokenDependenciesFor({ systemKey, theme });
   const currentMatches = items.filter((item) => currentValue !== null && item.value === currentValue);
   if (currentMatches.length > 1) {
     throw new TypeError("currentValue must match at most one item.");
@@ -135,6 +143,11 @@ export function indexNavListPattern(options = {}) {
     currentValue,
     items,
     tokenDependencies: {
+      focusRing: {
+        tokenName: tokens.focusRing.tokenName,
+        variantId: tokens.focusRing.id,
+        runtimeSeam: "src/frontend/designSystem/layers/02-token/focus-ring/systems/default.mjs#focusRingTokenSpec",
+      },
       listGap: {
         tokenName: tokens.listGap.tokenName,
         variantId: tokens.listGap.id,
@@ -150,6 +163,7 @@ export function indexNavListPattern(options = {}) {
       "data-index-nav-list-theme": theme,
     },
     styleVars: {
+      "--pattern-index-nav-list-focus-inset": tokens.focusRing.containmentInsetValue,
       "--pattern-index-nav-list-gap": tokens.listGap.lengthValue,
     },
     consumerRestrictions: indexNavListPatternContract.consumerRules,

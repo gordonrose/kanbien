@@ -6,6 +6,29 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function focusRingFitsInside(locator: ReturnType<Page["locator"]>, boundarySelector: string) {
+  return locator.evaluate((element, selector) => {
+    const boundary = element.closest(selector);
+    if (!(element instanceof HTMLElement) || !(boundary instanceof HTMLElement)) {
+      return false;
+    }
+
+    const elementBox = element.getBoundingClientRect();
+    const boundaryBox = boundary.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const outlineWidth = Number.parseFloat(style.outlineWidth) || 0;
+    const outlineOffset = Number.parseFloat(style.outlineOffset) || 0;
+    const focusInset = outlineWidth + Math.max(outlineOffset, 0);
+
+    return (
+      elementBox.top - focusInset >= boundaryBox.top &&
+      elementBox.left - focusInset >= boundaryBox.left &&
+      elementBox.right + focusInset <= boundaryBox.right &&
+      elementBox.bottom + focusInset <= boundaryBox.bottom
+    );
+  }, boundarySelector);
+}
+
 async function pageShellDrawerMetrics(page: Page) {
   return page.evaluate(() => {
     const stack = document.querySelector("[data-panel-stack]");
@@ -52,6 +75,10 @@ test.describe("entity panel pattern route", () => {
     await expect(primaryIndex.getByRole("button", { name: "Identity" })).toHaveAttribute("aria-current", "true");
     await primaryIndex.getByRole("button", { name: "Workflows" }).click();
     await expect(primaryIndex.getByRole("button", { name: "Workflows" })).toHaveAttribute("aria-current", "true");
+    await primaryIndex.getByRole("button", { name: "Workflows" }).focus();
+    expect(
+      await focusRingFitsInside(primaryIndex.getByRole("button", { name: "Workflows" }), "[data-index-nav-panel]"),
+    ).toBe(true);
     await expect(primaryIndex.getByRole("button", { name: "Identity" })).not.toHaveAttribute("aria-current", "true");
     await expect(page.getByRole("button", { name: "Primary Details" })).toHaveAttribute("aria-current", "true");
 

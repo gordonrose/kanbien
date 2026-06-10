@@ -31,7 +31,7 @@ app adoption.
 | --- | --- |
 | Behavior rule | `review-ready`; `docs/design-system/01-behavior-rule/shared/index-navigation/IndexNavigation-Behaviour.md` |
 | Pattern dependency | `index-nav-item` is `review-ready` for `default` |
-| Direct token dependency | `index-nav-list-gap` is `review-ready` for `default` |
+| Direct token dependency | `index-nav-list-gap` and `focus-ring` are `review-ready` for `default` |
 | Inventory | Legacy/template index lists exist in entity-page and filter-panel routes, but are not the source of truth. |
 
 ## Composition Contract
@@ -54,6 +54,10 @@ item.
 The list must preserve visible focus, current state, disabled state, tooltip
 disclosure, and keyboard activation by composing the item pattern unchanged.
 
+Because the governed focus ring draws outside each item box, the list must
+reserve the signed focus-ring containment inset around the item stack. Scroll
+or panel hosts must not clip item focus shells.
+
 ## Data Or Event Contract
 
 Input items contain `label`, optional `supportingText`, `value`, and optional
@@ -68,9 +72,10 @@ Activation bubbles from the underlying primitive as
 
 ## Visual-Skin Boundary
 
-Spacing between items comes from `index-nav-list-gap`. Item surfaces,
-typography, focus, current indicator, tooltip, and target-size values come from
-the item pattern and primitive dependencies.
+Spacing between items comes from `index-nav-list-gap`. Focus containment around
+the item stack comes from `focus-ring`. Item surfaces, typography, current
+indicator, tooltip, focus rendering, and target-size values come from the item
+pattern and primitive dependencies.
 
 ## Rendered View
 
@@ -96,6 +101,9 @@ the item pattern and primitive dependencies.
 
 Consumers must not copy route-local proof markup, recreate list spacing, or
 rebuild item behavior locally.
+
+Consumers must not remove the focus containment inset or replace it with a
+local padding value.
 
 Consumers must not treat this pattern as an entity-page component, route,
 template, canonical scenario, or app adoption seam.

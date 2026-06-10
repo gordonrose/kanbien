@@ -31,13 +31,14 @@ design system proves its own focus-ring values in
 | Required roles | `visible focus ring` |
 | Required themes | `original`, `dark`, `desert` |
 | Required variant fields | `id`, `tokenName`, `value`, `preview`, `metadata`, `useCaseInstructions` |
-| Required value fields | `focusRole`, `sourceTokenId`, `sourceTokenName`, `sourceColorValue`, `ringValue`, `offsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
+| Required value fields | `focusRole`, `sourceTokenId`, `sourceTokenName`, `sourceColorValue`, `ringValue`, `offsetValue`, `containmentInsetValue`, `contrastRequirement`, `themeMapping`, `layoutImpact` |
 
 ## Cross-System Rule
 
 Every design system may choose different focus-ring values, but it must
 preserve visible keyboard focus, theme-specific proof, layout-stable rendering,
-the declared primary source-color dependency, and the same consumer
+the declared primary source-color dependency, a containment inset for scroll or
+panel hosts that would otherwise clip outside outlines, and the same consumer
 restrictions before downstream primitives or patterns consume the token.
 
 ## Consumer Restrictions

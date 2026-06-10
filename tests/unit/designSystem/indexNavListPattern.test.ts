@@ -12,7 +12,7 @@ const items = [
 ];
 
 describe("index-nav-list pattern seam", () => {
-  it("composes index-nav-item entries with a signed list gap token", () => {
+  it("composes index-nav-item entries with signed list gap and focus containment tokens", () => {
     const list = indexNavListPattern({
       id: "primary-index",
       ariaLabel: "Primary index",
@@ -24,11 +24,15 @@ describe("index-nav-list pattern seam", () => {
       schema: "kanbien.designSystem.patternSpec.v1",
       patternName: "index-nav-list",
       tokenDependencies: {
+        focusRing: {
+          tokenName: "--focus-ring-visible-original",
+        },
         listGap: {
           tokenName: "--index-nav-list-gap",
         },
       },
       styleVars: {
+        "--pattern-index-nav-list-focus-inset": "0.25rem",
         "--pattern-index-nav-list-gap": "0.5rem",
       },
     });
@@ -71,7 +75,7 @@ describe("index-nav-list pattern seam", () => {
       patternName: "index-nav-list",
       status: "review-ready",
       requiredPatterns: ["index-nav-item"],
-      directTokenDependencies: ["index-nav-list-gap"],
+      directTokenDependencies: ["focus-ring", "index-nav-list-gap"],
     });
   });
 });

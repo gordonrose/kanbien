@@ -1386,6 +1386,7 @@
   display: block;
   min-width: 0;
   max-width: 100%;
+  overflow: visible;
 }
 
 .ds-index-nav-list-items {
@@ -1393,8 +1394,9 @@
   gap: var(--pattern-index-nav-list-gap);
   min-width: 0;
   margin: 0;
-  padding: 0;
+  padding: var(--pattern-index-nav-list-focus-inset);
   list-style: none;
+  overflow: visible;
 }
 
 .ds-index-nav-list-item {
