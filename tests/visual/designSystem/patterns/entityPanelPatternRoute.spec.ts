@@ -30,10 +30,11 @@ test.describe("entity panel pattern route", () => {
       "hidden",
     );
     await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Identity" })).toHaveAttribute("aria-current", "true");
-    await page.getByRole("button", { name: "Workflows" }).click();
-    await expect(page.getByRole("button", { name: "Workflows" })).toHaveAttribute("aria-current", "true");
-    await expect(page.getByRole("button", { name: "Identity" })).not.toHaveAttribute("aria-current", "true");
+    const primaryIndex = page.locator("[data-entity-panel-region='primary-index']");
+    await expect(primaryIndex.getByRole("button", { name: "Identity" })).toHaveAttribute("aria-current", "true");
+    await primaryIndex.getByRole("button", { name: "Workflows" }).click();
+    await expect(primaryIndex.getByRole("button", { name: "Workflows" })).toHaveAttribute("aria-current", "true");
+    await expect(primaryIndex.getByRole("button", { name: "Identity" })).not.toHaveAttribute("aria-current", "true");
     await expect(page.getByRole("button", { name: "Primary Details" })).toHaveAttribute("aria-current", "true");
 
     await page.getByRole("button", { name: "Owning Feature" }).click();
@@ -43,6 +44,32 @@ test.describe("entity panel pattern route", () => {
     await expect(page.locator("[data-entity-panel]")).toHaveCount(1);
     await expect(page.locator("[data-entity-panel-region='secondary-index']")).toHaveCount(1);
     await expect(page.locator("[data-entity-panel-region='body']")).toHaveCount(1);
+    await expect(page.locator("[data-entity-panel-region='body'] [data-entity-body-panel]")).toBeVisible();
+    await expect(page.locator("[data-entity-panel-region='body'] [data-accordion-group]")).toBeVisible();
+    await expect(page.locator("#entity-panel-proof-accordion-identity-panel [data-text-field-control]")).toHaveCount(2);
+    await expect(page.locator("#entity-panel-proof-accordion-identity-panel [data-textarea-control]")).toBeVisible();
+
+    await page.locator("#entity-panel-proof-accordion-workflows-button").click();
+    await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-radio-simple-select-field]")).toBeVisible();
+    await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-toggle-field]")).toBeVisible();
+    await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-simple-dropdown-field]")).toBeVisible();
+    await expect(page.locator("#entity-panel-proof-accordion-workflows-panel [data-drawer-select]")).toBeVisible();
+    await page.locator("#entity-panel-proof-accordion-workflows-panel [data-drawer-select] [data-count-card-control]").click();
+    await expect(page.locator("[data-drawer-select][data-drawer-select-open='true']")).toBeVisible();
+    await expect(page.locator("[data-panel-stack]")).toBeVisible();
+    await expect(page.getByRole("searchbox", { name: "Search options" })).toBeFocused();
+    await page.getByRole("button", { name: "Close selector" }).click();
+    await expect(page.locator("[data-panel-stack]")).toHaveCount(0);
+    await expect(page.locator("[data-entity-panel]")).toHaveCount(1);
+    await expect(page.locator("[data-entity-panel-action-log]")).toHaveText("Panel action log: none");
+
+    await page.locator("#entity-panel-proof-accordion-display-button").click();
+    await expect(page.locator("#entity-panel-proof-accordion-display-panel [data-card-list-select-field]")).toBeVisible();
+    const bodyScroll = page.locator("[data-entity-panel-region='body'] [data-body-region-control-scroll]");
+    await bodyScroll.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+    });
+    await expect(page.locator("#entity-panel-proof-accordion-display-panel [data-card-list-select-field]")).toBeInViewport();
     await page.locator("[data-entity-panel-primary-control]").selectOption("hidden");
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeHidden();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
@@ -115,6 +142,8 @@ test.describe("entity panel pattern route", () => {
       .toBeLessThanOrEqual(416);
     await expect(page.getByRole("button", { name: "Show secondary index" })).toBeVisible();
     await expect(page.locator("[data-entity-panel-region='body']")).toBeVisible();
+    await expect(page.locator("[data-entity-panel-region='body'] [data-accordion-group]")).toBeVisible();
+    await expect(page.locator("#entity-panel-proof-accordion-identity-panel [data-text-field-control]").first()).toBeVisible();
     await expect(page.locator("[data-entity-panel-region='secondary-index']")).toBeVisible();
 
     await page.getByRole("button", { name: "Show secondary index" }).click();

@@ -7,6 +7,43 @@ import {
   attachIndexNavPanelPatternController,
   renderIndexNavPanelPattern,
 } from "../../../../layers/04-pattern-contract/index-nav-panel/index.mjs";
+import {
+  attachAccordionGroupPatternController,
+  renderAccordionGroupPattern,
+} from "../../../../layers/04-pattern-contract/accordion-group/index.mjs";
+import {
+  attachCardListSelectFieldPatternController,
+  renderCardListSelectFieldPattern,
+} from "../../../../layers/04-pattern-contract/card-list-select-field/index.mjs";
+import {
+  attachDrawerSelectFieldPatternController,
+  renderDrawerSelectFieldPattern,
+} from "../../../../layers/04-pattern-contract/drawer-select-field/index.mjs";
+import {
+  attachRadioSimpleSelectFieldPatternController,
+  renderRadioSimpleSelectFieldPattern,
+} from "../../../../layers/04-pattern-contract/radio-simple-select-field/index.mjs";
+import {
+  attachSimpleDropdownFieldPatternController,
+  renderSimpleDropdownFieldPattern,
+} from "../../../../layers/04-pattern-contract/simple-dropdown-field/index.mjs";
+import {
+  attachToggleFieldPatternController,
+  renderToggleFieldPattern,
+} from "../../../../layers/04-pattern-contract/toggle-field/index.mjs";
+import {
+  attachTextFieldControlPrimitiveController,
+  renderTextFieldControlPrimitive,
+} from "../../../../layers/03-primitive/text-field-control/index.mjs";
+import {
+  attachTextareaControlPrimitiveController,
+  renderTextareaControlPrimitive,
+} from "../../../../layers/03-primitive/textarea-control/index.mjs";
+import { attachFieldRowControlPrimitiveController } from "../../../../layers/03-primitive/field-row-control/index.mjs";
+import {
+  attachFieldContainerControlPrimitiveController,
+  renderFieldContainerControlPrimitive,
+} from "../../../../layers/03-primitive/field-container-control/index.mjs";
 
 const root = document.querySelector("[data-pattern-proof-root]");
 
@@ -46,19 +83,234 @@ const primaryFixtures = [
   { label: "Attributes", value: "attributes", supportingText: "6 items" },
 ];
 
-const bodyCards = [
-  ["Body slot placeholder", "This region may host future governed form and builder patterns. The placeholder is proof-only and is not a governed form control."],
-  ["Long body content", "Desktop proof keeps body scrolling inside the governed scroll region. Mobile proof may switch to page-scroll behavior through the pattern viewport state."],
-  ["Hosted control blocker", "Text fields, text areas, radios, toggles, dropdowns, drawer selects, card selects, accordions, and workflow builders still need their own governed passes."],
-  ["Secondary index priority", "On mobile, body content takes precedence over secondary index, and secondary index takes precedence over primary page index."],
-  ["Consumer boundary", "Later component seams may supply governed body content, but this pattern does not own product data, form validation, or persistence behavior."],
-];
-
 function secondaryItemsForState(state) {
   if (state.secondaryCount === "0") {
     return [];
   }
   return secondaryFixtures.slice(0, Number(state.secondaryCount));
+}
+
+function proofTheme(state) {
+  return state.theme ?? "original";
+}
+
+function drawerCommittedValues(state) {
+  return Array.isArray(state.drawerValues) && state.drawerValues.length > 0
+    ? state.drawerValues
+    : ["organization-core"];
+}
+
+function drawerPendingValues(state) {
+  return Array.isArray(state.drawerPendingValues) ? state.drawerPendingValues : drawerCommittedValues(state);
+}
+
+function fieldContainerHtml(id, state, childHtml) {
+  return renderFieldContainerControlPrimitive({
+    id,
+    theme: proofTheme(state),
+    childHtml,
+  });
+}
+
+function identityFieldsHtml(state) {
+  const theme = proofTheme(state);
+  return `
+    <div class="entity-body-panel-proof-form-grid">
+      ${fieldContainerHtml(
+        "entity-panel-proof-name-container",
+        state,
+        renderTextFieldControlPrimitive({
+          id: "entity-panel-proof-name",
+          label: "Entity name",
+          name: "entity-name",
+          value: "Organization",
+          helperText: "Human-facing entity name displayed in governed surfaces.",
+          theme,
+        }),
+      )}
+      ${fieldContainerHtml(
+        "entity-panel-proof-key-container",
+        state,
+        renderTextFieldControlPrimitive({
+          id: "entity-panel-proof-key",
+          label: "Stable entity key",
+          name: "stable-entity-key",
+          value: "organization",
+          state: "read-only",
+          helperText: "Stable key is locked once the entity definition exists.",
+          theme,
+        }),
+      )}
+      ${fieldContainerHtml(
+        "entity-panel-proof-description-container",
+        state,
+        renderTextareaControlPrimitive({
+          id: "entity-panel-proof-description",
+          label: "Description fallback",
+          name: "description-fallback",
+          value:
+            "An organization represents a company, department, partner, or other business structure that the platform manages.",
+          helperText: "Textarea growth is governed by the textarea-control primitive.",
+          growthVariant: "multi-line",
+          theme,
+        }),
+      )}
+    </div>
+  `;
+}
+
+function workflowFieldsHtml(state) {
+  const theme = proofTheme(state);
+  const pendingValues = drawerPendingValues(state);
+  return `
+    <div class="entity-body-panel-proof-form-stack">
+      ${fieldContainerHtml(
+        "entity-panel-proof-feature-status-container",
+        state,
+        renderRadioSimpleSelectFieldPattern({
+          id: "entity-panel-proof-feature-status",
+          name: "feature-status",
+          label: "Feature status",
+          helperText: "Choose exactly one feature status for this entity.",
+          selectedValue: "existing",
+          columns: 2,
+          theme,
+          options: [
+            { value: "existing", label: "Existing" },
+            { value: "planned", label: "Planned" },
+            { value: "unassigned", label: "Not yet assigned" },
+          ],
+        }),
+      )}
+      ${fieldContainerHtml(
+        "entity-panel-proof-workflow-toggle-container",
+        state,
+        renderToggleFieldPattern({
+          id: "entity-panel-proof-workflow-toggle",
+          name: "workflow-automation",
+          label: "Enable workflow automation",
+          helperText: "Boolean toggle behavior is governed by toggle-field.",
+          checked: true,
+          theme,
+        }),
+      )}
+      ${fieldContainerHtml(
+        "entity-panel-proof-page-template-container",
+        state,
+        renderSimpleDropdownFieldPattern({
+          id: "entity-panel-proof-page-template",
+          name: "page-template",
+          label: "Page template",
+          helperText: "Choose the page template used for this entity view route.",
+          selectedValue: "record_management_page",
+          theme,
+          options: [
+            { value: "record_management_page", label: "Record management page" },
+            { value: "record_management_list_centric", label: "Record management list centric" },
+            { value: "nested_record", label: "Nested record" },
+          ],
+        }),
+      )}
+      ${fieldContainerHtml(
+        "entity-panel-proof-owning-feature-container",
+        state,
+        renderDrawerSelectFieldPattern({
+          id: "entity-panel-proof-owning-feature",
+          label: "Owning feature",
+          helperText: "Choose the feature that owns this entity once it exists.",
+          mode: "single",
+          open: Boolean(state.drawerOpen),
+          origin: "right",
+          viewport: state.viewportMode === "mobile" ? "mobile" : "desktop",
+          query: state.drawerQuery ?? "",
+          columns: 1,
+          showActions: true,
+          theme,
+          committedValue: drawerCommittedValues(state)[0] ?? "",
+          committedValues: drawerCommittedValues(state),
+          pendingValues,
+          requestInitialFocus: Boolean(state.drawerRequestInitialFocus),
+          options: [
+            {
+              value: "organization-core",
+              label: "Organization core",
+              supportingText: "Owns organization identity fields.",
+            },
+            {
+              value: "workflow-engine",
+              label: "Workflow engine",
+              supportingText: "Owns workflow and status sequence behavior.",
+            },
+            {
+              value: "display-settings",
+              label: "Display settings",
+              supportingText: "Owns list, drawer, and page display posture.",
+            },
+          ],
+        }),
+      )}
+    </div>
+  `;
+}
+
+function displayFieldsHtml(state) {
+  return fieldContainerHtml(
+    "entity-panel-proof-list-display-container",
+    state,
+    renderCardListSelectFieldPattern({
+      id: "entity-panel-proof-list-display",
+      name: "list-display",
+      label: "List display",
+      helperText: "Choose visible fields or priority order.",
+      variant: "priority",
+      selectedValues: ["email", "description"],
+      priorityOrder: ["email", "description"],
+      columns: 2,
+      theme: proofTheme(state),
+      options: [
+        { value: "email", label: "Email" },
+        { value: "description", label: "Description" },
+        { value: "owner", label: "Owner with long governed label" },
+        { value: "updated", label: "Updated at" },
+      ],
+    }),
+  );
+}
+
+function governedAccordionBodyHtml(state) {
+  return `
+    <div class="entity-body-panel-proof-form" data-entity-panel-governed-body>
+      ${renderAccordionGroupPattern({
+        id: "entity-panel-proof-accordion",
+        label: "Entity panel governed body sections",
+        headingLevel: 2,
+        theme: proofTheme(state),
+        tone: "neutral",
+        sections: [
+          {
+            value: "identity",
+            title: "Identity",
+            supportingText: "Entity name, label keys, and source authority fields.",
+            expanded: !state.drawerOpen,
+            contentHtml: identityFieldsHtml(state),
+          },
+          {
+            value: "workflows",
+            title: "Workflows",
+            supportingText: "Governed selectors and boolean controls.",
+            expanded: Boolean(state.drawerOpen),
+            contentHtml: workflowFieldsHtml(state),
+          },
+          {
+            value: "display",
+            title: "List display",
+            supportingText: "Governed card-list priority selection.",
+            contentHtml: displayFieldsHtml(state),
+          },
+        ],
+      })}
+    </div>
+  `;
 }
 
 function bodyHtmlForState(state) {
@@ -80,16 +332,7 @@ function bodyHtmlForState(state) {
     `;
   }
 
-  return bodyCards
-    .map(
-      ([title, text]) => `
-        <div class="token-spec-card">
-          <h2>${escapeHtml(title)}</h2>
-          <p>${escapeHtml(text)}</p>
-        </div>
-      `,
-    )
-    .join("");
+  return governedAccordionBodyHtml(state);
 }
 
 function renderControls(state) {
@@ -187,7 +430,7 @@ function renderSummary(spec, state) {
       <div><dt>Expected scroll owner</dt><dd>${escapeHtml(scrollOwner)}</dd></div>
       <div><dt>Secondary current item</dt><dd>${escapeHtml(state.secondaryCurrent ?? "none")}</dd></div>
       <div><dt>Secondary resize handle</dt><dd>${state.secondaryResizeMode === "on" ? "shown; governed by index-nav-panel" : "hidden"}</dd></div>
-      <div><dt>Hosted controls</dt><dd>blocked until governed upstream</dd></div>
+      <div><dt>Hosted controls</dt><dd>governed accordion and field seams</dd></div>
     </dl>
   `;
 }
@@ -296,12 +539,13 @@ function renderPage(state) {
               <li>The header is rendered through the governed <code>panel-header-control</code> primitive.</li>
               <li>The embedded secondary index is rendered through the governed <code>index-nav-panel</code> pattern.</li>
               <li>The body region is rendered through the governed <code>entity-body-panel</code> pattern.</li>
+              <li>The body content proof composes the governed <code>accordion-group</code> pattern and governed form-control seams.</li>
             </ul>
           </article>
           <article class="token-spec-note">
             <h2>Boundary</h2>
             <ul>
-              <li>The pattern does not own text fields, text areas, radios, toggles, dropdowns, drawer selects, card selects, accordions, or workflow builders.</li>
+              <li>The pattern does not own text fields, text areas, radios, toggles, dropdowns, card selects, accordions, or workflow builders; it only hosts governed child seams.</li>
               <li>The primary-index fallback state is represented as an entity-page coordination state; this pattern does not render the primary page index.</li>
               <li>Context bar and display-settings drawer composition is blocked until governed Layer 4 seams exist for those families.</li>
               <li>Proof controls are diagnostic review pressure, not downstream consumer props unless named in the pattern seam.</li>
@@ -314,6 +558,16 @@ function renderPage(state) {
 
   attachEntityPanelPatternController(root);
   attachIndexNavPanelPatternController(root);
+  attachFieldContainerControlPrimitiveController(root);
+  attachFieldRowControlPrimitiveController(root);
+  attachTextFieldControlPrimitiveController(root);
+  attachTextareaControlPrimitiveController(root);
+  attachRadioSimpleSelectFieldPatternController(root);
+  attachSimpleDropdownFieldPatternController(root);
+  attachToggleFieldPatternController(root);
+  attachCardListSelectFieldPatternController(root);
+  attachDrawerSelectFieldPatternController(root);
+  attachAccordionGroupPatternController(root);
   for (const panel of root.querySelectorAll("[data-entity-panel]")) {
     panel.dataset.entityPanelViewport = state.viewportMode;
   }
@@ -338,6 +592,33 @@ function renderPage(state) {
       control.addEventListener("change", () => renderPage({ ...state, [key]: control.value }));
     }
   }
+
+  root.addEventListener(
+    "drawer-select:open",
+    () => renderPage({ ...state, drawerOpen: true, drawerPendingValues: drawerCommittedValues(state), drawerRequestInitialFocus: true }),
+    { once: true },
+  );
+
+  root.addEventListener(
+    "drawer-select:close",
+    () => renderPage({ ...state, drawerOpen: false, drawerPendingValues: drawerCommittedValues(state), drawerRequestInitialFocus: false }),
+    { once: true },
+  );
+
+  root.addEventListener(
+    "drawer-select:apply",
+    () => renderPage({ ...state, drawerOpen: false, drawerValues: drawerPendingValues(state), drawerPendingValues: drawerPendingValues(state), drawerRequestInitialFocus: false }),
+    { once: true },
+  );
+
+  root.addEventListener(
+    "drawer-select:pending-change",
+    (event) => {
+      const nextValues = Array.isArray(event.detail?.selectedValues) ? event.detail.selectedValues : [];
+      renderPage({ ...state, drawerPendingValues: nextValues, drawerRequestInitialFocus: false });
+    },
+    { once: true },
+  );
 
   root.addEventListener(
     "index-nav-item-control:activate",
@@ -370,7 +651,7 @@ function renderPage(state) {
     (event) => {
       const id = event.detail?.id ?? "";
       const value = event.detail?.value ?? "";
-      if (typeof id === "string" && id.endsWith("-header-action")) {
+      if (typeof id === "string" && id === "entity-panel-proof-header-action") {
         if (state.viewportMode === "mobile") {
           renderPage({
             ...state,

@@ -68,7 +68,7 @@ test.describe("drawer-select-field pattern route", () => {
     await expect(page.getByRole("searchbox", { name: "Search options" })).toBeFocused();
     await page.getByRole("checkbox", { name: /Workflow routing/ }).focus();
     await page.keyboard.press("Space");
-    await expect(page.getByText(/Pending: .*workflow/)).toBeVisible();
+    await expect(page.locator("[data-drawer-select-field-log]")).toContainText(/Pending:[\s\S]*workflow/);
     await expect(page.getByRole("checkbox", { name: /Workflow routing/ })).toBeFocused();
     await page.getByRole("button", { name: "Apply" }).click();
     await expect(page.locator("[data-panel-stack]")).toHaveCount(0);

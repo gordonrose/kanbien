@@ -474,7 +474,16 @@ export function focusDrawerSelectInitialControl(root = document) {
 }
 
 function scheduleDrawerSelectInitialFocus(root) {
-  const focus = () => focusDrawerSelectInitialControl(root);
+  const focus = () => {
+    const drawer = root.querySelector("[data-drawer-select][data-drawer-select-open='true']");
+    if (
+      !(drawer instanceof HTMLElement) ||
+      drawer.getAttribute("data-drawer-select-request-initial-focus") !== "true"
+    ) {
+      return false;
+    }
+    return focusDrawerSelectInitialControl(root);
+  };
   focus();
   window.requestAnimationFrame(() => {
     focus();

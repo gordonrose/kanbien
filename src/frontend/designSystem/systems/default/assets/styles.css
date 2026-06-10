@@ -1474,6 +1474,12 @@
   min-width: 0;
 }
 
+.ds-entity-panel-body .ds-entity-body-panel,
+.ds-entity-panel-body .ds-body-region-control {
+  block-size: 100%;
+  min-block-size: 0;
+}
+
 .ds-entity-body-panel .ds-body-region-control {
   inline-size: 100%;
 }

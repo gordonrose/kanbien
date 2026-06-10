@@ -145,13 +145,14 @@ test.describe("drawer-select pattern route", () => {
     await search.focus();
     expect(await focusRingFitsInside(search, "[data-searchable-selection-panel]")).toBe(true);
 
-    await page.getByRole("checkbox", { name: /Workflow routing/ }).focus();
     const workflowOption = page.locator("[data-card-list-select-option-value='workflow']");
+    const workflowInput = workflowOption.locator("[data-card-list-select-input]");
+    await workflowInput.focus();
     await expect(workflowOption.locator("[data-focus-instruction-disclosure]")).toBeVisible();
     expect(await focusRingFitsInside(workflowOption.locator(".ds-card-list-select-option-label"), "[data-scroll-region-control]")).toBe(true);
-    await page.keyboard.press("Space");
+    await workflowInput.press("Space");
     await expect(page.getByText(/Pending: workflow/)).toBeVisible();
-    await expect(page.getByRole("checkbox", { name: /Workflow routing/ })).toBeFocused();
+    await expect(workflowInput).toBeFocused();
     await page.getByRole("button", { name: "Close selector" }).click();
     await expect(page.locator("[data-panel-stack]")).toHaveCount(0);
     await expect(page.getByText(/Committed: record-page/)).toBeVisible();
