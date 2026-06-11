@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { validateCurrentTaskAudit } from "./checkCurrentTaskAudit";
 
 type PreflightStatus =
   | "SAFE"
@@ -9,7 +10,8 @@ type PreflightStatus =
   | "MAIN_BRANCH_BLOCK"
   | "BOOTSTRAP_MISSING_BLOCK"
   | "BOOTSTRAP_MISMATCH_BLOCK"
-  | "BASE_MISMATCH_BLOCK";
+  | "BASE_MISMATCH_BLOCK"
+  | "CURRENT_TASK_AUDIT_BLOCK";
 
 type Options = {
   allowDirty: boolean;
@@ -44,6 +46,7 @@ type Report = {
   bootstrapExists: boolean | null;
   bootstrap: BootstrapRecord | null;
   bootstrapMismatches: string[];
+  currentTaskAuditViolations: string[];
   upstream: string | null;
   recommendations: string[];
 };
@@ -382,6 +385,23 @@ function buildReport(options: Options): Report {
     ]),
   );
   const dirtyPaths = worktreeChanges.flatMap(parseDirtyPaths);
+  const auditStatusOutput = runGit(["status", "--short", "--untracked-files=all"]);
+  const auditChangedPaths = auditStatusOutput
+    ? auditStatusOutput
+        .split("\n")
+        .map((line) => line.trimEnd())
+        .filter(Boolean)
+        .flatMap(parseDirtyPaths)
+    : [];
+  const currentTaskAuditPath = "docs/workspace/trust-harness/current-task-audit.md";
+  const currentTaskAuditContent = existsSync(currentTaskAuditPath)
+    ? readFileSync(currentTaskAuditPath, "utf8")
+    : null;
+  const currentTaskAuditViolations = validateCurrentTaskAudit({
+    content: currentTaskAuditContent,
+    changedPaths: auditChangedPaths,
+    auditPath: currentTaskAuditPath,
+  }).violations;
   const dirtyCollisions = findDirtyWriteSetCollisions({
     dirtyPaths,
     plannedWriteSetPaths,
@@ -409,6 +429,8 @@ function buildReport(options: Options): Report {
     headDescendsFromBase === false
   ) {
     status = "BASE_MISMATCH_BLOCK";
+  } else if (currentTaskAuditViolations.length > 0) {
+    status = "CURRENT_TASK_AUDIT_BLOCK";
   }
 
   const recommendations: string[] = [];
@@ -445,6 +467,9 @@ function buildReport(options: Options): Report {
   for (const mismatch of bootstrapMismatches) {
     recommendations.push(`Fix bootstrap mismatch: ${mismatch}.`);
   }
+  for (const violation of currentTaskAuditViolations) {
+    recommendations.push(`Fix current task audit violation: ${violation}`);
+  }
   if (
     (options.requireBase || !worktreeClean) &&
     headDescendsFromBase === false
@@ -479,6 +504,7 @@ function buildReport(options: Options): Report {
     bootstrapExists,
     bootstrap,
     bootstrapMismatches,
+    currentTaskAuditViolations,
     upstream,
     recommendations,
   };
@@ -529,6 +555,12 @@ function printReport(report: Report): void {
     console.log("- bootstrap mismatches:");
     for (const mismatch of report.bootstrapMismatches) {
       console.log(`  ${mismatch}`);
+    }
+  }
+  if (report.currentTaskAuditViolations.length > 0) {
+    console.log("- current task audit violations:");
+    for (const violation of report.currentTaskAuditViolations) {
+      console.log(`  ${violation}`);
     }
   }
   if (report.worktreeChanges.length > 0) {
