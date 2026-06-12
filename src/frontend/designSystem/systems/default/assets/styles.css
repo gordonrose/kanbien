@@ -1296,6 +1296,8 @@
 }
 
 .menu-simple-select-proof-stage[data-menu-select-proof-viewport="mobile"] {
+  container-name: token-foundation-header;
+  container-type: inline-size;
   max-inline-size: 24rem;
 }
 
