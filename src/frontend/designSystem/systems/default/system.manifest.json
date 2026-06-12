@@ -23,6 +23,12 @@
       "implementationExport": "bodyRegionFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/body-region-frame"
     },
+    "tokens.standard-page-shell-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/standard-page-shell-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/standardPageShellFrame.tokens.mjs",
+      "implementationExport": "standardPageShellFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/standard-page-shell-frame"
+    },
     "tokens.button-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/button-frame/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/buttonFrame.tokens.mjs",
@@ -34,6 +40,42 @@
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/choiceCardStateAffordance.tokens.mjs",
       "implementationExport": "choiceCardStateAffordanceTokenSpec",
       "pageRoute": "/design-system/default/tokens/choice-card-state-affordance"
+    },
+    "tokens.context-navigation-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/context-navigation-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/contextNavigationFrame.tokens.mjs",
+      "implementationExport": "contextNavigationFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/context-navigation-frame"
+    },
+    "tokens.context-navigation-item-affordance": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/context-navigation-item-affordance/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/contextNavigationItemAffordance.tokens.mjs",
+      "implementationExport": "contextNavigationItemAffordanceTokenSpec",
+      "pageRoute": "/design-system/default/tokens/context-navigation-item-affordance"
+    },
+    "tokens.context-navigation-overflow-menu-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/context-navigation-overflow-menu-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/contextNavigationOverflowMenuFrame.tokens.mjs",
+      "implementationExport": "contextNavigationOverflowMenuFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/context-navigation-overflow-menu-frame"
+    },
+    "tokens.top-navigation-base-tokens": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/top-navigation-base-tokens/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/topNavigationBaseTokens.tokens.mjs",
+      "implementationExport": "topNavigationBaseTokensSpec",
+      "pageRoute": "/design-system/default/tokens/top-navigation-base-tokens"
+    },
+    "tokens.top-navigation-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/top-navigation-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/topNavigationFrame.tokens.mjs",
+      "implementationExport": "topNavigationFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/top-navigation-frame"
+    },
+    "tokens.tools-navigation-frame": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/tools-navigation-frame/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/toolsNavigationFrame.tokens.mjs",
+      "implementationExport": "toolsNavigationFrameTokenSpec",
+      "pageRoute": "/design-system/default/tokens/tools-navigation-frame"
     },
     "tokens.count-card-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/count-card-frame/contract.mjs",

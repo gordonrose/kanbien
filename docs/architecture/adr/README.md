@@ -64,3 +64,4 @@ evolves.
 - `0050-serve-temporary-public-brochure-through-same-origin-public-site-routes.md`
 - `0051-log-harness-governance-decisions-as-adrs.md`
 - `0052-require-current-task-audits-for-material-codex-work.md`
+- `0053-require-structural-token-preview-guards-for-shell-navigation.md`

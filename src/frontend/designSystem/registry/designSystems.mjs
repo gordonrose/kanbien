@@ -37,6 +37,14 @@ export const designSystems = {
       bodyRegionFrame: () => import("../systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs"),
       buttonFrame: () => import("../systems/default/tokens/proofs/buttonFrame.tokens.mjs"),
       choiceCardStateAffordance: () => import("../systems/default/tokens/proofs/choiceCardStateAffordance.tokens.mjs"),
+      contextNavigationFrame: () => import("../systems/default/tokens/proofs/contextNavigationFrame.tokens.mjs"),
+      contextNavigationItemAffordance: () =>
+        import("../systems/default/tokens/proofs/contextNavigationItemAffordance.tokens.mjs"),
+      contextNavigationOverflowMenuFrame: () =>
+        import("../systems/default/tokens/proofs/contextNavigationOverflowMenuFrame.tokens.mjs"),
+      topNavigationBaseTokens: () => import("../systems/default/tokens/proofs/topNavigationBaseTokens.tokens.mjs"),
+      topNavigationFrame: () => import("../systems/default/tokens/proofs/topNavigationFrame.tokens.mjs"),
+      toolsNavigationFrame: () => import("../systems/default/tokens/proofs/toolsNavigationFrame.tokens.mjs"),
       countCardFrame: () => import("../systems/default/tokens/proofs/countCardFrame.tokens.mjs"),
       dropdownListboxFrame: () => import("../systems/default/tokens/proofs/dropdownListboxFrame.tokens.mjs"),
       dropdownTriggerFrame: () => import("../systems/default/tokens/proofs/dropdownTriggerFrame.tokens.mjs"),
@@ -60,6 +68,7 @@ export const designSystems = {
       indexNavListGap: () => import("../systems/default/tokens/proofs/indexNavListGap.tokens.mjs"),
       indexNavPanelFrame: () => import("../systems/default/tokens/proofs/indexNavPanelFrame.tokens.mjs"),
       scrollbarSkin: () => import("../systems/default/tokens/proofs/scrollbarSkin.tokens.mjs"),
+      standardPageShellFrame: () => import("../systems/default/tokens/proofs/standardPageShellFrame.tokens.mjs"),
       statusColor: () => import("../systems/default/tokens/proofs/statusColor.tokens.mjs"),
       labelTextStyle: () => import("../systems/default/tokens/proofs/labelTextStyle.tokens.mjs"),
       minimumTargetSize: () => import("../systems/default/tokens/proofs/minimumTargetSize.tokens.mjs"),

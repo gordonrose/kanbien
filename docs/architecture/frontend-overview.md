@@ -41,7 +41,11 @@ Today that means:
   package-delivery change
 - `package.json` includes `check:design-system-registry` in the static gate to
   verify that switchable design-system registrations, manifests, contract
-  modules, implementation exports, and served system-scoped routes stay aligned
+  modules, implementation exports, served system-scoped routes, and governed
+  structural shell/navigation token previews stay aligned. The gate also keeps
+  41 context-navigation glyph source material aligned to the existing
+  `/design-system` source routes so primitive proofs cannot fall back to
+  placeholder letter icons.
 
 Primary architecture decisions behind this shape live in:
 
@@ -51,6 +55,7 @@ Primary architecture decisions behind this shape live in:
 - `docs/architecture/adr/0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md`
 - `docs/architecture/adr/0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
 - `docs/architecture/adr/0050-serve-temporary-public-brochure-through-same-origin-public-site-routes.md`
+- `docs/architecture/adr/0053-require-structural-token-preview-guards-for-shell-navigation.md`
 
 ## Runtime Shape
 
@@ -115,6 +120,9 @@ Current role:
 - require switchable token proof modules to expose the Layer 2 token proof
   exports `tokenDefinitionV1`, `tokenTypeTemplate`, `variants`, and the manifest
   named system token spec export
+- require structural shell/navigation frame token proof modules to use a
+  dedicated structural preview kind, renderer branch, and visual-spec selector
+  instead of a generic surface preview
 - require later governed layers to consume token seams through
   `src/frontend/designSystem/layers/02-token/` rather than importing directly
   from `systems/<system-key>/tokens/proofs/`

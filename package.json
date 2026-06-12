@@ -47,7 +47,7 @@
     "check:governed-root-admin-page-audit": "node --import tsx src/scripts/checkGovernedRootAdminPageAudit.ts",
     "check:governed-root-admin-ui": "node --import tsx src/scripts/checkGovernedRootAdminUi.ts",
     "check:repo-governance-harness": "npx vitest run tests/audit/repoGovernance/harnessAdrRouting.test.ts",
-    "check:design-system-registry": "npx vitest run tests/integration/frontend/designSystemSystemRegistryGuard.test.ts",
+    "check:design-system-registry": "npx vitest run tests/integration/frontend/designSystemSystemRegistryGuard.test.ts tests/integration/frontend/designSystemStructuralTokenPreviewGuard.test.ts tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts",
     "check:design-system-text-disclosure": "node --import tsx src/scripts/checkDesignSystemTextDisclosure.ts",
     "check:static": "npm run product-request:validate -- --all && npm run check:feature-dependencies && npm run check:governed-ui-adoption && npm run check:governed-root-admin-page-audit && npm run check:governed-root-admin-ui && npm run check:repo-governance-harness && npm run check:design-system-registry && npm run check:design-system-text-disclosure && npm run check:frontend-architecture && npm run typecheck",
     "check:repo": "npm run check:static && npm run deps:audit",

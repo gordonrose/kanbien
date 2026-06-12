@@ -24,6 +24,24 @@ function renderSummaryPanels(pageModel) {
           if (!variant) {
             return "";
           }
+          if (variant.preview.kind === "standard-page-shell-frame-sample") {
+            return renderStandardPageShellFramePreview(variant, "stage");
+          }
+          if (variant.preview.kind === "context-navigation-frame-sample") {
+            return renderContextNavigationFramePreview(variant, "stage");
+          }
+          if (variant.preview.kind === "context-navigation-item-affordance-sample") {
+            return renderContextNavigationItemAffordancePreview(variant, "stage");
+          }
+          if (variant.preview.kind === "tools-navigation-frame-sample") {
+            return renderToolsNavigationFramePreview(variant, "stage");
+          }
+          if (variant.preview.kind === "top-navigation-base-tokens-sample") {
+            return renderTopNavigationBaseTokensPreview(variant, "stage");
+          }
+          if (variant.preview.kind === "top-navigation-frame-sample") {
+            return renderTopNavigationFramePreview(variant, "stage");
+          }
           return `
             <div
               class="token-spec-page-preview"
@@ -42,6 +60,171 @@ function renderSummaryPanels(pageModel) {
         })
         .join("")}
     </section>
+  `;
+}
+
+function renderStandardPageShellFramePreview(variant, placement = "card") {
+  return `
+    <div class="token-spec-shell-frame-preview token-spec-shell-frame-preview--${escapeHtml(placement)}" aria-hidden="true">
+      <div class="token-spec-shell-frame-diagram token-spec-shell-frame-diagram--desktop">
+        <div class="token-spec-shell-frame-top">Top nav</div>
+        <div class="token-spec-shell-frame-sub">Sub nav</div>
+        <div class="token-spec-shell-frame-rail">Context rail</div>
+        <div class="token-spec-shell-frame-drawer">Drawer</div>
+        <div class="token-spec-shell-frame-main">Page body</div>
+        <div class="token-spec-shell-frame-tools">Tools zone</div>
+        <div class="token-spec-shell-frame-tooltip">Tooltip</div>
+      </div>
+      <div class="token-spec-shell-frame-diagram token-spec-shell-frame-diagram--mobile">
+        <div class="token-spec-shell-frame-mobile-top">Top + sub chrome</div>
+        <div class="token-spec-shell-frame-mobile-main">Page body</div>
+        <div class="token-spec-shell-frame-mobile-bar">Bottom context bar</div>
+        <div class="token-spec-shell-frame-mobile-safe">Safe area</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderContextNavigationFramePreview(variant, placement = "card") {
+  return `
+    <div class="token-spec-context-nav-frame-preview token-spec-context-nav-frame-preview--${escapeHtml(placement)}" aria-hidden="true">
+      <div class="token-spec-context-nav-frame-diagram token-spec-context-nav-frame-diagram--desktop">
+        <div class="token-spec-context-nav-frame-rail">Desktop rail</div>
+        <div class="token-spec-context-nav-frame-primary">Primary scroll</div>
+        <div class="token-spec-context-nav-frame-utility">Utility anchor</div>
+        <div class="token-spec-context-nav-frame-content">Page content</div>
+      </div>
+      <div class="token-spec-context-nav-frame-diagram token-spec-context-nav-frame-diagram--mobile">
+        <div class="token-spec-context-nav-frame-mobile-content">Page content</div>
+        <div class="token-spec-context-nav-frame-mobile-drawer">Drawer stops above bar</div>
+        <div class="token-spec-context-nav-frame-mobile-bar">Mobile bottom bar</div>
+        <div class="token-spec-context-nav-frame-mobile-pin">Viewport pinned</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderContextNavigationItemAffordancePreview(variant, placement = "card") {
+  const states = [
+    ["resting", "Rest"],
+    ["hover", "Hover"],
+    ["current", "Current"],
+    ["disabled", "Disabled"],
+  ];
+
+  return `
+    <div
+      class="token-spec-context-nav-item-affordance-preview token-spec-context-nav-item-affordance-preview--${escapeHtml(placement)}"
+      data-token-preview-radius="${escapeHtml(variant.radiusValue)}"
+      data-token-preview-desktop-inline-size="${escapeHtml(variant.desktopInlineSize)}"
+      data-token-preview-desktop-block-size="${escapeHtml(variant.desktopBlockSize)}"
+      data-token-preview-resting-border="${escapeHtml(variant.restingBorderValue)}"
+      data-token-preview-resting-background="${escapeHtml(variant.restingBackgroundValue)}"
+      data-token-preview-resting-foreground="${escapeHtml(variant.restingForegroundValue)}"
+      data-token-preview-hover-border="${escapeHtml(variant.hoverBorderValue)}"
+      data-token-preview-hover-background="${escapeHtml(variant.hoverBackgroundValue)}"
+      data-token-preview-hover-foreground="${escapeHtml(variant.hoverForegroundValue)}"
+      data-token-preview-current-border="${escapeHtml(variant.currentBorderValue)}"
+      data-token-preview-current-background="${escapeHtml(variant.currentBackgroundValue)}"
+      data-token-preview-current-foreground="${escapeHtml(variant.currentForegroundValue)}"
+      data-token-preview-disabled-opacity="${escapeHtml(variant.disabledOpacityValue)}"
+      aria-hidden="true"
+    >
+      ${states
+        .map(
+          ([state, label]) => `
+            <span class="token-spec-context-nav-item-affordance-state" data-token-context-nav-item-state="${escapeHtml(state)}">
+              <strong>${escapeHtml(label.slice(0, 1))}</strong>
+              <small>${escapeHtml(label)}</small>
+            </span>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderToolsNavigationFramePreview(variant, placement = "card") {
+  return `
+    <div class="token-spec-tools-nav-frame-preview token-spec-tools-nav-frame-preview--${escapeHtml(placement)}" aria-hidden="true">
+      <div class="token-spec-tools-nav-frame-diagram token-spec-tools-nav-frame-diagram--desktop">
+        <div class="token-spec-tools-nav-frame-content">Page body</div>
+        <div class="token-spec-tools-nav-frame-rail">
+          <span>Build</span>
+          <span>Reports</span>
+          <span>Support</span>
+          <span>Unavailable</span>
+        </div>
+      </div>
+      <div class="token-spec-tools-nav-frame-diagram token-spec-tools-nav-frame-diagram--mobile">
+        <div class="token-spec-tools-nav-frame-mobile-content">Page body</div>
+        <div class="token-spec-tools-nav-frame-mobile-hidden">Tools hidden on mobile</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTopNavigationBaseTokensPreview(variant, placement = "card") {
+  return `
+    <div class="token-spec-top-nav-base-preview token-spec-top-nav-base-preview--${escapeHtml(placement)}" aria-hidden="true">
+      <div class="token-spec-top-nav-base-shell">
+        <div class="token-spec-top-nav-base-brand">
+          <span>K</span>
+          <strong>Brand</strong>
+        </div>
+        <div class="token-spec-top-nav-base-links">
+          <span>Current</span>
+          <span>Destination</span>
+          <span>More</span>
+        </div>
+        <div class="token-spec-top-nav-base-profile">Profile</div>
+      </div>
+      <div class="token-spec-top-nav-base-groups">
+        <span><strong>mapped 41</strong><code>background-color / primary-color-source / primary-tinted-* / focus-ring</code></span>
+        <span><strong>partially mapped</strong><code>button-frame / panel-frame / panel-corner-radius</code></span>
+        <span><strong>resolved 41</strong><code>top-navigation-frame owns text / border / current state / menu elevation / non-flush radius</code></span>
+        <span><strong>retired 40</strong><code>--surface-* / --ink* / --line* / --accent* / --shadow* / --radius*</code></span>
+        <span><strong>blocked</strong><code>not consumable by primitives or patterns</code></span>
+        <span><strong>next</strong><code>create or explicitly map missing token seams</code></span>
+      </div>
+      <div class="token-spec-top-nav-base-boundary">
+        <strong>Blocked 41-token inventory</strong>
+        <span>Old design-system variables are reference evidence only; top navigation still needs missing 41 token seams.</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTopNavigationFramePreview(variant, placement = "card") {
+  const role = variant.preview.role ?? "chrome";
+  return `
+    <div
+      class="token-spec-top-nav-frame-preview token-spec-top-nav-frame-preview--${escapeHtml(placement)}"
+      data-token-top-nav-frame-role="${escapeHtml(role)}"
+      data-token-preview-background="${escapeHtml(variant.preview.background)}"
+      data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+      data-token-preview-supporting-foreground="${escapeHtml(variant.preview.supportingForeground)}"
+      data-token-preview-border="${escapeHtml(variant.preview.border)}"
+      data-token-preview-radius="${escapeHtml(variant.preview.radius)}"
+      data-token-preview-shadow="${escapeHtml(variant.preview.shadow)}"
+      aria-hidden="true"
+    >
+      <div class="token-spec-top-nav-frame-shell">
+        <span class="token-spec-top-nav-frame-brand">K</span>
+        <span class="token-spec-top-nav-frame-destination">Home</span>
+        <span class="token-spec-top-nav-frame-destination token-spec-top-nav-frame-destination--current">Current</span>
+        <span class="token-spec-top-nav-frame-destination">More</span>
+        <span class="token-spec-top-nav-frame-profile">Profile</span>
+      </div>
+      <div class="token-spec-top-nav-frame-menu">
+        <span>Menu panel</span>
+        <strong>${escapeHtml(variant.preview.label)}</strong>
+      </div>
+      <div class="token-spec-top-nav-frame-boundary">
+        <strong>${escapeHtml(variant.frameRole)}</strong>
+        <span>${escapeHtml(variant.stateMapping)} / ${escapeHtml(variant.themeMapping)}</span>
+      </div>
+    </div>
   `;
 }
 
@@ -293,6 +476,29 @@ function renderVariantPreview(variant) {
         <span class="token-spec-surface-card-sample">${escapeHtml(variant.preview.sample)}</span>
       </div>
     `;
+  }
+
+  if (variant.preview.kind === "standard-page-shell-frame-sample") {
+    return renderStandardPageShellFramePreview(variant);
+  }
+  if (variant.preview.kind === "tools-navigation-frame-sample") {
+    return renderToolsNavigationFramePreview(variant);
+  }
+
+  if (variant.preview.kind === "top-navigation-base-tokens-sample") {
+    return renderTopNavigationBaseTokensPreview(variant);
+  }
+
+  if (variant.preview.kind === "top-navigation-frame-sample") {
+    return renderTopNavigationFramePreview(variant);
+  }
+
+  if (variant.preview.kind === "context-navigation-frame-sample") {
+    return renderContextNavigationFramePreview(variant);
+  }
+
+  if (variant.preview.kind === "context-navigation-item-affordance-sample") {
+    return renderContextNavigationItemAffordancePreview(variant);
   }
 
   if (variant.preview.kind === "detail-slot-frame-sample") {
@@ -881,6 +1087,7 @@ function applyPreviewStyles(root) {
       element.style.setProperty("--token-preview-border", element.dataset.tokenPreviewBorder ?? "");
       element.style.setProperty("--token-preview-shadow", element.dataset.tokenPreviewShadow ?? "");
       element.style.setProperty("--token-preview-radius", element.dataset.tokenPreviewRadius ?? "");
+      element.style.setProperty("--token-preview-supporting-foreground", element.dataset.tokenPreviewSupportingForeground ?? "");
       element.style.setProperty("--token-preview-padding-block", element.dataset.tokenPreviewPaddingBlock ?? "");
       element.style.setProperty("--token-preview-padding-inline", element.dataset.tokenPreviewPaddingInline ?? "");
       element.style.setProperty("--token-preview-max-inline-size", element.dataset.tokenPreviewMaxInlineSize ?? "");
