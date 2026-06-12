@@ -130,7 +130,7 @@ describe("icon-button-control primitive seam", () => {
     expect(iconButtonControlPrimitiveContract).toMatchObject({
       primitiveName: "icon-button-control",
       eventName: "icon-button-control:activate",
-      supportedIcons: ["plus", "close", "list"],
+      supportedIcons: ["plus", "close", "list", "filter", "sort"],
       supportedFrameIntents: ["quiet", "subtle"],
       requiredTokens: ["button-frame", "icon-size", "focus-ring", "minimum-target-size"],
       requiredSystemRegistries: ["glyph-registry"],

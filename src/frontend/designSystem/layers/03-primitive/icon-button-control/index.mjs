@@ -5,7 +5,7 @@ import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/s
 import { resolveDefaultGlyphPath } from "../glyph-registry/systems/default.mjs";
 
 const primitiveName = "icon-button-control";
-const supportedIconNames = ["plus", "close", "list"];
+const supportedIconNames = ["plus", "close", "list", "filter", "sort"];
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
