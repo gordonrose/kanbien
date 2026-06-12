@@ -33,6 +33,7 @@ pattern slot composition, component seams, or app adoption.
 | `shared contract` | Body region frame must include | background, foreground, border, radius, padding, gap, section gap, min inline size, max inline size, min block size, desktop max block size, mobile block-size behavior, and state spacing |
 | `shared contract` | Width rails | Body regions must define min and max inline size so adjacent navigation or panel regions cannot squash the body below its governed review width or stretch it beyond the available composition width |
 | `shared contract` | Radius source | Body region radius must derive from a signed panel or panel-corner radius seam |
+| `shared contract` | Theme mapping | Body region theme variants must derive surface, foreground, border, radius, and rails from the same-theme panel-frame variant when the system provides themed panel frames |
 | `shared contract` | State posture | Empty, loading, read-only, error, and blocked states may use this frame token for spacing and surface, but semantic state meaning belongs to later primitives or patterns |
 
 ## Consumer Restrictions

@@ -42,11 +42,15 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
-function tokenDependenciesFor() {
+function bodyRegionFrameIdForTheme(theme) {
+  return theme === "original" ? "body-region-frame-default" : `body-region-frame-default-${theme}`;
+}
+
+function tokenDependenciesFor(theme) {
   const bodyRegionFrame = findVariant(
     bodyRegionFrameTokenSpec,
-    (variant) => variant.id === "body-region-frame-default",
-    "body-region-control requires the signed body-region-frame token.",
+    (variant) => variant.id === bodyRegionFrameIdForTheme(theme),
+    `body-region-control requires the signed ${theme} body-region-frame token.`,
   );
 
   return { bodyRegionFrame };
@@ -92,7 +96,7 @@ export function bodyRegionControlPrimitive(options = {}) {
     throw new RangeError(`body-region-control does not support mobileMode "${mobileMode}".`);
   }
 
-  const tokens = tokenDependenciesFor();
+  const tokens = tokenDependenciesFor(theme);
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",

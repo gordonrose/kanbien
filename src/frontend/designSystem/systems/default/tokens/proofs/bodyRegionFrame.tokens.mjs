@@ -1,10 +1,84 @@
 import { bodyRegionFrameTokenContract } from "../../../../layers/02-token/body-region-frame/contract.mjs";
 import { panelFrameTokenSpec } from "./panelFrame.tokens.mjs";
 
-const panelFrame = panelFrameTokenSpec.variants.find((variant) => variant.id === "panel-frame-default");
+const supportedThemes = ["original", "dark", "desert"];
 
-if (!panelFrame) {
-  throw new Error("body-region-frame requires the signed panel-frame dependency.");
+function panelFrameIdForTheme(theme) {
+  return theme === "original" ? "panel-frame-default" : `panel-frame-${theme}`;
+}
+
+function bodyRegionFrameIdForTheme(theme) {
+  return theme === "original" ? "body-region-frame-default" : `body-region-frame-default-${theme}`;
+}
+
+function bodyRegionFrameTokenNameForTheme(theme) {
+  return theme === "original" ? "--body-region-frame" : `--body-region-frame-${theme}`;
+}
+
+function panelFrameForTheme(theme) {
+  const panelFrame = panelFrameTokenSpec.variants.find((variant) => variant.id === panelFrameIdForTheme(theme));
+  if (!panelFrame) {
+    throw new Error(`body-region-frame requires the signed ${theme} panel-frame dependency.`);
+  }
+  return panelFrame;
+}
+
+function bodyRegionVariant(theme) {
+  const panelFrame = panelFrameForTheme(theme);
+  const labelPrefix = theme === "original" ? "" : `${theme[0].toUpperCase()}${theme.slice(1)} `;
+
+  return {
+    id: bodyRegionFrameIdForTheme(theme),
+    tokenName: bodyRegionFrameTokenNameForTheme(theme),
+    value: {
+      frameRole: "body region frame",
+      backgroundValue: panelFrame.backgroundValue,
+      foregroundValue: panelFrame.foregroundValue,
+      borderValue: panelFrame.borderValue,
+      radiusValue: panelFrame.radiusValue,
+      paddingBlockValue: "1rem",
+      paddingInlineValue: "1rem",
+      gapValue: "0.75rem",
+      sectionGapValue: "1rem",
+      minInlineSize: panelFrame.doubleInlineSize,
+      maxInlineSize: panelFrame.maxInlineSize,
+      minBlockSize: "12rem",
+      desktopMaxBlockSize: panelFrame.maxBlockSize,
+      mobileBlockSizeBehavior: "mobile body regions may expand to content height when the containing pattern selects page-scroll placement",
+      stateSpacingValue: "0.75rem",
+    },
+    derivation: {
+      sourceTokenName: panelFrame.tokenName,
+      sourceValue: panelFrame.tokenValue,
+      formulaOrMapping:
+        "body region surface, foreground, border, radius, min width, max width, and desktop max height derive from the same-theme panel-frame; padding and state spacing are body-region decisions",
+      renderedValue:
+        "panel-frame double min width / panel-frame available max width / 1rem padding / 0.75rem content gap / 1rem section gap / 12rem minimum height / panel-frame desktop max height",
+    },
+    preview: {
+      kind: "surface-card",
+      sample: "Body region",
+      background: panelFrame.backgroundValue,
+      foreground: panelFrame.foregroundValue,
+      border: panelFrame.borderValue,
+      radius: panelFrame.radiusValue,
+      label: `${labelPrefix}body region frame`,
+    },
+    metadata: {
+      frameRole: "body region frame",
+      responsiveBehavior:
+        "desktop body regions may use a governed internal scroll owner; mobile body regions may expand with page scroll when the containing pattern selects that posture",
+      scrollBehavior:
+        "scroll ownership belongs to the consuming primitive or pattern; this token supplies frame and sizing values only",
+      theme,
+      accessibility: "Body-region spacing and scroll sizing must keep content reachable at zoom and must not hide errors, blocked states, or controls.",
+    },
+    useCaseInstructions: [
+      "Use for inner body/content regions inside governed panels.",
+      "Do not use for outer panel shells, navigation lists, cards, fields, builders, route wrappers, or app-local form layouts.",
+      "Hosted controls still need their own governed token and primitive foundations before the body region may render them as real controls.",
+    ],
+  };
 }
 
 export const tokenTypeTemplate = {
@@ -60,64 +134,17 @@ export const tokenDefinitionV1 = {
     rendererExport: "renderTokenSpecPage",
     allowedConsumers: ["03-primitive", "04-pattern-contract"],
   },
-  dependencies: [
-    {
+  dependencies: supportedThemes.map((theme) => {
+    const panelFrame = panelFrameForTheme(theme);
+    return {
       contractId: "tokens.panel-frame",
       variantId: panelFrame.id,
       tokenName: panelFrame.tokenName,
       value: panelFrame.tokenValue,
       relationship: "derived-from",
-    },
-  ],
-  variants: [
-    {
-      id: "body-region-frame-default",
-      tokenName: "--body-region-frame",
-      value: {
-        frameRole: "body region frame",
-        backgroundValue: panelFrame.backgroundValue,
-        foregroundValue: panelFrame.foregroundValue,
-        borderValue: panelFrame.borderValue,
-        radiusValue: panelFrame.radiusValue,
-        paddingBlockValue: "1rem",
-        paddingInlineValue: "1rem",
-        gapValue: "0.75rem",
-        sectionGapValue: "1rem",
-        minInlineSize: panelFrame.doubleInlineSize,
-        maxInlineSize: panelFrame.maxInlineSize,
-        minBlockSize: "12rem",
-        desktopMaxBlockSize: panelFrame.maxBlockSize,
-        mobileBlockSizeBehavior: "mobile body regions may expand to content height when the containing pattern selects page-scroll placement",
-        stateSpacingValue: "0.75rem",
-      },
-      derivation: {
-        sourceTokenName: panelFrame.tokenName,
-        sourceValue: panelFrame.tokenValue,
-        formulaOrMapping: "body region surface, foreground, border, radius, min width, max width, and desktop max height derive from panel-frame; padding and state spacing are body-region decisions",
-        renderedValue: "panel-frame double min width / panel-frame available max width / 1rem padding / 0.75rem content gap / 1rem section gap / 12rem minimum height / panel-frame desktop max height",
-      },
-      preview: {
-        kind: "surface-card",
-        sample: "Body region",
-        background: panelFrame.backgroundValue,
-        foreground: panelFrame.foregroundValue,
-        border: panelFrame.borderValue,
-        radius: panelFrame.radiusValue,
-        label: "Body region frame",
-      },
-      metadata: {
-        frameRole: "body region frame",
-        responsiveBehavior: "desktop body regions may use a governed internal scroll owner; mobile body regions may expand with page scroll when the containing pattern selects that posture",
-        scrollBehavior: "scroll ownership belongs to the consuming primitive or pattern; this token supplies frame and sizing values only",
-        accessibility: "Body-region spacing and scroll sizing must keep content reachable at zoom and must not hide errors, blocked states, or controls.",
-      },
-      useCaseInstructions: [
-        "Use for inner body/content regions inside governed panels.",
-        "Do not use for outer panel shells, navigation lists, cards, fields, builders, route wrappers, or app-local form layouts.",
-        "Hosted controls still need their own governed token and primitive foundations before the body region may render them as real controls.",
-      ],
-    },
-  ],
+    };
+  }),
+  variants: supportedThemes.map(bodyRegionVariant),
 };
 
 export const variants = tokenDefinitionV1.variants;
@@ -145,7 +172,7 @@ function toPageVariant(variant) {
     sourceTokenName: variant.derivation.sourceTokenName,
     sourceValue: variant.derivation.sourceValue,
     formulaOrMapping: variant.derivation.formulaOrMapping,
-    theme: "all",
+    theme: variant.metadata.theme,
     accessibility: variant.metadata.accessibility,
     preview: variant.preview,
     usage: [
@@ -164,7 +191,7 @@ export const bodyRegionFrameTokenSpec = {
   tokenType: "body-region-frame",
   title: tokenDefinitionV1.page.title,
   description: tokenDefinitionV1.page.description,
-  variantSectionDescription: "This variant governs inner body/content-region frame values.",
+  variantSectionDescription: "These variants govern inner body/content-region frame values for each supported theme.",
   tokenTypeTemplate,
   summaryPanels: [
     {

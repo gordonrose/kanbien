@@ -35,8 +35,8 @@ governed runtime seam.
 | Field | Value |
 | --- | --- |
 | Upstream contract | `tokens.panel-frame` |
-| Upstream variant or token | `panel-frame-default` |
-| Formula or mapping | Body region surface, foreground, border, radius, min inline size, max inline size, and desktop max block size map from the signed generic panel frame; body padding, section gap, and state spacing are body-region decisions. |
+| Upstream variant or token | `panel-frame-default`, `panel-frame-dark`, `panel-frame-desert` |
+| Formula or mapping | Body region surface, foreground, border, radius, min inline size, max inline size, and desktop max block size map from the signed same-theme generic panel frame; body padding, section gap, and state spacing are body-region decisions. |
 | What changes when upstream changes | Surface, foreground, border, radius, width rails, and desktop max-height proof output changes in the rendered token page. |
 | What must not change | Behavior contract, primitive semantics, accessibility contract, signed token values, or readiness truth. |
 
@@ -50,6 +50,14 @@ governed runtime seam.
 | System token export | `bodyRegionFrameTokenSpec` |
 | System page route | `/design-system/default/tokens/body-region-frame` |
 | System proof status | `review-ready` |
+
+## Theme Variants
+
+| Body Region Variant | Upstream Panel Variant | Theme |
+| --- | --- | --- |
+| `body-region-frame-default` | `panel-frame-default` | `original` |
+| `body-region-frame-default-dark` | `panel-frame-dark` | `dark` |
+| `body-region-frame-default-desert` | `panel-frame-desert` | `desert` |
 
 ## Rendered View
 

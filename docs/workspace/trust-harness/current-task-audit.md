@@ -2,61 +2,52 @@
 
 ## Preflight Contract
 
-- Task summary: Recover the glyph-registry migration from the dirty original
-  worktree into a clean branch after PR 17 and PR 18 merged to `main`.
+- Task summary: Recover the same-theme body-region-frame token and
+  body-region primitive resolution from the dirty original worktree into a
+  clean branch after PR 17, PR 18, and PR 19 merged to `main`.
 - Mode: reconcile-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
-  - `.codex/plugins/cache/openai-curated/github/*/skills/yeet/SKILL.md`
+  - `.codex/skills/41-front-end/02-token/SKILL.md`
   - `.codex/skills/41-front-end/03-primitive/SKILL.md`
-- Task risk class: governed frontend primitive registry migration
-- Discovered evidence boundary: the default glyph registry should be owned by
-  the Layer 3 primitive registry seam, while the old default-system registry
-  path remains as a compatibility re-export. Direct primitive consumers and
-  unit tests should import the Layer 3 seam, and active primitive docs should
-  name the Layer 3 registry as the source of truth.
-- Intended edit boundary: layer-owned default glyph registry, default-system
-  compatibility re-export, direct primitive consumers, matching unit-test
-  imports/expectations, primitive docs that name the glyph registry seam, and
-  this task audit.
+- Task risk class: governed frontend token and primitive recovery
+- Discovered evidence boundary: `body-region-frame` must derive its surface,
+  foreground, border, radius, width rails, and desktop max block size from the
+  same-theme `panel-frame` variant for original, dark, and desert themes.
+  `body-region-control` must resolve the body-region-frame variant matching
+  its requested theme.
+- Intended edit boundary: body-region-frame token docs and default proof data,
+  body-region-control token dependency resolution, focused unit tests, the
+  body-region-frame token visual spec selector repair required by the
+  same-theme variants, and this task audit.
 - Files allowed to edit:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `docs/design-system/03-primitive/primitive-readiness-index.md`
-  - `docs/design-system/03-primitive/shared/accordion-section-control/AccordionSectionControl-Contract.md`
-  - `docs/design-system/03-primitive/shared/icon-button-control/IconButtonControl-Contract.md`
-  - `docs/design-system/03-primitive/systems/default/icon-button-control/IconButtonControl-Proof.md`
-  - `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
-  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
-  - `tests/unit/designSystem/entityPanelPattern.test.ts`
-  - `tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts`
-  - `tests/unit/designSystem/iconButtonControlPrimitive.test.ts`
-  - `tests/unit/designSystem/indexNavPanelPattern.test.ts`
-  - `tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
+  - `docs/design-system/02-token/shared/body-region-frame/BodyRegionFrame-Contract.md`
+  - `docs/design-system/02-token/systems/default/body-region-frame/BodyRegionFrame-Implementation.md`
+  - `src/frontend/designSystem/systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/body-region-control/index.mjs`
+  - `tests/unit/designSystem/bodyRegionFrameToken.test.ts`
+  - `tests/unit/designSystem/bodyRegionControlPrimitive.test.ts`
+  - `tests/visual/designSystem/tokens/bodyRegionFrameTokenRoute.spec.ts`
 - Files explicitly out of scope:
   - `/home/gordon/kanbien` edits
   - `package.json`
   - package-lock or dependency updates
+  - mixed `src/frontend/designSystem/systems/default/assets/styles.css`
   - frontend proof-evidence manifest work blocked on
     `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
-  - same-theme panel-frame/body-region work
+  - glyph-registry migration already merged through PR 19
   - broad primitive/token CSS work
-  - unrelated primitive controller or render-helper changes
-  - branch/worktree deletion
+  - unrelated panel-stack or panel-surface visual-test additions unless a
+    focused verification gate proves they are required
 - Required verification commands:
-  - `rg -n "systems/default/glyphs/registry\\.mjs" src/frontend/designSystem/layers tests/unit/designSystem docs/design-system/03-primitive`
-  - `node --check src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
-  - `node --check src/frontend/designSystem/systems/default/glyphs/registry.mjs`
-  - `node --check src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
-  - `node --check src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
-  - `node --check src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
-  - `node --check src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
-  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts tests/unit/designSystem/iconButtonControlPrimitive.test.ts tests/unit/designSystem/indexNavPanelPattern.test.ts tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
+  - `node --check src/frontend/designSystem/systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs`
+  - `node --check src/frontend/designSystem/layers/03-primitive/body-region-control/index.mjs`
+  - `npx vitest run tests/unit/designSystem/bodyRegionFrameToken.test.ts tests/unit/designSystem/bodyRegionControlPrimitive.test.ts`
+  - `npx playwright test tests/visual/designSystem/tokens/bodyRegionFrameTokenRoute.spec.ts`
+  - `npx playwright test tests/visual/designSystem/primitives/bodyRegionControlPrimitiveRoute.spec.ts`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
 - Allowed closure vocabulary: `candidate recovery branch pending PR review`;
   do not claim the wider dirty-worktree recovery is complete.
@@ -65,48 +56,36 @@
 
 - Actual files edited:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `docs/design-system/03-primitive/primitive-readiness-index.md`
-  - `docs/design-system/03-primitive/shared/accordion-section-control/AccordionSectionControl-Contract.md`
-  - `docs/design-system/03-primitive/shared/icon-button-control/IconButtonControl-Contract.md`
-  - `docs/design-system/03-primitive/systems/default/icon-button-control/IconButtonControl-Proof.md`
-  - `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
-  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
-  - `src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
-  - `tests/unit/designSystem/entityPanelPattern.test.ts`
-  - `tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts`
-  - `tests/unit/designSystem/iconButtonControlPrimitive.test.ts`
-  - `tests/unit/designSystem/indexNavPanelPattern.test.ts`
-  - `tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
+  - `docs/design-system/02-token/shared/body-region-frame/BodyRegionFrame-Contract.md`
+  - `docs/design-system/02-token/systems/default/body-region-frame/BodyRegionFrame-Implementation.md`
+  - `src/frontend/designSystem/systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/body-region-control/index.mjs`
+  - `tests/unit/designSystem/bodyRegionFrameToken.test.ts`
+  - `tests/unit/designSystem/bodyRegionControlPrimitive.test.ts`
+  - `tests/visual/designSystem/tokens/bodyRegionFrameTokenRoute.spec.ts`
 - Evidence collected:
-  - The default glyph registry now lives at
-    `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`.
-  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs` remains as
-    a compatibility re-export.
-  - Direct primitive consumers and affected unit tests import the Layer 3
-    registry seam.
-  - Active primitive docs that named the old registry source now name the Layer
-    3 registry seam.
-  - The scoped stale-path scan found no remaining old registry-path references
-    in `src/frontend/designSystem/layers`, `tests/unit/designSystem`, or
-    `docs/design-system/03-primitive`.
+  - `body-region-frame` now has original, dark, and desert variants.
+  - Each body-region-frame variant derives surface, foreground, border,
+    radius, width rails, and desktop max block size from the same-theme
+    `panel-frame` variant.
+  - `body-region-control` resolves the body-region-frame variant matching its
+    requested theme.
+  - Unit coverage checks the three token variants and dark theme primitive
+    style/token dependency resolution.
+  - Browser coverage checks the body-region-frame token route after the new
+    variants and the body-region-control primitive route.
+  - The visual token spec selector was narrowed because the intended same-theme
+    variants made substring text queries ambiguous.
 - Commands run and results:
-  - `rg -n "systems/default/glyphs/registry\\.mjs" src/frontend/designSystem/layers tests/unit/designSystem docs/design-system/03-primitive`: no matches; exit code 1 expected for no matches.
-  - `node --check src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`: passed.
-  - `node --check src/frontend/designSystem/systems/default/glyphs/registry.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`: passed.
+  - `node --check src/frontend/designSystem/systems/default/tokens/proofs/bodyRegionFrame.tokens.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/body-region-control/index.mjs`: passed.
   - `npm ci`: sandbox run failed on `esbuild` EPERM in `/tmp`; escalated rerun passed and did not change tracked dependency files.
-  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts tests/unit/designSystem/iconButtonControlPrimitive.test.ts tests/unit/designSystem/indexNavPanelPattern.test.ts tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`: passed, 5 files, 31 tests.
+  - `npx vitest run tests/unit/designSystem/bodyRegionFrameToken.test.ts tests/unit/designSystem/bodyRegionControlPrimitive.test.ts`: passed, 2 files, 6 tests.
+  - `NODE_ENV=test PORT=4318 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/tokens/bodyRegionFrameTokenRoute.spec.ts`: sandbox run failed on localhost bind EPERM; escalated rerun exposed expected strict-mode ambiguity after adding the dark/desert token variants; after narrowing selectors, passed, 1 test. The preview server emitted pre-existing database authentication warnings from the rate-limit path.
+  - `NODE_ENV=test PORT=4318 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/primitives/bodyRegionControlPrimitiveRoute.spec.ts`: passed, 2 tests. The preview server emitted pre-existing database authentication warnings from the rate-limit path.
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed before closure update; rerun required after closure update.
 - Missing or inferred evidence:
-  - No Playwright run was required for this registry-path-only recovery slice;
-    rendered behavior is inferred from unchanged glyph path data and passing
-    focused unit coverage.
-  - The wider dirty-worktree recovery remains incomplete.
+  - No full design-system harness gate was run for this narrow recovery slice.
+  - Wider dirty-worktree recovery remains incomplete.
 - User confirmation still required: yes
 - Final permitted closure state: `candidate recovery branch pending PR review`
