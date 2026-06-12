@@ -1,4 +1,4 @@
-import { contextNavigationOverflowMenuFrameTokenSpec } from "../../02-token/context-navigation-overflow-menu-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import {
   attachContextNavigationItemControlPrimitiveController,
   renderContextNavigationItemControlPrimitive,
@@ -6,6 +6,10 @@ import {
 
 const primitiveName = "context-navigation-overflow-menu";
 const supportedModes = new Set(["default", "mobile"]);
+const contextNavigationOverflowMenuFrameTokenSpec = resolveTokenSpec({
+  systemKey: "default",
+  tokenType: "context-navigation-overflow-menu-frame",
+});
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {

@@ -17,6 +17,11 @@ describe("design-system token spec resolver", () => {
       systemKey: "default",
       tokenType: "context-navigation-frame",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "context-navigation-overflow-menu-frame" })).toMatchObject({
+      contractId: "tokens.context-navigation-overflow-menu-frame",
+      systemKey: "default",
+      tokenType: "context-navigation-overflow-menu-frame",
+    });
     expect(resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" })).toMatchObject({
       systemKey: "default",
       tokenType: "focus-ring",
