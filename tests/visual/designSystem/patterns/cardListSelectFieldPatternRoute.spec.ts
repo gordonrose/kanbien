@@ -48,10 +48,12 @@ test.describe("card-list-select-field pattern route", () => {
     await page.locator("[data-card-list-select-field-columns-control]").selectOption("4");
     await page.locator("[data-card-list-select-field-width-control]").selectOption("narrow");
     await page.locator("[data-card-list-select-field-direction-control]").selectOption("rtl");
+    await page.locator("[data-card-list-select-field-theme-control]").selectOption("dark");
 
     const host = page.locator("[data-card-list-select-field-review-width]").first();
     const group = page.locator("[data-card-list-select]").first();
     await expect(host).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("[data-card-list-select-field]").first()).toHaveAttribute("data-card-list-select-field-theme", "dark");
     await expect(group).toHaveAttribute("data-card-list-select-columns-rendered", "1");
     await expect(page.locator(".ds-card-list-select-state-text", { hasText: "Priority 1" }).first()).toBeVisible();
 
