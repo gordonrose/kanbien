@@ -17,6 +17,11 @@ describe("design-system token spec resolver", () => {
       systemKey: "default",
       tokenType: "context-navigation-frame",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "context-navigation-item-affordance" })).toMatchObject({
+      contractId: "tokens.context-navigation-item-affordance",
+      systemKey: "default",
+      tokenType: "context-navigation-item-affordance",
+    });
     expect(resolveTokenSpec({ systemKey: "default", tokenType: "context-navigation-overflow-menu-frame" })).toMatchObject({
       contractId: "tokens.context-navigation-overflow-menu-frame",
       systemKey: "default",
@@ -25,6 +30,11 @@ describe("design-system token spec resolver", () => {
     expect(resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" })).toMatchObject({
       systemKey: "default",
       tokenType: "focus-ring",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "icon-size" })).toMatchObject({
+      contractId: "tokens.icon-size",
+      systemKey: "default",
+      tokenType: "icon-size",
     });
     expect(resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" })).toMatchObject({
       contractId: "tokens.label-text-style",

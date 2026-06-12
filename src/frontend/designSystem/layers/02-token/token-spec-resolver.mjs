@@ -1,7 +1,9 @@
 import { buttonFrameTokenSpec } from "./button-frame/systems/default.mjs";
 import { contextNavigationFrameTokenSpec } from "./context-navigation-frame/systems/default.mjs";
+import { contextNavigationItemAffordanceTokenSpec } from "./context-navigation-item-affordance/systems/default.mjs";
 import { contextNavigationOverflowMenuFrameTokenSpec } from "./context-navigation-overflow-menu-frame/systems/default.mjs";
 import { focusRingTokenSpec } from "./focus-ring/systems/default.mjs";
+import { iconSizeTokenSpec } from "./icon-size/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "./label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "./minimum-target-size/systems/default.mjs";
 import { primaryTintedBackgroundTokenSpec } from "./primary-tinted-background/systems/default.mjs";
@@ -14,8 +16,10 @@ const tokenSpecRegistry = {
   default: {
     "button-frame": buttonFrameTokenSpec,
     "context-navigation-frame": contextNavigationFrameTokenSpec,
+    "context-navigation-item-affordance": contextNavigationItemAffordanceTokenSpec,
     "context-navigation-overflow-menu-frame": contextNavigationOverflowMenuFrameTokenSpec,
     "focus-ring": focusRingTokenSpec,
+    "icon-size": iconSizeTokenSpec,
     "label-text-style": labelTextStyleTokenSpec,
     "minimum-target-size": minimumTargetSizeTokenSpec,
     "primary-tinted-background": primaryTintedBackgroundTokenSpec,
