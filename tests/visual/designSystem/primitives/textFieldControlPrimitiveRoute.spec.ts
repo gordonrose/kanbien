@@ -33,12 +33,17 @@ test.describe("text-field-control primitive route", () => {
 
     const host = page.locator("[data-text-field-review-width]").first();
     const input = page.locator("[data-text-field-control-input]").first();
+    const fieldRow = page.locator("[data-field-row-control]").first();
 
+    await page.locator("[data-text-field-label-control]").selectOption("long");
+    await page.locator("[data-text-field-value-control]").selectOption("long");
     await page.locator("[data-text-field-state-control]").selectOption("error");
     await page.locator("[data-text-field-direction-control]").selectOption("rtl");
     await page.locator("[data-text-field-width-control]").selectOption("narrow");
 
     await expect(input).toHaveAttribute("aria-invalid", "true");
+    await expect(fieldRow).toHaveAttribute("data-field-row-control-controller", "attached");
+    await expect(input).toHaveValue("entity.organization.label.singular.with.long.preview.value");
     await expect(input).toHaveAttribute("aria-describedby", "text-field-control-proof-error");
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("Error text field")).toBeVisible();
     await expect(page.locator("[data-text-field-proof-state-evidence]").getByText("aria-invalidfalse")).toHaveCount(0);

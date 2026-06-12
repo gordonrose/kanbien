@@ -45,9 +45,15 @@ test.describe("simple-dropdown-field pattern route", () => {
     await page.locator("[data-simple-dropdown-field-label-length-control]").selectOption("long");
     await page.locator("[data-simple-dropdown-field-width-control]").selectOption("narrow");
     await page.locator("[data-simple-dropdown-field-direction-control]").selectOption("rtl");
+    await page.locator("[data-simple-dropdown-field-theme-control]").selectOption("dark");
     await page.locator("[data-simple-dropdown-field-state-control]").selectOption("error");
 
     await expect(page.locator("[data-simple-dropdown-field-review-width]").first()).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("[data-simple-dropdown-field]").first()).toHaveAttribute("data-simple-dropdown-field-theme", "dark");
+    await expect(page.locator("[data-field-row-control]").first()).toHaveAttribute(
+      "data-field-row-control-controller",
+      "attached",
+    );
     await expect(page.getByRole("button")).toHaveAttribute("aria-invalid", "true");
     await expect(page.locator("[data-field-row-control-message='error']")).toHaveText("Choose one page template before continuing.");
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
