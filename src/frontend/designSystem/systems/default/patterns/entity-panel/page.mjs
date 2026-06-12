@@ -5,7 +5,6 @@ import {
 } from "../../../../layers/04-pattern-contract/entity-panel/index.mjs";
 import {
   attachIndexNavPanelPatternController,
-  renderIndexNavPanelPattern,
 } from "../../../../layers/04-pattern-contract/index-nav-panel/index.mjs";
 import {
   attachAccordionFormSectionPatternController,
@@ -449,12 +448,17 @@ function renderPage(state) {
   const spec = entityPanelPattern({
     id: "entity-panel-proof-summary",
     title: "Identity",
+    primaryTitle: "Primary index",
+    primaryItems: primaryFixtures,
+    primaryCurrent: renderedPrimaryCurrent,
+    showPrimaryIndex: state.primaryMode !== "hidden",
+    primaryResizable: !mobileReview,
     secondaryItems,
     secondaryCurrent: renderedSecondaryCurrent,
     showSecondaryIndex: state.secondaryMode !== "hidden",
     showSecondaryHeader: state.secondaryHeaderMode === "shown",
     secondaryResizable: state.secondaryResizeMode === "on",
-    mobileActiveRegion: state.mobileActiveRegion === "secondary-index" ? "secondary-index" : "body",
+    mobileActiveRegion: state.mobileActiveRegion,
     bodyHtml: bodyHtmlForState(state),
   });
 
@@ -484,37 +488,15 @@ function renderPage(state) {
               data-entity-panel-primary-mode="${escapeHtml(state.primaryMode)}"
               ${state.viewportMode === "mobile" ? 'data-drawer-overlay-boundary="proof-viewport"' : ""}
             >
-              ${
-                state.primaryMode !== "hidden"
-                  ? `<aside class="ds-entity-panel-proof-primary" data-entity-panel-region="primary-index">
-                      ${renderIndexNavPanelPattern({
-                        id: "entity-panel-proof-primary-index",
-                        title: "Primary index",
-                        ariaLabel: "Primary index",
-                        currentValue: renderedPrimaryCurrent,
-                        items: primaryFixtures,
-                        showHeader: mobileReview,
-                        showAddAction: false,
-                        headerActions: mobileReview
-                          ? [
-                              {
-                                label: "Close primary index",
-                                value: "close-primary-index",
-                                icon: "close",
-                                visibility: "mobile",
-                              },
-                            ]
-                          : [],
-                        widthMode: "standard",
-                        mobileMode: "page-scroll",
-                        resizable: !mobileReview,
-                      })}
-                    </aside>`
-                  : ""
-              }
               ${renderEntityPanelPattern({
                 id: "entity-panel-proof",
                 title: "Identity",
+                primaryTitle: "Primary index",
+                primaryItems: primaryFixtures,
+                primaryCurrent: renderedPrimaryCurrent,
+                showPrimaryIndex: state.primaryMode !== "hidden",
+                showPrimaryHeader: mobileReview,
+                primaryResizable: !mobileReview,
                 secondaryTitle: "Secondary index",
                 secondaryItems,
                 secondaryCurrent: renderedSecondaryCurrent,
@@ -525,7 +507,7 @@ function renderPage(state) {
                 panelActionIcon: mobileReview && state.mobileActiveRegion === "body" ? "list" : "close",
                 secondaryActionLabel: "Add secondary index item",
                 secondaryActionIcon: "plus",
-                mobileActiveRegion: state.mobileActiveRegion === "secondary-index" ? "secondary-index" : "body",
+                mobileActiveRegion: state.mobileActiveRegion,
                 bodyHtml: bodyHtmlForState(state),
               })}
             </div>
@@ -540,6 +522,7 @@ function renderPage(state) {
             <ul>
               <li>The panel frame is consumed from the signed <code>panel-frame</code> token.</li>
               <li>The header is rendered through the governed <code>panel-header-control</code> primitive.</li>
+              <li>The optional primary index is rendered through the governed <code>index-nav-panel</code> pattern.</li>
               <li>The embedded secondary index is rendered through the governed <code>index-nav-panel</code> pattern.</li>
               <li>The body region is rendered through the governed <code>entity-body-panel</code> pattern.</li>
               <li>The body content proof composes the governed <code>accordion-form-section</code> pattern and governed form-control seams.</li>
@@ -549,7 +532,7 @@ function renderPage(state) {
             <h2>Boundary</h2>
             <ul>
               <li>The pattern does not own text fields, text areas, radios, toggles, dropdowns, card selects, accordions, or workflow builders; it only hosts governed child seams.</li>
-              <li>The primary-index fallback state is represented as an entity-page coordination state; this pattern does not render the primary page index.</li>
+              <li>The primary index is an optional entity-panel region rendered through the governed <code>index-nav-panel</code> pattern.</li>
               <li>Context bar and display-settings drawer composition is blocked until governed Layer 4 seams exist for those families.</li>
               <li>Proof controls are diagnostic review pressure, not downstream consumer props unless named in the pattern seam.</li>
             </ul>

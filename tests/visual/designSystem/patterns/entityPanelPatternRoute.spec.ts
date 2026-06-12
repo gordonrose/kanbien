@@ -61,7 +61,7 @@ test.describe("entity panel pattern route", () => {
 
     await expect(page.getByRole("heading", { name: "Entity Panel Pattern", level: 1 })).toBeVisible();
     await expect(page.locator("[data-entity-panel]")).toHaveAttribute("data-entity-panel-viewport", "desktop");
-    await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeVisible();
+    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toBeVisible();
     await expect(page.locator("[data-entity-panel-region='primary-index'] [data-index-nav-panel]")).toHaveAttribute(
       "data-index-nav-panel-resizable",
       "true",
@@ -70,7 +70,7 @@ test.describe("entity panel pattern route", () => {
       "data-index-nav-panel-header-mode",
       "hidden",
     );
-    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(0);
+    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(1);
     const primaryIndex = page.locator("[data-entity-panel-region='primary-index']");
     await expect(primaryIndex.getByRole("button", { name: "Identity" })).toHaveAttribute("aria-current", "true");
     await primaryIndex.getByRole("button", { name: "Workflows" }).click();
@@ -172,7 +172,7 @@ test.describe("entity panel pattern route", () => {
     await page.locator("[data-entity-panel-secondary-header-control]").selectOption("shown");
     await page.getByRole("button", { name: "Show secondary index" }).click();
     await page.locator("[data-panel-header-control]").getByRole("button", { name: "Close panel" }).click();
-    await page.getByRole("button", { name: "Identity" }).click();
+    await page.locator("[data-entity-panel-region='primary-index']").getByRole("button", { name: "Identity" }).click();
     await page.getByRole("button", { name: "Owning Feature" }).click();
     await expect(page.locator("[data-entity-panel-region='body']")).toHaveCSS("position", "absolute");
 
@@ -298,9 +298,9 @@ test.describe("entity panel pattern route", () => {
     await expect(page.getByRole("button", { name: "Primary Details" })).not.toHaveAttribute("aria-current", "true");
     await page.locator("[data-panel-header-control]").getByRole("button", { name: "Close panel" }).click();
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeVisible();
-    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(0);
+    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(1);
 
-    await page.getByRole("button", { name: "Identity" }).click();
+    await page.locator("[data-entity-panel-region='primary-index']").getByRole("button", { name: "Identity" }).click();
     await expect(page.locator("[data-entity-panel-region='secondary-index']")).toBeVisible();
     await expect(secondaryHeader.getByRole("button", { name: "Close secondary index" })).toHaveCount(0);
 
@@ -318,7 +318,7 @@ test.describe("entity panel pattern route", () => {
 
     await page.getByRole("button", { name: "Close secondary index" }).click();
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeHidden();
-    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(0);
+    await expect(page.locator("[data-entity-panel] [data-entity-panel-region='primary-index']")).toHaveCount(1);
     await expect(page.locator("[data-entity-panel-region='body']")).toBeVisible();
     await expect(page.getByRole("button", { name: "Show secondary index" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Owning Feature" })).toHaveAttribute("aria-current", "true");
@@ -326,9 +326,12 @@ test.describe("entity panel pattern route", () => {
     await page.getByRole("button", { name: "Show secondary index" }).click();
     await page.locator("[data-panel-header-control]").getByRole("button", { name: "Close panel" }).click();
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Identity" })).not.toHaveAttribute("aria-current", "true");
+    await expect(page.locator("[data-entity-panel-region='primary-index']").getByRole("button", { name: "Identity" })).not.toHaveAttribute(
+      "aria-current",
+      "true",
+    );
 
-    await page.getByRole("button", { name: "Identity" }).click();
+    await page.locator("[data-entity-panel-region='primary-index']").getByRole("button", { name: "Identity" }).click();
     await expect(page.locator("[data-entity-panel-region='secondary-index']")).toBeVisible();
     await expect(page.locator("[data-entity-panel-region='primary-index']")).toBeHidden();
     await expect(page.locator("[data-entity-panel-region='body']")).toBeVisible();
