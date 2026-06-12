@@ -10,7 +10,7 @@ import {
   headerSortOptions,
   renderHeaderMenuSimpleSelectPattern,
 } from "../../../src/frontend/designSystem/layers/04-pattern-contract/header-menu-simple-select/index.mjs";
-import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs";
 
 type SelectOption = { value: string };
 

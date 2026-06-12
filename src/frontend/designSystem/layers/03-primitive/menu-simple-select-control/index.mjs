@@ -3,7 +3,7 @@ import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems
 import { menuSimpleSelectFrameTokenSpec } from "../../02-token/menu-simple-select-frame/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
-import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../glyph-registry/systems/default.mjs";
 
 const primitiveName = "menu-simple-select-control";
 const supportedTriggerIconNames = ["chevron", "filter", "sort"];
@@ -245,7 +245,7 @@ export function menuSimpleSelectControlPrimitive(options = {}) {
       glyphRegistry: {
         systemKey,
         semanticGlyphName: triggerIcon,
-        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+        runtimeSeam: "src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry",
       },
     },
     attributes: {

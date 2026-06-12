@@ -8,7 +8,7 @@ import {
 import {
   defaultGlyphRegistry,
   resolveDefaultGlyphPath,
-} from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
+} from "../../../src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs";
 
 describe("icon-button-control primitive seam", () => {
   it("resolves signed token dependencies for an icon-only add action", () => {
@@ -84,7 +84,7 @@ describe("icon-button-control primitive seam", () => {
     expect(control.systemDependencies.glyphRegistry).toMatchObject({
       systemKey: "default",
       semanticGlyphName: "close",
-      runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+      runtimeSeam: "src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry",
     });
     expect(control.attributes["aria-label"]).toBe("Close panel");
     expect(html).toContain('aria-label="Close panel"');

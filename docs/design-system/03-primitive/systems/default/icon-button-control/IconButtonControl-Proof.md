@@ -9,5 +9,5 @@ accessible label behavior, signed token dependencies, focus visibility, and
 activation event logging.
 
 Glyph artwork is resolved through the default system registry at
-`src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry`;
+`src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry`;
 the shared primitive owns only the semantic glyph names and button behavior.

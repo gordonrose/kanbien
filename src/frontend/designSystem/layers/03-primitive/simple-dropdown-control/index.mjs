@@ -11,7 +11,7 @@ import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/s
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
 import { tooltipSurfaceTokenSpec } from "../../02-token/tooltip-surface/systems/default.mjs";
 import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/systems/default.mjs";
-import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../glyph-registry/systems/default.mjs";
 
 const primitiveName = "simple-dropdown-control";
 const allowedStates = new Set(["default", "required", "disabled", "error"]);
@@ -287,7 +287,7 @@ export function simpleDropdownControlPrimitive(options = {}) {
       glyphRegistry: {
         systemKey,
         semanticGlyphName: "chevron-down",
-        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+        runtimeSeam: "src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry",
       },
     },
     iconPath,

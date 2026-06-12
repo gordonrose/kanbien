@@ -3,7 +3,7 @@ import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mj
 import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { supportingTextStyleTokenSpec } from "../../02-token/supporting-text-style/systems/default.mjs";
-import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../glyph-registry/systems/default.mjs";
 import { renderTruncatingLabelPrimitive } from "../truncating-label/index.mjs";
 
 const primitiveName = "accordion-section-control";
@@ -166,7 +166,7 @@ export function accordionSectionControlPrimitive(options = {}) {
       glyphRegistry: {
         systemKey,
         semanticGlyphName: "chevron-down",
-        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+        runtimeSeam: "src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry",
       },
     },
     tokenDependencies: {
