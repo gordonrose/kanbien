@@ -2,78 +2,72 @@
 
 ## Preflight Contract
 
-- Task summary: Convert the governed context-navigation pattern to the Layer 2
-  token-spec resolver without changing rendered appearance or behavior.
+- Task summary: Convert the governed top-navigation link primitive to the
+  Layer 2 token-spec resolver without changing rendered appearance or behavior.
 - Mode: patch-only
 - Governing instruction sources:
   - `AGENTS.md`
+  - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/41-front-end/00-orchestrator/SKILL.md`
-  - `.codex/skills/41-front-end/02-token/SKILL.md`
-  - `.codex/skills/41-front-end/04-pattern-contract/SKILL.md`
-  - `.codex/skills/40-frontend/frontend-implementation-auditor/SKILL.md`
-  - `docs/design-system/01-behavior-rule/shared/context-navigation/ContextNavigation-Behaviour.md`
-  - `docs/design-system/04-pattern-contract/shared/context-navigation/ContextNavigation-Contract.md`
+  - `.codex/skills/41-front-end/03-primitive/SKILL.md`
+  - `docs/design-system/01-behavior-rule/shared/top-navigation/TopNavigation-Behaviour.md`
+  - `docs/design-system/03-primitive/shared/top-navigation-link-control/TopNavigationLinkControl-Contract.md`
 - Task risk class: governed design-system token-routing refactor with no
   intended visual or behavior change.
-- Discovered evidence boundary: this step may only register the existing
-  context-navigation frame token in the resolver and convert
-  `context-navigation` from direct default token import to resolver lookup.
-  Evidence must come from focused unit tests, rendered design-system proof
-  coverage, source-boundary inspection, and static harness checks.
-- Intended edit boundary: register the existing `context-navigation-frame`
-  token spec in the resolver, convert `context-navigation` token lookup to a
-  resolver call, extend focused resolver test coverage, and keep this task
-  audit aligned.
+- Discovered evidence boundary: this step may only convert
+  `top-navigation-link-control` from direct default token imports to resolver
+  lookup for already registered tokens. Runtime seam disclosure strings,
+  token values, markup, style variables, controller behavior, and rendered
+  output are out of scope.
+- Intended edit boundary: replace direct default token imports in the primitive
+  with resolver calls and keep this task audit aligned.
 - Files allowed to edit:
-  - `src/frontend/designSystem/layers/02-token/token-spec-resolver.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/context-navigation/index.mjs`
-  - `tests/unit/designSystem/tokenSpecResolver.test.ts`
+  - `src/frontend/designSystem/layers/03-primitive/top-navigation-link-control/index.mjs`
   - `docs/workspace/trust-harness/current-task-audit.md`
 - Files explicitly out of scope:
   - app adoption files
   - app-local CSS
   - token values
-  - child primitive behavior
+  - runtime seam disclosure text
+  - primitive markup, ARIA semantics, style variables, or controller behavior
   - package files
   - migrations
   - backend feature code
   - destructive git cleanup
 - Required verification commands:
-  - `npx vitest run tests/unit/designSystem/tokenSpecResolver.test.ts tests/unit/designSystem/contextNavigationPattern.test.ts`
-  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/patterns/contextNavigationPatternRoute.spec.ts --output /tmp/kanbien-playwright-results-contextnav-resolver-step-docker`
+  - `npx vitest run tests/unit/designSystem/topNavigationLinkControlPrimitive.test.ts`
+  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/primitives/topNavigationLinkControlPrimitiveRoute.spec.ts --output /tmp/kanbien-playwright-results-topnav-link-resolver-step-docker`
   - `npm run check:static`
+  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
   - `git diff --stat`
   - `git status --short`
-- Allowed closure vocabulary: `context-navigation resolver remediation
-  candidate pending review`; do not claim completion if required validation
-  fails or is not run.
+- Allowed closure vocabulary: `top-navigation link primitive resolver
+  remediation candidate pending review`; do not claim completion if required
+  validation fails or is not run.
 
 ## Post-Work Closure Record
 
 - Actual files edited:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `src/frontend/designSystem/layers/02-token/token-spec-resolver.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/context-navigation/index.mjs`
-  - `tests/unit/designSystem/tokenSpecResolver.test.ts`
+  - `src/frontend/designSystem/layers/03-primitive/top-navigation-link-control/index.mjs`
 - Evidence collected:
-  - `context-navigation` now resolves `context-navigation-frame` through the
-    Layer 2 token-spec resolver instead of directly importing the default system
-    token module.
-  - The resolver registration points to the existing default
-    `context-navigation-frame` token spec and does not create or alter token
-    values.
-  - Rendered context-navigation proof passed through Docker Playwright after the
-    source edit.
-  - Source-boundary inspection shows no remaining direct token system imports in
-    the shell-navigation pattern set; unrelated older pattern families still
-    have direct imports outside this workstream.
+  - `top-navigation-link-control` now resolves `top-navigation-frame`,
+    `label-text-style`, `focus-ring`, and `minimum-target-size` through the
+    Layer 2 token-spec resolver instead of directly importing default system
+    token modules.
+  - The primitive still uses the existing registered default token specs and
+    does not create or alter token values.
+  - Runtime seam disclosure strings, markup, ARIA semantics, style variables,
+    and controller behavior were not edited.
+  - Rendered primitive proof passed through Docker Playwright after the source
+    edit.
 - Commands run and results:
-  - `npx vitest run tests/unit/designSystem/tokenSpecResolver.test.ts tests/unit/designSystem/contextNavigationPattern.test.ts`: passed, 6 tests.
-  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/patterns/contextNavigationPatternRoute.spec.ts --output /tmp/kanbien-playwright-results-contextnav-resolver-step-docker`: passed, 1 test.
+  - `npx vitest run tests/unit/designSystem/topNavigationLinkControlPrimitive.test.ts`: passed, 3 tests.
+  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/primitives/topNavigationLinkControlPrimitiveRoute.spec.ts --output /tmp/kanbien-playwright-results-topnav-link-resolver-step-docker`: passed, 2 tests.
+  - `rg -n "^import .*systems/default\\.mjs|systems/default\\.mjs" src/frontend/designSystem/layers/03-primitive/top-navigation-link-control/index.mjs`: showed no direct default token imports and only existing runtime seam disclosure strings.
   - `npm run check:static`: passed.
-  - `git diff --stat`: rerun after static; showed only the resolver, context-navigation pattern, resolver test, and current task audit changes.
-  - `git status --short`: rerun after static; showed only the resolver, context-navigation pattern, resolver test, and current task audit changes.
+  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed.
 - Missing or inferred evidence:
   - None for this step.
 - User confirmation still required: yes, before destructive cleanup or any push.
-- Final permitted closure state: `context-navigation resolver remediation candidate pending review`
+- Final permitted closure state: `top-navigation link primitive resolver remediation candidate pending review`

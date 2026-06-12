@@ -1,7 +1,4 @@
-import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
-import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
-import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
-import { topNavigationFrameTokenSpec } from "../../02-token/top-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import { attachTruncatingLabelPrimitiveController, renderTruncatingLabelPrimitive } from "../truncating-label/index.mjs";
 
 const primitiveName = "top-navigation-link-control";
@@ -10,10 +7,10 @@ const supportedSystems = new Map([
   [
     "default",
     {
-      focusRingTokenSpec,
-      labelTextStyleTokenSpec,
-      minimumTargetSizeTokenSpec,
-      topNavigationFrameTokenSpec,
+      focusRingTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" }),
+      labelTextStyleTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" }),
+      minimumTargetSizeTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "minimum-target-size" }),
+      topNavigationFrameTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "top-navigation-frame" }),
     },
   ],
 ]);
