@@ -2,125 +2,122 @@
 
 ## Preflight Contract
 
-- Task summary: Reconcile the record-list-form proof gap where primary-index
-  show/hide was missing, with the corrected ownership that primary index is an
-  optional `entity-panel` region rather than a parent-owned wrapper.
+- Task summary: Clean-worktree reconstruction of the entity-panel /
+  record-list-form primary-index reconciliation.
 - Mode: reconcile-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/41-front-end/04-pattern-contract/SKILL.md`
   - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
   - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
 - Task risk class: user-visible governed frontend pattern-proof reconciliation
-- Discovered evidence boundary: The previous contract language assigned
-  primary-index ownership incorrectly. The corrected boundary is that
-  `entity-panel` owns optional primary-index composition through
-  `index-nav-panel`, while `record-list-form` passes the hosted entity-panel
-  variant through and exposes proof controls for both primary-index presence
-  and mobile active region.
+- Discovered evidence boundary: `entity-panel` owns optional primary-index
+  composition through governed `index-nav-panel`; `record-list-form` owns
+  hosted custom detail body content and only passes primary-index state into
+  hosted `entity-panel` instances. Clean HEAD also showed that `record-list`
+  lacked a custom detail body preservation seam, so the narrow honest
+  composition requires `record-list` to preserve custom detail body content
+  when `data-record-list-pattern-custom-detail="true"` while retaining
+  ownership of the detail slot shell, open/closed state, resize behavior, row
+  state, and emitted events.
 - Intended edit boundary: Entity-panel Layer 4 seam/proof/docs/tests,
-  record-list-form Layer 4 seam/proof/docs/tests, default design-system CSS
-  for entity-panel internal mobile layout, and this task audit.
+  record-list custom detail body seam/docs, record-list-form behavior/Layer 4
+  seam/proof/docs/tests, default CSS limited to entity-panel primary-region
+  layout and mobile primary overlay, and this task audit.
 - Files allowed to edit:
   - `docs/workspace/trust-harness/current-task-audit.md`
+  - `docs/design-system/01-behavior-rule/shared/record-list-form/RecordListForm-Behaviour.md`
+  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
+  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
+  - `docs/design-system/04-pattern-contract/shared/record-list/RecordList-Contract.md`
+  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
+  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
   - `src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
+  - `src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
   - `src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
   - `src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
+  - `src/frontend/designSystem/systems/default/patterns/record-list-form/index.html`
   - `src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
   - `src/frontend/designSystem/systems/default/assets/styles.css`
   - `tests/unit/designSystem/entityPanelPattern.test.ts`
   - `tests/unit/designSystem/recordListFormPattern.test.ts`
   - `tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
   - `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
-  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
-  - `docs/workspace/trust-harness/audit-history/2026-06-12-duplicate-current-task-audit-records.md`
 - Files explicitly out of scope:
-  - `src/features/**`
-  - `src/frontend/**/app*/**`
-  - persistence migrations
-  - API contracts
-  - generated feature dependency artifacts
-- Pre-existing changed paths acknowledged:
-  - `.codex/skills/**`
-  - `AGENTS.md`
-  - `docs/architecture/**`
-  - `docs/design-system/**`
-  - `docs/workspace/issue-reconciliations/**`
-  - `docs/workspace/trust-harness/**`
   - `package.json`
-  - `src/frontend/**`
-  - `src/scripts/**`
-  - `tests/audit/**`
-  - `tests/fixtures/**`
-  - `tests/unit/designSystem/**`
-  - `tests/visual/designSystem/**`
+  - `AGENTS.md`
+  - `.codex/**`
+  - `docs/architecture/**`
+  - broad tokenization work
+  - same-theme `panel-frame` work
+  - glyph-registry migration
+  - unrelated primitive CSS changes
+  - unrelated Playwright broadening
+  - harness infrastructure unrelated to this task
 - Required verification commands:
   - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/recordListFormPattern.test.ts`
   - `node --check src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
+  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
   - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
   - `node --check src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
   - `node --check src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
   - `npx playwright test tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
   - `npx playwright test tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
-  - `npm run check:design-system-harness`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
-- Allowed closure vocabulary: `candidate fix pending user confirmation` after
-  focused browser evidence and harness evidence pass; do not claim the visible
-  issue is fixed until the user confirms the rendered page.
+- Allowed closure vocabulary: `candidate fix pending user confirmation; full
+  design-system harness gate blocked by missing out-of-scope package script`;
+  do not claim the visible issue is fixed until the user confirms the rendered
+  page.
 
 ## Post-Work Closure Record
 
 - Actual files edited:
+  - `docs/workspace/trust-harness/current-task-audit.md`
+  - `docs/design-system/01-behavior-rule/shared/record-list-form/RecordListForm-Behaviour.md`
+  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
+  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
+  - `docs/design-system/04-pattern-contract/shared/record-list/RecordList-Contract.md`
+  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
+  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
   - `src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
+  - `src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
   - `src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
   - `src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
+  - `src/frontend/designSystem/systems/default/patterns/record-list-form/index.html`
   - `src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
   - `src/frontend/designSystem/systems/default/assets/styles.css`
   - `tests/unit/designSystem/entityPanelPattern.test.ts`
   - `tests/unit/designSystem/recordListFormPattern.test.ts`
   - `tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
   - `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
-  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
-  - `docs/workspace/trust-harness/audit-history/2026-06-12-duplicate-current-task-audit-records.md`
-  - `docs/workspace/trust-harness/current-task-audit.md`
 - Evidence collected:
-  - Entity-panel contract now owns optional primary-index composition through
+  - `entity-panel` owns optional primary-index composition through governed
     `index-nav-panel`.
-  - Record-list-form passes primary-index state into hosted `entity-panel`
-    instead of rendering a parent-owned wrapper.
-  - Record-list-form proof exposes both `Entity primary index` show/hide and
-    `Entity mobile region` -> `Primary index` controls.
-  - Browser tests assert the primary-index region is inside `[data-entity-panel]`
-    and visible when the entity-panel mobile active region is `primary-index`.
-  - Stale archived audit wording no longer claims the primary index is a
-    page-level wrapper outside entity-panel.
-  - Dev server was restarted after detecting stale served CSS; a fresh process
-    is listening on port 3000 for user inspection.
+  - `record-list-form` passes primary-index state into hosted `entity-panel`
+    instances and does not render a parent-owned primary wrapper.
+  - `record-list` owns detail slot shell/open-close/resize/events while
+    preserving custom detail body content when
+    `data-record-list-pattern-custom-detail="true"`.
+  - The focused unit count is 9 because clean HEAD had 6 entity-panel unit
+    tests and this reconstruction adds 3 record-list-form unit tests. The
+    earlier 10-test count came from excluded dirty-branch same-theme
+    panel-frame work.
 - Commands run and results:
-  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/recordListFormPattern.test.ts`: passed, 10 tests.
+  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/recordListFormPattern.test.ts`: passed, 9 tests.
   - `node --check src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`: passed.
   - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`: passed.
   - `node --check src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`: passed.
   - `node --check src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`: passed.
-  - `npx playwright test tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`: passed, 7 tests.
-  - `npx playwright test tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`: passed, 7 tests.
-  - `npm run check:design-system-harness`: passed, including front-end harness executable audits, governed layer import guard, and text disclosure audit.
-  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: initially failed
-    until the audit acknowledged the pre-existing dirty scopes; rerun passed.
+  - `NODE_ENV=test PORT=4317 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`: passed, 7 tests; preview server emitted pre-existing database authentication warnings from the rate-limit path.
+  - `NODE_ENV=test PORT=4317 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`: passed, 4 tests; preview server emitted pre-existing database authentication warnings from the rate-limit path.
+  - `npm run check:design-system-harness`: blocked by out-of-scope missing package script; the clean base `package.json` does not define `check:design-system-harness`, and package wiring is explicitly out of scope for this reconstruction. This is not a code/test failure in the reconstructed patch.
+  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed after the audit recorded the clean-worktree scope and command results.
 - Missing or inferred evidence:
+  - Full design-system harness evidence is blocked by the missing
+    out-of-scope package script.
   - User visual confirmation on the live route is still required before using
     completion language for the visible issue.
-  - The working tree contains pre-existing unrelated modified and untracked
-    files; this audit records the files touched for this task but does not
-    classify the broader worktree.
 - User confirmation still required: yes
-- Final permitted closure state: `candidate fix pending user confirmation`
+- Final permitted closure state: `candidate fix pending user confirmation; full design-system harness gate blocked by missing out-of-scope package script`

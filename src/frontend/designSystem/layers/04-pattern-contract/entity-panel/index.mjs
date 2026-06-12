@@ -91,7 +91,7 @@ export const entityPanelPatternContract = {
   directTokenDependencies: ["panel-frame"],
   consumerRules: [
     "Consumers must use this pattern for governed entity panel shells.",
-    "Consumers must not recreate panel frame, header, secondary index, or body-panel behavior locally.",
+    "Consumers must not recreate panel frame, header, primary index, secondary index, or body-panel behavior locally.",
     "Consumers must not treat proof-only body HTML as governed form or builder controls.",
   ],
 };
@@ -102,6 +102,12 @@ export function entityPanelPattern(options = {}) {
   const id = options.id ?? `entity-panel-${Math.random().toString(36).slice(2, 10)}`;
   const title = options.title ?? "Entity body";
   const ariaLabel = options.ariaLabel ?? title;
+  const primaryTitle = options.primaryTitle ?? "Primary index";
+  const primaryItems = normalizeIndexItems(options.primaryItems ?? [], "primaryItems");
+  const primaryCurrent = options.primaryCurrent ?? null;
+  const showPrimaryIndex = options.showPrimaryIndex === true;
+  const showPrimaryHeader = options.showPrimaryHeader === true;
+  const primaryResizable = options.primaryResizable === true;
   const secondaryTitle = options.secondaryTitle ?? "Secondary index";
   const secondaryItems = normalizeIndexItems(options.secondaryItems ?? [], "secondaryItems");
   const secondaryCurrent = options.secondaryCurrent ?? null;
@@ -121,6 +127,7 @@ export function entityPanelPattern(options = {}) {
   assertString(id, "id");
   assertString(title, "title");
   assertString(ariaLabel, "ariaLabel");
+  assertString(primaryTitle, "primaryTitle");
   assertString(secondaryTitle, "secondaryTitle");
   assertString(panelActionLabel, "panelActionLabel");
   assertString(panelActionIcon, "panelActionIcon");
@@ -129,7 +136,7 @@ export function entityPanelPattern(options = {}) {
   assertString(mobileActiveRegion, "mobileActiveRegion");
   assertString(bodyState, "bodyState");
 
-  if (!["body", "secondary-index"].includes(mobileActiveRegion)) {
+  if (!["body", "primary-index", "secondary-index"].includes(mobileActiveRegion)) {
     throw new RangeError(`entity-panel does not support mobileActiveRegion "${mobileActiveRegion}".`);
   }
 
@@ -143,6 +150,12 @@ export function entityPanelPattern(options = {}) {
     id,
     title,
     ariaLabel,
+    primaryTitle,
+    primaryItems,
+    primaryCurrent,
+    showPrimaryIndex,
+    showPrimaryHeader,
+    primaryResizable,
     secondaryTitle,
     secondaryItems,
     secondaryCurrent,
@@ -169,6 +182,7 @@ export function entityPanelPattern(options = {}) {
       "data-entity-panel": "",
       "data-entity-panel-theme": theme,
       "data-entity-panel-mobile-active": mobileActiveRegion,
+      "data-entity-panel-primary-mode": showPrimaryIndex ? "shown" : "hidden",
       "data-entity-panel-mobile-breakpoint": tokens.panelFrame.mobileBreakpointValue,
       "aria-label": ariaLabel,
     },
@@ -208,6 +222,37 @@ export function renderEntityPanelPattern(options = {}) {
         showAction: true,
       })}
       <div class="ds-entity-panel-layout" data-entity-panel-layout>
+        ${
+          spec.showPrimaryIndex
+            ? `<aside class="ds-entity-panel-primary" data-entity-panel-region="primary-index">
+                ${renderIndexNavPanelPattern({
+                  systemKey: spec.systemKey,
+                  theme: spec.theme,
+                  id: `${spec.id}-primary-index`,
+                  title: spec.primaryTitle,
+                  ariaLabel: spec.primaryTitle,
+                  currentValue: spec.primaryCurrent,
+                  items: spec.primaryItems,
+                  showHeader: spec.showPrimaryHeader,
+                  showAddAction: false,
+                  headerActions:
+                    spec.mobileActiveRegion === "primary-index"
+                      ? [
+                          {
+                            label: "Close primary index",
+                            value: "close-primary-index",
+                            icon: "close",
+                            visibility: "mobile",
+                          },
+                        ]
+                      : [],
+                  widthMode: "standard",
+                  mobileMode: "page-scroll",
+                  resizable: spec.primaryResizable,
+                })}
+              </aside>`
+            : ""
+        }
         ${
           spec.showSecondaryIndex
             ? `<aside class="ds-entity-panel-secondary" data-entity-panel-region="secondary-index">
@@ -261,8 +306,8 @@ export function attachEntityPanelPatternController(root = document) {
   const updateViewportPosture = (panel) => {
     const breakpoint = panel.getAttribute("data-entity-panel-mobile-breakpoint");
     const breakpointPx = toPixels(breakpoint, panel.ownerDocument);
-    const viewportWidth = panel.ownerDocument?.defaultView?.innerWidth ?? 0;
-    panel.dataset.entityPanelViewport = breakpointPx > 0 && viewportWidth <= breakpointPx ? "mobile" : "desktop";
+    const panelWidth = panel.getBoundingClientRect().width;
+    panel.dataset.entityPanelViewport = breakpointPx > 0 && panelWidth > 0 && panelWidth <= breakpointPx ? "mobile" : "desktop";
   };
 
   for (const panel of root.querySelectorAll("[data-entity-panel]")) {
@@ -286,6 +331,7 @@ export function attachEntityPanelPatternController(root = document) {
       }
     }
     updateViewportPosture(panel);
+    panel.addEventListener("entity-panel:refresh-viewport", () => updateViewportPosture(panel));
     panel.ownerDocument?.defaultView?.addEventListener("resize", () => updateViewportPosture(panel));
   }
 
