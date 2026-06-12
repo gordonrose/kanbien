@@ -85,6 +85,9 @@ test.describe("toggle control primitive route", () => {
     await page.setViewportSize({ width: 1366, height: 900 });
     await page.goto(route);
 
+    await expect(page.locator("[data-toggle-control]")).toHaveCount(1);
+    await page.locator("[data-toggle-state-control]").selectOption("default");
+    await page.locator("[data-toggle-checked-control]").selectOption("unchecked");
     await expect(page.getByRole("heading", { name: "Toggle Control Primitive", level: 1 })).toBeVisible();
     const toggle = page.getByRole("switch", { name: "Enable workflow automation" });
     await expect(toggle).toBeVisible();
