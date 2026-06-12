@@ -6,6 +6,17 @@ async function horizontalOverflow(page: Page) {
   return page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth);
 }
 
+async function focusByKeyboard(page: Page, accessibleName: string) {
+  const target = page.getByRole("button", { name: accessibleName });
+  for (let index = 0; index < 12; index += 1) {
+    await page.keyboard.press("Tab");
+    if (await target.evaluate((node) => node === document.activeElement)) {
+      return target;
+    }
+  }
+  throw new Error(`Could not keyboard-focus ${accessibleName}.`);
+}
+
 test.describe("focus instruction disclosure primitive route", () => {
   test("shows focus-only instruction without stealing focus", async ({ page }) => {
     await page.setViewportSize({ width: 1366, height: 900 });
@@ -22,7 +33,7 @@ test.describe("focus instruction disclosure primitive route", () => {
     await expect(page.locator(`#${describedBy}`)).toHaveText("Use Alt plus Arrow Up or Arrow Down to reorder.");
     await expect(page.locator(`#${describedBy}`)).toBeHidden();
 
-    await reorderHost.focus();
+    await focusByKeyboard(page, "Reorderable record row");
     await expect(reorderHost).toBeFocused();
     await expect(reorderHost).toHaveAttribute("data-focus-instruction-disclosure-open", "true");
     await expect(page.locator(`#${describedBy}`)).toBeVisible();
@@ -40,7 +51,7 @@ test.describe("focus instruction disclosure primitive route", () => {
     await page.goto(route);
 
     await expect(page.getByRole("heading", { name: "Focus Instruction Disclosure Primitive", level: 1 })).toBeVisible();
-    await page.getByRole("button", { name: "Constrained host with long focused label text" }).focus();
+    await focusByKeyboard(page, "Constrained host with long focused label text");
     await expect(page.locator("#focus-instruction-disclosure-proof-constrained")).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });

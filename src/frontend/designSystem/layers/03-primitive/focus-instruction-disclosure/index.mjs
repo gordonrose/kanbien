@@ -3,6 +3,7 @@ import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/sys
 
 const primitiveName = "focus-instruction-disclosure";
 const supportedThemes = new Set(["original", "dark", "desert"]);
+let lastFocusInput = "pointer";
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -189,12 +190,36 @@ export function attachFocusInstructionDisclosurePrimitiveController(root = docum
     }
   }
 
+  const ownerDocument = root.ownerDocument ?? document;
+  if (ownerDocument.documentElement.dataset.focusInstructionDisclosureInputController !== "attached") {
+    ownerDocument.documentElement.dataset.focusInstructionDisclosureInputController = "attached";
+    ownerDocument.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        if (event.key === "Tab" || event.key.startsWith("Arrow") || event.key === "Home" || event.key === "End") {
+          lastFocusInput = "keyboard";
+        }
+      },
+      true,
+    );
+    ownerDocument.addEventListener(
+      "pointerdown",
+      () => {
+        lastFocusInput = "pointer";
+      },
+      true,
+    );
+  }
+
   for (const host of root.querySelectorAll("[data-focus-instruction-disclosure-host]")) {
     if (!(host instanceof HTMLElement) || host.dataset.focusInstructionDisclosureHostController === "attached") {
       continue;
     }
     host.dataset.focusInstructionDisclosureHostController = "attached";
-    host.addEventListener("focusin", () => setOpen(host, true));
+    host.addEventListener("focusin", () => setOpen(host, lastFocusInput === "keyboard"));
     host.addEventListener("focusout", () => setOpen(host, false));
     host.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
