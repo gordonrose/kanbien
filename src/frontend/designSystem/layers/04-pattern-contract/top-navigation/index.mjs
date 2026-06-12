@@ -10,8 +10,7 @@ import {
   attachTopNavigationTriggerControlPrimitiveController,
   renderTopNavigationTriggerControlPrimitive,
 } from "../../03-primitive/top-navigation-trigger-control/index.mjs";
-import { standardPageShellFrameTokenSpec } from "../../02-token/standard-page-shell-frame/systems/default.mjs";
-import { topNavigationFrameTokenSpec } from "../../02-token/top-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const patternName = "top-navigation";
 const allowedModes = new Set(["auto", "desktop", "overflow", "mobile"]);
@@ -112,9 +111,6 @@ export function topNavigationPattern(options = {}) {
   assertString(mode, "mode");
   assertString(openSurface, "openSurface");
   assertString(direction, "direction");
-  if (systemKey !== "default") {
-    throw new RangeError(`top-navigation has no system proof for "${systemKey}".`);
-  }
   if (!allowedModes.has(mode)) {
     throw new RangeError(`top-navigation does not support mode "${mode}".`);
   }
@@ -126,17 +122,17 @@ export function topNavigationPattern(options = {}) {
   }
 
   const chrome = findVariant(
-    topNavigationFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "top-navigation-frame" }),
     (variant) => variant.frameRole === "top navigation chrome" && variant.themeMapping === theme,
     `top-navigation requires a signed chrome frame token for ${theme}.`,
   );
   const menuPanel = findVariant(
-    topNavigationFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "top-navigation-frame" }),
     (variant) => variant.frameRole === "top navigation menu panel" && variant.themeMapping === theme,
     `top-navigation requires a signed menu panel frame token for ${theme}.`,
   );
   const shellFrame = findVariant(
-    standardPageShellFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "standard-page-shell-frame" }),
     (variant) => variant.id === "standard-page-shell-frame-default",
     "top-navigation requires the signed standard-page-shell-frame token for mobile breakpoint.",
   );
