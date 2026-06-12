@@ -60,3 +60,7 @@ evolves.
 - `0046-defer-recurring-maintenance-scheduler-until-platform-cadence-is-approved.md`
 - `0047-use-mocked-root-admin-chat-workspace-proof-route-before-production-adoption.md`
 - `0048-separate-design-system-contracts-from-system-implementations.md`
+- `0049-keep-compiled-runtime-script-paths-aligned-with-build-output.md`
+- `0050-serve-temporary-public-brochure-through-same-origin-public-site-routes.md`
+- `0051-log-harness-governance-decisions-as-adrs.md`
+- `0052-require-current-task-audits-for-material-codex-work.md`

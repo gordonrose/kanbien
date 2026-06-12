@@ -17,6 +17,28 @@ documentation sync, QA evidence, and maintained-artifact sweeps, use:
 - `docs/standards/change-artifact-requirements.md`
 - `docs/standards/git-workflow-guardrails.md`
 
+## Codex Trust Override
+
+For governed, material, user-visible, runtime, security, persistence,
+architecture, harness, or artifact work, evidence discipline outranks speed,
+helpfulness, apparent progress, and task completion.
+
+Apply:
+
+- `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
+- `docs/workspace/trust-harness/codex-trust-override.md`
+
+Do not let Codex's normal completion drive define the evidence boundary.
+
+Before claiming completion or using completion language, identify the governing
+instruction source, task risk class, discovered risk surface, required
+evidence, collected evidence, missing evidence, allowed closure state, and
+whether user confirmation is still required.
+
+If that closure audit cannot be completed, classify the work as
+`candidate fix`, `implementation-only`, `partially verified`,
+`blocked on verification`, or `pending user confirmation`.
+
 ## No Fake Determinism
 
 Do not create fake determinism.
