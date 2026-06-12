@@ -2,40 +2,38 @@
 
 ## Preflight Contract
 
-- Task summary: Recover the small default-system proof index route from the
-  dirty original worktree into a clean branch after PRs 17-21 merged to
-  `main`.
+- Task summary: Recover the focused `focus-instruction-disclosure` keyboard-only
+  behavior slice from the dirty original worktree into a clean branch after PRs
+  17-22 merged to `main`.
 - Mode: reconcile-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
-  - `.codex/skills/41-front-end/00-orchestrator/SKILL.md`
-- Task risk class: governed frontend proof-route recovery
-- Discovered evidence boundary: `/design-system/default/` should provide a
-  navigable index of default-system token, primitive, and pattern proof routes
-  without changing individual proof contracts, harness wiring, shared CSS, or
-  app UI.
-- Intended edit boundary: default-system route shell, default-system route
-  module, focused Playwright route proof, and this current-task audit.
+  - `.codex/skills/41-front-end/03-primitive/SKILL.md`
+- Task risk class: governed frontend primitive behavior recovery
+- Discovered evidence boundary: the disclosure primitive may expose keyboard
+  instructions only for keyboard-driven focus while preserving Escape close,
+  focusout close, `aria-describedby` linkage, and the existing route overflow
+  proof.
+- Intended edit boundary: focus-instruction-disclosure primitive controller,
+  its focused visual route proof, and this current-task audit.
 - Files allowed to edit:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `src/frontend/designSystem/systems/default/index.html`
-  - `src/frontend/designSystem/systems/default/page.mjs`
-  - `tests/visual/designSystem/defaultSystemProofIndex.spec.ts`
+  - `src/frontend/designSystem/layers/03-primitive/focus-instruction-disclosure/index.mjs`
+  - `tests/visual/designSystem/primitives/focusInstructionDisclosurePrimitiveRoute.spec.ts`
 - Files explicitly out of scope:
   - `/home/gordon/kanbien` edits beyond inspection and patch extraction
   - `package.json`
   - package-lock or dependency updates
   - `src/frontend/designSystem/systems/default/assets/styles.css`
-  - frontend proof-evidence manifest harness wiring
-  - proof-evidence manifest fixtures
-  - record-list-item-frame blocked recovery
-  - broad primitive/token CSS work
+  - unrelated primitive or pattern controllers
+  - frontend proof-evidence manifest harness work
+  - record-list-item-frame responsive CSS work
   - unrelated visual-test broadening
 - Required verification commands:
-  - `node --check src/frontend/designSystem/systems/default/page.mjs`
-  - `npx playwright test tests/visual/designSystem/defaultSystemProofIndex.spec.ts`
+  - `node --check src/frontend/designSystem/layers/03-primitive/focus-instruction-disclosure/index.mjs`
+  - `npx playwright test tests/visual/designSystem/primitives/focusInstructionDisclosurePrimitiveRoute.spec.ts`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
 - Allowed closure vocabulary: `candidate recovery branch pending PR review`;
   do not claim the wider dirty-worktree recovery is complete.
@@ -44,24 +42,26 @@
 
 - Actual files edited:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `src/frontend/designSystem/systems/default/index.html`
-  - `src/frontend/designSystem/systems/default/page.mjs`
-  - `tests/visual/designSystem/defaultSystemProofIndex.spec.ts`
+  - `src/frontend/designSystem/layers/03-primitive/focus-instruction-disclosure/index.mjs`
+  - `tests/visual/designSystem/primitives/focusInstructionDisclosurePrimitiveRoute.spec.ts`
 - Evidence collected:
-  - `/design-system/default/` renders a default-system proof index shell.
-  - The route lists token, primitive, and pattern proof sections with grouped
-    links.
-  - Browser coverage checks desktop and mobile widths, representative proof
-    links, section counts, summary counts, and horizontal overflow.
+  - The primitive tracks whether focus was initiated by keyboard navigation
+    before opening the instruction disclosure.
+  - Existing focusout and Escape close behavior remain owned by the primitive.
+  - The route proof now keyboard-focuses hosts before expecting the disclosure
+    to appear.
+  - The constrained mobile route proof still checks horizontal overflow.
 - Commands run and results:
   - `npm ci`: sandbox run failed on `esbuild` EPERM in `/tmp`; escalated rerun
     passed and did not change tracked dependency files.
-  - `node --check src/frontend/designSystem/systems/default/page.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/focus-instruction-disclosure/index.mjs`: passed.
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed before
     closure update; rerun required after closure update.
-  - `NODE_ENV=test PORT=4320 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/defaultSystemProofIndex.spec.ts`: sandbox run failed on localhost bind EPERM; escalated rerun passed, 2 tests. The preview server emitted pre-existing database authentication warnings from the rate-limit path.
+  - `npx playwright test tests/visual/designSystem/primitives/focusInstructionDisclosurePrimitiveRoute.spec.ts`: initial run failed because `NODE_ENV` was not set for this fresh worktree.
+  - `NODE_ENV=test PORT=4331 PLAYWRIGHT_PREVIEW_PORT=4331 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/primitives/focusInstructionDisclosurePrimitiveRoute.spec.ts`: sandbox run failed on localhost bind EPERM; escalated rerun passed, 2 tests. The preview server emitted pre-existing database authentication warnings from the rate-limit path.
 - Missing or inferred evidence:
-  - No full frontend gate was run locally for this narrow route-index recovery.
+  - No full frontend gate was run locally for this narrow primitive behavior
+    recovery.
   - Wider dirty-worktree recovery remains incomplete.
 - User confirmation still required: yes
 - Final permitted closure state: `candidate recovery branch pending PR review`
