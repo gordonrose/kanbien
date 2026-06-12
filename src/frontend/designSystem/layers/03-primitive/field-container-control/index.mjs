@@ -31,11 +31,13 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
-function tokenDependenciesFor() {
+const supportedThemes = new Set(["original", "dark", "desert"]);
+
+function tokenDependenciesFor(theme) {
   const fieldContainerFrame = findVariant(
     fieldContainerFrameTokenSpec,
-    (variant) => variant.id === "field-container-frame-default",
-    "field-container-control requires the signed field-container-frame token.",
+    (variant) => variant.id === `field-container-frame-${theme}`,
+    `field-container-control requires the signed ${theme} field-container-frame token.`,
   );
 
   return { fieldContainerFrame };
@@ -69,8 +71,11 @@ export function fieldContainerControlPrimitive(options = {}) {
   if (systemKey !== "default") {
     throw new RangeError(`field-container-control has no system proof for "${systemKey}".`);
   }
+  if (!supportedThemes.has(theme)) {
+    throw new RangeError(`field-container-control does not support theme "${theme}".`);
+  }
 
-  const tokens = tokenDependenciesFor();
+  const tokens = tokenDependenciesFor(theme);
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",

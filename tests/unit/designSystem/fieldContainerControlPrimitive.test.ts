@@ -14,7 +14,7 @@ describe("field-container-control primitive", () => {
       primitiveName: "field-container-control",
       tokenDependencies: {
         fieldContainerFrame: {
-          variantId: "field-container-frame-default",
+          variantId: "field-container-frame-original",
         },
       },
     });
@@ -36,5 +36,15 @@ describe("field-container-control primitive", () => {
     const html = renderFieldContainerControlPrimitive({ id: "field-container-empty" });
 
     expect(html).toContain('data-field-container-control-slot="empty"');
+  });
+
+  it("selects field-container frame tokens by theme", () => {
+    expect(fieldContainerControlPrimitive({ theme: "dark" }).tokenDependencies.fieldContainerFrame).toMatchObject({
+      variantId: "field-container-frame-dark",
+    });
+    expect(renderFieldContainerControlPrimitive({ theme: "dark" })).toContain("data-field-container-control-theme=\"dark\"");
+    expect(() => fieldContainerControlPrimitive({ theme: "unknown" })).toThrow(
+      'field-container-control does not support theme "unknown".',
+    );
   });
 });

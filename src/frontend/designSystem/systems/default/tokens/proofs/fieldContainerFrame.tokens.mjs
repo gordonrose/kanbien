@@ -1,11 +1,18 @@
 import { fieldContainerFrameTokenContract } from "../../../../layers/02-token/field-container-frame/contract.mjs";
 import { bodyRegionFrameTokenSpec } from "./bodyRegionFrame.tokens.mjs";
 
-const bodyRegionFrame = bodyRegionFrameTokenSpec.variants.find((variant) => variant.id === "body-region-frame-default");
-
-if (!bodyRegionFrame) {
-  throw new Error("field-container-frame requires the signed body-region-frame dependency.");
-}
+const supportedThemes = ["original", "dark", "desert"];
+const bodyRegionFramesByTheme = Object.fromEntries(
+  supportedThemes.map((theme) => {
+    const frame =
+      bodyRegionFrameTokenSpec.variants.find((variant) => variant.id === `body-region-frame-${theme}`) ??
+      bodyRegionFrameTokenSpec.variants.find((variant) => variant.theme === theme);
+    if (!frame) {
+      throw new Error(`field-container-frame requires the signed ${theme} body-region-frame dependency.`);
+    }
+    return [theme, frame];
+  }),
+);
 
 export const tokenTypeTemplate = {
   schema: "kanbien.designSystem.tokenTypeTemplate.v1",
@@ -14,6 +21,7 @@ export const tokenTypeTemplate = {
   variantSchema: {
     valueFields: [
       "frameRole",
+      "theme",
       "backgroundValue",
       "foregroundValue",
       "borderValue",
@@ -24,7 +32,7 @@ export const tokenTypeTemplate = {
       "minInlineSize",
       "maxInlineSize",
     ],
-    metadataFields: ["frameRole", "responsiveBehavior", "accessibility"],
+    metadataFields: ["frameRole", "theme", "responsiveBehavior", "accessibility"],
     useCaseInstructionFields: ["allowedUse", "forbiddenUse", "responsiveBehavior"],
   },
 };
@@ -58,18 +66,20 @@ export const tokenDefinitionV1 = {
   dependencies: [
     {
       contractId: "tokens.body-region-frame",
-      variantId: bodyRegionFrame.id,
-      tokenName: bodyRegionFrame.tokenName,
-      value: bodyRegionFrame.tokenValue,
+      variantId: bodyRegionFramesByTheme.original.id,
+      tokenName: bodyRegionFramesByTheme.original.tokenName,
+      value: bodyRegionFramesByTheme.original.tokenValue,
       relationship: "derived-from",
     },
   ],
-  variants: [
-    {
-      id: "field-container-frame-default",
-      tokenName: "--field-container-frame",
+  variants: supportedThemes.map((theme) => {
+    const bodyRegionFrame = bodyRegionFramesByTheme[theme];
+    return {
+      id: `field-container-frame-${theme}`,
+      tokenName: `--field-container-frame-${theme}`,
       value: {
         frameRole: "field container frame",
+        theme,
         backgroundValue: bodyRegionFrame.backgroundValue,
         foregroundValue: bodyRegionFrame.foregroundValue,
         borderValue: bodyRegionFrame.borderValue,
@@ -103,6 +113,7 @@ export const tokenDefinitionV1 = {
       },
       metadata: {
         frameRole: "field container frame",
+        theme,
         responsiveBehavior:
           "field containers fill their grid slot, preserve internal field content at constrained widths, and may stack when the containing pattern collapses",
         accessibility:
@@ -113,8 +124,8 @@ export const tokenDefinitionV1 = {
         "Do not use for native input frames, selectable option cards, body regions, panel shells, workflow builders, or app-local form CSS.",
         "Hosted field content must still consume its own governed primitive or pattern before being placed inside this frame.",
       ],
-    },
-  ],
+    };
+  }),
 };
 
 export const variants = tokenDefinitionV1.variants;
@@ -125,6 +136,7 @@ function toPageVariant(variant) {
     tokenName: variant.tokenName,
     tokenValue: variant.derivation.renderedValue,
     frameRole: variant.value.frameRole,
+    theme: variant.value.theme,
     backgroundValue: variant.value.backgroundValue,
     foregroundValue: variant.value.foregroundValue,
     borderValue: variant.value.borderValue,
@@ -137,7 +149,6 @@ function toPageVariant(variant) {
     sourceTokenName: variant.derivation.sourceTokenName,
     sourceValue: variant.derivation.sourceValue,
     formulaOrMapping: variant.derivation.formulaOrMapping,
-    theme: "all",
     accessibility: variant.metadata.accessibility,
     preview: variant.preview,
     usage: [
@@ -162,7 +173,7 @@ export const fieldContainerFrameTokenSpec = {
     {
       label: "Field",
       title: "Reusable field container",
-      variantId: "field-container-frame-default",
+      variantId: "field-container-frame-original",
       supportingText: "Outer field surface, padding, and minimum field height are tokenized before form primitives consume them.",
     },
   ],
