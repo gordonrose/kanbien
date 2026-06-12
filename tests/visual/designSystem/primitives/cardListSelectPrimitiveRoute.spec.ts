@@ -63,7 +63,9 @@ test.describe("card list select primitive route", () => {
     await page.getByLabel("Option text").selectOption("supporting");
     await page.getByLabel("Review width").selectOption("narrow");
     await page.locator("[data-card-list-direction-control]").selectOption("rtl");
+    await page.locator("[data-card-list-theme-control]").selectOption("dark");
     await expect(page.getByRole("heading", { name: "Card List Select Primitive", level: 1 })).toBeVisible();
+    await expect(page.locator("[data-card-list-select]").first()).toHaveAttribute("data-card-list-select-theme", "dark");
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 });

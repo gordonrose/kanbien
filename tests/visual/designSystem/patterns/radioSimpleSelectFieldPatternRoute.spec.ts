@@ -45,10 +45,12 @@ test.describe("radio-simple-select-field pattern route", () => {
     await page.locator("[data-radio-field-columns-control]").selectOption("4");
     await page.locator("[data-radio-field-width-control]").selectOption("narrow");
     await page.locator("[data-radio-field-direction-control]").selectOption("rtl");
+    await page.locator("[data-radio-field-theme-control]").selectOption("dark");
 
     const host = page.locator("[data-radio-simple-select-field-review-width]").first();
     const group = page.locator("[data-radio-simple-select]").first();
     await expect(host).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("[data-radio-simple-select-field]").first()).toHaveAttribute("data-radio-simple-select-field-theme", "dark");
     await expect(group).toHaveAttribute("data-radio-simple-select-columns-rendered", "1");
 
     await page.getByRole("radio", { name: /Operational handoff posture/ }).focus();
