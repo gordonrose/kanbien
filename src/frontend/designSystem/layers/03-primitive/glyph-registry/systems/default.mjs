@@ -11,6 +11,19 @@ export const defaultGlyphRegistry = {
       semanticName: "filter",
       svgPath: "M7 7h10l-4 5v4l-2 1v-5z",
     },
+    "context-filter": {
+      semanticName: "context-filter",
+      svgPath: "M4 6h16l-6.5 7.25V19l-3-1.5v-4.25z",
+    },
+    "context-more": {
+      semanticName: "context-more",
+      svgPath:
+        "M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z",
+    },
+    "context-list": {
+      semanticName: "context-list",
+      svgPath: "M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z",
+    },
     "chevron-down": {
       semanticName: "chevron-down",
       svgPath: "M6 9l6 6l6-6",

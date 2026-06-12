@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Context Navigation Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/systems/default/assets/styles.css?v=navigation-source-v2" />
+  </head>
+  <body data-pattern-layer-surface="context-navigation">
+    <header class="top-nav">
+      <div class="brand-lockup"><span class="brand-mark">K</span><strong>Kanbien Design System</strong></div>
+      <nav class="primary-nav" aria-label="Primary"><a class="nav-link active" href="/design-system/default/patterns/context-navigation" aria-current="page">Patterns</a></nav>
+      <div class="profile-chip"><span>CN</span><strong>Profile</strong></div>
+    </header>
+    <section class="sub-nav" aria-label="Page search and breadcrumb">
+      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+        <ol class="breadcrumb-list">
+          <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+          <li><a class="breadcrumb-button" href="/design-system/default/patterns">Patterns</a></li>
+          <li><a class="breadcrumb-button breadcrumb-current" href="/design-system/default/patterns/context-navigation" aria-current="page">context-navigation</a></li>
+        </ol>
+      </nav>
+    </section>
+    <main class="design-system-page-main-no-context-nav" data-pattern-proof-page></main>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/systems/default/patterns/context-navigation/page.mjs?v=navigation-source-v2"></script>
+  </body>
+</html>

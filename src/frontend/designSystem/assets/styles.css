@@ -57,6 +57,8 @@
   --context-nav-layer: 2147481000;
   --context-nav-drawer-layer: 2147481001;
   --context-nav-menu-layer: 2147481002;
+  --context-nav-mobile-bar-offset: calc(4.125rem + env(safe-area-inset-bottom, 0));
+  --context-nav-mobile-page-bottom-reserve: 5.75rem;
   --nav-avatar-bg: linear-gradient(135deg, #1d3244, #304d66);
   --shadow: 0 1.5rem 3.75rem rgba(15, 31, 45, 0.12);
   --shadow-soft: 0 1rem 2.125rem rgba(15, 31, 45, 0.08);
@@ -12380,7 +12382,7 @@ html[dir="rtl"] .language-option {
   }
 
   body {
-    padding-bottom: 5.75rem;
+    padding-bottom: var(--context-nav-mobile-page-bottom-reserve);
   }
 
   .sub-nav {
@@ -12502,6 +12504,9 @@ html[dir="rtl"] .language-option {
     border-left: 0;
     background: var(--surface-2);
     box-shadow: 0 -0.75rem 1.875rem rgba(38, 48, 86, 0.08);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    contain: layout paint;
   }
 
   .context-nav-main {
@@ -12553,7 +12558,7 @@ html[dir="rtl"] .language-option {
     top: var(--context-nav-top, 0);
     left: 0;
     right: 0;
-    bottom: var(--context-nav-mobile-bar-offset, calc(4.125rem + env(safe-area-inset-bottom, 0)));
+    bottom: var(--context-nav-mobile-bar-offset);
     width: auto;
     max-height: none;
     border-top: 0.0625rem solid var(--line);
@@ -12564,7 +12569,7 @@ html[dir="rtl"] .language-option {
     top: var(--context-nav-top, 0);
     left: 0;
     right: 0;
-    bottom: var(--context-nav-mobile-bar-offset, calc(4.125rem + env(safe-area-inset-bottom, 0)));
+    bottom: var(--context-nav-mobile-bar-offset);
     width: auto;
     max-height: none;
     border-right: 0;
