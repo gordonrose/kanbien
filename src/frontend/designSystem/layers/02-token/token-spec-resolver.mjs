@@ -1,4 +1,5 @@
 import { buttonFrameTokenSpec } from "./button-frame/systems/default.mjs";
+import { contextNavigationFrameTokenSpec } from "./context-navigation-frame/systems/default.mjs";
 import { focusRingTokenSpec } from "./focus-ring/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "./label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "./minimum-target-size/systems/default.mjs";
@@ -9,6 +10,7 @@ import { toolsNavigationFrameTokenSpec } from "./tools-navigation-frame/systems/
 const tokenSpecRegistry = {
   default: {
     "button-frame": buttonFrameTokenSpec,
+    "context-navigation-frame": contextNavigationFrameTokenSpec,
     "focus-ring": focusRingTokenSpec,
     "label-text-style": labelTextStyleTokenSpec,
     "minimum-target-size": minimumTargetSizeTokenSpec,

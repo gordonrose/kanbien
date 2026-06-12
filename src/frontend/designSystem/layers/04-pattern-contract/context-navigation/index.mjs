@@ -7,7 +7,7 @@ import {
   attachContextNavigationOverflowMenuPrimitiveController,
   renderContextNavigationOverflowMenuPrimitive,
 } from "../../03-primitive/context-navigation-overflow-menu/index.mjs";
-import { contextNavigationFrameTokenSpec } from "../../02-token/context-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const patternName = "context-navigation";
 const allowedViewportModes = new Set(["responsive", "desktop", "mobile"]);
@@ -172,7 +172,7 @@ export function contextNavigationPattern(options = {}) {
   const utilityItems = normalizeItems(options.utilityItems ?? [], "utilityItems");
   const mobileItems = normalizeItems(options.mobileItems ?? [...primaryItems, ...utilityItems], "mobileItems");
   const frame = findVariant(
-    contextNavigationFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "context-navigation-frame" }),
     (variant) => variant.id === "context-navigation-frame-default",
     "context-navigation requires a signed context-navigation-frame token.",
   );
