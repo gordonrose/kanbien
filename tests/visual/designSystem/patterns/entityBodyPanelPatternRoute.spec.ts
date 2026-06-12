@@ -77,9 +77,11 @@ test.describe("entity body panel pattern route", () => {
     await expect.poll(() => scrollRegion.evaluate((element) => element.children.length)).toBe(0);
 
     await page.locator("[data-entity-body-panel-state-control]").selectOption("default");
+    await page.locator("[data-entity-body-panel-content-control]").selectOption("short");
+    await expect(page.locator("[data-entity-body-panel-content-control]")).toHaveValue("short");
     await page.locator("[data-entity-body-panel-hosted-control]").selectOption("static-proof");
     await expect(page.locator("[data-entity-body-panel-governed-form]")).toHaveCount(0);
-    await expect(page.getByText("Static proof content", { exact: false })).toBeVisible();
+    await expect(scrollRegion.getByText("Static proof content, not a governed field.", { exact: true })).toBeVisible();
 
     await page.locator("[data-entity-body-panel-mobile-control]").selectOption("internal-scroll");
     await expect(scrollRegion).toHaveAttribute("data-scroll-region-control-mobile-mode", "internal-scroll");

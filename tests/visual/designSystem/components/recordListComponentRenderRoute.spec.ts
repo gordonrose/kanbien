@@ -93,7 +93,10 @@ test.describe("record list component render route", () => {
 
     await page.getByRole("button", { name: "LedgerWorks Finance" }).click();
 
-    const hintOpacity = await page.locator(".ds-record-list-item-keyboard-hint").first().evaluate((element) => getComputedStyle(element).opacity);
-    expect(hintOpacity).toBe("0");
+    await expect(page.locator("[data-focus-instruction-disclosure]").first()).toBeHidden();
+    await expect(page.getByRole("button", { name: "LedgerWorks Finance" })).toHaveAttribute(
+      "data-focus-instruction-disclosure-open",
+      "false",
+    );
   });
 });
