@@ -2,7 +2,7 @@ import {
   attachToolsNavigationItemControlPrimitiveController,
   renderToolsNavigationItemControlPrimitive,
 } from "../../03-primitive/tools-navigation-item-control/index.mjs";
-import { toolsNavigationFrameTokenSpec } from "../../02-token/tools-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const patternName = "tools-navigation";
 const allowedViewportModes = new Set(["responsive", "desktop", "mobile"]);
@@ -81,7 +81,7 @@ export function toolsNavigationPattern(options = {}) {
   const mode = options.mode ?? "default";
   const items = Array.isArray(options.items) ? options.items.map(normalizeItem) : [];
   const frame = findVariant(
-    toolsNavigationFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "tools-navigation-frame" }),
     (variant) => variant.id === "tools-navigation-frame-default",
     "tools-navigation requires a signed tools-navigation-frame token.",
   );
@@ -92,9 +92,6 @@ export function toolsNavigationPattern(options = {}) {
   assertString(label, "label");
   assertString(viewportMode, "viewportMode");
   assertString(mode, "mode");
-  if (systemKey !== "default") {
-    throw new RangeError(`tools-navigation has no system proof for "${systemKey}".`);
-  }
   if (!allowedViewportModes.has(viewportMode)) {
     throw new RangeError(`tools-navigation does not support viewportMode "${viewportMode}".`);
   }

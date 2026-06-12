@@ -29,6 +29,11 @@ describe("design-system token spec resolver", () => {
       systemKey: "default",
       tokenType: "top-navigation-frame",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "tools-navigation-frame" })).toMatchObject({
+      contractId: "tokens.tools-navigation-frame",
+      systemKey: "default",
+      tokenType: "tools-navigation-frame",
+    });
   });
 
   it("rejects unknown systems and unknown token types without falling back", () => {
