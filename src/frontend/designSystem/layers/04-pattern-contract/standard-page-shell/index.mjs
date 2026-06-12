@@ -5,7 +5,7 @@ import {
 import { attachSubNavigationPatternController, renderSubNavigationPattern } from "../sub-navigation/index.mjs";
 import { attachToolsNavigationPatternController, renderToolsNavigationPattern } from "../tools-navigation/index.mjs";
 import { attachTopNavigationPatternController, renderTopNavigationPattern } from "../top-navigation/index.mjs";
-import { standardPageShellFrameTokenSpec } from "../../02-token/standard-page-shell-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const patternName = "standard-page-shell";
 const allowedModes = new Set(["desktop", "compressed", "mobile"]);
@@ -68,7 +68,7 @@ export function standardPageShellPattern(options = {}) {
   const mode = options.mode ?? "desktop";
   const direction = options.direction ?? "ltr";
   const frame = findVariant(
-    standardPageShellFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "standard-page-shell-frame" }),
     (variant) => variant.id === "standard-page-shell-frame-default",
     "standard-page-shell requires the signed standard-page-shell-frame token.",
   );
@@ -78,9 +78,6 @@ export function standardPageShellPattern(options = {}) {
   assertString(id, "id");
   assertString(mode, "mode");
   assertString(direction, "direction");
-  if (systemKey !== "default") {
-    throw new RangeError(`standard-page-shell has no system proof for "${systemKey}".`);
-  }
   if (!allowedModes.has(mode)) {
     throw new RangeError(`standard-page-shell does not support mode "${mode}".`);
   }
