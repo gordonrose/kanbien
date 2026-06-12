@@ -8,6 +8,22 @@ describe("design-system token spec resolver", () => {
       systemKey: "default",
       tokenType: "standard-page-shell-frame",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "button-frame" })).toMatchObject({
+      systemKey: "default",
+      tokenType: "button-frame",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" })).toMatchObject({
+      systemKey: "default",
+      tokenType: "focus-ring",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" })).toMatchObject({
+      contractId: "tokens.label-text-style",
+      systemKey: "default",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "minimum-target-size" })).toMatchObject({
+      contractId: "tokens.minimum-target-size",
+      systemKey: "default",
+    });
   });
 
   it("rejects unknown systems and unknown token types without falling back", () => {

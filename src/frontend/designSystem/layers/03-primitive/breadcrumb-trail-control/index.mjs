@@ -1,7 +1,4 @@
-import { buttonFrameTokenSpec } from "../../02-token/button-frame/systems/default.mjs";
-import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
-import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
-import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import {
   attachTruncatingLabelPrimitiveController,
   renderTruncatingLabelPrimitive,
@@ -64,9 +61,9 @@ function normalizeItem(item, index, currentIndex) {
   };
 }
 
-function tokenDependenciesFor(theme) {
+function tokenDependenciesFor(systemKey, theme) {
   const buttonFrame = findVariant(
-    buttonFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "button-frame" }),
     (variant) =>
       variant.frameRole === "text action button frame" &&
       variant.intent === "subtle" &&
@@ -74,17 +71,17 @@ function tokenDependenciesFor(theme) {
     `breadcrumb-trail-control requires a signed text action button-frame token for ${theme}.`,
   );
   const labelTextStyle = findVariant(
-    labelTextStyleTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "label-text-style" }),
     (variant) => variant.role === "short label text",
     "breadcrumb-trail-control requires a signed label-text-style token.",
   );
   const focusRing = findVariant(
-    focusRingTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "focus-ring" }),
     (variant) => variant.role === "visible focus ring" && variant.theme === theme,
     `breadcrumb-trail-control requires a signed focus-ring token for ${theme}.`,
   );
   const minimumTargetSize = findVariant(
-    minimumTargetSizeTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "minimum-target-size" }),
     (variant) => variant.role === "interactive target",
     "breadcrumb-trail-control requires a signed minimum-target-size token.",
   );
@@ -152,9 +149,6 @@ export function breadcrumbTrailControlPrimitive(options = {}) {
   assertString(label, "label");
   assertString(mode, "mode");
   assertString(direction, "direction");
-  if (systemKey !== "default") {
-    throw new RangeError(`breadcrumb-trail-control has no system proof for "${systemKey}".`);
-  }
   if (!supportedThemes.has(theme)) {
     throw new RangeError(`breadcrumb-trail-control does not support theme "${theme}".`);
   }
@@ -162,7 +156,7 @@ export function breadcrumbTrailControlPrimitive(options = {}) {
     throw new RangeError(`breadcrumb-trail-control does not support mode "${mode}".`);
   }
 
-  const tokens = tokenDependenciesFor(theme);
+  const tokens = tokenDependenciesFor(systemKey, theme);
   const visibleItems = visibleItemsForMode(items, mode);
   const hiddenItems = hiddenItemsForMode(items, visibleItems, mode);
 
