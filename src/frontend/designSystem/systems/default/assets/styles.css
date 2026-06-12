@@ -1,4 +1,30 @@
 .token-spec-page {
+  --token-record-list-item-frame-row-background-original: #ffffff;
+  --token-record-list-item-frame-row-foreground-original: #111827;
+  --token-record-list-item-frame-row-supporting-original: #475569;
+  --token-record-list-item-frame-row-border-original: #d6deeb;
+  --token-record-list-item-frame-selected-background-original: #e4f4f1;
+  --token-record-list-item-frame-selected-border-original: #77c2b6;
+  --token-record-list-item-frame-disabled-background-original: #f8fafc;
+  --token-record-list-item-frame-drop-background-original: #eef2ff;
+  --token-record-list-item-frame-drop-accent-original: #008575;
+  --token-record-list-item-frame-row-background-dark: #171b22;
+  --token-record-list-item-frame-row-foreground-dark: #f4f7fb;
+  --token-record-list-item-frame-row-supporting-dark: #a8b5c7;
+  --token-record-list-item-frame-row-border-dark: #334155;
+  --token-record-list-item-frame-selected-background-dark: #123c3a;
+  --token-record-list-item-frame-selected-border-dark: #5eead4;
+  --token-record-list-item-frame-disabled-background-dark: #111827;
+  --token-record-list-item-frame-drop-background-dark: #1e2634;
+  --token-record-list-item-frame-row-background-desert: #fffaf0;
+  --token-record-list-item-frame-row-foreground-desert: #493327;
+  --token-record-list-item-frame-row-supporting-desert: #7a6652;
+  --token-record-list-item-frame-row-border-desert: #decfb8;
+  --token-record-list-item-frame-selected-background-desert: #f0ead2;
+  --token-record-list-item-frame-selected-border-desert: #a38b5f;
+  --token-record-list-item-frame-disabled-background-desert: #f7eddc;
+  --token-record-list-item-frame-drop-background-desert: #f8efd8;
+  --token-record-list-item-frame-drop-accent-desert: #0f766e;
   min-height: calc(100vh - var(--top-nav-height, 4rem));
   padding: 0 0 3rem;
   background:
@@ -255,6 +281,17 @@
 
 .token-spec-card > * + * {
   border-inline-start: 0.0625rem solid var(--line);
+}
+
+@media (max-width: 52rem) {
+  .token-spec-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .token-spec-card > * + * {
+    border-inline-start: 0;
+    border-block-start: 0.0625rem solid var(--line);
+  }
 }
 
 .token-spec-card-stacked-preview {
@@ -1204,6 +1241,12 @@
   color: var(--ink);
   font: inherit;
   font-size: 0.82rem;
+}
+
+@media (max-width: 52rem) {
+  .primitive-proof-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .detail-slot-control-proof-controls {
@@ -4472,85 +4515,89 @@
 
 .ds-record-list-item-control,
 .ds-record-list-item-drop-marker {
-  --record-list-item-background: #ffffff;
-  --record-list-item-foreground: #111827;
-  --record-list-item-supporting: #64748b;
-  --record-list-item-border: #d6deeb;
-  --record-list-item-accent: transparent;
-  --record-list-item-radius: 0.375rem;
-  --record-list-item-padding-block: 0.625rem;
-  --record-list-item-padding-inline: 0.75rem;
-  --record-list-item-gap: 0.25rem;
-  --record-list-item-min-block-size: 4.5rem;
-  --record-list-item-marker-min-block-size: 4.75rem;
-  --record-list-item-motion: 120ms ease;
+  --record-list-item-background: var(--primitive-record-list-item-background, var(--surface-1));
+  --record-list-item-foreground: var(--primitive-record-list-item-foreground, var(--ink));
+  --record-list-item-supporting: var(--primitive-record-list-item-supporting, var(--ink-soft));
+  --record-list-item-border: var(--primitive-record-list-item-border, var(--line));
+  --record-list-item-accent: var(--primitive-record-list-item-accent, transparent);
+  --record-list-item-radius: var(--primitive-record-list-item-radius, var(--radius-sm));
+  --record-list-item-padding-block: var(--primitive-record-list-item-padding-block);
+  --record-list-item-padding-inline: var(--primitive-record-list-item-padding-inline);
+  --record-list-item-gap: var(--primitive-record-list-item-gap);
+  --record-list-item-min-block-size: var(--primitive-record-list-item-min-block-size);
+  --record-list-item-marker-min-block-size: var(--primitive-record-list-item-marker-min-block-size);
+  --record-list-item-motion: var(--primitive-record-list-item-motion);
+  --record-list-item-elevation: var(--primitive-record-list-item-elevation, none);
+  --record-list-item-drop-elevation: var(--primitive-record-list-item-drop-elevation, none);
 }
 
-.ds-record-list-item-control[data-record-list-item-state="selected"] {
-  --record-list-item-background: #e4f4f1;
-  --record-list-item-border: #77c2b6;
+.ds-record-list-item-control[data-record-list-item-theme="original"],
+.ds-record-list-item-drop-marker[data-record-list-item-theme="original"] {
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-row-background-original);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-foreground-original);
+  --primitive-record-list-item-supporting: var(--token-record-list-item-frame-row-supporting-original);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-row-border-original);
 }
 
-.ds-record-list-item-control[data-record-list-item-state="disabled"] {
-  --record-list-item-background: #f8fafc;
-  --record-list-item-foreground: #64748b;
+.ds-record-list-item-control[data-record-list-item-theme="original"][data-record-list-item-state="selected"] {
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-selected-background-original);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-selected-border-original);
 }
 
-.ds-record-list-item-drop-marker {
-  --record-list-item-background: #eef2ff;
-  --record-list-item-accent: #008575;
+.ds-record-list-item-control[data-record-list-item-theme="original"][data-record-list-item-state="disabled"] {
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-disabled-background-original);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-supporting-original);
+}
+
+.ds-record-list-item-drop-marker[data-record-list-item-theme="original"] {
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-drop-background-original);
+  --primitive-record-list-item-accent: var(--token-record-list-item-frame-drop-accent-original);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="dark"],
 .ds-record-list-item-drop-marker[data-record-list-item-theme="dark"] {
-  --record-list-item-background: #171b22;
-  --record-list-item-foreground: #f4f7fb;
-  --record-list-item-supporting: #a8b5c7;
-  --record-list-item-border: #334155;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-row-background-dark);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-foreground-dark);
+  --primitive-record-list-item-supporting: var(--token-record-list-item-frame-row-supporting-dark);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-row-border-dark);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="dark"][data-record-list-item-state="selected"] {
-  --record-list-item-background: #123c3a;
-  --record-list-item-border: #5eead4;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-selected-background-dark);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-selected-border-dark);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="dark"][data-record-list-item-state="disabled"] {
-  --record-list-item-background: #111827;
-  --record-list-item-foreground: #a8b5c7;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-disabled-background-dark);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-supporting-dark);
 }
 
 .ds-record-list-item-drop-marker[data-record-list-item-theme="dark"] {
-  --record-list-item-accent: #5eead4;
-}
-
-.ds-record-list-item-drop-marker[data-record-list-item-theme="dark"] {
-  --record-list-item-background: #1e2634;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-drop-background-dark);
+  --primitive-record-list-item-accent: var(--token-record-list-item-frame-selected-border-dark);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="desert"],
 .ds-record-list-item-drop-marker[data-record-list-item-theme="desert"] {
-  --record-list-item-background: #fffaf0;
-  --record-list-item-foreground: #493327;
-  --record-list-item-supporting: #7a6652;
-  --record-list-item-border: #decfb8;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-row-background-desert);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-foreground-desert);
+  --primitive-record-list-item-supporting: var(--token-record-list-item-frame-row-supporting-desert);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-row-border-desert);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="desert"][data-record-list-item-state="selected"] {
-  --record-list-item-background: #f0ead2;
-  --record-list-item-border: #a38b5f;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-selected-background-desert);
+  --primitive-record-list-item-border: var(--token-record-list-item-frame-selected-border-desert);
 }
 
 .ds-record-list-item-control[data-record-list-item-theme="desert"][data-record-list-item-state="disabled"] {
-  --record-list-item-background: #f7eddc;
-  --record-list-item-foreground: #7a6652;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-disabled-background-desert);
+  --primitive-record-list-item-foreground: var(--token-record-list-item-frame-row-supporting-desert);
 }
 
 .ds-record-list-item-drop-marker[data-record-list-item-theme="desert"] {
-  --record-list-item-accent: #0f766e;
-}
-
-.ds-record-list-item-drop-marker[data-record-list-item-theme="desert"] {
-  --record-list-item-background: #f8efd8;
+  --primitive-record-list-item-background: var(--token-record-list-item-frame-drop-background-desert);
+  --primitive-record-list-item-accent: var(--token-record-list-item-frame-drop-accent-desert);
 }
 
 .ds-record-list-item-control {
@@ -4564,7 +4611,7 @@
   padding-block: var(--record-list-item-padding-block, 0.625rem);
   padding-inline: var(--record-list-item-padding-inline, 0.75rem);
   border: 0.0625rem solid var(--record-list-item-border, var(--line));
-  border-radius: var(--record-list-item-radius, var(--radius-sm));
+  border-radius: var(--primitive-record-list-item-radius, var(--radius-sm));
   background: var(--record-list-item-background, var(--surface-1));
   background-color: var(--record-list-item-background, var(--surface-1));
   color: var(--record-list-item-foreground, var(--ink));
@@ -4586,25 +4633,25 @@
 
 .ds-record-list-item-control:focus-visible {
   outline: 0.125rem solid var(--accent);
-  outline-offset: 0.125rem;
+  outline-offset: var(--primitive-record-list-item-focus-outline-offset, 0.125rem);
 }
 
 .ds-record-list-item-control[data-record-list-item-state="selected"],
 .ds-record-list-item-control[data-record-list-item-state="dragging"] {
-  box-shadow: 0 0.35rem 0.85rem color-mix(in srgb, var(--accent) 8%, transparent);
+  box-shadow: var(--record-list-item-elevation, none);
 }
 
 .ds-record-list-item-control[data-record-list-item-state="dragging"] {
   cursor: grabbing;
   opacity: 0.88;
   outline: 0.125rem dashed var(--record-list-item-accent, var(--accent));
-  outline-offset: -0.35rem;
+  outline-offset: var(--primitive-record-list-item-drag-outline-offset, -0.35rem);
 }
 
 .ds-record-list-item-copy {
   display: grid;
   min-inline-size: 0;
-  gap: 0.125rem;
+  gap: var(--primitive-record-list-item-copy-gap, var(--record-list-item-gap));
 }
 
 .ds-record-list-item-title,
@@ -4631,15 +4678,13 @@
   place-items: center;
   min-block-size: var(--record-list-item-marker-min-block-size, 4.75rem);
   border: 0.0625rem solid var(--record-list-item-border, var(--line));
-  border-radius: var(--record-list-item-radius, var(--radius-sm));
+  border-radius: var(--primitive-record-list-item-radius, var(--radius-sm));
   background: var(--record-list-item-background, var(--surface-1));
   background-color: var(--record-list-item-background, var(--surface-1));
   color: var(--record-list-item-supporting, var(--ink-soft));
   font-size: 0.78rem;
   font-weight: 700;
-  box-shadow:
-    inset 0 0 0 0.0625rem color-mix(in srgb, white 40%, transparent),
-    0 0.25rem 0.65rem color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: var(--record-list-item-drop-elevation, none);
 }
 
 .ds-record-list-pattern {

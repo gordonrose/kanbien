@@ -17,7 +17,7 @@ const themeValues = {
     selectedSurface: "#e4f4f1",
     disabledSurface: "#f8fafc",
     foreground: "#111827",
-    supporting: "#64748b",
+    supporting: "#475569",
     border: "#d6deeb",
     selectedBorder: "#77c2b6",
   },

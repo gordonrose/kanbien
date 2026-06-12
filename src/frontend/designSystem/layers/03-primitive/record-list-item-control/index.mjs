@@ -28,6 +28,13 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
+function cssVarStyle(styleValues) {
+  return Object.entries(styleValues)
+    .filter(([, value]) => value !== null && value !== undefined)
+    .map(([name, value]) => `${name}: ${value}`)
+    .join("; ");
+}
+
 function findVariant(tokenSpec, predicate, missingMessage) {
   const variant = tokenSpec.variants.find(predicate);
   if (!variant) {
@@ -169,6 +176,22 @@ export function recordListItemControlPrimitive(options = {}) {
       minimumTargetSize: { variantId: tokens.minimumTargetSize.id },
     },
     frame: tokens.recordListItemFrame,
+    styleVars: {
+      "--primitive-record-list-item-background": tokens.recordListItemFrame.backgroundValue,
+      "--primitive-record-list-item-foreground": tokens.recordListItemFrame.foregroundValue,
+      "--primitive-record-list-item-supporting": tokens.recordListItemFrame.supportingForegroundValue,
+      "--primitive-record-list-item-border": tokens.recordListItemFrame.borderValue,
+      "--primitive-record-list-item-accent": tokens.dragSourceFrame.accentValue,
+      "--primitive-record-list-item-radius": tokens.recordListItemFrame.radiusValue,
+      "--primitive-record-list-item-padding-block": tokens.recordListItemFrame.paddingBlockValue,
+      "--primitive-record-list-item-padding-inline": tokens.recordListItemFrame.paddingInlineValue,
+      "--primitive-record-list-item-gap": tokens.recordListItemFrame.gapValue,
+      "--primitive-record-list-item-min-block-size": tokens.recordListItemFrame.minBlockSize,
+      "--primitive-record-list-item-marker-min-block-size": tokens.dropMarkerFrame.markerMinBlockSize,
+      "--primitive-record-list-item-motion": tokens.recordListItemFrame.motionValue,
+      "--primitive-record-list-item-elevation": tokens.dragPreviewFrame.previewElevationValue,
+      "--primitive-record-list-item-drop-elevation": tokens.dropMarkerFrame.previewElevationValue,
+    },
   };
 }
 
@@ -185,6 +208,7 @@ export function renderRecordListItemControlPrimitive(options = {}) {
   const attrs = [
     `class="ds-record-list-item-control"`,
     `type="button"`,
+    `style="${escapeHtml(cssVarStyle(spec.styleVars))}"`,
     `data-record-list-item-control`,
     `data-record-list-item-id="${escapeHtml(spec.itemId)}"`,
     `data-record-list-item-state="${escapeHtml(spec.state)}"`,
@@ -267,6 +291,22 @@ function createDropMarker(theme = "original") {
   marker.dataset.recordListItemTheme = theme;
   marker.setAttribute("aria-hidden", "true");
   marker.textContent = frame.markerLabelValue || "Drop here";
+  marker.setAttribute(
+    "style",
+    cssVarStyle({
+      "--primitive-record-list-item-background": frame.backgroundValue,
+      "--primitive-record-list-item-foreground": frame.foregroundValue,
+      "--primitive-record-list-item-supporting": frame.supportingForegroundValue,
+      "--primitive-record-list-item-border": frame.borderValue,
+      "--primitive-record-list-item-accent": frame.accentValue,
+      "--primitive-record-list-item-radius": frame.radiusValue,
+      "--primitive-record-list-item-padding-block": frame.paddingBlockValue,
+      "--primitive-record-list-item-padding-inline": frame.paddingInlineValue,
+      "--primitive-record-list-item-marker-min-block-size": frame.markerMinBlockSize,
+      "--primitive-record-list-item-motion": frame.motionValue,
+      "--primitive-record-list-item-drop-elevation": frame.previewElevationValue,
+    }),
+  );
   return marker;
 }
 
