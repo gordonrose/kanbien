@@ -38,6 +38,29 @@ describe("body-region-control primitive seam", () => {
     });
   });
 
+  it("resolves same-theme body-region frame values", () => {
+    const region = bodyRegionControlPrimitive({
+      id: "entity-body-region-dark",
+      label: "Dark entity body content",
+      theme: "dark",
+    });
+
+    expect(region).toMatchObject({
+      theme: "dark",
+      tokenDependencies: {
+        bodyRegionFrame: {
+          tokenName: "--body-region-frame-dark",
+          variantId: "body-region-frame-default-dark",
+        },
+      },
+      styleVars: {
+        "--primitive-body-region-background": "#171b22",
+        "--primitive-body-region-foreground": "#f4f7fb",
+        "--primitive-body-region-border": "#303845",
+      },
+    });
+  });
+
   it("renders a named section and composes the governed scroll primitive", () => {
     const html = renderBodyRegionControlPrimitive({
       id: "entity-body-region",

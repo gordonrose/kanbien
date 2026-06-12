@@ -12,15 +12,19 @@ test.describe("body region frame token route", () => {
     await page.goto(route);
 
     await expect(page.getByRole("heading", { name: "Body Region Frame Token", level: 1 })).toBeVisible();
-    await expect(page.getByText("--body-region-frame")).toBeVisible();
-    await expect(page.getByText("--panel-frame")).toBeVisible();
+    await expect(page.getByText("--body-region-frame", { exact: true })).toBeVisible();
+    await expect(page.getByText("--body-region-frame-dark", { exact: true })).toBeVisible();
+    await expect(page.getByText("--body-region-frame-desert", { exact: true })).toBeVisible();
+    await expect(page.getByText("--panel-frame", { exact: true })).toBeVisible();
+    await expect(page.getByText("--panel-frame-dark", { exact: true })).toBeVisible();
+    await expect(page.getByText("--panel-frame-desert", { exact: true })).toBeVisible();
     await expect(page.getByText("1rem", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("0.75rem", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("26rem", { exact: true })).toBeVisible();
+    await expect(page.getByText("26rem", { exact: true })).toHaveCount(3);
     await expect(page.getByText("100%", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("12rem", { exact: true })).toBeVisible();
-    await expect(page.getByText("32rem", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("Hosted controls still need their own governed token and primitive foundations")).toBeVisible();
+    await expect(page.getByText("12rem", { exact: true })).toHaveCount(3);
+    await expect(page.getByText("32rem", { exact: true })).toHaveCount(3);
+    await expect(page.getByText("Hosted controls still need their own governed token and primitive foundations").first()).toBeVisible();
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
 
     await page.setViewportSize({ width: 390, height: 844 });
