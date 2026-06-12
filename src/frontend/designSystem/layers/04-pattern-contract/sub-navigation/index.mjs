@@ -6,7 +6,7 @@ import {
   attachSearchShellControlPrimitiveController,
   renderSearchShellControlPrimitive,
 } from "../../03-primitive/search-shell-control/index.mjs";
-import { standardPageShellFrameTokenSpec } from "../../02-token/standard-page-shell-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const patternName = "sub-navigation";
 const allowedModes = new Set(["auto", "desktop", "compressed", "compact", "mobile"]);
@@ -127,9 +127,6 @@ export function subNavigationPattern(options = {}) {
   assertString(mode, "mode");
   assertString(direction, "direction");
   assertString(searchState, "searchState");
-  if (systemKey !== "default") {
-    throw new RangeError(`sub-navigation has no system proof for "${systemKey}".`);
-  }
   if (!allowedModes.has(mode)) {
     throw new RangeError(`sub-navigation does not support mode "${mode}".`);
   }
@@ -141,7 +138,7 @@ export function subNavigationPattern(options = {}) {
   }
 
   const shellFrame = findVariant(
-    standardPageShellFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "standard-page-shell-frame" }),
     (variant) => variant.id === "standard-page-shell-frame-default",
     "sub-navigation requires the signed standard-page-shell-frame token.",
   );
