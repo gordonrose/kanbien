@@ -1,7 +1,11 @@
-import { contextNavigationFrameTokenSpec } from "../../02-token/context-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 
 const primitiveName = "context-navigation-bottom-bar";
 const allowedModes = new Set(["default", "proof-static"]);
+const contextNavigationFrameTokenSpec = resolveTokenSpec({
+  systemKey: "default",
+  tokenType: "context-navigation-frame",
+});
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
