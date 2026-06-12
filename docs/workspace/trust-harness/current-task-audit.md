@@ -2,63 +2,76 @@
 
 ## Preflight Contract
 
-- Task summary: Recover focused visual proof assertions for record-list
-  component render and entity-body-panel pattern routes after PR 30 merged to
-  `main`.
-- Mode: reconcile-only
+- Task summary: Update git/workflow governance so future Codex sessions default
+  to clean branch/worktree isolation, bounded dirty-worktree recovery, and safe
+  cleanup.
+- Mode: patch-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
-  - `.codex/skills/40-frontend/frontend-test-case-maintainer/SKILL.md`
-- Task risk class: governed frontend component/pattern proof recovery
-- Discovered evidence boundary: existing record-list component and
-  entity-body-panel proof routes already exercise the relevant rendered states;
-  the recovered slice narrows assertions to governed seams and scoped content
-  without changing runtime code, CSS, route HTML, or shared helpers.
-- Intended edit boundary: two focused visual route spec assertion updates and
-  this current-task audit.
+  - `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
+  - `docs/architecture/adr/0051-log-harness-governance-decisions-as-adrs.md`
+- Task risk class: material repo-governance instruction update
+- Discovered evidence boundary: the requested change alters Codex git
+  isolation and recovery procedure, so evidence must come from the updated
+  governance instructions, the isolated worktree state, the single active task
+  audit, and the existing repo-governance validation harness.
+- Intended edit boundary: add dirty recovery procedure to the branch governor,
+  add git isolation routing to the change-loop orchestrator, add concise
+  durable material-work isolation guidance to `AGENTS.md`, and keep the task
+  audit plus bootstrap record aligned with this governance update.
 - Files allowed to edit:
+  - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
+  - `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
+  - `AGENTS.md`
+  - `docs/workspace/chat-bootstraps/2026-06-12-governance-git-isolation.md`
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `tests/visual/designSystem/components/recordListComponentRenderRoute.spec.ts`
-  - `tests/visual/designSystem/patterns/entityBodyPanelPatternRoute.spec.ts`
 - Files explicitly out of scope:
-  - `/home/gordon/kanbien` edits beyond inspection and patch extraction
+  - implementation source code
+  - tests
   - `package.json`
-  - package-lock or dependency updates
-  - `src/frontend/designSystem/systems/default/assets/styles.css`
-  - record-list component or entity-body-panel runtime seams
-  - design-system route markup
-  - unrelated frontend proof-evidence harness work
+  - package-lock files
+  - `/home/gordon/kanbien`
+  - staging, committing, pushing, merging, rebasing, deleting, or cleaning
 - Required verification commands:
-  - `npx playwright test tests/visual/designSystem/components/recordListComponentRenderRoute.spec.ts tests/visual/designSystem/patterns/entityBodyPanelPatternRoute.spec.ts`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
-- Allowed closure vocabulary: `candidate recovery branch pending PR review`;
-  do not claim the wider dirty-worktree recovery is complete.
+  - `npm run check:repo-governance-harness`
+  - `git diff --stat`
+  - `git status --short`
+- Allowed closure vocabulary: `governance update candidate pending review`;
+  do not claim completion if required validation fails or is not run.
 
 ## Post-Work Closure Record
 
 - Actual files edited:
+  - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
+  - `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
+  - `AGENTS.md`
+  - `docs/workspace/chat-bootstraps/2026-06-12-governance-git-isolation.md`
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `tests/visual/designSystem/components/recordListComponentRenderRoute.spec.ts`
-  - `tests/visual/designSystem/patterns/entityBodyPanelPatternRoute.spec.ts`
 - Evidence collected:
-  - Record-list component proof now asserts the governed
-    `data-focus-instruction-disclosure` seam is hidden after pointer selection
-    and that the selected row exposes
-    `data-focus-instruction-disclosure-open="false"`.
-  - Entity-body-panel proof now resets the content control before switching to
-    static proof content and scopes the exact static-content assertion to the
-    governed scroll region.
+  - The governance changes are isolated in
+    `/tmp/kanbien-worktrees/governance-git-isolation` on branch
+    `codex/governance-git-isolation`.
+  - `branch-and-commit-governor` contains `Dirty Worktree Recovery Mode`.
+  - `change-loop-orchestrator` contains `Git Isolation Start Gate`.
+  - `AGENTS.md` contains `Material Work Isolation`.
+  - This audit has one active preflight contract and one active closure record
+    for the governance git-isolation update.
 - Commands run and results:
-  - `npm ci`: sandbox run failed on `esbuild` EPERM; escalated rerun passed and
-    did not report tracked dependency-file changes.
-  - `NODE_ENV=test PORT=4348 PLAYWRIGHT_PREVIEW_PORT=4348 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/components/recordListComponentRenderRoute.spec.ts tests/visual/designSystem/patterns/entityBodyPanelPatternRoute.spec.ts`: escalated run passed, 7 tests. The preview server emitted pre-existing database authentication warnings from the rate-limit path.
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed before
-    closure update; rerun required after closure update.
+    this cleanup; failed after cleanup until validator-required closure fields
+    were restored.
+  - `npm run check:repo-governance-harness`: passed before this cleanup, 8
+    tests; failed after cleanup until validator-required closure fields were
+    restored.
+  - `git diff --stat`: ran before this cleanup and must be rerun after it.
+  - `git status --short`: showed only the allowed governance update paths
+    before this cleanup and must be rerun after it.
 - Missing or inferred evidence:
-  - Current-task audit validator must be rerun after closure update.
-  - No full frontend gate is planned locally for this test-only recovery.
-  - Wider dirty-worktree recovery remains incomplete.
-- User confirmation still required: yes
-- Final permitted closure state: `candidate recovery branch pending PR review`
+  - Final validation must be rerun after restoring the validator-required
+    closure fields.
+- User confirmation still required: yes, before staging, committing, pushing,
+  merging, rebasing, deleting, or cleaning.
+- Final permitted closure state: `governance update candidate pending review`

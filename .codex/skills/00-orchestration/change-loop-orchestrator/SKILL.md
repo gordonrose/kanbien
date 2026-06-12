@@ -67,6 +67,24 @@ the implementation loop, inspect repo state, run git preflight, or draft PRD /
 capability / implementation artifacts before the product-discovery-maintainer
 has given the plain-language summary and one focused first question.
 
+## Git Isolation Start Gate
+
+Before implementation begins, route material multi-file work through
+`branch-and-commit-governor`.
+
+If the repo is dirty, has sibling worktrees, has parallel chat activity, or the
+task may touch shared seams, the branch governor owns:
+
+- preflight
+- base commit selection
+- external worktree creation
+- branch naming
+- bootstrap record creation
+- dirty recovery classification when needed
+
+Do not begin the implementation loop until the branch governor reports an
+isolated branch/worktree or an approved exception.
+
 ## Default Loop
 
 ### 1. Classify the change
