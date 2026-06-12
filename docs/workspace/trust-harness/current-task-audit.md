@@ -2,76 +2,63 @@
 
 ## Preflight Contract
 
-- Task summary: Convert the governed tools-navigation item primitive to the
-  Layer 2 token-spec resolver without changing rendered appearance or behavior.
+- Task summary: Add a source guard that keeps shared shell-navigation
+  primitives and patterns from directly importing default token system modules
+  after resolver conversion.
 - Mode: patch-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
   - `.codex/skills/41-front-end/00-orchestrator/SKILL.md`
-  - `.codex/skills/41-front-end/03-primitive/SKILL.md`
-  - `docs/design-system/01-behavior-rule/shared/tools-navigation/ToolsNavigation-Behaviour.md`
-  - `docs/design-system/03-primitive/shared/tools-navigation-item-control/ToolsNavigationItemControl-Contract.md`
-- Task risk class: governed design-system token-routing refactor with no
+  - `docs/architecture/adr/0053-require-structural-token-preview-guards-for-shell-navigation.md`
+  - `tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts`
+- Task risk class: governed frontend harness/source guard change with no
   intended visual or behavior change.
-- Discovered evidence boundary: this step may only convert
-  `tools-navigation-item-control` from direct default token imports to resolver
-  lookup for already registered tokens. Runtime seam disclosure strings, token
-  values, icon-button composition, glyph registry behavior, markup, style
-  variables, controller behavior, state semantics, emitted events, and rendered
-  output are out of scope.
-- Intended edit boundary: replace direct default token imports in the primitive
-  with resolver calls and keep this task audit aligned.
+- Discovered evidence boundary: this step may only add a test assertion that
+  scans the scoped shell-navigation shared primitive and pattern seams for
+  direct `systems/default.mjs` token imports. It must not change runtime code,
+  routes, CSS, token values, proof output, or behavior.
+- Intended edit boundary: add the guard assertion to the existing design-system
+  navigation source material guard and keep this task audit aligned.
 - Files allowed to edit:
-  - `src/frontend/designSystem/layers/03-primitive/tools-navigation-item-control/index.mjs`
+  - `tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts`
   - `docs/workspace/trust-harness/current-task-audit.md`
 - Files explicitly out of scope:
+  - runtime source files
   - app adoption files
   - app-local CSS
   - token values
-  - runtime seam disclosure text
-  - icon-button-control primitive
-  - glyph registry behavior
-  - primitive markup, ARIA semantics, style variables, controller behavior, states, or events
+  - proof routes
   - package files
   - migrations
   - backend feature code
   - destructive git cleanup
 - Required verification commands:
-  - `npx vitest run tests/unit/designSystem/toolsNavigationItemControlPrimitive.test.ts`
-  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/primitives/toolsNavigationItemControlPrimitiveRoute.spec.ts --output /tmp/kanbien-playwright-results-tools-item-resolver-step-docker`
+  - `npx vitest run tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts`
   - `npm run check:static`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
   - `git diff --stat`
   - `git status --short`
-- Allowed closure vocabulary: `tools-navigation item primitive resolver
-  remediation candidate pending review`; do not claim completion if required
-  validation fails or is not run.
+- Allowed closure vocabulary: `shell-navigation resolver import guard
+  candidate pending review`; do not claim completion if required validation
+  fails or is not run.
 
 ## Post-Work Closure Record
 
 - Actual files edited:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `src/frontend/designSystem/layers/03-primitive/tools-navigation-item-control/index.mjs`
+  - `tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts`
 - Evidence collected:
-  - `tools-navigation-item-control` now resolves `tools-navigation-frame`,
-    `focus-ring`, `icon-size`, `label-text-style`, and
-    `minimum-target-size` through the Layer 2 token-spec resolver instead of
-    directly importing default system token modules.
-  - The primitive still uses the existing registered default token specs and
-    does not create or alter token values.
-  - Runtime seam disclosure strings, icon-button-control composition, glyph
-    registry behavior, markup, ARIA semantics, style variables, controller
-    behavior, state semantics, and event name were not edited.
-  - Rendered primitive proof passed through Docker Playwright after the source
-    edit.
+  - Existing design-system navigation source material guard now scans the
+    shared shell-navigation primitive and pattern seams and fails if any of
+    those files directly import `systems/default.mjs` token modules.
+  - No runtime source, route, CSS, token value, proof output, or behavior file
+    was edited in this step.
 - Commands run and results:
-  - `npx vitest run tests/unit/designSystem/toolsNavigationItemControlPrimitive.test.ts`: passed, 3 tests.
-  - `docker run --rm --network host -v /home/owner/projects/kanbien:/work -w /work -e PLAYWRIGHT_BASE_URL=http://host.docker.internal:3000 mcr.microsoft.com/playwright:v1.59.1-noble npx playwright test tests/visual/designSystem/primitives/toolsNavigationItemControlPrimitiveRoute.spec.ts --output /tmp/kanbien-playwright-results-tools-item-resolver-step-docker`: passed, 1 test.
-  - `rg -n "^import .*systems/default\\.mjs|systems/default\\.mjs" src/frontend/designSystem/layers/03-primitive/tools-navigation-item-control/index.mjs`: showed no direct default token imports and only existing runtime seam disclosure strings.
+  - `npx vitest run tests/integration/frontend/designSystemNavigationSourceMaterialGuard.test.ts`: passed, 3 tests.
   - `npm run check:static`: passed.
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed.
 - Missing or inferred evidence:
   - None for this step.
 - User confirmation still required: yes, before destructive cleanup or any push.
-- Final permitted closure state: `tools-navigation item primitive resolver remediation candidate pending review`
+- Final permitted closure state: `shell-navigation resolver import guard candidate pending review`
