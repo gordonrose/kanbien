@@ -262,7 +262,8 @@ Do not satisfy the ADR decision check with a generic phrase such as
 
 For every change that may affect architecture, shared frontend seams,
 design-system adoption, routing/topology, API/data contracts, persistence,
-authn/authz, tenant boundaries, test harness behavior, or other enduring
+authn/authz, tenant boundaries, material harness-governance decisions, test
+harness behavior, evidence gates, Codex skill authority, or other enduring
 patterns:
 
 - search `docs/architecture/adr/` for the scoped change areas
@@ -272,6 +273,14 @@ patterns:
   exists
 - stop and surface any stale or conflicting ADR guidance before implementation
   proceeds
+
+ADR-0051 makes material harness-governance changes ADR-trackable. When a
+change alters what evidence is required, which harness gate or skill is
+authoritative, how incomplete work is classified, or how a known Codex failure
+mode is made impossible or loud, the ADR decision check must include
+`docs/architecture/adr/0051-log-harness-governance-decisions-as-adrs.md` and
+must either create/update the relevant ADR or explain why the harness change is
+too local to need one.
 
 If a narrower maintainer skill performs the implementation planning, make sure
 that skill's output still contains this exact ADR discovery result.
