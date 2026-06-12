@@ -1,4 +1,4 @@
-import { standardPageShellFrameTokenSpec } from "../../02-token/standard-page-shell-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import { attachSearchFieldControlPrimitiveController, renderSearchFieldControlPrimitive, searchFieldControlPrimitive } from "../search-field-control/index.mjs";
 
 const primitiveName = "search-shell-control";
@@ -81,9 +81,6 @@ export function searchShellControlPrimitive(options = {}) {
   assertString(state, "state");
   assertString(mode, "mode");
   assertString(hint, "hint");
-  if (systemKey !== "default") {
-    throw new RangeError(`search-shell-control has no system proof for "${systemKey}".`);
-  }
   if (!supportedThemes.has(theme)) {
     throw new RangeError(`search-shell-control does not support theme "${theme}".`);
   }
@@ -95,7 +92,7 @@ export function searchShellControlPrimitive(options = {}) {
   }
 
   const shellFrame = findVariant(
-    standardPageShellFrameTokenSpec,
+    resolveTokenSpec({ systemKey, tokenType: "standard-page-shell-frame" }),
     (variant) => variant.id === "standard-page-shell-frame-default",
     "search-shell-control requires the signed standard-page-shell-frame token.",
   );
