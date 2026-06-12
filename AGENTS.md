@@ -873,6 +873,21 @@ For repo-local Codex sessions, prefer launching through:
 That launcher runs `npm run git:preflight` before Codex starts so blocked repo
 states fail before any edit loop begins.
 
+## Material Work Isolation
+
+Material multi-file repo work must start from an isolated branch/worktree
+before edits begin. Default source of truth is `origin/main`.
+
+Dirty branches are salvage sources, not implementation branches. Do not merge,
+promote, or stage a dirty mixed branch as a unit.
+
+When parallel worktrees or active Codex sessions exist, use an external
+worktree for each material task. Do not create nested worktrees inside the repo
+root.
+
+If the active worktree contains unrelated dirty changes, stop and route through
+`branch-and-commit-governor` before editing.
+
 Defaults:
 
 - for non-trivial code, test, docs, migration, or artifact changes, create a

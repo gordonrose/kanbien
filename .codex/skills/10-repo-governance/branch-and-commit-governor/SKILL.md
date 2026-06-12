@@ -192,6 +192,136 @@ unless the user explicitly asks to publish only the task branch. Treat remote
 host suggestions to open a pull request as generic output, not workflow
 direction, unless the user explicitly asks for a PR.
 
+## Dirty Worktree Recovery Mode
+
+Dirty recovery is not normal delivery. Treat the dirty worktree as a salvage
+source, not an implementation branch.
+
+Before recovery work begins, preserve the dirty state under:
+
+- `/tmp/kanbien-dirty-recovery-<date-or-slug>/`
+
+Capture at least:
+
+- `status.txt`
+- `log.txt`
+- `tracked-dirty.patch`
+- `untracked-files.txt`
+- `untracked-files.tgz`
+
+Use fresh external worktrees from current `origin/main`. The external worktree
+root should be:
+
+- `/tmp/kanbien-worktrees/<slice-name>`
+
+Create recovery branches as:
+
+- `recover/<slice-name>`
+
+Never:
+
+- merge the dirty branch as a unit
+- stage the dirty worktree as a unit
+- create nested worktrees inside the repo root
+- run `git clean`, `git reset --hard`, broad `git restore .`, or delete
+  `.worktrees/` during recovery without an explicit final cleanup manifest and
+  approval
+
+Recovery loop:
+
+1. Fetch origin.
+2. Create a fresh external worktree from current `origin/main`.
+3. Create a scoped branch named `recover/<slice-name>`.
+4. Reconstruct only the selected slice from the dirty worktree.
+5. Verify with focused tests and required repo gates.
+6. Commit only scoped files.
+7. Push the branch.
+8. Open a PR against `main`.
+9. Wait for CI.
+10. Merge only if CI is green, mergeable, and scoped.
+11. After merge, safe-discard only dirty files or hunks proven represented by
+    updated `origin/main`.
+
+### Bucket-Level Blocking
+
+If one bucket is blocked, mark only that bucket blocked and continue to the
+next independent bucket.
+
+Stop globally only when:
+
+- repo state or `origin/main` safety is unclear
+- package-lock or dependency state changes unexpectedly
+- conflicts affect shared base state
+- CI fails for a reason that is not a narrow test-maintenance issue
+- the requested recovery would require broad unrelated scope
+
+### Recoverable Test Maintenance
+
+Codex may fix narrow test-selector or assertion failures autonomously when
+they are clearly caused by intended current-slice behavior.
+
+Codex must stop if the failure requires:
+
+- broader runtime changes
+- unrelated CSS
+- unrelated docs or tests
+- package or lockfile changes
+- unclear behavior decisions
+
+### Broad CSS Rule
+
+Do not smuggle broad CSS into a narrow slice.
+
+If `src/frontend/designSystem/systems/default/assets/styles.css` is required:
+
+- classify exact selector families involved
+- recover only one coherent selector family per PR
+- stop if unrelated selector families are required
+- do not restore or discard the whole CSS file from a dirty branch
+
+### Audit Hygiene
+
+Before commit, `docs/workspace/trust-harness/current-task-audit.md` must
+contain exactly one active record for the current task:
+
+- one task summary
+- one discovered evidence boundary
+- one intended edit boundary
+- one allowed file list
+- one command-results section
+- one final closure state
+
+If stale prior-task evidence remains, clean the audit before staging.
+
+### Safe-Discard Cleanup
+
+Allowed:
+
+- `git restore -- <explicit tracked paths>`
+- `rm -f <explicit untracked files proven byte-identical to origin/main>`
+- `git worktree remove <exact registered worktree path>` only after
+  `git worktree list` and clean-status confirmation
+
+Forbidden:
+
+- `git clean`
+- `git clean -fd`
+- `git reset --hard`
+- `git restore .`
+- `rm -rf .worktrees`
+
+### Bounded Autonomy
+
+When asked to recover autonomously, process at most three PR attempts per run
+unless the user explicitly raises the limit.
+
+Stop and report after:
+
+- three PR attempts
+- one merged high-risk PR
+- two blocked buckets
+- any global safety stop
+
 ## Decision Rules
 
 ### Branch creation is a default, not a trap
