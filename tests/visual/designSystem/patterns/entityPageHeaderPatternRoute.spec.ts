@@ -20,12 +20,20 @@ test.describe("entity page header pattern route", () => {
     );
     await expect(page.getByText("entityPageHeaderPattern", { exact: true })).toBeVisible();
     await expect(page.getByText("--page-header-structure", { exact: true })).toBeVisible();
-    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("9-19");
+    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("11-19");
 
+    await page.locator("[data-entity-page-header-region-boundaries-control]").setChecked(false);
+    await expect(header).toHaveAttribute("data-entity-page-header-region-boundaries", "false");
+    await page.locator("[data-entity-page-header-primary-filter-control]").setChecked(false);
+    await expect(page.locator('[data-entity-page-header-slot-summary="primary-filter"]')).toHaveCount(0);
+    await page.locator("[data-entity-page-header-primary-filter-control]").setChecked(true);
+    await page.locator("[data-entity-page-header-secondary-filter-control]").setChecked(false);
+    await expect(page.locator('[data-entity-page-header-slot-summary="secondary-filter"]')).toHaveCount(0);
+    await page.locator("[data-entity-page-header-secondary-filter-control]").setChecked(true);
     await page.locator("[data-entity-page-header-secondary-control]").setChecked(false);
-    await expect(page.locator('[data-entity-page-header-slot-summary="primary-filter"]')).toHaveText("2-4");
-    await expect(page.locator('[data-entity-page-header-slot-summary="secondary-filter"]')).toHaveText("5-7");
-    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("8-19");
+    await expect(page.locator('[data-entity-page-header-slot-summary="primary-filter"]')).toHaveText("2-5");
+    await expect(page.locator('[data-entity-page-header-slot-summary="secondary-filter"]')).toHaveText("6-9");
+    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("10-19");
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 
@@ -34,7 +42,7 @@ test.describe("entity page header pattern route", () => {
     await page.goto(route);
 
     await page.locator("[data-entity-page-header-action-count-control]").selectOption("2");
-    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("9-22");
+    await expect(page.locator('[data-entity-page-header-slot-summary="context-title"]')).toHaveText("11-22");
     await expect(page.locator('[data-entity-page-header-slot-summary="action-1"]')).toHaveText("23-23");
     await expect(page.locator('[data-entity-page-header-slot-summary="action-2"]')).toHaveText("24-24");
 
@@ -48,6 +56,20 @@ test.describe("entity page header pattern route", () => {
       "data-entity-page-header-proof-width",
       "squeezed",
     );
+
+    const toolsTrigger = page.locator("[data-entity-page-header-tools-trigger]");
+    await expect(toolsTrigger).toHaveAttribute("data-icon-button-control", "");
+    await toolsTrigger.click();
+    const toolsMenu = page.locator("[data-entity-page-header-tools-menu]");
+    await expect(toolsMenu).toBeVisible();
+    await expect(toolsMenu.locator("[data-entity-page-header-tools-close]")).toHaveAttribute(
+      "data-icon-button-control",
+      "",
+    );
+    await expect(toolsMenu.locator("[data-entity-page-header-tools-action][data-text-action-button-control]")).toHaveCount(
+      2,
+    );
+
     await expect.poll(() => horizontalOverflow(page)).toBeLessThanOrEqual(0);
   });
 });

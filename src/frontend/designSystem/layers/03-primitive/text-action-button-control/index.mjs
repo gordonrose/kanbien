@@ -189,6 +189,7 @@ export function renderTextActionButtonControlPrimitive(options = {}) {
   const spec = textActionButtonControlPrimitive(options);
   const attributes = {
     ...spec.attributes,
+    ...(options.extraAttributes ?? {}),
     "data-text-action-button-control-style": cssVarStyle(spec.styleVars),
   };
 

@@ -1,6 +1,5 @@
 import {
   attachIconButtonControlPrimitiveController,
-  iconButtonControlPrimitive,
   renderIconButtonControlPrimitive,
 } from "../../03-primitive/icon-button-control/index.mjs";
 import {
@@ -11,6 +10,10 @@ import {
   attachTruncatingLabelPrimitiveController,
   renderTruncatingLabelPrimitive,
 } from "../../03-primitive/truncating-label/index.mjs";
+import {
+  attachTextActionButtonControlPrimitiveController,
+  renderTextActionButtonControlPrimitive,
+} from "../../03-primitive/text-action-button-control/index.mjs";
 import {
   attachHeaderMenuSimpleSelectPatternController,
   headerFilterOptions,
@@ -226,6 +229,17 @@ export function entityPageHeaderPattern(options = {}) {
     styleVars: {
       "--pattern-entity-page-header-columns": String(visibleColumnCount),
       "--pattern-entity-page-header-gap": tokens.headerStructure.gapValue,
+      "--pattern-entity-page-header-container-padding": "0.75rem",
+      "--pattern-entity-page-header-filter-padding-inline": "0.5rem",
+      "--pattern-entity-page-header-context-gap": "0.5rem",
+      "--pattern-entity-page-header-context-padding-inline": "0.75rem",
+      "--pattern-entity-page-header-tools-menu-offset": "0.5rem",
+      "--pattern-entity-page-header-tools-menu-radius": "var(--radius-sm)",
+      "--pattern-entity-page-header-tools-menu-shadow": "0 1rem 2rem color-mix(in srgb, var(--ink) 12%, transparent)",
+      "--pattern-entity-page-header-tools-header-gap": "0.75rem",
+      "--pattern-entity-page-header-tools-padding": "0.5rem",
+      "--pattern-entity-page-header-tools-group-gap": "0.375rem",
+      "--pattern-entity-page-header-region-radius": "var(--radius-sm)",
     },
     consumerRestrictions: entityPageHeaderPatternContract.consumerRules,
   };
@@ -374,7 +388,7 @@ function renderActionSlot(spec, slot) {
 }
 
 function renderCollapsedMenuTrigger(spec) {
-  const trigger = iconButtonControlPrimitive({
+  return renderIconButtonControlPrimitive({
     systemKey: spec.systemKey,
     theme: spec.theme,
     id: `${spec.id}-tools-trigger`,
@@ -382,23 +396,13 @@ function renderCollapsedMenuTrigger(spec) {
     value: "header-tools",
     icon: "list",
     frameIntent: "quiet",
+    extraAttributes: {
+      "data-entity-page-header-tools-trigger": "",
+      "aria-haspopup": "dialog",
+      "aria-expanded": "false",
+      "aria-controls": `${spec.id}-tools-menu`,
+    },
   });
-  const attributes = {
-    ...trigger.attributes,
-    "data-icon-button-control-style": cssVarStyle(trigger.styleVars),
-    "data-entity-page-header-tools-trigger": "",
-    "aria-haspopup": "dialog",
-    "aria-expanded": "false",
-    "aria-controls": `${spec.id}-tools-menu`,
-  };
-
-  return `
-    <button ${toAttributeString(attributes)}>
-      <svg class="ds-icon-button-control-glyph" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-        <path d="${escapeHtml(trigger.iconPath)}" />
-      </svg>
-    </button>
-  `;
 }
 
 function renderCollapsedSelectRows(spec) {
@@ -452,17 +456,17 @@ function renderCollapsedActionRows(spec) {
     <div class="ds-entity-page-header-tools-group ds-entity-page-header-tools-actions" role="group" aria-label="Header actions">
       ${spec.actions
         .map(
-          (action, index) => `
-            <button
-              id="${escapeHtml(`${spec.id}-tools-action-${index + 1}`)}"
-              class="ds-entity-page-header-tools-action"
-              type="button"
-              data-entity-page-header-tools-action
-              data-entity-page-header-tools-action-value="${escapeHtml(action.value)}"
-            >
-              <span>${escapeHtml(action.label)}</span>
-            </button>
-          `,
+          (action, index) =>
+            renderTextActionButtonControlPrimitive({
+              systemKey: spec.systemKey,
+              theme: spec.theme,
+              id: `${spec.id}-tools-action-${index + 1}`,
+              label: action.label,
+              value: action.value,
+              extraAttributes: {
+                "data-entity-page-header-tools-action": "",
+              },
+            }),
         )
         .join("")}
     </div>
@@ -471,20 +475,6 @@ function renderCollapsedActionRows(spec) {
 
 function renderCollapsedToolsSlot(spec) {
   const slot = { id: "collapsed-tools", startColumn: 24, endColumn: 25 };
-  const closeButton = iconButtonControlPrimitive({
-    systemKey: spec.systemKey,
-    theme: spec.theme,
-    id: `${spec.id}-tools-close`,
-    label: "Close header tools",
-    value: "close-header-tools",
-    icon: "close",
-    frameIntent: "quiet",
-  });
-  const closeAttributes = {
-    ...closeButton.attributes,
-    "data-icon-button-control-style": cssVarStyle(closeButton.styleVars),
-    "data-entity-page-header-tools-close": "",
-  };
 
   return `
     <div class="ds-entity-page-header-tools-slot" data-entity-page-header-slot="${slot.id}" ${slotPlacementAttributes(slot)}>
@@ -492,11 +482,18 @@ function renderCollapsedToolsSlot(spec) {
       <div class="ds-entity-page-header-tools-menu" id="${escapeHtml(`${spec.id}-tools-menu`)}" data-entity-page-header-tools-menu hidden role="dialog" aria-label="Header tools">
         <div class="ds-entity-page-header-tools-menu-header">
           <span class="ds-entity-page-header-tools-menu-title">Header tools</span>
-          <button ${toAttributeString(closeAttributes)}>
-            <svg class="ds-icon-button-control-glyph" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-              <path d="${escapeHtml(closeButton.iconPath)}" />
-            </svg>
-          </button>
+          ${renderIconButtonControlPrimitive({
+            systemKey: spec.systemKey,
+            theme: spec.theme,
+            id: `${spec.id}-tools-close`,
+            label: "Close header tools",
+            value: "close-header-tools",
+            icon: "close",
+            frameIntent: "quiet",
+            extraAttributes: {
+              "data-entity-page-header-tools-close": "",
+            },
+          })}
         </div>
         <div class="ds-entity-page-header-tools-menu-body">
           ${renderCollapsedSelectRows(spec)}
@@ -515,7 +512,7 @@ export function renderEntityPageHeaderPattern(options = {}) {
   };
 
   return `
-    <div class="ds-entity-page-header-container" data-entity-page-header-container>
+    <div class="ds-entity-page-header-container" data-entity-page-header-container style="${escapeHtml(cssVarStyle(spec.styleVars))}">
       <header ${toAttributeString(attributes)}>
         ${spec.resolvedSlots
           .map((slot) => {
@@ -608,27 +605,16 @@ export function attachEntityPageHeaderPatternController(root = document) {
         }
       });
 
-      for (const action of toolsMenu.querySelectorAll("[data-entity-page-header-tools-action]")) {
-        if (!(action instanceof HTMLButtonElement)) {
-          continue;
-        }
-        action.addEventListener("click", () => {
-          action.dispatchEvent(
-            new CustomEvent("icon-button-control:activate", {
-              bubbles: true,
-              detail: {
-                value: action.dataset.entityPageHeaderToolsActionValue,
-                id: action.id,
-              },
-            }),
-          );
+      toolsMenu.addEventListener("text-action-button-control:activate", (event) => {
+        if (event.target instanceof HTMLElement && event.target.hasAttribute("data-entity-page-header-tools-action")) {
           closeToolsMenu();
-        });
-      }
+        }
+      });
     }
   }
 
   attachIconButtonControlPrimitiveController(root);
+  attachTextActionButtonControlPrimitiveController(root);
   attachReadinessStatusControlPrimitiveController(root);
   attachTruncatingLabelPrimitiveController(root);
   attachHeaderMenuSimpleSelectPatternController(root);

@@ -190,6 +190,7 @@ export function renderIconButtonControlPrimitive(options = {}) {
   const spec = iconButtonControlPrimitive(options);
   const attributes = {
     ...spec.attributes,
+    ...(options.extraAttributes ?? {}),
     "data-icon-button-control-style": cssVarStyle(spec.styleVars),
   };
 
