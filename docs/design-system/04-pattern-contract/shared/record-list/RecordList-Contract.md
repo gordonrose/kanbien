@@ -49,6 +49,13 @@ No governed `record-list` pattern existed before this contract.
   selected item or a row open event.
 - The detail body may show proof placeholder content, but later components
   must supply governed panel/body content through a downstream seam.
+- A pattern that composes a governed child inside the detail slot may supply
+  governed custom detail body HTML through the runtime seam; the child remains
+  responsible for its own behavior and accessibility contract.
+- When custom detail body HTML is active, `record-list` still owns the detail
+  slot shell, open/closed state, row current state, resize behavior, and
+  emitted events, but it must preserve the custom detail body content during
+  open and close state updates.
 - The pattern must support `1:5`, `1:4`, and `1:2` list-to-total ratio
   variants, where `1:2` gives the list half of the two-pane area.
 - When the detail slot is closed, the list must use the full pattern width and

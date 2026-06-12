@@ -18,9 +18,9 @@
 
 ## Purpose
 
-`entity-panel` composes a governed panel header, optional embedded
-secondary index, governed body scroll region, and body slot placeholder for
-future governed form or builder content.
+`entity-panel` composes a governed panel header, optional embedded primary
+index, optional embedded secondary index, governed body scroll region, and
+body slot placeholder for future governed form or builder content.
 
 It does not own hosted text fields, textareas, radios, toggles, dropdowns,
 drawer selects, accordions, card selects, workflow builders, backend data
@@ -39,14 +39,20 @@ loading, component seams, canonical scenarios, templates, or app adoption.
 ## Composition Contract
 
 The pattern renders one labelled entity panel with one governed
-`panel-header-control`, an optional embedded secondary `index-nav-panel`, and a
-governed body scroll region.
+`panel-header-control`, an optional embedded primary `index-nav-panel`, an
+optional embedded secondary `index-nav-panel`, and a governed body scroll
+region.
 
 On desktop, the body scroll region may own internal scrolling so the panel
 header remains available for orientation. On mobile, the pattern exposes an
-active internal state for proof and later composition: `body` or
-`secondary-index`. The secondary index overlays the body rather than replacing
+active internal state for proof and later composition: `body`, `primary-index`,
+or `secondary-index`. The active index overlays the body rather than replacing
 it. The body remains the underlying working view.
+
+The embedded primary index must reuse the governed `index-nav-panel` pattern.
+The primary index may be hidden for entity-panel variants that do not need
+primary coordination, but when shown it is part of the entity-panel composition
+and must not be reconstructed by a parent proof, component, or app page.
 
 The embedded secondary index must reuse the governed `index-nav-panel` pattern.
 Consumers must not reconstruct a separate secondary navigation family inside
@@ -68,25 +74,22 @@ the child `index-nav-panel` and `resize-handle-control` contracts.
 
 When the mobile secondary index overlay is active, it must expose both the
 secondary add affordance and a governed close affordance that returns to the
-page-level primary index coordination state. When a secondary nav item is
+primary index coordination state. When a secondary nav item is
 activated on mobile, the proof moves to body/content view and preserves that
 secondary item as the current tab.
 
-The primary index is not part of the entity-panel composition and must not
-be rendered under the panel header. The default proof route may render a
-page-level primary index wrapper to prove coordination, but that wrapper is not
-owned by this pattern.
-
 ## Data Or Event Contract
 
-Input contains `title`, optional `secondaryItems`, optional
-`secondaryCurrent`, and proof-only `bodyHtml`.
+Input contains `title`, optional `primaryItems`, optional `primaryCurrent`,
+optional primary-index visibility and resize state, optional `secondaryItems`,
+optional `secondaryCurrent`, optional secondary-index visibility and resize
+state, and proof-only `bodyHtml`.
 
 Header action activation bubbles through the composed `icon-button-control`.
-Secondary index item activation bubbles through the composed index-nav seams.
-Mobile transitions from page-level primary to secondary clear secondary
-selection; secondary item activation sets the secondary current tab; returning
-from body to secondary preserves the current secondary tab.
+Index item activation bubbles through the composed index-nav seams.
+Mobile transitions from primary to secondary clear secondary selection;
+secondary item activation sets the secondary current tab; returning from body
+to secondary preserves the current secondary tab.
 The entity panel pattern does not route, fetch, persist, validate, or
 mutate product data.
 
@@ -94,8 +97,8 @@ mutate product data.
 
 Panel shell, gap, padding, width, mobile breakpoint, and body scroll max height
 come from `panel-frame`. Header geometry comes through `panel-header-control`.
-Scrollbar appearance comes through `scroll-region-control`. Secondary index
-appearance comes through `index-nav-panel`.
+Scrollbar appearance comes through `scroll-region-control`. Primary and
+secondary index appearance comes through `index-nav-panel`.
 
 ## Rendered View
 
@@ -104,8 +107,8 @@ appearance comes through `index-nav-panel`.
 | How to view | `/design-system/default/patterns/entity-panel` |
 | Rendered view status | `available` |
 
-The rendered proof must expose controls for review viewport, page-level
-primary-index presence, secondary-index presence, secondary header visibility,
+The rendered proof must expose controls for review viewport, primary-index
+presence, secondary-index presence, secondary header visibility,
 secondary resize visibility, secondary fixture length, mobile active region,
 body content pressure, and text direction.
 These controls are
@@ -120,8 +123,8 @@ this pattern.
 ## Consumer Restrictions
 
 Consumers must not copy proof-route markup, recreate panel frame values,
-rebuild header behavior, rebuild secondary index behavior, or invent body
-scroll CSS locally.
+rebuild header behavior, rebuild primary or secondary index behavior, or invent
+body scroll CSS locally.
 
 Consumers must not treat proof-route hosted body content as entity-panel-owned
 form or builder controls. Hosted body content must remain governed by its own

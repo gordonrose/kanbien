@@ -33,10 +33,14 @@ describe("entity-panel pattern seam", () => {
     });
   });
 
-  it("renders generic header, embedded secondary index, and governed body scroll region", () => {
+  it("renders generic header, optional primary index, embedded secondary index, and governed body scroll region", () => {
     const html = renderEntityPanelPattern({
       id: "entity-panel-render",
       title: "Identity",
+      primaryItems: [{ label: "Identity", value: "identity" }],
+      primaryCurrent: "identity",
+      showPrimaryIndex: true,
+      primaryResizable: true,
       secondaryItems: [{ label: "Primary Details", value: "primary-details" }],
       bodyHtml: "<p>Body placeholder</p>",
     });
@@ -45,7 +49,8 @@ describe("entity-panel pattern seam", () => {
     expect(html).toContain("data-panel-header-control");
     expect(html).toContain('aria-label="Close panel"');
     expect(html).toContain(resolveDefaultGlyphPath("close"));
-    expect(html).not.toContain('data-entity-panel-region="primary-index"');
+    expect(html).toContain('data-entity-panel-region="primary-index"');
+    expect(html).toContain('data-resize-handle-control-target-id="entity-panel-render-primary-index"');
     expect(html).toContain('data-index-nav-panel-header-mode="hidden"');
     expect(html).not.toContain('aria-label="Close secondary index"');
     expect(html).toContain("data-entity-body-panel");
@@ -57,14 +62,17 @@ describe("entity-panel pattern seam", () => {
     const html = renderEntityPanelPattern({
       id: "entity-panel-state-render",
       title: "Identity",
+      primaryItems: [{ label: "Identity", value: "identity" }],
+      showPrimaryIndex: true,
       secondaryItems: [{ label: "Primary Details", value: "primary-details" }],
       showSecondaryIndex: false,
-      mobileActiveRegion: "secondary-index",
+      mobileActiveRegion: "primary-index",
       bodyHtml: "<p>Body placeholder</p>",
     });
 
     expect(html).not.toContain('data-entity-panel-region="secondary-index"');
-    expect(html).toContain('data-entity-panel-mobile-active="secondary-index"');
+    expect(html).toContain('data-entity-panel-region="primary-index"');
+    expect(html).toContain('data-entity-panel-mobile-active="primary-index"');
     expect(html).toContain("data-scroll-region-control");
   });
 
@@ -73,9 +81,9 @@ describe("entity-panel pattern seam", () => {
       entityPanelPattern({
         id: "entity-panel-invalid-region",
         title: "Identity",
-        mobileActiveRegion: "primary-index",
+        mobileActiveRegion: "activity-feed",
       }),
-    ).toThrow('entity-panel does not support mobileActiveRegion "primary-index".');
+    ).toThrow('entity-panel does not support mobileActiveRegion "activity-feed".');
   });
 
   it("can render the embedded secondary index header with a governed add action", () => {

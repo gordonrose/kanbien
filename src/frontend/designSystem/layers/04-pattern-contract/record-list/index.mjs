@@ -125,6 +125,7 @@ export function recordListPattern(options = {}) {
   const ratio = options.ratio ?? "1:2";
   const resizable = options.resizable !== false;
   const allowReorder = options.allowReorder !== false;
+  const detailBodyHtml = typeof options.detailBodyHtml === "string" ? options.detailBodyHtml : "";
   const items = normalizeItems(options.items ?? []);
 
   assertString(systemKey, "systemKey");
@@ -162,6 +163,7 @@ export function recordListPattern(options = {}) {
     ratioVariant,
     resizable,
     allowReorder,
+    detailBodyHtml,
     items,
     isEmpty: items.length === 0,
     primitiveDependencies: ["record-list-item-control", "detail-slot-control", "resize-handle-control"],
@@ -176,6 +178,7 @@ export function recordListPattern(options = {}) {
       id,
       class: "ds-record-list-pattern",
       "data-record-list-pattern": "",
+      "data-record-list-pattern-custom-detail": detailBodyHtml ? "true" : "false",
       "data-record-list-pattern-theme": theme,
       "data-record-list-pattern-ratio": ratio,
       "data-record-list-pattern-reorder": allowReorder ? "enabled" : "disabled",
@@ -188,6 +191,10 @@ export function recordListPattern(options = {}) {
 }
 
 function renderDetailContent(spec) {
+  if (spec.detailBodyHtml) {
+    return spec.detailBodyHtml;
+  }
+
   const item = spec.items.find((candidate) => candidate.itemId === spec.openItemId) ?? null;
   if (!item) {
     return `
@@ -401,6 +408,9 @@ function setOpenItem(pattern, itemId) {
 
   const source = itemId ? pattern.querySelector(`[data-record-list-item-id="${CSS.escape(itemId)}"]`) : null;
   const body = pattern.querySelector("[data-detail-slot-control-body]");
+  if (pattern.dataset.recordListPatternCustomDetail === "true") {
+    return;
+  }
   if (body instanceof HTMLElement) {
     const title = source?.querySelector(".ds-record-list-item-title")?.textContent?.trim() ?? "";
     const subtitle = source?.querySelector(".ds-record-list-item-subtitle")?.textContent?.trim() ?? "";
