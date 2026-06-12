@@ -45,7 +45,7 @@ Supported decorative glyph names are `plus`, `close`, and `list`. These names
 are semantic primitive choices, not shared artwork. The selected design-system
 implementation supplies the actual glyph drawing through its glyph registry.
 For the default system, that registry is
-`src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry`.
+`src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry`.
 
 The glyph never provides the accessible name; consumers must still provide the
 action label.

@@ -5,7 +5,7 @@ import {
   indexNavPanelPatternContract,
   renderIndexNavPanelPattern,
 } from "../../../src/frontend/designSystem/layers/04-pattern-contract/index-nav-panel/index.mjs";
-import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs";
 
 const items = [
   { value: "identity", label: "Identity", supportingText: "3 items" },

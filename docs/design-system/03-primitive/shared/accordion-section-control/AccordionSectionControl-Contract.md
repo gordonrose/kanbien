@@ -26,7 +26,7 @@ component seams, demos, canonicals, or app adoption.
 | Focus token | `focus-ring` |
 | Target token | `minimum-target-size` |
 | Text disclosure primitive | `truncating-label` |
-| System glyph registry | `src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry` |
+| System glyph registry | `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry` |
 
 ## Behavior Contract
 

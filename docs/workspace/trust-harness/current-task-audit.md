@@ -2,122 +2,111 @@
 
 ## Preflight Contract
 
-- Task summary: Clean-worktree reconstruction of the entity-panel /
-  record-list-form primary-index reconciliation.
+- Task summary: Recover the glyph-registry migration from the dirty original
+  worktree into a clean branch after PR 17 and PR 18 merged to `main`.
 - Mode: reconcile-only
 - Governing instruction sources:
   - `AGENTS.md`
   - `.codex/skills/10-repo-governance/codex-trust-override/SKILL.md`
-  - `.codex/skills/41-front-end/04-pattern-contract/SKILL.md`
-  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-- Task risk class: user-visible governed frontend pattern-proof reconciliation
-- Discovered evidence boundary: `entity-panel` owns optional primary-index
-  composition through governed `index-nav-panel`; `record-list-form` owns
-  hosted custom detail body content and only passes primary-index state into
-  hosted `entity-panel` instances. Clean HEAD also showed that `record-list`
-  lacked a custom detail body preservation seam, so the narrow honest
-  composition requires `record-list` to preserve custom detail body content
-  when `data-record-list-pattern-custom-detail="true"` while retaining
-  ownership of the detail slot shell, open/closed state, resize behavior, row
-  state, and emitted events.
-- Intended edit boundary: Entity-panel Layer 4 seam/proof/docs/tests,
-  record-list custom detail body seam/docs, record-list-form behavior/Layer 4
-  seam/proof/docs/tests, default CSS limited to entity-panel primary-region
-  layout and mobile primary overlay, and this task audit.
+  - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
+  - `.codex/plugins/cache/openai-curated/github/*/skills/yeet/SKILL.md`
+  - `.codex/skills/41-front-end/03-primitive/SKILL.md`
+- Task risk class: governed frontend primitive registry migration
+- Discovered evidence boundary: the default glyph registry should be owned by
+  the Layer 3 primitive registry seam, while the old default-system registry
+  path remains as a compatibility re-export. Direct primitive consumers and
+  unit tests should import the Layer 3 seam, and active primitive docs should
+  name the Layer 3 registry as the source of truth.
+- Intended edit boundary: layer-owned default glyph registry, default-system
+  compatibility re-export, direct primitive consumers, matching unit-test
+  imports/expectations, primitive docs that name the glyph registry seam, and
+  this task audit.
 - Files allowed to edit:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `docs/design-system/01-behavior-rule/shared/record-list-form/RecordListForm-Behaviour.md`
-  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list/RecordList-Contract.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
-  - `src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
-  - `src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
-  - `src/frontend/designSystem/systems/default/patterns/record-list-form/index.html`
-  - `src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
-  - `src/frontend/designSystem/systems/default/assets/styles.css`
+  - `docs/design-system/03-primitive/primitive-readiness-index.md`
+  - `docs/design-system/03-primitive/shared/accordion-section-control/AccordionSectionControl-Contract.md`
+  - `docs/design-system/03-primitive/shared/icon-button-control/IconButtonControl-Contract.md`
+  - `docs/design-system/03-primitive/systems/default/icon-button-control/IconButtonControl-Proof.md`
+  - `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
+  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
   - `tests/unit/designSystem/entityPanelPattern.test.ts`
-  - `tests/unit/designSystem/recordListFormPattern.test.ts`
-  - `tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
-  - `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
+  - `tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts`
+  - `tests/unit/designSystem/iconButtonControlPrimitive.test.ts`
+  - `tests/unit/designSystem/indexNavPanelPattern.test.ts`
+  - `tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
 - Files explicitly out of scope:
+  - `/home/gordon/kanbien` edits
   - `package.json`
-  - `AGENTS.md`
-  - `.codex/**`
-  - `docs/architecture/**`
-  - broad tokenization work
-  - same-theme `panel-frame` work
-  - glyph-registry migration
-  - unrelated primitive CSS changes
-  - unrelated Playwright broadening
-  - harness infrastructure unrelated to this task
+  - package-lock or dependency updates
+  - frontend proof-evidence manifest work blocked on
+    `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
+  - same-theme panel-frame/body-region work
+  - broad primitive/token CSS work
+  - unrelated primitive controller or render-helper changes
+  - branch/worktree deletion
 - Required verification commands:
-  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/recordListFormPattern.test.ts`
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
-  - `node --check src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
-  - `node --check src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
-  - `npx playwright test tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
-  - `npx playwright test tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
+  - `rg -n "systems/default/glyphs/registry\\.mjs" src/frontend/designSystem/layers tests/unit/designSystem docs/design-system/03-primitive`
+  - `node --check src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
+  - `node --check src/frontend/designSystem/systems/default/glyphs/registry.mjs`
+  - `node --check src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
+  - `node --check src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
+  - `node --check src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
+  - `node --check src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
+  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts tests/unit/designSystem/iconButtonControlPrimitive.test.ts tests/unit/designSystem/indexNavPanelPattern.test.ts tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
   - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`
-- Allowed closure vocabulary: `candidate fix pending user confirmation; full
-  design-system harness gate blocked by missing out-of-scope package script`;
-  do not claim the visible issue is fixed until the user confirms the rendered
-  page.
+- Allowed closure vocabulary: `candidate recovery branch pending PR review`;
+  do not claim the wider dirty-worktree recovery is complete.
 
 ## Post-Work Closure Record
 
 - Actual files edited:
   - `docs/workspace/trust-harness/current-task-audit.md`
-  - `docs/design-system/01-behavior-rule/shared/record-list-form/RecordListForm-Behaviour.md`
-  - `docs/design-system/04-pattern-contract/shared/entity-panel/EntityPanel-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/entity-panel/EntityPanel-Proof.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list/RecordList-Contract.md`
-  - `docs/design-system/04-pattern-contract/shared/record-list-form/RecordListForm-Contract.md`
-  - `docs/design-system/04-pattern-contract/systems/default/record-list-form/RecordListForm-Proof.md`
-  - `src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`
-  - `src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`
-  - `src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`
-  - `src/frontend/designSystem/systems/default/patterns/record-list-form/index.html`
-  - `src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`
-  - `src/frontend/designSystem/systems/default/assets/styles.css`
+  - `docs/design-system/03-primitive/primitive-readiness-index.md`
+  - `docs/design-system/03-primitive/shared/accordion-section-control/AccordionSectionControl-Contract.md`
+  - `docs/design-system/03-primitive/shared/icon-button-control/IconButtonControl-Contract.md`
+  - `docs/design-system/03-primitive/systems/default/icon-button-control/IconButtonControl-Proof.md`
+  - `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`
+  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`
+  - `src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`
   - `tests/unit/designSystem/entityPanelPattern.test.ts`
-  - `tests/unit/designSystem/recordListFormPattern.test.ts`
-  - `tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`
-  - `tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`
+  - `tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts`
+  - `tests/unit/designSystem/iconButtonControlPrimitive.test.ts`
+  - `tests/unit/designSystem/indexNavPanelPattern.test.ts`
+  - `tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`
 - Evidence collected:
-  - `entity-panel` owns optional primary-index composition through governed
-    `index-nav-panel`.
-  - `record-list-form` passes primary-index state into hosted `entity-panel`
-    instances and does not render a parent-owned primary wrapper.
-  - `record-list` owns detail slot shell/open-close/resize/events while
-    preserving custom detail body content when
-    `data-record-list-pattern-custom-detail="true"`.
-  - The focused unit count is 9 because clean HEAD had 6 entity-panel unit
-    tests and this reconstruction adds 3 record-list-form unit tests. The
-    earlier 10-test count came from excluded dirty-branch same-theme
-    panel-frame work.
+  - The default glyph registry now lives at
+    `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`.
+  - `src/frontend/designSystem/systems/default/glyphs/registry.mjs` remains as
+    a compatibility re-export.
+  - Direct primitive consumers and affected unit tests import the Layer 3
+    registry seam.
+  - Active primitive docs that named the old registry source now name the Layer
+    3 registry seam.
+  - The scoped stale-path scan found no remaining old registry-path references
+    in `src/frontend/designSystem/layers`, `tests/unit/designSystem`, or
+    `docs/design-system/03-primitive`.
 - Commands run and results:
-  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/recordListFormPattern.test.ts`: passed, 9 tests.
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/entity-panel/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/layers/04-pattern-contract/record-list-form/index.mjs`: passed.
-  - `node --check src/frontend/designSystem/systems/default/patterns/entity-panel/page.mjs`: passed.
-  - `node --check src/frontend/designSystem/systems/default/patterns/record-list-form/page.mjs`: passed.
-  - `NODE_ENV=test PORT=4317 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/patterns/entityPanelPatternRoute.spec.ts`: passed, 7 tests; preview server emitted pre-existing database authentication warnings from the rate-limit path.
-  - `NODE_ENV=test PORT=4317 DATABASE_HOST=127.0.0.1 DATABASE_PORT=5432 DATABASE_NAME=service_platform_test DATABASE_USER=service_platform DATABASE_PASSWORD=change_me_local_test_only DATABASE_SSL=false npx playwright test tests/visual/designSystem/patterns/recordListFormPatternRoute.spec.ts`: passed, 4 tests; preview server emitted pre-existing database authentication warnings from the rate-limit path.
-  - `npm run check:design-system-harness`: blocked by out-of-scope missing package script; the clean base `package.json` does not define `check:design-system-harness`, and package wiring is explicitly out of scope for this reconstruction. This is not a code/test failure in the reconstructed patch.
-  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed after the audit recorded the clean-worktree scope and command results.
+  - `rg -n "systems/default/glyphs/registry\\.mjs" src/frontend/designSystem/layers tests/unit/designSystem docs/design-system/03-primitive`: no matches; exit code 1 expected for no matches.
+  - `node --check src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs`: passed.
+  - `node --check src/frontend/designSystem/systems/default/glyphs/registry.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/accordion-section-control/index.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs`: passed.
+  - `node --check src/frontend/designSystem/layers/03-primitive/simple-dropdown-control/index.mjs`: passed.
+  - `npm ci`: sandbox run failed on `esbuild` EPERM in `/tmp`; escalated rerun passed and did not change tracked dependency files.
+  - `npx vitest run tests/unit/designSystem/entityPanelPattern.test.ts tests/unit/designSystem/headerMenuSimpleSelectPattern.test.ts tests/unit/designSystem/iconButtonControlPrimitive.test.ts tests/unit/designSystem/indexNavPanelPattern.test.ts tests/unit/designSystem/menuSimpleSelectControlPrimitive.test.ts`: passed, 5 files, 31 tests.
+  - `node --import tsx src/scripts/checkCurrentTaskAudit.ts`: passed before closure update; rerun required after closure update.
 - Missing or inferred evidence:
-  - Full design-system harness evidence is blocked by the missing
-    out-of-scope package script.
-  - User visual confirmation on the live route is still required before using
-    completion language for the visible issue.
+  - No Playwright run was required for this registry-path-only recovery slice;
+    rendered behavior is inferred from unchanged glyph path data and passing
+    focused unit coverage.
+  - The wider dirty-worktree recovery remains incomplete.
 - User confirmation still required: yes
-- Final permitted closure state: `candidate fix pending user confirmation; full design-system harness gate blocked by missing out-of-scope package script`
+- Final permitted closure state: `candidate recovery branch pending PR review`

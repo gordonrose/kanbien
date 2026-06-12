@@ -2,7 +2,7 @@ import { buttonFrameTokenSpec } from "../../02-token/button-frame/systems/defaul
 import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
 import { iconSizeTokenSpec } from "../../02-token/icon-size/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
-import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../glyph-registry/systems/default.mjs";
 
 const primitiveName = "icon-button-control";
 const supportedIconNames = ["plus", "close", "list"];
@@ -134,7 +134,7 @@ export function iconButtonControlPrimitive(options = {}) {
       glyphRegistry: {
         systemKey,
         semanticGlyphName: icon,
-        runtimeSeam: "src/frontend/designSystem/systems/default/glyphs/registry.mjs#defaultGlyphRegistry",
+        runtimeSeam: "src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry",
       },
     },
     tokenDependencies: {

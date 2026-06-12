@@ -8,7 +8,7 @@ import {
   menuSimpleSelectControlPrimitiveContract,
   renderMenuSimpleSelectControlPrimitive,
 } from "../../../src/frontend/designSystem/layers/03-primitive/menu-simple-select-control/index.mjs";
-import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/systems/default/glyphs/registry.mjs";
+import { resolveDefaultGlyphPath } from "../../../src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs";
 
 const options = [
   { value: "chats", label: "Chats", eyebrow: "Parent", trailingLabel: "Chats" },
