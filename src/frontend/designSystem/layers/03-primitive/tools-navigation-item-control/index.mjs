@@ -1,8 +1,4 @@
-import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
-import { iconSizeTokenSpec } from "../../02-token/icon-size/systems/default.mjs";
-import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
-import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
-import { toolsNavigationFrameTokenSpec } from "../../02-token/tools-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import {
   attachIconButtonControlPrimitiveController,
   iconButtonControlPrimitive,
@@ -13,6 +9,11 @@ import { resolveDefaultGlyphPath } from "../../../systems/default/glyphs/registr
 const primitiveName = "tools-navigation-item-control";
 const supportedStates = new Set(["resting", "active", "unavailable"]);
 const supportedIconNames = ["close", "filter", "list", "plus", "sort"];
+const focusRingTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" });
+const iconSizeTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "icon-size" });
+const labelTextStyleTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" });
+const minimumTargetSizeTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "minimum-target-size" });
+const toolsNavigationFrameTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "tools-navigation-frame" });
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
