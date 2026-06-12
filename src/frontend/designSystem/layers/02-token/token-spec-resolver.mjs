@@ -3,6 +3,8 @@ import { contextNavigationFrameTokenSpec } from "./context-navigation-frame/syst
 import { focusRingTokenSpec } from "./focus-ring/systems/default.mjs";
 import { labelTextStyleTokenSpec } from "./label-text-style/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "./minimum-target-size/systems/default.mjs";
+import { primaryTintedBackgroundTokenSpec } from "./primary-tinted-background/systems/default.mjs";
+import { primaryTintedForegroundTokenSpec } from "./primary-tinted-foreground/systems/default.mjs";
 import { standardPageShellFrameTokenSpec } from "./standard-page-shell-frame/systems/default.mjs";
 import { topNavigationFrameTokenSpec } from "./top-navigation-frame/systems/default.mjs";
 import { toolsNavigationFrameTokenSpec } from "./tools-navigation-frame/systems/default.mjs";
@@ -14,6 +16,8 @@ const tokenSpecRegistry = {
     "focus-ring": focusRingTokenSpec,
     "label-text-style": labelTextStyleTokenSpec,
     "minimum-target-size": minimumTargetSizeTokenSpec,
+    "primary-tinted-background": primaryTintedBackgroundTokenSpec,
+    "primary-tinted-foreground": primaryTintedForegroundTokenSpec,
     "standard-page-shell-frame": standardPageShellFrameTokenSpec,
     "top-navigation-frame": topNavigationFrameTokenSpec,
     "tools-navigation-frame": toolsNavigationFrameTokenSpec,

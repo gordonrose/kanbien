@@ -1,12 +1,26 @@
-import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
-import { labelTextStyleTokenSpec } from "../../02-token/label-text-style/systems/default.mjs";
-import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
-import { primaryTintedBackgroundTokenSpec } from "../../02-token/primary-tinted-background/systems/default.mjs";
-import { primaryTintedForegroundTokenSpec } from "../../02-token/primary-tinted-foreground/systems/default.mjs";
-import { topNavigationFrameTokenSpec } from "../../02-token/top-navigation-frame/systems/default.mjs";
+import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import { attachTruncatingLabelPrimitiveController, renderTruncatingLabelPrimitive } from "../truncating-label/index.mjs";
 
 const primitiveName = "top-navigation-brand-control";
+const supportedSystems = new Map([
+  [
+    "default",
+    {
+      focusRingTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "focus-ring" }),
+      labelTextStyleTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" }),
+      minimumTargetSizeTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "minimum-target-size" }),
+      primaryTintedBackgroundTokenSpec: resolveTokenSpec({
+        systemKey: "default",
+        tokenType: "primary-tinted-background",
+      }),
+      primaryTintedForegroundTokenSpec: resolveTokenSpec({
+        systemKey: "default",
+        tokenType: "primary-tinted-foreground",
+      }),
+      topNavigationFrameTokenSpec: resolveTokenSpec({ systemKey: "default", tokenType: "top-navigation-frame" }),
+    },
+  ],
+]);
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -43,34 +57,44 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
-function tokenDependenciesFor({ theme }) {
+function getSystemProof(systemKey) {
+  assertString(systemKey, "systemKey");
+  const proof = supportedSystems.get(systemKey);
+  if (!proof) {
+    throw new RangeError(`top-navigation-brand-control has no system proof for "${systemKey}".`);
+  }
+  return proof;
+}
+
+function tokenDependenciesFor({ systemKey, theme }) {
+  const proof = getSystemProof(systemKey);
   const chrome = findVariant(
-    topNavigationFrameTokenSpec,
+    proof.topNavigationFrameTokenSpec,
     (variant) => variant.frameRole === "top navigation chrome" && variant.themeMapping === theme,
     `top-navigation-brand-control has no signed chrome frame token for ${theme}.`,
   );
   const markBackground = findVariant(
-    primaryTintedBackgroundTokenSpec,
+    proof.primaryTintedBackgroundTokenSpec,
     (variant) => variant.theme === theme,
     `top-navigation-brand-control has no signed primary-tinted-background token for ${theme}.`,
   );
   const markForeground = findVariant(
-    primaryTintedForegroundTokenSpec,
+    proof.primaryTintedForegroundTokenSpec,
     (variant) => variant.theme === theme,
     `top-navigation-brand-control has no signed primary-tinted-foreground token for ${theme}.`,
   );
   const labelTextStyle = findVariant(
-    labelTextStyleTokenSpec,
+    proof.labelTextStyleTokenSpec,
     (variant) => variant.role === "short label text",
     "top-navigation-brand-control requires a signed label-text-style token.",
   );
   const focusRing = findVariant(
-    focusRingTokenSpec,
+    proof.focusRingTokenSpec,
     (variant) => variant.role === "visible focus ring" && variant.theme === theme,
     `top-navigation-brand-control has no signed focus-ring token for ${theme}.`,
   );
   const minimumTargetSize = findVariant(
-    minimumTargetSizeTokenSpec,
+    proof.minimumTargetSizeTokenSpec,
     (variant) => variant.role === "interactive target",
     "top-navigation-brand-control requires a signed minimum-target-size token.",
   );
@@ -119,7 +143,7 @@ export function topNavigationBrandControlPrimitive(options = {}) {
     throw new RangeError(`top-navigation-brand-control has no system proof for "${systemKey}".`);
   }
 
-  const tokens = tokenDependenciesFor({ theme });
+  const tokens = tokenDependenciesFor({ systemKey, theme });
   const labelId = `${id}-label`;
 
   return {

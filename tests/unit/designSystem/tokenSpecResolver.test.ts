@@ -29,6 +29,16 @@ describe("design-system token spec resolver", () => {
       contractId: "tokens.minimum-target-size",
       systemKey: "default",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "primary-tinted-background" })).toMatchObject({
+      contractId: "tokens.primary-tinted-background",
+      systemKey: "default",
+      tokenType: "primary-tinted-background",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "primary-tinted-foreground" })).toMatchObject({
+      contractId: "tokens.primary-tinted-foreground",
+      systemKey: "default",
+      tokenType: "primary-tinted-foreground",
+    });
     expect(resolveTokenSpec({ systemKey: "default", tokenType: "top-navigation-frame" })).toMatchObject({
       contractId: "tokens.top-navigation-frame",
       systemKey: "default",
