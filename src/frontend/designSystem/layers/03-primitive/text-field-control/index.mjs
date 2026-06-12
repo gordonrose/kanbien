@@ -2,7 +2,10 @@ import { fieldValueTextStyleTokenSpec } from "../../02-token/field-value-text-st
 import { focusRingTokenSpec } from "../../02-token/focus-ring/systems/default.mjs";
 import { minimumTargetSizeTokenSpec } from "../../02-token/minimum-target-size/systems/default.mjs";
 import { textControlFrameTokenSpec } from "../../02-token/text-control-frame/systems/default.mjs";
-import { renderFieldRowControlPrimitive } from "../field-row-control/index.mjs";
+import {
+  attachFieldRowControlPrimitiveController,
+  renderFieldRowControlPrimitive,
+} from "../field-row-control/index.mjs";
 
 const primitiveName = "text-field-control";
 const allowedStates = new Set(["default", "required", "read-only", "disabled", "error"]);
@@ -222,6 +225,8 @@ export function renderTextFieldControlPrimitive(options = {}) {
 }
 
 export function attachTextFieldControlPrimitiveController(root = document) {
+  attachFieldRowControlPrimitiveController(root);
+
   for (const textField of root.querySelectorAll("[data-text-field-control]")) {
     if (!(textField instanceof HTMLElement) || textField.dataset.textFieldControlController === "attached") {
       continue;

@@ -1,4 +1,5 @@
 import {
+  attachFieldRowControlPrimitiveController,
   fieldRowControlPrimitive,
   renderFieldRowControlPrimitive,
 } from "../../03-primitive/field-row-control/index.mjs";
@@ -155,5 +156,6 @@ export function renderSimpleDropdownFieldPattern(options = {}) {
 }
 
 export function attachSimpleDropdownFieldPatternController(root = document) {
+  attachFieldRowControlPrimitiveController(root);
   attachSimpleDropdownControlPrimitiveController(root);
 }
