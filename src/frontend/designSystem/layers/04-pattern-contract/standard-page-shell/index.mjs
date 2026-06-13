@@ -112,14 +112,15 @@ export function standardPageShellPattern(options = {}) {
       class: "ds-standard-page-shell",
       "data-standard-page-shell": "",
       "data-standard-page-shell-theme": theme,
+      "data-theme-scope": theme === "original" ? null : theme,
       "data-standard-page-shell-mode": mode,
       dir: direction,
     },
     styleVars: {
       "--pattern-standard-page-shell-context-rail-inline-size": frame.contextRailInlineSize,
       "--pattern-standard-page-shell-page-padding-bottom": frame.mobileShellPagePaddingBottom,
-      "--pattern-standard-page-shell-background": frame.surfaceSubNav,
-      "--pattern-standard-page-shell-border": frame.borderValue,
+      "--pattern-standard-page-shell-background": theme === "original" ? frame.surfaceSubNav : "var(--paper)",
+      "--pattern-standard-page-shell-border": theme === "original" ? frame.borderValue : "0.0625rem solid var(--line)",
     },
     consumerRestrictions: standardPageShellPatternContract.consumerRules,
   };

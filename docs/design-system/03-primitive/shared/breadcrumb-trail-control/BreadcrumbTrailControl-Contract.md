@@ -11,15 +11,19 @@ focus return on dismissal, and long-label disclosure through the accepted
 `truncating-label` primitive. It does not own row placement, search, route
 generation, component props, or app adoption.
 
+Breadcrumb labels request `truncating-label` tooltip placement `below` so
+full-label disclosure does not auto-place upward into shell top navigation
+chrome when breadcrumbs are hosted in sub-navigation.
+
 ## Token And Primitive Dependencies
 
 - `button-frame`
 - `label-text-style`
 - `focus-ring`
 - `minimum-target-size`
-- `tooltip-surface`
-- `tooltip-text-style`
+- `icon-size`
 - `truncating-label`
+- `icon-button-control`
 
 ## Behavior Boundary
 
@@ -28,7 +32,7 @@ generation, component props, or app adoption.
 - Use reduction modes: `full`, `reduced-page-minus-one`,
   `reduced-middle`, `compact`, and `mobile-hidden`.
 - In compact mode, hide the full trail and expose hidden path context through
-  one trigger.
+  one signpost icon-button trigger.
 - Reveal surfaces close on outside click and `Escape`; focus returns to the
   triggering control.
 - Consumers must not recreate breadcrumb collapse, menus, current semantics,

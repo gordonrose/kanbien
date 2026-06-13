@@ -693,6 +693,43 @@ function renderVariantPreview(variant) {
     `;
   }
 
+  if (variant.preview.kind === "sub-navigation-row-structure-map") {
+    const columnLabels = Array.from({ length: Number(variant.preview.columnCount ?? 24) }, (_, index) =>
+      String(index + 1).padStart(2, "0"),
+    );
+
+    return `
+      <div
+        class="token-spec-sub-navigation-row-map-host"
+        data-token-preview-background="${escapeHtml(variant.preview.background)}"
+        data-token-preview-foreground="${escapeHtml(variant.preview.foreground)}"
+        data-token-preview-border="${escapeHtml(variant.preview.border)}"
+        data-token-preview-sub-navigation-gap="${escapeHtml(variant.preview.gap)}"
+        aria-hidden="true"
+      >
+        <div class="token-spec-sub-navigation-row-grid">
+          ${columnLabels.map((label) => `<span>${escapeHtml(label)}</span>`).join("")}
+          <div class="token-spec-sub-navigation-row-lanes">
+          ${variant.preview.lanes
+            .map(
+              (lane) => `
+                <div
+                  class="token-spec-sub-navigation-row-lane"
+                  data-token-sub-navigation-row-lane="${escapeHtml(lane.id)}"
+                  data-token-sub-navigation-row-span="${escapeHtml(lane.label)}"
+                >
+                  <strong>${escapeHtml(lane.id)}</strong>
+                  <small>${escapeHtml(lane.label)}</small>
+                </div>
+              `,
+            )
+            .join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   if (variant.preview.kind === "button-frame-sample") {
     return `
       <div
@@ -988,7 +1025,7 @@ function renderVariantPreview(variant) {
 function renderVariantCard(pageModel, variant) {
   return `
     <article
-      class="token-spec-card ${variant.preview.kind === "page-header-structure-map" ? "token-spec-card-stacked-preview" : ""}"
+      class="token-spec-card ${["page-header-structure-map", "sub-navigation-row-structure-map"].includes(variant.preview.kind) ? "token-spec-card-stacked-preview" : ""}"
       data-token-variant-id="${escapeHtml(variant.id)}"
     >
       <div class="token-spec-card-preview">

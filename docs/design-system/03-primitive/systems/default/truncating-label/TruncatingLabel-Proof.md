@@ -45,6 +45,11 @@ with:
 The render helper owns the primitive HTML. The controller owns focus, hover,
 tap toggle, and Escape disclosure behavior.
 
+The controller also honors `tooltipPlacement` requests. `auto` keeps the
+default viewport-fit behavior, while `below` and `above` allow later governed
+composition seams to avoid known host chrome collisions before falling back to
+viewport-contained placement.
+
 The render helper does not emit an inline `style` attribute. Token-derived
 style declarations are carried through the primitive data contract and applied
 by the primitive controller so the proof respects the repo CSP.
@@ -55,7 +60,7 @@ by the primitive controller so the proof respects the repo CSP.
 | --- | --- |
 | desktop | `tests/visual/designSystem/primitives/truncatingLabelPrimitiveRoute.spec.ts` checks truncation, containment, focus reveal, Escape dismissal, and full accessible value. |
 | mobile | The same browser proof checks mobile containment, RTL stability, and touch/click toggle disclosure. |
-| unit | `tests/unit/designSystem/truncatingLabelPrimitive.test.ts` checks token resolution, rejected inputs, unsupported systems, render ownership, route-local markup exclusion, and CSP-safe style transport. |
+| unit | `tests/unit/designSystem/truncatingLabelPrimitive.test.ts` checks token resolution, explicit tooltip placement, rejected inputs, unsupported systems, render ownership, route-local markup exclusion, and CSP-safe style transport. |
 | live route | `http://localhost:3000/design-system/default/primitives/truncating-label` was checked with Playwright after the dev server restart; it rendered 3 labels, click opened, second click closed, and no console or page errors were reported. |
 
 ## Rendered View

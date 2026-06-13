@@ -16,6 +16,8 @@ Status: review-ready
 - Utility item renders as a native button and emits `context-navigation-item-control:activate`.
 - Disabled item renders as a native disabled button and does not emit activation.
 - Focus styling and minimum target size are supplied by signed token dependencies.
+- Hover and keyboard focus disclose the item label through the governed tooltip
+  surface and text-style tokens.
 
 ## Token Evidence
 
@@ -27,11 +29,13 @@ The proof renders dependency metadata from:
 - `focus-ring`
 - `label-text-style`
 - `icon-size`
+- `tooltip-surface`
+- `tooltip-text-style`
 - `default` glyph registry
 
 ## Known Boundary
 
-The default proof consumes `context-navigation-item-affordance` for current-state visual treatment and the default glyph registry for decorative item icons. It intentionally does not compose `icon-button-control` because this primitive must also render destination links and visible labels. It does not own More-menu overflow, drawer behavior, or long-label disclosure.
+The default proof consumes `context-navigation-item-affordance` for current-state visual treatment, tooltip tokens for item-label disclosure, and the default glyph registry for decorative item icons. It intentionally does not compose `icon-button-control` because this primitive must also render destination links and visible labels. It does not own More-menu overflow, drawer behavior, or long-label truncation.
 
 ## Verification
 

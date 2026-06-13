@@ -25,3 +25,8 @@
 The proof composes governed child pattern renderers. It does not rebuild
 top navigation, secondary navigation, context navigation, tools navigation,
 or child primitive markup inside the standard shell.
+
+The proof also verifies that selecting a non-original theme scopes the whole
+standard shell frame. The shell emits `data-theme-scope` for the selected
+theme, passes that theme to child pattern seams, and keeps shell-owned body and
+side-rail surfaces on the same scoped palette.

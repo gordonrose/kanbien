@@ -69,6 +69,29 @@ describe("truncating-label primitive seam", () => {
     expect(desert.tokenDependencies.focusRing.tokenName).toBe("--focus-ring-visible-desert");
   });
 
+  it("supports explicit tooltip placement for constrained host chrome", () => {
+    const label = truncatingLabelPrimitive({
+      id: "below-label",
+      text: "Breadcrumb label",
+      tooltipPlacement: "below",
+    });
+    const html = renderTruncatingLabelPrimitive({
+      id: "below-label",
+      text: "Breadcrumb label",
+      tooltipPlacement: "below",
+    });
+
+    expect(label.tooltipPlacement).toBe("below");
+    expect(label.attributes["data-truncating-label-tooltip-placement"]).toBe("below");
+    expect(html).toContain('data-truncating-label-tooltip-placement="below"');
+    expect(() =>
+      truncatingLabelPrimitive({
+        text: "Label",
+        tooltipPlacement: "sideways",
+      }),
+    ).toThrow('truncating-label does not support tooltipPlacement "sideways".');
+  });
+
   it("rejects missing text and unsupported systems or themes", () => {
     expect(() => truncatingLabelPrimitive({ text: "" })).toThrow("text must be a non-empty string.");
     expect(() => truncatingLabelPrimitive({ systemKey: "missing", text: "Label" })).toThrow(

@@ -95,7 +95,7 @@ export const subNavigationPatternContract = {
   contractPath: "docs/design-system/04-pattern-contract/shared/sub-navigation/SubNavigation-Contract.md",
   supportedSystems: ["default"],
   requiredPrimitives: ["breadcrumb-trail-control", "search-shell-control"],
-  directTokenDependencies: ["standard-page-shell-frame"],
+  directTokenDependencies: ["standard-page-shell-frame", "sub-navigation-row-structure"],
   consumerRules: [
     "Consumers must use this pattern for governed secondary navigation row composition.",
     "Consumers must not recreate breadcrumb, search, collapse, mobile fallback, or row-width negotiation markup locally.",
@@ -142,7 +142,20 @@ export function subNavigationPattern(options = {}) {
     (variant) => variant.id === "standard-page-shell-frame-default",
     "sub-navigation requires the signed standard-page-shell-frame token.",
   );
+  const rowStructure = findVariant(
+    resolveTokenSpec({ systemKey, tokenType: "sub-navigation-row-structure" }),
+    (variant) => variant.id === "sub-navigation-row-structure-default",
+    "sub-navigation requires the signed sub-navigation-row-structure token.",
+  );
   const resolvedMode = resolvedModeFor(mode);
+  const laneDefinitions = Array.isArray(rowStructure.laneDefinitions) ? rowStructure.laneDefinitions : [];
+  const breadcrumbLane = laneDefinitions.find((lane) => lane.id === "breadcrumb");
+  const gapLane = laneDefinitions.find((lane) => lane.id === "gap");
+  const searchLane = laneDefinitions.find((lane) => lane.id === "search");
+  const reserveLane = laneDefinitions.find((lane) => lane.id === "reserve");
+  if (!breadcrumbLane || !gapLane || !searchLane || !reserveLane) {
+    throw new RangeError("sub-navigation-row-structure must define breadcrumb, gap, search, and reserve lanes.");
+  }
 
   return {
     schema: "kanbien.designSystem.patternSpec.v1",
@@ -168,6 +181,12 @@ export function subNavigationPattern(options = {}) {
         runtimeSeam:
           "src/frontend/designSystem/layers/02-token/standard-page-shell-frame/systems/default.mjs#standardPageShellFrameTokenSpec",
       },
+      subNavigationRowStructure: {
+        tokenName: rowStructure.tokenName,
+        variantId: rowStructure.id,
+        runtimeSeam:
+          "src/frontend/designSystem/layers/02-token/sub-navigation-row-structure/systems/default.mjs#subNavigationRowStructureTokenSpec",
+      },
     },
     attributes: {
       id,
@@ -189,14 +208,29 @@ export function subNavigationPattern(options = {}) {
       "--pattern-sub-navigation-search-max-inline-size": shellFrame.subNavSearchMaxInlineSize,
       "--pattern-sub-navigation-background": shellFrame.surfaceSubNav,
       "--pattern-sub-navigation-border": shellFrame.borderValue,
+      "--pattern-sub-navigation-tooltip-layer": shellFrame.tooltipLayer,
       "--pattern-sub-navigation-mobile-breakpoint": shellFrame.mobileBreakpoint,
+      "--pattern-sub-navigation-column-count": String(rowStructure.columnCount),
+      "--pattern-sub-navigation-visible-columns": String(rowStructure.columnCount),
+      "--pattern-sub-navigation-min-column-inline-size": rowStructure.minimumColumnInlineSize,
+      "--pattern-sub-navigation-row-gap": rowStructure.gapValue,
+      "--pattern-sub-navigation-breadcrumb-start": String(breadcrumbLane.startColumn),
+      "--pattern-sub-navigation-breadcrumb-end": String(breadcrumbLane.endColumn),
+      "--pattern-sub-navigation-gap-start": String(gapLane.startColumn),
+      "--pattern-sub-navigation-gap-end": String(gapLane.endColumn),
+      "--pattern-sub-navigation-search-start": String(searchLane.startColumn),
+      "--pattern-sub-navigation-search-end": String(searchLane.endColumn),
+      "--pattern-sub-navigation-breadcrumb-min-columns": String(breadcrumbLane.minimumColumns),
+      "--pattern-sub-navigation-search-min-columns": String(searchLane.minimumColumns),
+      "--pattern-sub-navigation-reserve-start": String(reserveLane.startColumn),
     },
     behavior: {
       desktopRule: "breadcrumb and bounded centered search are visible",
       compressedRule: "breadcrumb reduces through the approved hidden-path reveal before search leaves the row",
       compactRule: "breadcrumb becomes a compact reveal while search stays bounded",
       mobileRule: "breadcrumb is absent and search fills the available row width",
-      responsiveRule: "auto mode resolves desktop, compressed, compact, or mobile from rendered inline size",
+      responsiveRule:
+        "auto mode resolves desktop, compressed, compact, or mobile from rendered breadcrumb lane pressure and signed row-structure columns",
     },
     consumerRestrictions: subNavigationPatternContract.consumerRules,
   };
@@ -285,6 +319,7 @@ function toPixels(value, ownerDocument = document) {
 
 function resolveAutoMode(nav) {
   if (nav.getAttribute("data-sub-navigation-mode") !== "auto") {
+    updateColumnAllocation(nav);
     return;
   }
   const inlineSize = nav.getBoundingClientRect().width;
@@ -298,15 +333,95 @@ function resolveAutoMode(nav) {
     nextMode = "compressed";
   }
   setVisibleSlot(nav, nextMode);
+  updateColumnAllocation(nav);
   if (nextMode === "desktop" && breadcrumbSlotHasPressure(nav, "desktop")) {
     nextMode = "compressed";
     setVisibleSlot(nav, nextMode);
+    updateColumnAllocation(nav);
   }
   if (nextMode === "compressed" && breadcrumbSlotHasPressure(nav, "compressed")) {
     nextMode = "compact";
+    setVisibleSlot(nav, nextMode);
+    updateColumnAllocation(nav);
   }
   nav.dataset.subNavigationResolvedMode = nextMode;
-  setVisibleSlot(nav, nextMode);
+}
+
+function readPositiveIntegerStyle(element, propertyName, fallback) {
+  const value = Number.parseInt(element.style.getPropertyValue(propertyName), 10);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+function columnsForInlineSize(nav, inlineSize) {
+  const columnCount = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-column-count", 24);
+  const minColumnSize = toPixels(
+    nav.style.getPropertyValue("--pattern-sub-navigation-min-column-inline-size"),
+    nav.ownerDocument,
+  );
+  if (minColumnSize <= 0) {
+    return columnCount;
+  }
+  return Math.max(1, Math.min(columnCount, Math.floor(inlineSize / minColumnSize)));
+}
+
+function visibleResolvedMode(nav) {
+  const visibleSlot = Array.from(nav.querySelectorAll("[data-sub-navigation-slot]")).find(
+    (slot) => slot instanceof HTMLElement && !slot.hidden,
+  );
+  if (visibleSlot instanceof HTMLElement && visibleSlot.dataset.subNavigationSlot) {
+    return visibleSlot.dataset.subNavigationSlot;
+  }
+  return nav.dataset.subNavigationResolvedMode || nav.getAttribute("data-sub-navigation-resolved-mode") || "desktop";
+}
+
+function updateColumnAllocation(nav) {
+  const inlineSize = nav.getBoundingClientRect().width;
+  const resolvedMode = visibleResolvedMode(nav);
+  const columnCount = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-column-count", 24);
+  const breadcrumbStart = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-breadcrumb-start", 1);
+  const breadcrumbEnd = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-breadcrumb-end", 8);
+  const gapStart = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-gap-start", breadcrumbEnd);
+  const gapEnd = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-gap-end", gapStart);
+  const searchStart = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-search-start", gapEnd);
+  const searchEnd = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-search-end", 17);
+  const breadcrumbMin = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-breadcrumb-min-columns", 3);
+  const searchMin = readPositiveIntegerStyle(nav, "--pattern-sub-navigation-search-min-columns", 5);
+  const visibleColumns = columnsForInlineSize(nav, inlineSize);
+  const signedGapColumns = Math.max(0, gapEnd - gapStart);
+  const signedSearchColumns = Math.max(1, searchEnd - searchStart);
+  const signedBreadcrumbColumns = Math.max(1, breadcrumbEnd - breadcrumbStart);
+  const signedContentColumns = signedBreadcrumbColumns + signedGapColumns + signedSearchColumns;
+  let breadcrumbColumns = signedBreadcrumbColumns;
+  let gapColumns = signedGapColumns;
+  let searchColumns = signedSearchColumns;
+
+  if (resolvedMode === "compact") {
+    breadcrumbColumns = Math.min(signedBreadcrumbColumns, Math.max(1, breadcrumbMin));
+    searchColumns = signedSearchColumns;
+  }
+
+  if (visibleColumns < signedContentColumns) {
+    const activeContentColumns = breadcrumbColumns + gapColumns + searchColumns;
+    const minWithGap = breadcrumbMin + searchMin + signedGapColumns;
+    if (visibleColumns < minWithGap) {
+      gapColumns = 0;
+    }
+    const pressure = activeContentColumns - visibleColumns;
+    breadcrumbColumns = Math.max(breadcrumbMin, breadcrumbColumns - Math.max(0, Math.floor(pressure / 2)));
+    searchColumns = Math.max(searchMin, visibleColumns - breadcrumbColumns - gapColumns);
+    if (breadcrumbColumns + gapColumns + searchColumns > visibleColumns) {
+      breadcrumbColumns = Math.max(breadcrumbMin, visibleColumns - searchColumns);
+    }
+  }
+
+  const breadcrumbColumnEnd = breadcrumbStart + breadcrumbColumns;
+  const searchColumnStart = breadcrumbColumnEnd + gapColumns;
+  const searchColumnEnd = Math.min(columnCount + 1, searchColumnStart + searchColumns);
+
+  nav.style.setProperty("--pattern-sub-navigation-visible-columns", String(Math.max(visibleColumns, searchColumnEnd - 1)));
+  nav.style.setProperty("--pattern-sub-navigation-breadcrumb-current-end", String(breadcrumbColumnEnd));
+  nav.style.setProperty("--pattern-sub-navigation-search-current-start", String(searchColumnStart));
+  nav.style.setProperty("--pattern-sub-navigation-search-current-end", String(searchColumnEnd));
 }
 
 function setVisibleSlot(nav, mode) {

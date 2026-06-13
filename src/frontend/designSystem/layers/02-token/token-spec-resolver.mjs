@@ -9,6 +9,9 @@ import { minimumTargetSizeTokenSpec } from "./minimum-target-size/systems/defaul
 import { primaryTintedBackgroundTokenSpec } from "./primary-tinted-background/systems/default.mjs";
 import { primaryTintedForegroundTokenSpec } from "./primary-tinted-foreground/systems/default.mjs";
 import { standardPageShellFrameTokenSpec } from "./standard-page-shell-frame/systems/default.mjs";
+import { subNavigationRowStructureTokenSpec } from "./sub-navigation-row-structure/systems/default.mjs";
+import { tooltipSurfaceTokenSpec } from "./tooltip-surface/systems/default.mjs";
+import { tooltipTextStyleTokenSpec } from "./tooltip-text-style/systems/default.mjs";
 import { topNavigationFrameTokenSpec } from "./top-navigation-frame/systems/default.mjs";
 import { toolsNavigationFrameTokenSpec } from "./tools-navigation-frame/systems/default.mjs";
 
@@ -25,6 +28,9 @@ const tokenSpecRegistry = {
     "primary-tinted-background": primaryTintedBackgroundTokenSpec,
     "primary-tinted-foreground": primaryTintedForegroundTokenSpec,
     "standard-page-shell-frame": standardPageShellFrameTokenSpec,
+    "sub-navigation-row-structure": subNavigationRowStructureTokenSpec,
+    "tooltip-surface": tooltipSurfaceTokenSpec,
+    "tooltip-text-style": tooltipTextStyleTokenSpec,
     "top-navigation-frame": topNavigationFrameTokenSpec,
     "tools-navigation-frame": toolsNavigationFrameTokenSpec,
   },

@@ -1,5 +1,9 @@
 import { resolveTokenSpec } from "../../02-token/token-spec-resolver.mjs";
 import {
+  attachIconButtonControlPrimitiveController,
+  renderIconButtonControlPrimitive,
+} from "../icon-button-control/index.mjs";
+import {
   attachTruncatingLabelPrimitiveController,
   renderTruncatingLabelPrimitive,
 } from "../truncating-label/index.mjs";
@@ -123,8 +127,8 @@ export const breadcrumbTrailControlPrimitiveContract = {
   supportedSystems: ["default"],
   supportedThemes: Array.from(supportedThemes),
   supportedModes: Array.from(supportedModes),
-  requiredTokens: ["button-frame", "label-text-style", "focus-ring", "minimum-target-size"],
-  primitiveDependencies: ["truncating-label"],
+  requiredTokens: ["button-frame", "label-text-style", "focus-ring", "minimum-target-size", "icon-size"],
+  primitiveDependencies: ["truncating-label", "icon-button-control"],
   consumerRules: [
     "Consumers must use this primitive for governed breadcrumb hierarchy controls.",
     "Consumers must not invent breadcrumb hierarchy, collapse order, reveal surfaces, current semantics, or tooltip behavior locally.",
@@ -198,6 +202,10 @@ export function breadcrumbTrailControlPrimitive(options = {}) {
         primitiveName: "truncating-label",
         runtimeSeam: "src/frontend/designSystem/layers/03-primitive/truncating-label/index.mjs#truncatingLabelPrimitive",
       },
+      iconButtonControl: {
+        primitiveName: "icon-button-control",
+        runtimeSeam: "src/frontend/designSystem/layers/03-primitive/icon-button-control/index.mjs#iconButtonControlPrimitive",
+      },
     },
     attributes: {
       id,
@@ -240,6 +248,7 @@ function renderLabel(spec, item) {
     text: item.label,
     textStyle: "label",
     focusable: false,
+    tooltipPlacement: "below",
   });
 }
 
@@ -250,14 +259,25 @@ function renderMenuItem(item) {
   return `<a class="ds-breadcrumb-trail-control-menu-item" href="${escapeHtml(item.href)}" role="menuitem">${escapeHtml(item.label)}</a>`;
 }
 
-function renderReveal(spec, idSuffix, label, items) {
-  if (items.length === 0) {
-    return "";
+function renderRevealTrigger(spec, buttonId, menuId, label, idSuffix) {
+  if (idSuffix === "compact") {
+    return renderIconButtonControlPrimitive({
+      systemKey: spec.systemKey,
+      theme: spec.theme,
+      id: buttonId,
+      label,
+      value: "compact-breadcrumb-menu",
+      icon: "signpost",
+      frameIntent: "subtle",
+      extraAttributes: {
+        class: "ds-icon-button-control ds-breadcrumb-trail-control-compact-trigger ds-breadcrumb-trail-control-reveal-trigger",
+        "aria-expanded": "false",
+        "aria-controls": menuId,
+        "data-breadcrumb-trail-control-trigger": "",
+      },
+    });
   }
-  const buttonId = `${spec.id}-${idSuffix}-trigger`;
-  const menuId = `${spec.id}-${idSuffix}-menu`;
   return `
-    <span class="ds-breadcrumb-trail-control-reveal">
       <button
         id="${escapeHtml(buttonId)}"
         class="ds-breadcrumb-trail-control-button ds-breadcrumb-trail-control-reveal-trigger"
@@ -267,6 +287,18 @@ function renderReveal(spec, idSuffix, label, items) {
         aria-label="${escapeHtml(label)}"
         data-breadcrumb-trail-control-trigger
       >...</button>
+  `;
+}
+
+function renderReveal(spec, idSuffix, label, items) {
+  if (items.length === 0) {
+    return "";
+  }
+  const buttonId = `${spec.id}-${idSuffix}-trigger`;
+  const menuId = `${spec.id}-${idSuffix}-menu`;
+  return `
+    <span class="ds-breadcrumb-trail-control-reveal">
+      ${renderRevealTrigger(spec, buttonId, menuId, label, idSuffix)}
       <div
         id="${escapeHtml(menuId)}"
         class="ds-breadcrumb-trail-control-menu"
@@ -333,6 +365,7 @@ function closeMenu(trigger, menu, restoreFocus) {
 }
 
 export function attachBreadcrumbTrailControlPrimitiveController(root = document) {
+  attachIconButtonControlPrimitiveController(root);
   for (const breadcrumb of root.querySelectorAll("[data-breadcrumb-trail-control]")) {
     if (!(breadcrumb instanceof HTMLElement) || breadcrumb.dataset.breadcrumbTrailControlController === "attached") {
       continue;

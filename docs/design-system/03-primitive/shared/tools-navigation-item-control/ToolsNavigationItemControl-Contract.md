@@ -15,7 +15,10 @@ the tools-navigation rail.
 - `button-frame`
 - `focus-ring`
 - `minimum-target-size`
+- `label-text-style`
 - `icon-size`
+- `tooltip-surface`
+- `tooltip-text-style`
 
 ## Primitive Dependencies
 
@@ -50,6 +53,8 @@ parallel tools-only button anatomy.
 - Active controls expose `aria-pressed="true"`.
 - Unavailable controls expose `aria-disabled="true"`, remain named, and emit no
   activation event.
+- Pointer hover and keyboard focus disclose a governed tooltip containing the
+  tool label; `Escape` dismisses the tooltip without activating the tool.
 
 ## Consumer Boundary
 

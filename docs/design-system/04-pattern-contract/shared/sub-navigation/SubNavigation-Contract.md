@@ -40,6 +40,7 @@ wrappers, backend behavior, or app adoption.
 | `breadcrumb` behavior | Review-ready Layer 1 child behavior rule. | `review-ready`; `docs/design-system/01-behavior-rule/shared/breadcrumb/Breadcrumb-Behaviour.md`. | Eligible child obligation. |
 | `search-shell` behavior | Review-ready Layer 1 child behavior rule. | `review-ready`; `docs/design-system/01-behavior-rule/shared/search-shell/SearchShell-Behaviour.md`. | Eligible child obligation. |
 | `standard-page-shell-frame` | Review-ready shell frame token. | `review-ready`; `src/frontend/designSystem/layers/02-token/standard-page-shell-frame/systems/default.mjs#standardPageShellFrameTokenSpec`. | Eligible direct token dependency for row placement and search width. |
+| `sub-navigation-row-structure` | Review-ready row structure token. | `review-ready`; `src/frontend/designSystem/layers/02-token/sub-navigation-row-structure/systems/default.mjs#subNavigationRowStructureTokenSpec`. | Required direct token dependency for breadcrumb/gap/search/reserve lanes and collapse order. |
 | `breadcrumb-trail-control` | Review-ready primitive contract and default proof. | `review-ready`; `src/frontend/designSystem/layers/03-primitive/breadcrumb-trail-control/index.mjs#breadcrumbTrailControlPrimitive`. | Required child primitive. |
 | `search-shell-control` | Review-ready primitive contract and default proof. | `review-ready`; `src/frontend/designSystem/layers/03-primitive/search-shell-control/index.mjs#searchShellControlPrimitive`. | Required child primitive. |
 
@@ -50,17 +51,37 @@ The pattern must compose:
 - breadcrumb region from `breadcrumb-trail-control`
 - search region from `search-shell-control`
 - responsive row slots for desktop, compressed, compact, and mobile fallback
+- the 24-column breadcrumb/gap/search/reserve lane map from
+  `sub-navigation-row-structure`
 
 The pattern must not recreate breadcrumb links, breadcrumb reveal behavior,
 native search input behavior, search hints, focus behavior, or child primitive
 styling locally.
+
+Breadcrumb long-label disclosure must stay below the breadcrumb label in this
+pattern so it does not collide with the top-navigation band above the
+sub-navigation row. This is requested through the governed
+`breadcrumb-trail-control` and `truncating-label` seams, not local tooltip CSS.
+
+The pattern's desktop and compressed row geometry must use the signed
+`sub-navigation-row-structure` lanes: breadcrumb begins in columns `1-7`,
+gap occupies column `8`, search begins in columns `9-17`, and reserve occupies
+columns `18-24`. Rendered-width reduction must remove reserve columns before
+shrinking breadcrumb, gap, or search; the gap lane remains while possible and
+is dropped only when preserving both breadcrumb and search minimum columns
+requires it. Desktop and compressed breadcrumb modes use the signed breadcrumb
+lane as their rendered pressure boundary. Compact mode uses only the compact
+breadcrumb trigger lane plus the protected gap so the collapsed breadcrumb does
+not leave the search field behind seven empty columns. Breadcrumb full,
+reduced, or compact modes must be derived from the breadcrumb lane's rendered
+width and content pressure, not from the whole row width alone.
 
 ## Required States
 
 | State | Required Behavior |
 | --- | --- |
 | desktop | Breadcrumb is fully visible and search is centered and bounded. |
-| compressed | Breadcrumb reduces through the approved hidden-path reveal before search leaves the row. |
+| compressed | Reserve columns are removed first; breadcrumb reduces through the approved hidden-path reveal before search leaves the row. |
 | compact | Breadcrumb becomes compact reveal and search remains bounded. |
 | mobile | Breadcrumb is absent and search fills the available sub-navigation width. |
 | RTL | Row direction, breadcrumb ordering, separator flow, and search presentation mirror. |

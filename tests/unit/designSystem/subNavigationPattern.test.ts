@@ -14,7 +14,7 @@ const breadcrumbs = [
 ];
 
 describe("sub-navigation pattern seam", () => {
-  it("resolves the signed shell frame token and child primitive obligations", () => {
+  it("resolves the signed shell and row structure tokens with child primitive obligations", () => {
     const pattern = subNavigationPattern({
       id: "sub-navigation-test",
       mode: "compressed",
@@ -33,11 +33,23 @@ describe("sub-navigation pattern seam", () => {
           tokenName: "--standard-page-shell-frame",
           variantId: "standard-page-shell-frame-default",
         },
+        subNavigationRowStructure: {
+          tokenName: "--sub-navigation-row-structure",
+          variantId: "sub-navigation-row-structure-default",
+        },
       },
       behavior: {
         compressedRule: "breadcrumb reduces through the approved hidden-path reveal before search leaves the row",
       },
     });
+    expect(pattern.behavior.responsiveRule).toContain("signed row-structure columns");
+    expect(pattern.styleVars["--pattern-sub-navigation-column-count"]).toBe("24");
+    expect(pattern.styleVars["--pattern-sub-navigation-breadcrumb-start"]).toBe("1");
+    expect(pattern.styleVars["--pattern-sub-navigation-gap-start"]).toBe("8");
+    expect(pattern.styleVars["--pattern-sub-navigation-gap-end"]).toBe("9");
+    expect(pattern.styleVars["--pattern-sub-navigation-search-start"]).toBe("9");
+    expect(pattern.styleVars["--pattern-sub-navigation-search-end"]).toBe("18");
+    expect(pattern.styleVars["--pattern-sub-navigation-tooltip-layer"]).toBe("2147483000");
   });
 
   it("renders composition from governed breadcrumb and search-shell primitives", () => {
@@ -61,6 +73,10 @@ describe("sub-navigation pattern seam", () => {
     expect(subNavigationPatternContract.requiredPrimitives).toEqual([
       "breadcrumb-trail-control",
       "search-shell-control",
+    ]);
+    expect(subNavigationPatternContract.directTokenDependencies).toEqual([
+      "standard-page-shell-frame",
+      "sub-navigation-row-structure",
     ]);
     expect(subNavigationPatternContract.consumerRules.join(" ")).toContain("row-width negotiation");
     expect(() => subNavigationPattern({ mode: "drawer" })).toThrow('sub-navigation does not support mode "drawer".');

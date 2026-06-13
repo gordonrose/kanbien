@@ -29,6 +29,12 @@
       "implementationExport": "standardPageShellFrameTokenSpec",
       "pageRoute": "/design-system/default/tokens/standard-page-shell-frame"
     },
+    "tokens.sub-navigation-row-structure": {
+      "contractModule": "src/frontend/designSystem/layers/02-token/sub-navigation-row-structure/contract.mjs",
+      "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/subNavigationRowStructure.tokens.mjs",
+      "implementationExport": "subNavigationRowStructureTokenSpec",
+      "pageRoute": "/design-system/default/tokens/sub-navigation-row-structure"
+    },
     "tokens.button-frame": {
       "contractModule": "src/frontend/designSystem/layers/02-token/button-frame/contract.mjs",
       "implementationModule": "src/frontend/designSystem/systems/default/tokens/proofs/buttonFrame.tokens.mjs",

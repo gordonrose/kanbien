@@ -7,6 +7,7 @@ import { tooltipTextStyleTokenSpec } from "../../02-token/tooltip-text-style/sys
 
 const primitiveName = "truncating-label";
 const supportedTextStyles = new Set(["label", "supporting"]);
+const supportedTooltipPlacements = new Set(["auto", "below", "above"]);
 const supportedSystems = new Map([
   [
     "default",
@@ -142,6 +143,7 @@ export function truncatingLabelPrimitive(options = {}) {
   const text = options.text ?? "";
   const textStyle = options.textStyle ?? "label";
   const focusable = options.focusable ?? true;
+  const tooltipPlacement = options.tooltipPlacement ?? "auto";
   const id = options.id ?? `truncating-label-${Math.random().toString(36).slice(2, 10)}`;
 
   assertString(theme, "theme");
@@ -150,6 +152,9 @@ export function truncatingLabelPrimitive(options = {}) {
   assertString(id, "id");
   if (!supportedTextStyles.has(textStyle)) {
     throw new RangeError(`truncating-label does not support textStyle "${textStyle}".`);
+  }
+  if (!supportedTooltipPlacements.has(tooltipPlacement)) {
+    throw new RangeError(`truncating-label does not support tooltipPlacement "${tooltipPlacement}".`);
   }
 
   const tokens = tokenDependenciesFor({ systemKey, theme, textStyle });
@@ -163,6 +168,7 @@ export function truncatingLabelPrimitive(options = {}) {
     text,
     textStyle,
     focusable,
+    tooltipPlacement,
     id,
     tooltipId,
     states: {
@@ -229,6 +235,7 @@ export function truncatingLabelPrimitive(options = {}) {
       "data-truncating-label": "",
       "data-truncating-label-theme": theme,
       "data-truncating-label-text-style": textStyle,
+      "data-truncating-label-tooltip-placement": tooltipPlacement,
     },
     tooltipAttributes: {
       id: tooltipId,
@@ -332,7 +339,22 @@ export function attachTruncatingLabelPrimitiveController(root = document) {
     const aboveTop = labelBox.top - tooltipHeight - gutter;
     const belowTop = labelBox.bottom + gutter;
     const fitsAbove = aboveTop >= gutter;
-    const top = fitsAbove ? aboveTop : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter));
+    const fitsBelow = belowTop + tooltipHeight <= viewportHeight - gutter;
+    const placement = label.dataset.truncatingLabelTooltipPlacement ?? "auto";
+    const top =
+      placement === "below"
+        ? fitsBelow
+          ? belowTop
+          : fitsAbove
+            ? aboveTop
+            : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter))
+        : placement === "above"
+          ? fitsAbove
+            ? aboveTop
+            : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter))
+          : fitsAbove
+            ? aboveTop
+            : Math.min(belowTop, Math.max(gutter, viewportHeight - tooltipHeight - gutter));
     const left = Math.min(Math.max(labelBox.left, gutter), Math.max(gutter, viewportWidth - tooltipWidth - gutter));
 
     tooltip.style.setProperty("--primitive-truncating-label-tooltip-top", `${Math.round(top)}px`);

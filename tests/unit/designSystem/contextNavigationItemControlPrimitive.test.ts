@@ -54,6 +54,12 @@ describe("context-navigation-item-control primitive seam", () => {
         iconSize: {
           tokenName: "--icon-button-glyph-size",
         },
+        tooltipSurface: {
+          tokenName: "--tooltip-surface-original",
+        },
+        tooltipTextStyle: {
+          tokenName: "--tooltip-text-style-default",
+        },
         minimumTargetSize: {
           tokenName: "--target-size-interactive-min",
         },
@@ -127,6 +133,9 @@ describe("context-navigation-item-control primitive seam", () => {
     expect(html).toContain('href="#rendered"');
     expect(html).toContain('aria-current="page"');
     expect(html).toContain('data-context-navigation-item-control=""');
+    expect(html).toContain('role="tooltip"');
+    expect(html).toContain('data-context-navigation-item-control-tooltip');
+    expect(html).toContain('data-navigation-item-tooltip-placement="inline-end"');
     expect(html).toContain("Rendered &lt;item&gt; &amp; label");
     expect(html).not.toContain("primitive-proof-row");
   });
@@ -167,6 +176,8 @@ describe("context-navigation-item-control primitive seam", () => {
       },
     });
     expect(contextNavigationItemControlPrimitiveContract.requiredSystemRegistries).toContain("glyph-registry");
+    expect(contextNavigationItemControlPrimitiveContract.requiredTokens).toContain("tooltip-surface");
+    expect(contextNavigationItemControlPrimitiveContract.requiredTokens).toContain("tooltip-text-style");
     expect(contextNavigationItemControlPrimitiveContract.consumerRules).toContain(
       "Consumers must not use this primitive to invent current-state rail styling, drawer behavior, More-menu overflow, or app-local CSS.",
     );

@@ -13,6 +13,8 @@ const focusRingTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "
 const iconSizeTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "icon-size" });
 const labelTextStyleTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "label-text-style" });
 const minimumTargetSizeTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "minimum-target-size" });
+const tooltipSurfaceTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "tooltip-surface" });
+const tooltipTextStyleTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "tooltip-text-style" });
 const toolsNavigationFrameTokenSpec = resolveTokenSpec({ systemKey: "default", tokenType: "tools-navigation-frame" });
 
 function assertString(value, fieldName) {
@@ -76,8 +78,18 @@ function tokenDependenciesFor({ theme }) {
     (variant) => variant.role === "interactive target",
     "tools-navigation-item-control requires a signed minimum-target-size token.",
   );
+  const tooltipSurface = findVariant(
+    tooltipSurfaceTokenSpec,
+    (variant) => variant.id === `tooltip-surface-${theme}`,
+    `tools-navigation-item-control requires a signed ${theme} tooltip-surface token.`,
+  );
+  const tooltipTextStyle = findVariant(
+    tooltipTextStyleTokenSpec,
+    (variant) => variant.id === "tooltip-text-style-default",
+    "tools-navigation-item-control requires a signed tooltip-text-style token.",
+  );
 
-  return { frame, focusRing, labelTextStyle, iconSize, minimumTargetSize };
+  return { frame, focusRing, labelTextStyle, iconSize, minimumTargetSize, tooltipSurface, tooltipTextStyle };
 }
 
 function glyphPathFor({ systemKey, icon }) {
@@ -103,7 +115,15 @@ export const toolsNavigationItemControlPrimitiveContract = {
     reason:
       "tools-navigation-item-control composes icon-button-control for governed icon-only button anatomy while adding tools-navigation active, unavailable, sizing, and event semantics.",
   },
-  requiredTokens: ["tools-navigation-frame", "focus-ring", "minimum-target-size", "label-text-style", "icon-size"],
+  requiredTokens: [
+    "tools-navigation-frame",
+    "focus-ring",
+    "minimum-target-size",
+    "label-text-style",
+    "icon-size",
+    "tooltip-surface",
+    "tooltip-text-style",
+  ],
   requiredSystemRegistries: ["glyph-registry"],
   eventName: "tools-navigation-item-control:activate",
   consumerRules: [
@@ -171,6 +191,23 @@ export function toolsNavigationItemControlPrimitive(options = {}) {
     "--primitive-tools-navigation-item-label-line-height": tokens.labelTextStyle.lineHeightValue,
     "--primitive-tools-navigation-item-icon-inline-size": tokens.iconSize.inlineSize,
     "--primitive-tools-navigation-item-icon-block-size": tokens.iconSize.blockSize,
+    "--primitive-tools-navigation-item-tooltip-background": tokens.tooltipSurface.backgroundValue,
+    "--primitive-tools-navigation-item-tooltip-foreground": tokens.tooltipSurface.foregroundValue,
+    "--primitive-tools-navigation-item-tooltip-border": tokens.tooltipSurface.borderValue,
+    "--primitive-tools-navigation-item-tooltip-shadow": tokens.tooltipSurface.shadowValue,
+    "--primitive-tools-navigation-item-tooltip-radius": tokens.tooltipSurface.radiusValue,
+    "--primitive-tools-navigation-item-tooltip-padding-block": tokens.tooltipSurface.paddingBlockValue,
+    "--primitive-tools-navigation-item-tooltip-padding-inline": tokens.tooltipSurface.paddingInlineValue,
+    "--primitive-tools-navigation-item-tooltip-max-inline-size": tokens.tooltipSurface.maxInlineSizeValue,
+    "--primitive-tools-navigation-item-tooltip-z-index": tokens.tooltipSurface.zIndexValue,
+    "--primitive-tools-navigation-item-tooltip-motion-duration": tokens.tooltipSurface.motionDurationValue,
+    "--primitive-tools-navigation-item-tooltip-motion-easing": tokens.tooltipSurface.motionEasingValue,
+    "--primitive-tools-navigation-item-tooltip-font-family": tokens.tooltipTextStyle.fontFamilyValue,
+    "--primitive-tools-navigation-item-tooltip-font-size": tokens.tooltipTextStyle.fontSizeValue,
+    "--primitive-tools-navigation-item-tooltip-font-weight": tokens.tooltipTextStyle.fontWeightValue,
+    "--primitive-tools-navigation-item-tooltip-line-height": tokens.tooltipTextStyle.lineHeightValue,
+    "--primitive-tools-navigation-item-tooltip-letter-spacing": tokens.tooltipTextStyle.letterSpacingValue,
+    "--primitive-tools-navigation-item-tooltip-text-transform": tokens.tooltipTextStyle.textTransform,
   };
 
   return {
@@ -218,6 +255,17 @@ export function toolsNavigationItemControlPrimitive(options = {}) {
         variantId: tokens.iconSize.id,
         runtimeSeam: "src/frontend/designSystem/layers/02-token/icon-size/systems/default.mjs#iconSizeTokenSpec",
       },
+      tooltipSurface: {
+        tokenName: tokens.tooltipSurface.tokenName,
+        variantId: tokens.tooltipSurface.id,
+        runtimeSeam: "src/frontend/designSystem/layers/02-token/tooltip-surface/systems/default.mjs#tooltipSurfaceTokenSpec",
+      },
+      tooltipTextStyle: {
+        tokenName: tokens.tooltipTextStyle.tokenName,
+        variantId: tokens.tooltipTextStyle.id,
+        runtimeSeam:
+          "src/frontend/designSystem/layers/02-token/tooltip-text-style/systems/default.mjs#tooltipTextStyleTokenSpec",
+      },
       minimumTargetSize: {
         tokenName: tokens.minimumTargetSize.tokenName,
         variantId: tokens.minimumTargetSize.id,
@@ -236,6 +284,7 @@ export function toolsNavigationItemControlPrimitive(options = {}) {
       "aria-pressed": active ? "true" : "false",
       "aria-disabled": unavailable ? "true" : null,
       type: "button",
+      "data-navigation-item-tooltip-placement": "inline-start",
       "data-icon-button-control-style": cssVarStyle({
         ...iconButton.styleVars,
         ...styles,
@@ -256,6 +305,7 @@ export function toolsNavigationItemControlPrimitive(options = {}) {
 
 export function renderToolsNavigationItemControlPrimitive(options = {}) {
   const spec = toolsNavigationItemControlPrimitive(options);
+  const tooltip = `<span id="${escapeHtml(`${spec.attributes.id}-tooltip`)}" class="ds-tools-navigation-item-control-tooltip" role="tooltip" data-tools-navigation-item-control-tooltip>${escapeHtml(spec.label)}</span>`;
   return renderIconButtonControlPrimitive({
     systemKey: spec.systemKey,
     theme: spec.theme,
@@ -264,11 +314,70 @@ export function renderToolsNavigationItemControlPrimitive(options = {}) {
     value: spec.value,
     icon: spec.icon,
     frameIntent: spec.active ? "subtle" : "quiet",
-  }).replace(/<button ([^>]*)>/, `<button ${toAttributeString(spec.attributes)}>`);
+  })
+    .replace(/<button ([^>]*)>/, `<button ${toAttributeString(spec.attributes)}>`)
+    .replace("</button>", `${tooltip}</button>`);
 }
 
 export function attachToolsNavigationItemControlPrimitiveController(root = document) {
   attachIconButtonControlPrimitiveController(root);
+
+  function positionTooltip(control, tooltip) {
+    const controlBox = control.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    const viewportWidth = control.ownerDocument.defaultView?.innerWidth ?? 1024;
+    const viewportHeight = control.ownerDocument.defaultView?.innerHeight ?? 768;
+    const gutter = 8;
+    const tooltipWidth = tooltipBox.width || 120;
+    const tooltipHeight = tooltipBox.height || 32;
+    const preferredInlineEnd = control.getAttribute("data-navigation-item-tooltip-placement") !== "inline-start";
+    const inlineEndLeft = controlBox.right + gutter;
+    const inlineStartLeft = controlBox.left - tooltipWidth - gutter;
+    const preferredLeft = preferredInlineEnd ? inlineEndLeft : inlineStartLeft;
+    const fallbackLeft = preferredInlineEnd ? inlineStartLeft : inlineEndLeft;
+    const left =
+      preferredLeft >= gutter && preferredLeft + tooltipWidth <= viewportWidth - gutter
+        ? preferredLeft
+        : Math.min(Math.max(fallbackLeft, gutter), Math.max(gutter, viewportWidth - tooltipWidth - gutter));
+    const top = Math.min(
+      Math.max(controlBox.top + controlBox.height / 2 - tooltipHeight / 2, gutter),
+      Math.max(gutter, viewportHeight - tooltipHeight - gutter),
+    );
+    tooltip.style.setProperty("--primitive-tools-navigation-item-tooltip-left", `${Math.round(left)}px`);
+    tooltip.style.setProperty("--primitive-tools-navigation-item-tooltip-top", `${Math.round(top)}px`);
+  }
+
+  function setTooltipOpen(control, open) {
+    const tooltip = control.querySelector("[data-tools-navigation-item-control-tooltip]");
+    if (!(tooltip instanceof HTMLElement)) {
+      return;
+    }
+    if (open) {
+      positionTooltip(control, tooltip);
+      control.dataset.navigationItemTooltipOpen = "true";
+      control.setAttribute("aria-describedby", tooltip.id);
+      control.ownerDocument.defaultView?.requestAnimationFrame(() => positionTooltip(control, tooltip));
+      return;
+    }
+    delete control.dataset.navigationItemTooltipOpen;
+    control.removeAttribute("aria-describedby");
+  }
+
+  for (const control of root.querySelectorAll("[data-tools-navigation-item-control]")) {
+    if (!(control instanceof HTMLElement) || control.dataset.toolsNavigationItemTooltipController === "attached") {
+      continue;
+    }
+    control.dataset.toolsNavigationItemTooltipController = "attached";
+    control.addEventListener("pointerenter", () => setTooltipOpen(control, true));
+    control.addEventListener("pointerleave", () => setTooltipOpen(control, false));
+    control.addEventListener("focus", () => setTooltipOpen(control, true));
+    control.addEventListener("blur", () => setTooltipOpen(control, false));
+    control.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setTooltipOpen(control, false);
+      }
+    });
+  }
 
   root.addEventListener("click", (event) => {
     const control = event.target.closest("[data-tools-navigation-item-control]");

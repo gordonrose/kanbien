@@ -45,6 +45,29 @@ describe("standard-page-shell pattern seam", () => {
     expect(html).toContain('data-search-shell-control=""');
   });
 
+  it("scopes non-original themes across the composed shell frame", () => {
+    const pattern = standardPageShellPattern({
+      id: "standard-page-shell-dark",
+      theme: "dark",
+    });
+    const html = renderStandardPageShellPattern({
+      id: "standard-page-shell-dark",
+      theme: "dark",
+    });
+
+    expect(pattern.attributes).toMatchObject({
+      "data-standard-page-shell-theme": "dark",
+      "data-theme-scope": "dark",
+    });
+    expect(pattern.styleVars["--pattern-standard-page-shell-background"]).toBe("var(--paper)");
+    expect(pattern.styleVars["--pattern-standard-page-shell-border"]).toBe("0.0625rem solid var(--line)");
+    expect(html).toContain('data-theme-scope="dark"');
+    expect(html).toContain('data-top-navigation-theme="dark"');
+    expect(html).toContain('data-sub-navigation-theme="dark"');
+    expect(html).toContain('data-context-navigation-theme="dark"');
+    expect(html).toContain('data-tools-navigation-theme="dark"');
+  });
+
   it("documents the Layer 4 boundary", () => {
     expect(standardPageShellPatternContract.requiredPatterns).toEqual([
       "top-navigation",

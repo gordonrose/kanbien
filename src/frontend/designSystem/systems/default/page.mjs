@@ -46,6 +46,7 @@ const tokenFallbackSlugs = [
   "record-list-item-frame",
   "resize-handle",
   "scrollbar-skin",
+  "sub-navigation-row-structure",
   "status-color",
   "supporting-text-style",
   "text-control-frame",

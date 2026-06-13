@@ -39,6 +39,41 @@ async function rtlHintMirrorsInsideSearch(page: Page) {
   });
 }
 
+async function visibleSlotGeometry(page: Page) {
+  return page.evaluate(() => {
+    const slot = document.querySelector("[data-sub-navigation-slot]:not([hidden])");
+    const breadcrumb = slot?.querySelector("[data-sub-navigation-region='breadcrumb']");
+    const search = slot?.querySelector("[data-sub-navigation-region='search']");
+    if (!(slot instanceof HTMLElement) || !(breadcrumb instanceof HTMLElement) || !(search instanceof HTMLElement)) {
+      return null;
+    }
+    const slotBox = slot.getBoundingClientRect();
+    const breadcrumbBox = breadcrumb.getBoundingClientRect();
+    const searchBox = search.getBoundingClientRect();
+    return {
+      slotWidth: slotBox.width,
+      breadcrumbLeft: breadcrumbBox.left - slotBox.left,
+      breadcrumbRight: breadcrumbBox.right - slotBox.left,
+      searchLeft: searchBox.left - slotBox.left,
+      searchRight: searchBox.right - slotBox.left,
+      searchCenter: searchBox.left + searchBox.width / 2 - slotBox.left,
+    };
+  });
+}
+
+async function breadcrumbTooltipBelowLabel(page: Page) {
+  return page.evaluate(() => {
+    const label = document.querySelector('[data-truncating-label][aria-label="Design briefs"]');
+    const tooltip = label?.querySelector("[data-truncating-label-tooltip]");
+    if (!(label instanceof HTMLElement) || !(tooltip instanceof HTMLElement)) {
+      return false;
+    }
+    const labelBox = label.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    return tooltipBox.top >= labelBox.bottom + 6;
+  });
+}
+
 test.describe("sub-navigation pattern route", () => {
   test("renders canonical desktop, compressed, compact, mobile, theme, and direction states", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -75,6 +110,9 @@ test.describe("sub-navigation pattern route", () => {
     await expect(pattern.getByRole("link", { name: "Workspace" })).toHaveCount(0);
     await expect(pattern.getByRole("link", { name: "Projects" })).toHaveCount(0);
     await expect(pattern.getByRole("link", { name: "Design brief" })).toHaveCount(0);
+    await pattern.locator('[data-truncating-label][aria-label="Design briefs"]').hover();
+    await expect(pattern.locator('[data-truncating-label-tooltip]:has-text("Design briefs")')).toBeVisible();
+    await expect.poll(() => breadcrumbTooltipBelowLabel(page)).toBe(true);
 
     await page.locator("[data-sub-navigation-mode-control]").selectOption("compact");
     await expect(pattern.locator("[data-breadcrumb-trail-control]:visible")).toHaveAttribute(
@@ -108,6 +146,14 @@ test.describe("sub-navigation pattern route", () => {
     await page.locator("[data-sub-navigation-mode-control]").selectOption("auto");
     await page.locator("[data-sub-navigation-width-control]").selectOption("wide");
     await expect(pattern).toHaveAttribute("data-sub-navigation-resolved-mode", "desktop");
+    await expect.poll(async () => {
+      const geometry = await visibleSlotGeometry(page);
+      return geometry ? Math.round(geometry.searchLeft - (geometry.slotWidth * 8) / 24) : Number.NaN;
+    }).toBe(0);
+    await expect.poll(async () => {
+      const geometry = await visibleSlotGeometry(page);
+      return geometry ? Math.round(geometry.searchRight - (geometry.slotWidth * 17) / 24) : Number.NaN;
+    }).toBe(0);
 
     await page.locator("[data-sub-navigation-width-control]").selectOption("roomy");
     await expect(pattern).toHaveAttribute("data-sub-navigation-resolved-mode", "compressed");
@@ -118,6 +164,14 @@ test.describe("sub-navigation pattern route", () => {
     await page.locator("[data-sub-navigation-width-control]").selectOption("compact");
     await expect(pattern).toHaveAttribute("data-sub-navigation-resolved-mode", "compact");
     await expect(pattern.getByRole("button", { name: "Open page structure menu" })).toBeVisible();
+    await expect.poll(async () => {
+      const geometry = await visibleSlotGeometry(page);
+      return geometry ? geometry.breadcrumbRight <= geometry.searchLeft + 1 : false;
+    }).toBe(true);
+    await expect.poll(async () => {
+      const geometry = await visibleSlotGeometry(page);
+      return geometry ? Math.round(geometry.searchLeft - geometry.breadcrumbRight) : Number.NaN;
+    }).toBeLessThanOrEqual(80);
 
     await page.locator("[data-sub-navigation-width-control]").selectOption("mobile");
     await expect(pattern).toHaveAttribute("data-sub-navigation-resolved-mode", "mobile");

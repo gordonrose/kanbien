@@ -11,3 +11,5 @@ activation event logging.
 Glyph artwork is resolved through the default system registry at
 `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry`;
 the shared primitive owns only the semantic glyph names and button behavior.
+The proof includes the signpost semantic glyph used by compact breadcrumb menu
+triggers.

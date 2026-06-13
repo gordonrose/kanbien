@@ -80,6 +80,10 @@ export const defaultGlyphRegistry = {
       semanticName: "sort",
       svgPath: "M7 8h10M9 12h6M11 16h2",
     },
+    signpost: {
+      semanticName: "signpost",
+      svgPath: "M12 21V5M7 5h10l2 3-2 3H7zM5 11h10l2 3-2 3H5z",
+    },
   },
 };
 

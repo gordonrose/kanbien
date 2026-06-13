@@ -66,6 +66,11 @@ When the primitive owns focus, focus and pointer hover reveal the full text in
 the disclosure surface. Click or tap toggles the disclosure surface. Escape
 dismisses the disclosure.
 
+The primitive supports a `tooltipPlacement` option. `auto` preserves the
+default viewport-fit behavior. `below` and `above` let later governed
+composition seams avoid known host chrome collisions while still falling back
+to a viewport-contained position when the requested side cannot fit.
+
 When a containing interactive primitive owns focus, `truncating-label` may be
 rendered non-focusable so it does not create nested focus targets. Pointer hover
 still reveals full text when overflow is present.
@@ -105,6 +110,7 @@ consumer obligations.
 | `focus-visible` | Focus reveals disclosure and uses the signed focus-ring token without layout shift. |
 | `pointer-hover` | Hover reveals disclosure without emitting an app action. |
 | `touch-toggle` | Tap toggles disclosure without changing the label value or emitting an app action. |
+| `placement-requested` | A governed consumer may request `auto`, `below`, or `above` tooltip placement to avoid host chrome collisions. |
 
 ## Data Or Event Contract
 
@@ -149,7 +155,7 @@ or product-specific wrapper.
 
 | Evidence Area | Requirement |
 | --- | --- |
-| behavior | `tests/unit/designSystem/truncatingLabelPrimitive.test.ts` shows full value preservation, supported themes, token resolution, rejected missing text, unsupported systems, render seam ownership, and no inline `style` attribute. |
+| behavior | `tests/unit/designSystem/truncatingLabelPrimitive.test.ts` shows full value preservation, supported themes, token resolution, explicit placement requests, rejected missing text, unsupported systems, render seam ownership, and no inline `style` attribute. |
 | accessibility | `tests/visual/designSystem/primitives/truncatingLabelPrimitiveRoute.spec.ts` shows focusability, full accessible value, `aria-describedby`, Escape dismissal, visible focus behavior, and click/tap toggle behavior. |
 | token consumption | Unit proof shows visual declarations are sourced from signed Layer 2 seams and carried by the primitive seam instead of local visual literals. |
 | rendered verification | Desktop and mobile browser proof shows truncation, no overlap, disclosure reveal, RTL stability, operable navigation, and contained target sizing. |

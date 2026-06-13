@@ -41,10 +41,10 @@ Patterns may select the intent that fits their composition, such as a quiet
 icon button in a dense panel header. Patterns must not invent their own colour
 calculation or local frame values.
 
-Supported decorative glyph names are `plus`, `close`, and `list`. These names
-are semantic primitive choices, not shared artwork. The selected design-system
-implementation supplies the actual glyph drawing through its glyph registry.
-For the default system, that registry is
+Supported decorative glyph names are `plus`, `close`, `list`, `filter`,
+`sort`, and `signpost`. These names are semantic primitive choices, not shared
+artwork. The selected design-system implementation supplies the actual glyph
+drawing through its glyph registry. For the default system, that registry is
 `src/frontend/designSystem/layers/03-primitive/glyph-registry/systems/default.mjs#defaultGlyphRegistry`.
 
 The glyph never provides the accessible name; consumers must still provide the

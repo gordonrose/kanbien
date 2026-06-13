@@ -17,6 +17,7 @@ Status: review-ready
 
 The proof renders resting, active, and unavailable native button controls using
 the signed `tools-navigation-frame` token, shared focus, target, label, and
-icon tokens, and the default glyph registry. The route shows the controls in a
-contained right-rail specimen plus a state inspector so the visual review does
-not collapse to isolated letter placeholders.
+icon tokens, governed tooltip surface and text-style tokens, and the default
+glyph registry. The route shows the controls in a contained right-rail specimen
+plus a state inspector so the visual review does not collapse to isolated
+letter placeholders.

@@ -113,6 +113,27 @@ describe("icon-button-control primitive seam", () => {
     expect(html).toContain(resolveDefaultGlyphPath("list"));
   });
 
+  it("supports a governed signpost glyph for compact navigation menu buttons", () => {
+    const control = iconButtonControlPrimitive({
+      id: "open-page-structure",
+      label: "Open page structure menu",
+      value: "page-structure",
+      icon: "signpost",
+      frameIntent: "subtle",
+    });
+    const html = renderIconButtonControlPrimitive({
+      id: "open-page-structure",
+      label: "Open page structure menu",
+      value: "page-structure",
+      icon: "signpost",
+      frameIntent: "subtle",
+    });
+
+    expect(control.icon).toBe("signpost");
+    expect(control.attributes["aria-label"]).toBe("Open page structure menu");
+    expect(html).toContain(resolveDefaultGlyphPath("signpost"));
+  });
+
   it("keeps default glyph artwork in the selected-system registry", () => {
     expect(defaultGlyphRegistry).toMatchObject({
       schema: "kanbien.designSystem.glyphRegistry.v1",
@@ -121,6 +142,7 @@ describe("icon-button-control primitive seam", () => {
         close: { semanticName: "close" },
         list: { semanticName: "list" },
         plus: { semanticName: "plus" },
+        signpost: { semanticName: "signpost" },
       },
     });
     expect(resolveDefaultGlyphPath("plus")).toBe(defaultGlyphRegistry.glyphs.plus.svgPath);
@@ -130,7 +152,7 @@ describe("icon-button-control primitive seam", () => {
     expect(iconButtonControlPrimitiveContract).toMatchObject({
       primitiveName: "icon-button-control",
       eventName: "icon-button-control:activate",
-      supportedIcons: ["plus", "close", "list", "filter", "sort"],
+      supportedIcons: ["plus", "close", "list", "filter", "sort", "signpost"],
       supportedFrameIntents: ["quiet", "subtle"],
       requiredTokens: ["button-frame", "icon-size", "focus-ring", "minimum-target-size"],
       requiredSystemRegistries: ["glyph-registry"],

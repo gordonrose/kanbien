@@ -23,9 +23,25 @@ test.describe("standard-page-shell pattern route", () => {
     await expect(shell).toHaveAttribute("data-standard-page-shell-mode", "compressed");
     await expect(shell.locator("[data-sub-navigation]")).toHaveAttribute("data-sub-navigation-mode", "compressed");
 
-    await page.locator("[data-standard-page-shell-theme-control]").selectOption("desert");
-    await expect(shell).toHaveAttribute("data-standard-page-shell-theme", "desert");
-    await expect(shell.locator("[data-sub-navigation]")).toHaveAttribute("data-sub-navigation-theme", "desert");
+    await page.locator("[data-standard-page-shell-theme-control]").selectOption("dark");
+    await expect(shell).toHaveAttribute("data-standard-page-shell-theme", "dark");
+    await expect(shell).toHaveAttribute("data-theme-scope", "dark");
+    await expect(shell.locator("[data-sub-navigation]")).toHaveAttribute("data-sub-navigation-theme", "dark");
+    await expect(shell.locator("[data-context-navigation]")).toHaveAttribute("data-context-navigation-theme", "dark");
+    await expect(shell.locator("[data-tools-navigation]")).toHaveAttribute("data-tools-navigation-theme", "dark");
+    await expect(shell.locator(".ds-standard-page-shell-body")).toHaveCSS("background-color", "rgb(11, 13, 18)");
+    await expect(shell.locator(".ds-standard-page-shell-body-card")).toHaveCSS(
+      "background-color",
+      "rgb(16, 19, 24)",
+    );
+    await expect(shell.locator(".ds-context-navigation-rail")).toHaveCSS(
+      "background-color",
+      "rgba(16, 19, 24, 0.98)",
+    );
+    await expect(shell.locator(".ds-tools-navigation-rail")).toHaveCSS(
+      "background-color",
+      "rgba(16, 19, 24, 0.98)",
+    );
     await page.locator("[data-standard-page-shell-direction-control]").selectOption("rtl");
     await expect(shell).toHaveAttribute("dir", "rtl");
     await expect(shell.locator("[data-sub-navigation]")).toHaveAttribute("dir", "rtl");

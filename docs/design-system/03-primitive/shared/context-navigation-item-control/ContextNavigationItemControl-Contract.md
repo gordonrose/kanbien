@@ -28,8 +28,10 @@ It decides whether the item is a native destination link or a native utility but
 - `focus-ring`
 - `label-text-style`
 - `icon-size`
+- `tooltip-surface`
+- `tooltip-text-style`
 
-The primitive may consume these token seams only through the signed runtime modules. It must not copy frame, target, focus, label, or icon-size values into app CSS.
+The primitive may consume these token seams only through the signed runtime modules. It must not copy frame, target, focus, label, icon-size, or tooltip values into app CSS.
 
 ## System Dependencies
 
@@ -52,6 +54,8 @@ tokens.
 - Disabled items render as native disabled buttons and deny activation.
 - Keyboard behavior follows native link and button behavior.
 - Focus remains on the activated control unless downstream routing changes the page.
+- Pointer hover and keyboard focus disclose a governed tooltip containing the
+  item label; `Escape` dismisses the tooltip without activating the item.
 
 ## Accessibility
 
@@ -59,7 +63,8 @@ tokens.
 - The visual icon slot is `aria-hidden` and cannot replace the text label.
 - Current meaning is programmatic at this layer and visual affordance comes from `context-navigation-item-affordance`.
 - The primitive must preserve the signed minimum target size and visible focus ring.
-- This primitive does not own long-label truncation or tooltip disclosure; a later composition must consume an approved text-disclosure primitive when labels can overflow.
+- The primitive owns the item-label tooltip disclosure for icon-only rail
+  presentation; long visible-label truncation remains out of scope.
 
 ## Consumer Boundary
 
@@ -74,7 +79,8 @@ Denied:
 - Do not invent context-navigation current-state styling in this primitive.
 - Do not nest another focusable control inside this item.
 - Do not copy this route's proof markup into app pages.
-- Do not add local ellipsis, clipping, or tooltip behavior for long labels.
+- Do not add local ellipsis, clipping, or alternate tooltip behavior for long
+  labels.
 
 ## Proof
 

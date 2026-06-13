@@ -15,7 +15,7 @@ const items = [
 ];
 
 describe("breadcrumb-trail-control primitive", () => {
-  it("resolves signed tokens and the truncating-label primitive dependency", () => {
+  it("resolves signed tokens and primitive dependencies", () => {
     const spec = breadcrumbTrailControlPrimitive({
       id: "breadcrumb-test",
       items,
@@ -30,6 +30,7 @@ describe("breadcrumb-trail-control primitive", () => {
         focusRing: { variantId: "focus-ring-visible-original" },
         minimumTargetSize: { variantId: "target-size-interactive-all" },
         truncatingLabel: { primitiveName: "truncating-label" },
+        iconButtonControl: { primitiveName: "icon-button-control" },
       },
     });
     expect(spec.visibleItems.map((item: { id: string }) => item.id)).toEqual(["home", "current"]);
@@ -45,6 +46,7 @@ describe("breadcrumb-trail-control primitive", () => {
 
     expect(html).toContain('data-breadcrumb-trail-control=""');
     expect(html).toContain('data-truncating-label=""');
+    expect(html).toContain('data-truncating-label-tooltip-placement="below"');
     expect(html).toContain('aria-current="page"');
     expect(html.indexOf("Open hidden breadcrumb menu")).toBeLessThan(html.indexOf("Design brief"));
     expect(html).toContain('role="menu"');
@@ -57,9 +59,27 @@ describe("breadcrumb-trail-control primitive", () => {
       "label-text-style",
       "focus-ring",
       "minimum-target-size",
+      "icon-size",
     ]);
-    expect(breadcrumbTrailControlPrimitiveContract.primitiveDependencies).toEqual(["truncating-label"]);
+    expect(breadcrumbTrailControlPrimitiveContract.primitiveDependencies).toEqual([
+      "truncating-label",
+      "icon-button-control",
+    ]);
     expect(breadcrumbTrailControlPrimitiveContract.consumerRules.join(" ")).toContain("sub-navigation row placement");
     expect(breadcrumbTrailControlPrimitive().tokenDependencies).not.toHaveProperty("searchFieldControl");
+  });
+
+  it("renders compact collapse as a signpost icon button", () => {
+    const html = renderBreadcrumbTrailControlPrimitive({
+      id: "breadcrumb-compact",
+      items,
+      mode: "compact",
+    });
+
+    expect(html).toContain('aria-label="Open page structure menu"');
+    expect(html).toContain('data-icon-button-control=""');
+    expect(html).toContain("ds-breadcrumb-trail-control-compact-trigger");
+    expect(html).toContain("M12 21V5");
+    expect(html).not.toContain(">...</button>");
   });
 });

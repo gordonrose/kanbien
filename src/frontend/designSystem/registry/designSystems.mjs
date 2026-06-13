@@ -69,6 +69,8 @@ export const designSystems = {
       indexNavPanelFrame: () => import("../systems/default/tokens/proofs/indexNavPanelFrame.tokens.mjs"),
       scrollbarSkin: () => import("../systems/default/tokens/proofs/scrollbarSkin.tokens.mjs"),
       standardPageShellFrame: () => import("../systems/default/tokens/proofs/standardPageShellFrame.tokens.mjs"),
+      subNavigationRowStructure: () =>
+        import("../systems/default/tokens/proofs/subNavigationRowStructure.tokens.mjs"),
       statusColor: () => import("../systems/default/tokens/proofs/statusColor.tokens.mjs"),
       labelTextStyle: () => import("../systems/default/tokens/proofs/labelTextStyle.tokens.mjs"),
       minimumTargetSize: () => import("../systems/default/tokens/proofs/minimumTargetSize.tokens.mjs"),

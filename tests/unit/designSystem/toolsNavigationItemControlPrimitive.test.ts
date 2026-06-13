@@ -28,6 +28,12 @@ describe("tools-navigation-item-control primitive seam", () => {
           tokenName: "--tools-navigation-frame",
           variantId: "tools-navigation-frame-default",
         },
+        tooltipSurface: {
+          tokenName: "--tooltip-surface-original",
+        },
+        tooltipTextStyle: {
+          tokenName: "--tooltip-text-style-default",
+        },
       },
       systemDependencies: {
         glyphRegistry: {
@@ -57,6 +63,9 @@ describe("tools-navigation-item-control primitive seam", () => {
     expect(html).toContain('data-tools-navigation-item-control=""');
     expect(html).toContain("ds-icon-button-control");
     expect(html).toContain("ds-icon-button-control-glyph");
+    expect(html).toContain('role="tooltip"');
+    expect(html).toContain('data-tools-navigation-item-control-tooltip');
+    expect(html).toContain('data-navigation-item-tooltip-placement="inline-start"');
     expect(html).toContain('aria-label="Audit unavailable"');
     expect(html).toContain('aria-disabled="true"');
   });
@@ -77,6 +86,8 @@ describe("tools-navigation-item-control primitive seam", () => {
       }),
     ).toThrow('tools-navigation-item-control does not support icon "missing".');
     expect(toolsNavigationItemControlPrimitiveContract.requiredTokens).toContain("tools-navigation-frame");
+    expect(toolsNavigationItemControlPrimitiveContract.requiredTokens).toContain("tooltip-surface");
+    expect(toolsNavigationItemControlPrimitiveContract.requiredTokens).toContain("tooltip-text-style");
     expect(toolsNavigationItemControlPrimitiveContract.requiredSystemRegistries).toContain("glyph-registry");
     expect(toolsNavigationItemControlPrimitiveContract.iconButtonControlCompatibility).toMatchObject({
       relatedPrimitive: "icon-button-control",

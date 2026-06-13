@@ -60,6 +60,12 @@ The runtime seam composes those child patterns directly. Later component seam,
 use-case page, canonical, parity, and app adoption work may consume the shell
 only after their own layer gates pass.
 
+The selected non-original theme must be emitted as the shell's
+`data-theme-scope` so shell-owned body, context rail, tools rail, and composed
+child patterns resolve against one scoped palette. The shell may pass theme
+inputs to child patterns, but it must not leave the page body or side rail
+surfaces outside the active theme scope.
+
 ## Forbidden Work
 
 - Do not create a standard-page-shell runtime composition from route-local
@@ -76,6 +82,7 @@ only after their own layer gates pass.
 | top-navigation | `top-navigation` appears as consumable in `docs/design-system/04-pattern-contract/pattern-readiness-index.md`. |
 | sub-navigation | `sub-navigation` appears as consumable in `docs/design-system/04-pattern-contract/pattern-readiness-index.md`. |
 | child preservation | Unit coverage proves the standard shell consumes child pattern seams instead of rebuilding their markup or controller behavior. |
+| theme scope | Unit and browser coverage prove non-original themes apply to the shell frame, side rails, page body, and child pattern seams. |
 | rendered shell proof | A `/design-system/default/patterns/standard-page-shell` proof route shows desktop, reduced-width, mobile, RTL, and overflow states with child seams intact. |
 | browser evidence | Visual or browser tests prove context bottom bar pinning, tools-nav mobile hiding, top/sub chrome attachment, and page body non-overlap. |
 

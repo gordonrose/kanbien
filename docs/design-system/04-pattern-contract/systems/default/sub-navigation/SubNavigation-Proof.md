@@ -20,6 +20,13 @@
 - `docs/workspace/design-system/behavior-locks/search-shell-behavior-lock.md`
 - `docs/workspace/design-system/reference-packs/search-shell-reference-pack.md`
 
+## Proved Token Consumption
+
+| Token | Runtime seam |
+| --- | --- |
+| `standard-page-shell-frame` | `src/frontend/designSystem/layers/02-token/standard-page-shell-frame/systems/default.mjs#standardPageShellFrameTokenSpec` |
+| `sub-navigation-row-structure` | `src/frontend/designSystem/layers/02-token/sub-navigation-row-structure/systems/default.mjs#subNavigationRowStructureTokenSpec` |
+
 ## Proved Variants
 
 | Variant | Evidence |
@@ -30,10 +37,12 @@
 | Mobile | Breadcrumb is absent and search fills the viewport row. |
 | RTL | Direction is passed through to child primitives. |
 | Themes | Original, dark, and desert route controls reuse child primitive token seams. |
-| Auto resize | Pattern controller resolves row slots from rendered inline size. |
+| Auto resize | Pattern controller resolves row slots from rendered inline size and signed row-structure columns. |
+| Breadcrumb tooltip placement | Long breadcrumb-label disclosure is requested below the label so it does not collide with top-navigation chrome. |
 
 ## Audit
 
-The proof composes only `breadcrumb-trail-control` and `search-shell-control`.
-It does not invent lower-layer breadcrumb links, search inputs, row tokens,
-search results, route generation, component props, or app-local CSS.
+The proof composes only `breadcrumb-trail-control` and `search-shell-control`
+inside the signed `sub-navigation-row-structure` lane map. It does not invent
+lower-layer breadcrumb links, search inputs, row tokens, search results, route
+generation, component props, or app-local CSS.

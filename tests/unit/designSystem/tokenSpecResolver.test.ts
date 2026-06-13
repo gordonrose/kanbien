@@ -64,6 +64,21 @@ describe("design-system token spec resolver", () => {
       systemKey: "default",
       tokenType: "tools-navigation-frame",
     });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "sub-navigation-row-structure" })).toMatchObject({
+      contractId: "tokens.sub-navigation-row-structure",
+      systemKey: "default",
+      tokenType: "sub-navigation-row-structure",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "tooltip-surface" })).toMatchObject({
+      contractId: "tokens.tooltip-surface",
+      systemKey: "default",
+      tokenType: "tooltip-surface",
+    });
+    expect(resolveTokenSpec({ systemKey: "default", tokenType: "tooltip-text-style" })).toMatchObject({
+      contractId: "tokens.tooltip-text-style",
+      systemKey: "default",
+      tokenType: "text-style",
+    });
   });
 
   it("rejects unknown systems and unknown token types without falling back", () => {
