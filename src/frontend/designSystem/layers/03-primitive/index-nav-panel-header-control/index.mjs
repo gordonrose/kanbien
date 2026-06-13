@@ -46,11 +46,15 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
-function tokenDependenciesFor() {
+function themedVariantId(baseId, theme) {
+  return theme === "original" ? `${baseId}-default` : `${baseId}-${theme}`;
+}
+
+function tokenDependenciesFor({ theme }) {
   const headerFrame = findVariant(
     indexNavPanelFrameTokenSpec,
-    (variant) => variant.id === "index-nav-panel-header-default",
-    "index-nav-panel-header-control requires the signed index-nav panel header frame token.",
+    (variant) => variant.id === themedVariantId("index-nav-panel-header", theme),
+    `index-nav-panel-header-control requires the signed ${theme} index-nav panel header frame token.`,
   );
   const labelTextStyle = findVariant(
     labelTextStyleTokenSpec,
@@ -128,7 +132,7 @@ export function indexNavPanelHeaderControlPrimitive(options = {}) {
   assertString(addLabel, "addLabel");
   assertString(actionIcon, "actionIcon");
 
-  const tokens = tokenDependenciesFor();
+  const tokens = tokenDependenciesFor({ theme });
 
   return {
     schema: "kanbien.designSystem.primitiveSpec.v1",

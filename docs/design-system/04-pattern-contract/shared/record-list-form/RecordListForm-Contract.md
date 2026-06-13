@@ -60,6 +60,11 @@ The hosted primary index must be passed into the hosted `entity-panel` seam.
 This pattern must not render a parent-owned primary-index wrapper around or
 beside the hosted entity panel.
 
+When a record opens into a mobile-width hosted entity panel and the hosted
+primary index exists, `record-list-form` sets the entity panel's active mobile
+region to `primary-index`. Primary-to-secondary and secondary-to-body
+transitions remain owned by the hosted `entity-panel` seam.
+
 Hosted entity-panel body content must already be governed by its own primitive
 or pattern seam before later layers treat it as real form UI.
 
@@ -88,9 +93,9 @@ by `record-list`.
 
 The rendered proof must expose controls for theme, direction, width pressure,
 list/detail ratio, fixture count, selected record, hosted primary-index
-presence, hosted secondary-index presence, hosted secondary header, hosted
-secondary resize, hosted secondary fixture count, hosted mobile active region,
-and hosted body content pressure.
+presence, hosted primary resize, hosted secondary-index presence, hosted
+secondary header, hosted secondary resize, hosted secondary fixture count,
+hosted mobile active region, and hosted body content pressure.
 
 ## Consumer Restrictions
 

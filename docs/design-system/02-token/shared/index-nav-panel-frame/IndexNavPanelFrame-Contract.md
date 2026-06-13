@@ -29,7 +29,8 @@ relationships, or app adoption.
 
 | Scope | Token Decision | Value |
 | --- | --- | --- |
-| `shared contract` | Required roles | `panel frame`; `panel action` |
+| `shared contract` | Required roles | `panel frame`; `panel header`; `panel action` |
+| `system implementation` | Supported themes | `original`; `dark`; `desert` |
 | `system implementation` | Minimum desktop panel width | `10rem` |
 | `system implementation` | Standard panel width | `13rem` |
 | `system implementation` | Double panel width | `26rem` |
@@ -52,5 +53,9 @@ relationships, or app adoption.
 Consumers must not hard-code index-nav panel min width, max width, standard
 width, double width, breakpoint, padding, surface, radius, or scroll-height
 values in primitives, patterns, components, templates, or app pages.
+
+Consumers must select the same-theme frame variant for panel, header, and
+action values. Theme attributes alone are not sufficient when the consumed
+frame variables still point at the original light variant.
 
 Consumers must not treat proof-only width controls as new signed token values.

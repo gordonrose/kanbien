@@ -22,9 +22,10 @@ content without promoting a full entity-management template.
 
 The proof route includes controls for theme, direction, width pressure,
 list/detail ratio, fixture count, selected record, hosted primary-index
-presence, hosted secondary-index presence, hosted secondary header, hosted
-secondary resize, hosted secondary fixture count, hosted mobile active region,
-and hosted body content pressure. These are review controls. They prove child
+presence, hosted primary resize, hosted secondary-index presence, hosted
+secondary header, hosted secondary resize, hosted secondary fixture count,
+hosted mobile active region, and hosted body content pressure. These are review
+controls. They prove child
 pattern composition, mobile detail overlay posture, empty state,
 selected-record switching, and hosted entity-panel behavior without becoming
 downstream consumer values.

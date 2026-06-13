@@ -58,7 +58,10 @@ describe("record-list-form pattern seam", () => {
       primaryItems: [{ value: "identity", label: "Identity" }],
       primaryCurrent: "identity",
       showPrimaryIndex: true,
+      primaryResizable: true,
       secondaryItems: [{ value: "identity", label: "Identity" }],
+      showSecondaryHeader: true,
+      secondaryResizable: true,
       entityBodyHtmlByItemId: {
         northstar: '<p data-northstar-body="">Northstar governed body</p>',
         ledgerworks: '<p data-ledgerworks-body="">LedgerWorks governed body</p>',
@@ -72,6 +75,9 @@ describe("record-list-form pattern seam", () => {
     expect(html).toContain('data-detail-slot-control=""');
     expect(html).toContain('data-entity-panel=""');
     expect(html).toContain('data-entity-panel-region="primary-index"');
+    expect(html).toContain('data-resize-handle-control-target-id="record-list-form-render-entity-panel-northstar-primary-index"');
+    expect(html).toContain('data-index-nav-panel-header-mode="shown"');
+    expect(html).toContain('data-resize-handle-control-target-id="record-list-form-render-entity-panel-northstar-secondary-index"');
     expect(html).not.toContain("ds-record-list-form-primary");
     expect(html).toContain('data-record-list-form-detail-item="northstar"');
     expect(html).toContain('data-record-list-form-detail-item="ledgerworks" hidden');

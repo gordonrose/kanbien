@@ -72,6 +72,10 @@ function findVariant(tokenSpec, predicate, missingMessage) {
   return variant;
 }
 
+function themedVariantId(baseId, theme) {
+  return theme === "original" ? `${baseId}-default` : `${baseId}-${theme}`;
+}
+
 function normalizeItems(items) {
   if (!Array.isArray(items)) {
     throw new TypeError("items must be an array.");
@@ -110,12 +114,12 @@ function normalizeHeaderActions(actions) {
   });
 }
 
-function tokenDependenciesFor({ systemKey }) {
+function tokenDependenciesFor({ systemKey, theme }) {
   const proof = getSystemProof(systemKey);
   const panelFrame = findVariant(
     proof.indexNavPanelFrameTokenSpec,
-    (variant) => variant.id === "index-nav-panel-frame-default",
-    "index-nav-panel requires a signed index-nav-panel-frame token.",
+    (variant) => variant.id === themedVariantId("index-nav-panel-frame", theme),
+    `index-nav-panel requires a signed ${theme} index-nav-panel-frame token.`,
   );
   const labelTextStyle = findVariant(
     proof.labelTextStyleTokenSpec,
@@ -178,7 +182,7 @@ export function indexNavPanelPattern(options = {}) {
     throw new RangeError(`index-nav-panel does not support mobileMode "${mobileMode}".`);
   }
 
-  const tokens = tokenDependenciesFor({ systemKey });
+  const tokens = tokenDependenciesFor({ systemKey, theme });
   const inlineSize = widthMode === "double" ? tokens.panelFrame.doubleInlineSize : tokens.panelFrame.standardInlineSize;
 
   return {

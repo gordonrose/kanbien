@@ -58,6 +58,25 @@ describe("entity-panel pattern seam", () => {
     expect(html).toContain("Body placeholder");
   });
 
+  it("uses same-theme panel frame values for dark entity panels", () => {
+    const panel = entityPanelPattern({
+      id: "dark-entity-panel",
+      title: "Identity",
+      theme: "dark",
+      secondaryItems: [{ label: "Primary Details", value: "primary-details" }],
+    });
+
+    expect(panel.tokenDependencies.panelFrame).toMatchObject({
+      tokenName: "--panel-frame-dark",
+      variantId: "panel-frame-dark",
+    });
+    expect(panel.styleVars).toMatchObject({
+      "--pattern-entity-panel-background": "#171b22",
+      "--pattern-entity-panel-foreground": "#f4f7fb",
+      "--pattern-entity-panel-border": "#303845",
+    });
+  });
+
   it("renders the supported hidden secondary-index and mobile active-region states", () => {
     const html = renderEntityPanelPattern({
       id: "entity-panel-state-render",

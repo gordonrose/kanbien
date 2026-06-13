@@ -54,6 +54,7 @@ const reviewState = {
   ratio: "1:2",
   selectedItemId: "northstar",
   primaryMode: "shown",
+  primaryResizeMode: "off",
   secondaryMode: "shown",
   secondaryHeaderMode: "hidden",
   secondaryResizeMode: "off",
@@ -219,9 +220,21 @@ function renderControls() {
         <option value="shown" ${selected("primaryMode", "shown")}>Shown</option>
         <option value="hidden" ${selected("primaryMode", "hidden")}>Hidden</option>
       </select></label>
+      <label>Entity primary resize<select data-record-list-form-control="primaryResizeMode">
+        <option value="off" ${selected("primaryResizeMode", "off")}>Hidden</option>
+        <option value="on" ${selected("primaryResizeMode", "on")}>Shown</option>
+      </select></label>
       <label>Entity secondary index<select data-record-list-form-control="secondaryMode">
         <option value="shown" ${selected("secondaryMode", "shown")}>Shown</option>
         <option value="hidden" ${selected("secondaryMode", "hidden")}>Hidden</option>
+      </select></label>
+      <label>Entity secondary header<select data-record-list-form-control="secondaryHeaderMode">
+        <option value="hidden" ${selected("secondaryHeaderMode", "hidden")}>Hidden</option>
+        <option value="shown" ${selected("secondaryHeaderMode", "shown")}>Shown</option>
+      </select></label>
+      <label>Entity secondary resize<select data-record-list-form-control="secondaryResizeMode">
+        <option value="off" ${selected("secondaryResizeMode", "off")}>Hidden</option>
+        <option value="on" ${selected("secondaryResizeMode", "on")}>Shown</option>
       </select></label>
       <label>Entity mobile region<select data-record-list-form-control="mobileActiveRegion">
         <option value="body" ${selected("mobileActiveRegion", "body")}>Body</option>
@@ -244,6 +257,7 @@ function normalizeSelection() {
 
 function renderProof() {
   normalizeSelection();
+  document.documentElement.dataset.theme = reviewState.theme === "original" ? "normal" : reviewState.theme;
   const items = proofItems();
   const entitySecondaryItems = secondaryItemsForState();
   const patternSpec = recordListFormPattern({
@@ -257,10 +271,12 @@ function renderProof() {
     primaryItems: primaryItemFixtures,
     primaryCurrent: "identity",
     showPrimaryIndex: reviewState.primaryMode === "shown",
-    primaryResizable: false,
+    primaryResizable: reviewState.primaryResizeMode === "on",
     secondaryItems: entitySecondaryItems,
     secondaryCurrent: entitySecondaryItems[0]?.value ?? null,
     showSecondaryIndex: reviewState.secondaryMode === "shown",
+    showSecondaryHeader: reviewState.secondaryHeaderMode === "shown",
+    secondaryResizable: reviewState.secondaryResizeMode === "on",
     mobileActiveRegion: reviewState.mobileActiveRegion,
     entityBodyHtmlByItemId: bodyByItemId(),
     items,
@@ -297,10 +313,12 @@ function renderProof() {
               primaryItems: primaryItemFixtures,
               primaryCurrent: "identity",
               showPrimaryIndex: reviewState.primaryMode === "shown",
-              primaryResizable: false,
+              primaryResizable: reviewState.primaryResizeMode === "on",
               secondaryItems: entitySecondaryItems,
               secondaryCurrent: entitySecondaryItems[0]?.value ?? null,
               showSecondaryIndex: reviewState.secondaryMode === "shown",
+              showSecondaryHeader: reviewState.secondaryHeaderMode === "shown",
+              secondaryResizable: reviewState.secondaryResizeMode === "on",
               mobileActiveRegion: reviewState.mobileActiveRegion,
               entityBodyHtmlByItemId: bodyByItemId(),
               items,
@@ -311,7 +329,7 @@ function renderProof() {
             <div><dt>Pattern seam</dt><dd><code>recordListFormPattern</code></dd></div>
             <div><dt>Child patterns</dt><dd><code>${patternSpec.childPatterns.recordList.patternName}; ${patternSpec.childPatterns.entityPanels[0]?.patternName ?? "none"}</code></dd></div>
             <div><dt>Selected record</dt><dd><code>${patternSpec.selectedItemId || "none"}</code></dd></div>
-            <div><dt>Hosted entity panel</dt><dd><code>primary ${reviewState.primaryMode}; secondary ${reviewState.secondaryMode}; mobile ${reviewState.mobileActiveRegion}; body ${reviewState.bodyLength}</code></dd></div>
+            <div><dt>Hosted entity panel</dt><dd><code>primary ${reviewState.primaryMode}/${reviewState.primaryResizeMode}; secondary ${reviewState.secondaryMode}/${reviewState.secondaryHeaderMode}/${reviewState.secondaryResizeMode}; mobile ${reviewState.mobileActiveRegion}; body ${reviewState.bodyLength}</code></dd></div>
           </dl>
         </section>
       </div>
@@ -347,7 +365,10 @@ function renderProof() {
         name === "ratio" ||
         name === "selectedItemId" ||
         name === "primaryMode" ||
+        name === "primaryResizeMode" ||
         name === "secondaryMode" ||
+        name === "secondaryHeaderMode" ||
+        name === "secondaryResizeMode" ||
         name === "mobileActiveRegion" ||
         name === "bodyLength"
       ) {

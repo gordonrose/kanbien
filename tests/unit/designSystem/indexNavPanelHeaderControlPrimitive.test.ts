@@ -36,6 +36,25 @@ describe("index-nav-panel-header-control primitive seam", () => {
     });
   });
 
+  it("uses the same-theme header frame token for dark headers", () => {
+    const header = indexNavPanelHeaderControlPrimitive({
+      id: "dark-primary-index-header",
+      title: "Primary index",
+      theme: "dark",
+      addLabel: "Add index item",
+    });
+
+    expect(header.tokenDependencies.headerFrame).toMatchObject({
+      tokenName: "--index-nav-panel-header-frame-dark",
+      variantId: "index-nav-panel-header-dark",
+    });
+    expect(header.styleVars).toMatchObject({
+      "--primitive-index-nav-panel-header-background": "inherit",
+      "--primitive-index-nav-panel-header-foreground": "inherit",
+      "--primitive-index-nav-panel-header-separator": "#303845",
+    });
+  });
+
   it("renders a header with governed icon-button action", () => {
     const html = renderIndexNavPanelHeaderControlPrimitive({
       id: "primary-index-header",

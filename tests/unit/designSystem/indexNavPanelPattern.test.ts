@@ -43,6 +43,26 @@ describe("index-nav-panel pattern seam", () => {
     });
   });
 
+  it("uses same-theme frame tokens for dark index-nav panels", () => {
+    const panel = indexNavPanelPattern({
+      id: "dark-index-panel",
+      title: "Primary index",
+      theme: "dark",
+      currentValue: "identity",
+      items,
+    });
+
+    expect(panel.tokenDependencies.panelFrame).toMatchObject({
+      tokenName: "--index-nav-panel-frame-dark",
+      variantId: "index-nav-panel-frame-dark",
+    });
+    expect(panel.styleVars).toMatchObject({
+      "--pattern-index-nav-panel-background": "#171b22",
+      "--pattern-index-nav-panel-foreground": "#f4f7fb",
+      "--pattern-index-nav-panel-border": "#303845",
+    });
+  });
+
   it("renders panel header, add action, list, and empty state without route-local proof classes", () => {
     const html = renderIndexNavPanelPattern({
       id: "primary-index-panel",

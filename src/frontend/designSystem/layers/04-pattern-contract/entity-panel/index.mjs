@@ -16,6 +16,7 @@ import {
 } from "../entity-body-panel/index.mjs";
 
 const patternName = "entity-panel";
+const attachedEntityPanelRoots = new WeakSet();
 
 function assertString(value, fieldName) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -70,11 +71,15 @@ function normalizeIndexItems(items, fieldName) {
   });
 }
 
-function tokenDependenciesFor() {
+function panelFrameIdForTheme(theme) {
+  return theme === "original" ? "panel-frame-default" : `panel-frame-${theme}`;
+}
+
+function tokenDependenciesFor({ theme }) {
   const panelFrame = findVariant(
     panelFrameTokenSpec,
-    (variant) => variant.id === "panel-frame-default",
-    "entity-panel requires a signed generic panel-frame token.",
+    (variant) => variant.id === panelFrameIdForTheme(theme),
+    `entity-panel requires a signed ${theme} generic panel-frame token.`,
   );
 
   return { panelFrame };
@@ -140,7 +145,7 @@ export function entityPanelPattern(options = {}) {
     throw new RangeError(`entity-panel does not support mobileActiveRegion "${mobileActiveRegion}".`);
   }
 
-  const tokens = tokenDependenciesFor();
+  const tokens = tokenDependenciesFor({ theme });
 
   return {
     schema: "kanbien.designSystem.patternSpec.v1",
@@ -183,6 +188,8 @@ export function entityPanelPattern(options = {}) {
       "data-entity-panel-theme": theme,
       "data-entity-panel-mobile-active": mobileActiveRegion,
       "data-entity-panel-primary-mode": showPrimaryIndex ? "shown" : "hidden",
+      "data-entity-panel-primary-current": primaryCurrent ?? "",
+      "data-entity-panel-secondary-current": secondaryCurrent ?? "",
       "data-entity-panel-mobile-breakpoint": tokens.panelFrame.mobileBreakpointValue,
       "aria-label": ariaLabel,
     },
@@ -303,6 +310,57 @@ export function renderEntityPanelPattern(options = {}) {
 }
 
 export function attachEntityPanelPatternController(root = document) {
+  const updateCurrentItem = (region, currentValue) => {
+    for (const item of region.querySelectorAll("[data-index-nav-item-control]")) {
+      if (!(item instanceof HTMLElement) || item.hasAttribute("disabled")) {
+        continue;
+      }
+      const isCurrent = item.dataset.indexNavItemControlValue === currentValue;
+      item.dataset.indexNavItemControlState = isCurrent ? "current" : "resting";
+      if (isCurrent) {
+        item.setAttribute("aria-current", "true");
+      } else {
+        item.removeAttribute("aria-current");
+      }
+    }
+  };
+
+  const regionFor = (panel, regionName) => panel.querySelector(`[data-entity-panel-region="${regionName}"]`);
+
+  const activateRegion = (panel, regionName) => {
+    if (!["body", "primary-index", "secondary-index"].includes(regionName)) {
+      return;
+    }
+    panel.dataset.entityPanelMobileActive = regionName;
+  };
+
+  const activatePrimaryItem = (panel, value) => {
+    const primaryRegion = regionFor(panel, "primary-index");
+    const secondaryRegion = regionFor(panel, "secondary-index");
+    panel.dataset.entityPanelPrimaryCurrent = value;
+    panel.dataset.entityPanelSecondaryCurrent = "";
+    if (primaryRegion instanceof HTMLElement) {
+      updateCurrentItem(primaryRegion, value);
+    }
+    if (secondaryRegion instanceof HTMLElement) {
+      updateCurrentItem(secondaryRegion, "");
+    }
+    if (panel.dataset.entityPanelViewport === "mobile") {
+      activateRegion(panel, "secondary-index");
+    }
+  };
+
+  const activateSecondaryItem = (panel, value) => {
+    const secondaryRegion = regionFor(panel, "secondary-index");
+    panel.dataset.entityPanelSecondaryCurrent = value;
+    if (secondaryRegion instanceof HTMLElement) {
+      updateCurrentItem(secondaryRegion, value);
+    }
+    if (panel.dataset.entityPanelViewport === "mobile") {
+      activateRegion(panel, "body");
+    }
+  };
+
   const updateViewportPosture = (panel) => {
     const breakpoint = panel.getAttribute("data-entity-panel-mobile-breakpoint");
     const breakpointPx = toPixels(breakpoint, panel.ownerDocument);
@@ -333,6 +391,44 @@ export function attachEntityPanelPatternController(root = document) {
     updateViewportPosture(panel);
     panel.addEventListener("entity-panel:refresh-viewport", () => updateViewportPosture(panel));
     panel.ownerDocument?.defaultView?.addEventListener("resize", () => updateViewportPosture(panel));
+  }
+
+  if (!attachedEntityPanelRoots.has(root)) {
+    attachedEntityPanelRoots.add(root);
+
+    root.addEventListener("index-nav-item-control:activate", (event) => {
+      const value = event.detail?.value;
+      const target = event.target;
+      const panel = target instanceof Element ? target.closest("[data-entity-panel]") : null;
+      const region = target instanceof Element ? target.closest("[data-entity-panel-region]") : null;
+      if (!(panel instanceof HTMLElement) || !(region instanceof HTMLElement) || typeof value !== "string" || value.trim().length === 0) {
+        return;
+      }
+
+      if (region.dataset.entityPanelRegion === "primary-index") {
+        activatePrimaryItem(panel, value);
+        return;
+      }
+      if (region.dataset.entityPanelRegion === "secondary-index") {
+        activateSecondaryItem(panel, value);
+      }
+    });
+
+    root.addEventListener("icon-button-control:activate", (event) => {
+      const value = event.detail?.value ?? "";
+      const target = event.target;
+      const panel = target instanceof Element ? target.closest("[data-entity-panel]") : null;
+      if (!(panel instanceof HTMLElement)) {
+        return;
+      }
+      if (value === "close-secondary-index") {
+        activateRegion(panel, "primary-index");
+        return;
+      }
+      if (value === "close-primary-index") {
+        activateRegion(panel, "body");
+      }
+    });
   }
 
   attachPanelHeaderControlPrimitiveController(root);

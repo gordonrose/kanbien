@@ -297,6 +297,13 @@ function updateVisiblePanel(form, itemId) {
       if (!panel.hidden) {
         for (const entityPanel of panel.querySelectorAll("[data-entity-panel]")) {
           entityPanel.dispatchEvent(new CustomEvent("entity-panel:refresh-viewport"));
+          if (
+            entityPanel instanceof HTMLElement &&
+            entityPanel.dataset.entityPanelViewport === "mobile" &&
+            entityPanel.querySelector("[data-entity-panel-region='primary-index']")
+          ) {
+            entityPanel.dataset.entityPanelMobileActive = "primary-index";
+          }
         }
       }
     }
